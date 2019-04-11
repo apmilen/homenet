@@ -28,6 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+################################################################################
+### Remote Connection Settings
+################################################################################
+
+# Don't change values here, set via environment variable or secrets.env file
+POSTGRES_HOST = '127.0.0.1'
+POSTGRES_PORT = 5432
+POSTGRES_DB = 'penny'
+POSTGRES_USER = 'penny'
+POSTGRES_PASSWORD = ''
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,11 +86,14 @@ WSGI_APPLICATION = 'penny.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST': POSTGRES_HOST,
+        'PORT': POSTGRES_PORT,
+        'USER': POSTGRES_USER,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'NAME': POSTGRES_DB,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
