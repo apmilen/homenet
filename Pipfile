@@ -14,6 +14,11 @@ pytest-cov = "*"
 mixer = "*"
 pytest-xdist = "*"
 graphene-django = "*"
+psycopg2cffi = "*"
+psutil = "*"
+python-dotenv = "*"
+django-pdb = "*"
+bleach = "*"
 
 [requires]
 python_version = "3.7"
