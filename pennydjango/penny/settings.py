@@ -41,6 +41,10 @@ POSTGRES_PASSWORD = ''
 
 # Application definition
 
+GRAPHENE = {
+    'SCHEMA': 'penny.schema.schema',
+}
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +52,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'graphene_django',
+    'penny',
+    'rentals'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTH_USER_MODEL = 'penny.User'
 ROOT_URLCONF = 'penny.urls'
 
 TEMPLATES = [
