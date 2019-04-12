@@ -1,14 +1,10 @@
-import json
 import pytest
 from mixer.backend.django import mixer
-
-from decimal import Decimal
 
 from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory
 from graphene.test import Client
 
-from rentals import mutations
 from penny.schema import schema
 
 
@@ -26,20 +22,25 @@ def test_create_rentproperty_mutation():
         "about": "this is a nice house, don't u think? ;)",
         "bedrooms": 3,
         "baths": 2,
+        "petsAllowed": True,
         "amenities": "a lot"
     }
     req = RequestFactory().get('/')
     req.user = AnonymousUser()
     client = Client(schema)
-    executed = client.execute(
-        '''
+    query = '''
         mutation createRentP($input: RentPropertyInput!) {
           createRentproperty(rentp: $input) {
             status
             formErrors
+            rentproperty {
+              id
+            }
           }
         }
-        ''',
+        '''
+    executed = client.execute(
+        query,
         variables={"input": data},
         context=req
     )
@@ -47,12 +48,32 @@ def test_create_rentproperty_mutation():
     res = executed["data"]["createRentproperty"]
     assert res["status"] == 403, "user not authenticated"
 
-    # req.user = user
-    # res = mutation.mutate(None, {}, req, None)
-    # assert res.status == 400, 'Should return 400 if there are form errors'
-    # assert "message" in res.formErrors, "should have form error field"
-    #
-    # req.user = user
-    # res = mutation.mutate(None, data, req, None)
-    # assert res.status == 200, "should return 200 if mutation is successful"
-    # assert res.rent_property.id
+    req.user = user
+    executed = client.execute(
+        query,
+        variables={"input": {}},
+        context=req
+    )
+    assert executed.get("errors"), "should return errors"
+
+    req.user = user
+    executed = client.execute(
+        query,
+        variables={"input": data},
+        context=req
+    )
+    assert not executed.get("errors")
+    res = executed["data"]["createRentproperty"]
+    assert res["status"] == 200, "should return 200 if mutation is successful"
+    assert res["rentproperty"]["id"]
+
+    data["latitude"] = 33.1111111111
+    executed = client.execute(
+        query,
+        variables={"input": data},
+        context=req
+    )
+    assert not executed.get("errors")
+    res = executed["data"]["createRentproperty"]
+    assert res["status"] == 400, 'Should return 400 if there are form errors'
+    assert "latitud" in res["formErrors"], "should have form error field"
