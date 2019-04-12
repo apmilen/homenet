@@ -5,7 +5,9 @@ from penny.model_utils import BaseModel
 
 
 class RentProperty(BaseModel):
-    publisher = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    publisher = models.ForeignKey(get_user_model(),
+                                  related_name="rent_properties",
+                                  on_delete=models.CASCADE)
     price = models.PositiveIntegerField()
     contact = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
