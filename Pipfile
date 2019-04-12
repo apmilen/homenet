@@ -8,6 +8,12 @@ verify_ssl = true
 [packages]
 django = "*"
 psycopg2 = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-cov = "*"
+mixer = "*"
+pytest-xdist = "*"
+graphene-django = "*"
 
 [requires]
 python_version = "3.7"
