@@ -1,18 +1,23 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 
-import rentals.schema
+import rentals.queries
+import rentals.mutations
 
 from .models import User
 
 
-class CategoryType(DjangoObjectType):
+class UserType(DjangoObjectType):
     class Meta:
         model = User
 
 
-class Query(rentals.schema.Query, graphene.ObjectType):
+class Query(rentals.queries.Query, graphene.ObjectType):
     pass
 
 
-schema = graphene.Schema(query=Query)
+class Mutation(rentals.mutations.Mutation, graphene.ObjectType):
+    pass
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)

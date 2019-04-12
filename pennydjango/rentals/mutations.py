@@ -1,0 +1,50 @@
+import json
+import graphene
+
+from .queries import RentPropertyType
+from .forms import CreateRentPropertyForm
+
+
+class RentPropertyInput(graphene.InputObjectType):
+    price = graphene.Int(required=True)
+    contact = graphene.String(required=True)
+    address = graphene.String(required=True)
+    latitude = graphene.Float(required=True)
+    longitude = graphene.Float(required=True)
+    about = graphene.String()
+    bedrooms = graphene.Int(required=True)
+    baths = graphene.Int(required=True)
+    pets_allowed = graphene.Boolean()
+    amenities = graphene.String(required=True)
+
+
+class CreateRentPropertyMutation(graphene.Mutation):
+    class Arguments:
+        rentp = RentPropertyInput(required=True)
+
+    status = graphene.Int()
+    formErrors = graphene.String()
+    rentproperty = graphene.Field(RentPropertyType)
+
+    @staticmethod
+    def mutate(root, info, **kwargs):
+        data = kwargs.get("rentp")
+        if not info.context.user.is_authenticated:
+            return CreateRentPropertyMutation(status=403)
+
+        form = CreateRentPropertyForm(data=data)
+        # Here we would usually use Django forms to validate the input
+        if not form.is_valid():
+            return CreateRentPropertyMutation(
+                status=400,
+                formErrors=json.dumps(form.errors)
+            )
+
+        obj = form.save(commit=False)
+        obj.publisher = info.context.user
+        obj.save()
+        return CreateRentPropertyMutation(status=200, rentproperty=obj)
+
+
+class Mutation(graphene.ObjectType):
+    create_rentproperty = CreateRentPropertyMutation.Field()

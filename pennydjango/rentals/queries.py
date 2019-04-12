@@ -12,14 +12,16 @@ class RentPropertyType(DjangoObjectType):
 class Query(object):
     rentproperty = graphene.Field(RentPropertyType,
                                   required=True,
-                                  id=graphene.UUID())
+                                  id=graphene.ID())
 
     all_rentp = graphene.List(RentPropertyType)
 
-    def resolve_all_rentp(self, info, **kwargs):
+    @staticmethod
+    def resolve_all_rentp(root, info):
         return RentProperty.objects.select_related('publisher').all()
 
-    def resolve_rentproperty(self, **kwargs):
+    @staticmethod
+    def resolve_rentproperty(root, info, **kwargs):
         rp_id = kwargs.get("id")
         if rp_id:
             return RentProperty.objects.get(id=rp_id)
