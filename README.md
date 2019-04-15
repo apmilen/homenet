@@ -14,11 +14,11 @@ PATH=./node_modules/.bin:$PATH
 # For fish: add this line to ~/.config/fish/config.fish
 set -x PATH ./node_modules/.bin $PATH
 
-# Install python packages
-apt install python3.7 python3-pip python3.7-dev
+# Install system packages
+apt install python3.7 python3-pip python3.7-dev libpq-dev postgresql
 
 # install pipenv https://github.com/pypa/pipenv
-pip3 install --user pipenv
+python3.7 -m pip install --user pipenv
 
 # (Optional) install pyenv for manage python versions (3.7.3)
 # https://github.com/pyenv/pyenv
@@ -36,6 +36,7 @@ pg_ctl -D data/database -l logs/postgres.log start
 psql -c "CREATE USER penny WITH PASSWORD 'your_strongest_pass_ever';" postgres
 psql -c "CREATE DATABASE penny OWNER penny;" postgres
 psql -c "GRANT ALL PRIVILEGES ON DATABASE penny TO penny;" postgres
+psql -c "ALTER USER penny CREATEDB;" postgres
 
 # create database and user in psql
 # migrate
