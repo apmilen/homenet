@@ -61,6 +61,7 @@ SITE_ID = 1
 WSGI_APPLICATION = 'penny.wsgi.application'
 GRAPHENE = {
     'SCHEMA': 'penny.schema.schema',
+    'MIDDLEWARE': []
 }
 ENDPOINT="http://localhost:8000/graphiql"
 
@@ -340,6 +341,7 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    GRAPHENE["MIDDLEWARE"] = ['graphene_django.debug.DjangoDebugMiddleware']
 
 # Assertions about the environment
 

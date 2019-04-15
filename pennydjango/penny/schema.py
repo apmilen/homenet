@@ -1,5 +1,6 @@
-from graphene import relay, ObjectType, Schema
+from graphene import relay, ObjectType, Schema, Field
 from graphene_django.types import DjangoObjectType
+from graphene_django.debug import DjangoDebug
 
 import rentals.queries
 import rentals.mutations
@@ -15,7 +16,7 @@ class UserType(DjangoObjectType):
 
 
 class Query(rentals.queries.Query, ObjectType):
-    pass
+    debug = Field(DjangoDebug, name='__debug')
 
 
 class Mutation(rentals.mutations.Mutation, ObjectType):

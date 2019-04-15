@@ -2,8 +2,8 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-
-from .models import RentProperty
+from penny.utils import get_output_fields
+from rentals.models import RentProperty
 
 
 class RentPropertyType(DjangoObjectType):
@@ -19,7 +19,9 @@ class Query(object):
 
     @staticmethod
     def resolve_all_rentp(root, info, **kwargs):
-        return RentProperty.objects.select_related('publisher').all()
+        output_fields = get_output_fields(info)
+        query = RentProperty.objects.all()
+        return query.only(*output_fields)
 
     @staticmethod
     def resolve_rentproperty(root, info, **kwargs):

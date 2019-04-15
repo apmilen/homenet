@@ -1,4 +1,5 @@
 import bleach
+import re
 import uuid
 
 from enum import Enum
@@ -6,6 +7,8 @@ from enum import Enum
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (DecimalField, CharField, IntegerField,
                               AutoField, QuerySet)
+
+from penny.collect_fields import get_fields
 
 
 def sanitize_html(text, strip=False, allow_safe=True):
@@ -122,3 +125,22 @@ class ExtendedEncoder(DjangoJSONEncoder):
             return cls.convert_for_json(cls().default(obj))
         except TypeError:
             return obj
+
+
+def convert_to_snake(name):
+    """
+    Converts camelCase string to snake_case
+    """
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
+def get_output_fields(info):
+    """
+    return the requested output fields as a list
+    """
+    fields_dict = get_fields(info)["edges"]["node"]
+    fields = [convert_to_snake(key)
+              for key in fields_dict
+              if key not in ['cursor']]
+    return fields
