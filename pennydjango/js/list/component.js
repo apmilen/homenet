@@ -10,12 +10,12 @@ const Properties = () =>
             if (error) return `Error! ${error.message}`
 
             return <>
-                {data.allRentp.map(rentp =>
-                    <ul key={rentp.id}>
-                        <li>{rentp.contact}</li>
-                        <li>{rentp.about}</li>
-                        <li>{rentp.longitude}</li>
-                        <li>{rentp.latitude}</li>
+                {data.allRentp.edges.map(rentp =>
+                    <ul key={rentp.node.id}>
+                        <li>{rentp.node.contact}</li>
+                        <li>{rentp.node.about}</li>
+                        <li>{rentp.node.longitude}</li>
+                        <li>{rentp.node.latitude}</li>
                     </ul>
                 )}
             </>

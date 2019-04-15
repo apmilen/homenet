@@ -19,11 +19,15 @@ class RentQueriesTestCase(SimpleRentTest):
         executed = self.client.execute(
             '''
             query {
-              allRentp{
-                contact
-                publisher {
-                  username
-                  id
+              allRentp {
+                edges {
+                  node {
+                    contact
+                    publisher {
+                      username
+                      modelId
+                    }
+                  }
                 }
               }
             }
@@ -31,29 +35,33 @@ class RentQueriesTestCase(SimpleRentTest):
         )
         assert not executed.get("errors")
         expected = {
-            "allRentp": [
-                OrderedDict({
-                    "contact": ob.contact,
-                    "publisher": OrderedDict({
-                        "username": ob.publisher.username,
-                        "id": str(ob.publisher.id)
+            "allRentp": OrderedDict({
+                "edges": [
+                    OrderedDict({
+                        "node": OrderedDict({
+                            "contact": ob.contact,
+                            "publisher": OrderedDict({
+                                "username": ob.publisher.username,
+                                "modelId": str(ob.publisher.model_id)
+                            })
+                        })
                     })
-                })
-                for ob in self.properties
-            ]
+                    for ob in self.properties
+                ]
+            })
         }
         assert dict(executed.get("data")) == expected
 
     def test_resolve_rentproperty(self):
         executed = self.client.execute(
             '''
-            query getProper($id: ID){
-              rentproperty(id: $id){
+            query getProper($id: UUID!){
+              rentproperty(modelId: $id){
                 about
               }
             }
             ''',
-            variables={'id': self.property1.id}
+            variables={'id': str(self.property1.model_id)}
         )
         assert not executed.get("errors")
         expected = {

@@ -182,9 +182,9 @@ def check_django_invariants():
                 f'    Missing setting: {setting_name} in secrets.env'
             )
 
-    if s.IS_TESTING:
-        assert s.REDIS_DB != s.SETTINGS_DEFAULTS['REDIS_DB'], (
-            'Tests must be run with a different redis db than the main redis')
+    # if s.IS_TESTING:
+    #     assert s.REDIS_DB != s.SETTINGS_DEFAULTS['REDIS_DB'], (
+    #         'Tests must be run with a different redis db than the main redis')
 
 
 def django_status_line(fancy: bool=False, truncate: bool=False) -> str:

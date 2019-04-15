@@ -22,6 +22,7 @@ export const Home = {
         const client = new ApolloClient({
           link: link,
           cache: new InMemoryCache(),
+            onError: (e) => {console.log(e)}
         })
         return {props, client}
     },

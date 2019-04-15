@@ -18,17 +18,17 @@ class RentPropertyInput(graphene.InputObjectType):
     amenities = graphene.String(required=True)
 
 
-class CreateRentPropertyMutation(graphene.Mutation):
-    class Arguments:
-        rentp = RentPropertyInput(required=True)
+class CreateRentPropertyMutation(graphene.relay.ClientIDMutation):
+    class Input:
+        rentproperty = RentPropertyInput(required=True)
 
     status = graphene.Int()
     formErrors = graphene.String()
     rentproperty = graphene.Field(RentPropertyType)
 
-    @staticmethod
-    def mutate(root, info, **kwargs):
-        data = kwargs.get("rentp")
+    @classmethod
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        data = kwargs.get("rentproperty")
         if not info.context.user.is_authenticated:
             return CreateRentPropertyMutation(status=403)
 

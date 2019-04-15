@@ -1,4 +1,4 @@
-import graphene
+from graphene import relay, ObjectType, Schema
 from graphene_django.types import DjangoObjectType
 
 import rentals.queries
@@ -10,14 +10,16 @@ from .models import User
 class UserType(DjangoObjectType):
     class Meta:
         model = User
+        filter_fields = ("id", "name")
+        interfaces = (relay.Node,)
 
 
-class Query(rentals.queries.Query, graphene.ObjectType):
+class Query(rentals.queries.Query, ObjectType):
     pass
 
 
-class Mutation(rentals.mutations.Mutation, graphene.ObjectType):
+class Mutation(rentals.mutations.Mutation, ObjectType):
     pass
 
 
-schema = graphene.Schema(query=Query, mutation=Mutation)
+schema = Schema(query=Query, mutation=Mutation)

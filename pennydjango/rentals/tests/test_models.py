@@ -5,7 +5,7 @@ class RentPropertyTestCase(SimpleRentTest):
 
     def test_rent_property(self):
         rent_prop = self.property1
-        assert rent_prop.id
+        assert rent_prop.model_id
         assert rent_prop.contact
         assert rent_prop.address
         assert rent_prop.latitude
