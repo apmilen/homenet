@@ -19,6 +19,7 @@ psutil = "*"
 python-dotenv = "*"
 django-pdb = "*"
 bleach = "*"
+django-filter = "*"
 
 [requires]
 python_version = "3.7"
