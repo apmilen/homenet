@@ -11,7 +11,8 @@ const Properties = () =>
 
             return <>
                 {data.allRentp.edges.map(rentp =>
-                    <ul key={rentp.node.id}>
+                    <ul key={rentp.node.modelId}>
+                        <li>{rentp.node.price}</li>
                         <li>{rentp.node.contact}</li>
                         <li>{rentp.node.about}</li>
                         <li>{rentp.node.longitude}</li>

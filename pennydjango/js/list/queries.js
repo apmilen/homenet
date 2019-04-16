@@ -5,11 +5,12 @@ export const GET_RENTP = gql`
     allRentp {
         edges {
             node {
-                id
+                modelId
                 latitude
                 longitude
                 about
                 contact
+                price
             }
         }
     }
