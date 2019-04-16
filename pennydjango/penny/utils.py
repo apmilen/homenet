@@ -142,5 +142,5 @@ def get_output_fields(info):
     fields_dict = get_fields(info)["edges"]["node"]
     fields = [convert_to_snake(key)
               for key in fields_dict
-              if key not in ['cursor']]
+              if key not in ['cursor', "__typename"]]
     return fields
