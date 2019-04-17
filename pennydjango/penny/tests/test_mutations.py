@@ -1,6 +1,3 @@
-from django.test import TestCase
-
-from penny.models import User
 from penny.tests.test_utils import GraphClientTestCase
 
 
@@ -29,7 +26,7 @@ class CreateUserTest(GraphClientTestCase):
             variables={'input': data},
             context=self.request
         )
-        assert not executed.get('errors')
+        self.assertIsNone(executed.get('errors'))
         res = executed['data']['createUser']
         assert res['status'] == 400,\
             "Should return 400 if there are form errors"
@@ -41,7 +38,7 @@ class CreateUserTest(GraphClientTestCase):
             variables={'input': data},
             context=self.request
         )
-        assert not executed.get('errors')
+        self.assertIsNone(executed.get('errors'))
         res = executed['data']['createUser']
         assert res['status'] == 200,\
             "Should return 200 if mutation is successful"
