@@ -61,7 +61,7 @@ SITE_ID = 1
 WSGI_APPLICATION = 'penny.wsgi.application'
 GRAPHENE = {
     'SCHEMA': 'penny.schema.schema',
-    'MIDDLEWARE': ['graphql_jwt.middleware.JSONWebTokenMiddleware']
+    'MIDDLEWARE': []
 }
 ENDPOINT="http://localhost:8000/graphiql"
 
@@ -272,7 +272,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 

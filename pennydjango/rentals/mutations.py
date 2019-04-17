@@ -28,10 +28,10 @@ class CreateRentPropertyMutation(graphene.relay.ClientIDMutation):
 
     @classmethod
     def mutate_and_get_payload(cls, root, info, **kwargs):
-        data = kwargs.get("rentproperty")
         if not info.context.user.is_authenticated:
             return CreateRentPropertyMutation(status=403)
 
+        data = kwargs.get("rentproperty")
         form = CreateRentPropertyForm(data=data)
         # Here we would usually use Django forms to validate the input
         if not form.is_valid():
