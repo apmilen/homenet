@@ -8,6 +8,7 @@ export const GET_RENTP = gql`
                 modelId
                 latitude
                 longitude
+                address
                 about
                 contact
                 price
