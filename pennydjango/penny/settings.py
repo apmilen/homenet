@@ -61,7 +61,7 @@ SITE_ID = 1
 WSGI_APPLICATION = 'penny.wsgi.application'
 GRAPHENE = {
     'SCHEMA': 'penny.schema.schema',
-    'MIDDLEWARE': []
+    'MIDDLEWARE': ['graphql_jwt.middleware.JSONWebTokenMiddleware']
 }
 ENDPOINT="http://localhost:8000/graphiql"
 
@@ -270,7 +270,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}
 ]
+
 AUTHENTICATION_BACKENDS = (
+    'graphql_jwt.backends.JSONWebTokenBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -341,7 +343,9 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    GRAPHENE["MIDDLEWARE"] = ['graphene_django.debug.DjangoDebugMiddleware']
+    GRAPHENE["MIDDLEWARE"] = GRAPHENE["MIDDLEWARE"] + [
+        'graphene_django.debug.DjangoDebugMiddleware'
+    ]
 
 # Assertions about the environment
 

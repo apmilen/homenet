@@ -1,16 +1,10 @@
-from rentals.tests.test_utils import SimpleRentTest
-
 from collections import OrderedDict
-from graphene.test import Client
+
 from rentals import queries
-from penny.schema import schema
+from rentals.tests.test_utils import SimpleRentTest
 
 
 class RentQueriesTestCase(SimpleRentTest):
-    def setUp(self):
-        super().setUp()
-        self.client = Client(schema)
-
     def test_rentproperty_type(self):
         instance = queries.RentPropertyType()
         assert instance

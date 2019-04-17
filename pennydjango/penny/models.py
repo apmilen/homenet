@@ -11,7 +11,7 @@ class CaseInsensitiveUserManager(UserManager):
 
 class User(AbstractUser, BaseModel):
     objects = CaseInsensitiveUserManager()
-    # id = models.UUIDField
+    # model_id = models.UUIDField
     # username
     # password
     # email

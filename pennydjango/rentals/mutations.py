@@ -23,7 +23,7 @@ class CreateRentPropertyMutation(graphene.relay.ClientIDMutation):
         rentproperty = RentPropertyInput(required=True)
 
     status = graphene.Int()
-    formErrors = graphene.String()
+    form_errors = graphene.String()
     rentproperty = graphene.Field(RentPropertyType)
 
     @classmethod
@@ -37,7 +37,7 @@ class CreateRentPropertyMutation(graphene.relay.ClientIDMutation):
         if not form.is_valid():
             return CreateRentPropertyMutation(
                 status=400,
-                formErrors=json.dumps(form.errors)
+                form_errors=json.dumps(form.errors)
             )
 
         obj = form.save(commit=False)
