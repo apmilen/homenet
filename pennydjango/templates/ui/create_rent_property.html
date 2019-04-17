@@ -1,0 +1,18 @@
+{% extends 'ui/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block inner %}
+
+<form action="/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Send">
+</form>
+
+{% endblock inner %}
+
+{% block footer %}
+{% endblock %}
