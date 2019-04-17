@@ -112,6 +112,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
+CORS_ORIGIN_WHITELIST = ('localhost:8000', '127.0.0.1:8000')
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 ################################################################################
@@ -248,7 +250,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'graphene_django',
+    
     'penny',
     'rentals',
     'ui'
@@ -257,6 +261,7 @@ MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
     'penny.middleware.x_forwarded_for.XForwardedForMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

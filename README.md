@@ -24,8 +24,9 @@ pipenv install  # Uses Pipfile
 
 # init database
 initdb data/database
+mkdir -p data/logs
 # This needs to be called at start, later we'll use some service
-pg_ctl -D data/database -l logs/postgres.log start
+pg_ctl -D data/database -l data/logs/postgres.log start
 
 # Create role, db and grant privileges
 psql -c "CREATE USER penny WITH PASSWORD 'your_strongest_pass_ever';" postgres
@@ -45,6 +46,7 @@ set -x PATH ./node_modules/.bin $PATH
 
 cd pennydjango/js
 yarn install
+cd ..
 
 # create database and user in psql
 # migrate
