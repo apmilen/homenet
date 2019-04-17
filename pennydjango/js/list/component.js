@@ -95,12 +95,7 @@ class CreateRentProperty extends Component {
             </div>
 
             <Mutation mutation={CREATE_RENTP} variables={{ input }}>
-                {(createRentp, {data, error}) => {
-                    if (data) console.log("LA DATA", data)
-                    if (error) console.log("LE ERROR", error)
-
-                    return <button onClick={createRentp}>Send</button>
-                }}
+                {createRentp => <button onClick={createRentp}>Send</button>}
             </Mutation>
         </div>
       }

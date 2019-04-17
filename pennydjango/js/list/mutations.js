@@ -6,7 +6,7 @@ export const CREATE_RENTP = gql`
             status
             formErrors
             rentproperty {
-                d
+                id
             }
         }
     }
