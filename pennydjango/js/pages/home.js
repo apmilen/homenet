@@ -66,11 +66,20 @@ export const Home = {
     },
     render({client}) {
         return <ApolloProvider client={client}>
-            <h2>Users</h2>
-            <UserList/>
-            <hr/>
-            <h2>Rental Properties</h2>
-            <RentPropertyList/>
+            <div class="container-full">
+                <div class="input-group" style={{maxWidth: 600, margin: 'auto'}}>
+                    <input type="search" class="form-control" placeholder="Search for listings..."/>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default">🔎 Search</button>
+                    </span>
+                </div>
+                <br/>
+                <RentPropertyList/>
+                <div class="container" style={{maxWidth: 1200}}>
+                    <h2>Listing Agents</h2>
+                    <UserList/>
+                </div>
+            </div>
         </ApolloProvider>
     },
     mount(props, mount_point) {
