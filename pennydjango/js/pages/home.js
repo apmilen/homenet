@@ -8,7 +8,7 @@ import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloProvider } from 'react-apollo'
 
-import {RentalPropertyListView} from "@/list/component"
+import {RentPropertyList} from "@/list/component"
 
 
 global.loading = global.loading || {end: Date.now()}
@@ -66,7 +66,7 @@ export const Home = {
     },
     render({client}) {
         return <ApolloProvider client={client}>
-            <RentalPropertyListView/>
+            <RentPropertyList/>
         </ApolloProvider>
     },
     mount(props, mount_point) {
