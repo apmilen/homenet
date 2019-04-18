@@ -30,9 +30,6 @@
         <link rel="preload" as="style" href="{% http2static 'css/base.css' GIT_SHA %}" crossorigin>
 
         <link rel="preload" as="style" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="{% http2static 'fonts/bungee.woff2' %}" crossorigin="anonymous">
-        <link rel="preload" as="font" type="font/woff2" href="{% http2static 'fonts/lato-light.woff2'%}" crossorigin="anonymous">
-        <link rel="preload" as="font" type="font/woff2" href="{% http2static 'fonts/lato-regular.woff2'%}" crossorigin="anonymous">
         <link rel="preload" as="font" type="font/woff2" href="{% http2static 'fonts/fontawesome-webfont.woff2' '4.7.0' %}" crossorigin="anonymous">
         {% if custom_stylesheet %}
             <link rel="preload" as="style" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" crossorigin>

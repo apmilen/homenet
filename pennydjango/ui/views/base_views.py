@@ -65,7 +65,7 @@ class BaseView(View):
             'ENVIRONMENT': settings.PENNY_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
             'LANGUAGE_CODE': settings.LANGUAGE_CODE,
-            'user': self.user_json(request) or request.user,
+            'user': request.user,
             'title': self.title or self.__class__.__name__,
             'page_id': self.__class__.__name__.lower(),
             'component': self.component,

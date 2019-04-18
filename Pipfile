@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
+mypy = "*"
+django-stubs = "*"
+ipdb = "*"
 
 [packages]
 django = "*"
@@ -20,6 +24,7 @@ python-dotenv = "*"
 django-pdb = "*"
 bleach = "*"
 django-filter = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"

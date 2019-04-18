@@ -1,20 +1,7 @@
 from rentals.tests.test_utils import SimpleRentTest
 
-from django.contrib.auth.models import AnonymousUser
-from django.test import RequestFactory
-from graphene.test import Client
-
-from penny.schema import schema
-
 
 class RentMutationsTestCase(SimpleRentTest):
-    def setUp(self):
-        super().setUp()
-        self.client = Client(schema)
-
-        self.req = RequestFactory().get('/')
-        self.req.user = AnonymousUser()
-
     def test_create_rentproperty_mutation(self):
         data = {
             "rentproperty": {
@@ -44,25 +31,25 @@ class RentMutationsTestCase(SimpleRentTest):
         executed = self.client.execute(
             query,
             variables={'input': data},
-            context=self.req
+            context=self.request
         )
         assert not executed.get('errors')
         res = executed['data']['createRentproperty']
         assert res['status'] == 403,\
             "Testing user NOT authenticated but IT IS authenticated"
 
-        self.req.user = self.test_user
+        self.request.user = self.test_user
         executed = self.client.execute(
             query,
             variables={'input': {}},
-            context=self.req
+            context=self.request
         )
         assert executed.get("errors"), "Should return errors"
 
         executed = self.client.execute(
             query,
             variables={'input': data},
-            context=self.req
+            context=self.request
         )
         assert not executed.get("errors")
         res = executed['data']['createRentproperty']
@@ -74,7 +61,7 @@ class RentMutationsTestCase(SimpleRentTest):
         executed = self.client.execute(
             query,
             variables={'input': data},
-            context=self.req
+            context=self.request
         )
 
         assert not executed.get("errors")

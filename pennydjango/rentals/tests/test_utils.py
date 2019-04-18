@@ -1,15 +1,10 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-
 from rentals.models import RentProperty
+from penny.tests.test_utils import GraphClientTestCase
 
 
-class SimpleRentTest(TestCase):
+class SimpleRentTest(GraphClientTestCase):
     def setUp(self):
-        self.test_user = get_user_model().objects.create_user(
-            username='test_pub',
-            password='alalalalong'
-        )
+        super().setUp()
         self.property1 = RentProperty.objects.create(
             publisher=self.test_user,
             price=999,
@@ -34,3 +29,8 @@ class SimpleRentTest(TestCase):
             self.property1,
             self.property2,
         ]
+
+    def tearDown(self):
+        super().tearDown()
+        self.property1.delete()
+        self.property2.delete()

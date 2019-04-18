@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 
 import {Query, Mutation} from 'react-apollo'
-import {GET_RENTP} from '@/list/queries'
+import {GET_USERS, GET_RENTPROPERTIES} from '@/list/queries'
 import {CREATE_RENTP} from '@/list/mutations'
+
 
 
 class CreateRentProperty extends Component {
@@ -78,32 +79,65 @@ class CreateRentProperty extends Component {
 
 }
 
-const Properties = () =>
-    <Query query={GET_RENTP}>
-        {({loading, error, data}) => {
-            if (loading) return 'Loading...'
-            if (error) return `Error! ${error.message}`
 
-            return <>
-                {data.allRentp.edges.map(rentp =>
-                    <ul key={rentp.node.modelId}>
-                        <li>{rentp.node.price}</li>
-                        <li>{rentp.node.contact}</li>
-                        <li>{rentp.node.about}</li>
-                        <li>{rentp.node.longitude}</li>
-                        <li>{rentp.node.latitude}</li>
-                    </ul>
-                )}
-            </>
-            }
-        }
+
+const RentPropertyListItem = ({pk, price, contact, about, longitude, latitude, address, amenities, bedrooms, baths, petsAllowed, publisher}) =>
+    <div class="col-md-4 rental-list-item">
+        <div class="list-item-content">
+            <h3>{about}</h3>
+            <div><b>Price:</b> ${price}/month</div>
+            <div><b>Size:</b> {bedrooms} bedrooms, {baths} bathrooms</div>
+            <div><b>Amenities:</b> {amenities}</div>
+            <div><b>Pets Allowed:</b> {petsAllowed ? '😸 yes' : '😿 no'}</div>
+            <div><b>Primary Contact:</b> {contact}</div>
+        </div>
+        <br/>
+        <h4>{address} ({latitude}, {longitude})</h4>
+        <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
+    </div>
+
+
+export const RentPropertyList = () =>
+    <Query query={GET_RENTPROPERTIES}>
+        {({loading, error, data}) => {
+            if (loading)
+                return 'Loading...'
+
+            if (error)
+                return `Got an error! ${error.message}`
+
+            // console.log(data)
+
+            return <div>
+                {data.rentpropertys.edges.map(({node}) =>
+                    <RentPropertyListItem {...node}/>)}
+            </div>
+        }}
     </Query>
 
-export default class ListView extends React.Component {
-    render() {
-        return <span>
-            <Properties />
-            <CreateRentProperty />
-        </span>
-    }
-}
+
+
+const UserListItem = ({pk, username, email, name}) =>
+    <div class="user-list-item">
+        <div><b>Username:</b> {username}</div>
+        <div><b>Email:</b> {email}</div>
+        <div><b>Name:</b> {name}</div>
+    </div>
+
+export const UserList = () =>
+    <Query query={GET_USERS}>
+        {({loading, error, data}) => {
+            if (loading)
+                return 'Loading...'
+
+            if (error)
+                return `Got an error! ${error.message}`
+
+            // console.log(data)
+
+            return <div>
+                {data.users.edges.map(({node}) =>
+                    <UserListItem {...node}/>)}
+            </div>
+        }}
+    </Query>
