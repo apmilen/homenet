@@ -38,6 +38,10 @@ query rentpropertys {
                 about
                 contact
                 price
+                bedrooms
+                baths
+                amenities
+                petsAllowed
                 created
                 modified
                 publisher {
@@ -62,6 +66,10 @@ query rentproperty($id: UUID!) {
                 about
                 contact
                 price
+                bedrooms
+                baths
+                pets_allowed
+                amenities
                 created
                 modified
                 publisher {

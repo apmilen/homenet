@@ -49,7 +49,7 @@ export const Home = {
             // new RetryLink(),
             ErrorHandledLink,
             new HttpLink({
-                uri: props.endpoint,
+                uri: document.location.origin + '/gql',
                 // fetchOptions: {mode: 'no-cors'},
                 // credentials: "same-origin",
                 headers: {

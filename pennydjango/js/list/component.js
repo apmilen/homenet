@@ -5,13 +5,19 @@ import {GET_USERS, GET_RENTPROPERTIES} from '@/list/queries'
 
 
 
-const RentPropertyListItem = ({pk, price, contact, about, longitude, latitude, address}) =>
-    <div class="rental-list-item">
-        <div><b>Price</b> {price}</div>
-        <div><b>Primary</b>Contact: {contact}</div>
-        <div><b>About</b> {about}</div>
-        <div><b>Location</b> {address} ({latitude}, {longitude})</div>
-        <iframe width="600" height="300" src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
+const RentPropertyListItem = ({pk, price, contact, about, longitude, latitude, address, amenities, bedrooms, baths, petsAllowed, publisher}) =>
+    <div class="col-md-4 rental-list-item">
+        <div class="list-item-content">
+            <h3>{about}</h3>
+            <div><b>Price:</b> ${price}/month</div>
+            <div><b>Size:</b> {bedrooms} bedrooms, {baths} bathrooms</div>
+            <div><b>Amenities:</b> {amenities}</div>
+            <div><b>Pets Allowed:</b> {petsAllowed ? '😸 yes' : '😿 no'}</div>
+            <div><b>Primary Contact:</b> {contact}</div>
+        </div>
+        <br/>
+        <h4>{address} ({latitude}, {longitude})</h4>
+        <iframe src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
     </div>
 
 

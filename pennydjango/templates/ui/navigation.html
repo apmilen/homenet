@@ -19,11 +19,13 @@
 
         <div class="collapse navbar-collapse" id="navbar-items">
             <ul class="nav navbar-nav main-nav">
-                <li><a href="https://labs.oddslingers.com/whitepaper.html">Add a Listing +</a></li>
+                <li><a href="/admin/rentals/rentproperty/add/">Add a Listing +</a></li>
+                <li><a href="/admin/rentals/rentproperty/">Edit Listings</a></li>
             </ul>
 
             <!-- Navbar Right: Account Menu -->
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="/admin">Admin</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="/accounts/logout">Sign Out: {{user.username}}</a></li>
                 {% else %}

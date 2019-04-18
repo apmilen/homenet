@@ -1,11 +1,3 @@
-.rental-list-item {
-    text-align: left;
-    border: 1px solid gray;
-    width: 700px;
-    padding: 10px;
-    border-radius: 14px;
-    margin: 10px;
-}
 
 .user-list-item {
     display: inline-block;
@@ -15,4 +7,30 @@
     padding: 10px;
     border-radius: 14px;
     margin: 10px;
+}
+.rental-list-item {
+    display: inline-block;
+    text-align: left;
+    border: 1px solid gray;
+    border-radius: 14px;
+    margin: 10px;
+    padding: 0px;
+    overflow: hidden;
+}
+.rental-list-item .list-item-content {
+    padding: 10px;
+}
+
+.rental-list-item h3, h4 {
+    width: 100%;
+    text-align: center;
+    font-weight: 200;
+}
+
+.rental-list-item iframe {
+    width: 120%;
+    height: 300px;
+    border: 0;
+    margin-bottom: -20px;
+    border-top: 1px solid gray;
 }
