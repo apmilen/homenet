@@ -35,7 +35,7 @@ export const RentPropertyList = () =>
 
 
 const UserListItem = ({pk, username, email, name}) =>
-    <div style={{textAlign: 'left'}}>
+    <div class="user-list-item">
         <div><b>Username:</b> {username}</div>
         <div><b>Email:</b> {email}</div>
         <div><b>Name:</b> {name}</div>
