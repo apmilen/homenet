@@ -36,7 +36,7 @@ class RentQueriesTestCase(SimpleRentTest):
                             "contact": ob.contact,
                             "publisher": OrderedDict({
                                 "username": ob.publisher.username,
-                                "modelId": str(ob.publisher.model_id)
+                                "modelId": str(ob.publisher.id)
                             })
                         })
                     })
@@ -55,7 +55,7 @@ class RentQueriesTestCase(SimpleRentTest):
               }
             }
             ''',
-            variables={'id': str(self.property1.model_id)}
+            variables={'id': str(self.property1.id)}
         )
         assert not executed.get("errors")
         expected = {

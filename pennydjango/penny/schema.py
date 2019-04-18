@@ -1,20 +1,23 @@
-from graphene import ObjectType, Schema, Field
-from graphene_django.debug import DjangoDebug
+import graphene
 
-import penny.mutations
-import penny.queries
-import rentals.queries
-import rentals.mutations
+from graphene_django.types import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+from graphene_django.fields import DjangoConnectionField
 
-
-class Query(rentals.queries.Query, penny.queries.Query, ObjectType):
-    debug = Field(DjangoDebug, name='__debug')
+from .models import User
 
 
-class Mutation(rentals.mutations.Mutation,
-               penny.mutations.Mutation,
-               ObjectType):
-    pass
+class UserType(DjangoObjectType):
+    pk = graphene.UUID(source='id')
+
+    class Meta:
+        model = User
+
+        filter_fields = ("id", "username", "email")
+        interfaces = (graphene.relay.Node,)
 
 
-schema = Schema(query=Query, mutation=Mutation)
+class PennyQueries(graphene.ObjectType):
+    user = DjangoConnectionField(UserType)
+    users = DjangoFilterConnectionField(UserType)
+

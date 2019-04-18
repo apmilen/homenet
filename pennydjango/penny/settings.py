@@ -60,10 +60,10 @@ SITE_ID = 1
 
 WSGI_APPLICATION = 'penny.wsgi.application'
 GRAPHENE = {
-    'SCHEMA': 'penny.schema.schema',
+    'SCHEMA': 'penny.root_schema.schema',
     'MIDDLEWARE': []
 }
-ENDPOINT="http://localhost:8000/graphiql"
+ENDPOINT = 'http://127.0.0.1:8000/gql'
 
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
@@ -113,6 +113,8 @@ SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 ################################################################################
@@ -250,6 +252,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
+    'corsheaders',
+    
     'penny',
     'rentals',
     'ui'
@@ -258,6 +262,7 @@ MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
     'penny.middleware.x_forwarded_for.XForwardedForMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

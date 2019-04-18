@@ -6,15 +6,14 @@ from .utils import get_short_uuid
 
 
 class BaseModel(models.Model):
-    model_id = models.UUIDField(primary_key=True,
-                                default=uuid.uuid4,
-                                editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
     @property
     def short_id(self):
-        return get_short_uuid(self.model_id)
+        return get_short_uuid(self.id)
 
     def attrs(self, *attrs):
         """
@@ -26,7 +25,7 @@ class BaseModel(models.Model):
 
     def __json__(self, *attrs):
         return {
-            'model_id': self.model_id,
+            'id': self.id,
             'str': str(self),
             **self.attrs(*attrs),
         }

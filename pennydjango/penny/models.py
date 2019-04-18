@@ -1,4 +1,3 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 
 from .model_utils import BaseModel
@@ -11,7 +10,8 @@ class CaseInsensitiveUserManager(UserManager):
 
 class User(AbstractUser, BaseModel):
     objects = CaseInsensitiveUserManager()
-    # model_id = models.UUIDField
+
+    # id = models.UUIDField
     # username
     # password
     # email
@@ -22,4 +22,3 @@ class User(AbstractUser, BaseModel):
     # is_superuser
     # last_login
     # date_joined
-
