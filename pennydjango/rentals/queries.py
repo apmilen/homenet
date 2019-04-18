@@ -7,6 +7,8 @@ from rentals.models import RentProperty
 
 
 class RentPropertyType(DjangoObjectType):
+    pk = graphene.UUID(source='id')
+
     class Meta:
         model = RentProperty
         filter_fields = ("bedrooms", "publisher")
@@ -25,7 +27,7 @@ class Query(object):
 
     @staticmethod
     def resolve_rentproperty(root, info, **kwargs):
-        rp_id = kwargs.get("id")
+        rp_id = kwargs.get("pk")
         if rp_id:
             return RentProperty.objects.get(id=rp_id)
         return RentProperty.objects.none()

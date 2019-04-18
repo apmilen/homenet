@@ -5,7 +5,7 @@ export const GET_RENTP = gql`
     allRentp {
         edges {
             node {
-                modelId
+                pk
                 latitude
                 longitude
                 address
