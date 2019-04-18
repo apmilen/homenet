@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {Query} from 'react-apollo'
-import {GET_RENTPROPERTIES} from '@/list/queries'
+import {GET_USERS, GET_RENTPROPERTIES} from '@/list/queries'
 
 
 
@@ -33,6 +33,33 @@ export const RentPropertyList = () =>
             return <div>
                 {data.rentpropertys.edges.map(({node}) =>
                     <RentPropertyListItem {...node}/>)}
+            </div>
+        }}
+    </Query>
+
+
+const UserListItem = ({pk, username, email}) =>
+    <div>
+        <ul key={pk} style={{display: 'inline-block', verticalAlign: 'top', marginRight: 20}}>
+            <li>{username}</li>
+            <li>{email}</li>
+        </ul>
+    </div>
+
+export const UserList = () =>
+    <Query query={GET_USERS}>
+        {({loading, error, data}) => {
+            if (loading)
+                return 'Loading...'
+
+            if (error)
+                return `Unfortunately, got an error! ${error.message}`
+
+            console.log(data)
+
+            return <div>
+                {data.users.edges.map(({node}) =>
+                    <UserListItem {...node}/>)}
             </div>
         }}
     </Query>
