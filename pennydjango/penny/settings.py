@@ -50,10 +50,10 @@ _PLACEHOLDER_FOR_UNSET = 'set-this-value-in-secrets.env'
 ################################################################################
 DEBUG = False
 SERVE_STATIC = False
-DEFAULT_HOST = 'pennybag.com'
-ALLOWED_HOSTS = [DEFAULT_HOST]
+DEFAULT_HOST = 'hut.zalad.io'
+ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
-DEFAULT_HTTP_PROTOCOL = 'https'
+DEFAULT_HTTP_PROTOCOL = 'http'
 SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
 SITE_ID = 1
@@ -111,7 +111,6 @@ CSRF_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
 CORS_ORIGIN_ALLOW_ALL = True
@@ -276,7 +275,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}
 ]
-
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -348,9 +346,7 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    GRAPHENE["MIDDLEWARE"] = GRAPHENE["MIDDLEWARE"] + [
-        'graphene_django.debug.DjangoDebugMiddleware'
-    ]
+    GRAPHENE["MIDDLEWARE"] = ['graphene_django.debug.DjangoDebugMiddleware']
 
 # Assertions about the environment
 
