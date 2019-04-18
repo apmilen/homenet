@@ -9,93 +9,69 @@ class CreateRentProperty extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            price: 0,
+            price: null,
             contact: '',
             address: '',
-            latitude: 1,
-            longitude: -1,
+            latitude: null,
+            longitude: null,
             about: '',
-            bedrooms: 0,
-            baths: 0,
-            pets_allowed: true,
+            bedrooms: null,
+            baths: null,
+            petsAllowed: true,
             amenities: ''
         }
     }
+    changeField(e){
+        this.setState({ [e.target.name]: e.target.value })
+    }
+    fieldType(field){
+        switch (field) {
+            case 'price':
+            case 'latitude':
+            case 'longitude':
+            case 'bedrooms':
+            case 'baths':
+                return "number"
+
+            case 'petsAllowed':
+                return "checkbox"
+        }
+        return "text"
+    }
+    fieldPlaceholder(field){
+        return field
+    }
     render() {
-        const { 
-            price,
-            contact,
-            address,
-            latitude,
-            longitude,
-            about,
-            bedrooms,
-            baths,
-            pets_allowed,
-            amenities,
-        } = this.state
 
         const input = {
-            rentproperty: {
-                price,
-                contact,
-                address,
-                latitude,
-                longitude,
-                about,
-                bedrooms,
-                baths,
-                petsAllowed: pets_allowed,
-                amenities,
-            }
+            rentproperty: this.state
         }
 
         return <div>
-            <div className="flex flex-column mt3">
-                <input className="mb2" value={price}
-                    onChange={e => this.setState({ price: e.target.value })}
-                    type="number" placeholder="Price"
-                />
-                <input className="mb2" value={contact}
-                    onChange={e => this.setState({ contact: e.target.value })}
-                    type="text" placeholder="Contact"
-                />
-                <input className="mb2" value={address}
-                    onChange={e => this.setState({ address: e.target.value })}
-                    type="text" placeholder="Address"
-                />
-                <input className="mb2" value={latitude}
-                    onChange={e => this.setState({ latitude: e.target.value })}
-                    type="number" placeholder="Latitude"
-                />
-                <input className="mb2" value={longitude}
-                    onChange={e => this.setState({ longitude: e.target.value })}
-                    type="number" placeholder="Longitude"
-                />
-                <input className="mb2" value={about}
-                    onChange={e => this.setState({ about: e.target.value })}
-                    type="text" placeholder="About"
-                />
-                <input className="mb2" value={bedrooms}
-                    onChange={e => this.setState({ bedrooms: e.target.value })}
-                    type="number" placeholder="Bedrooms"
-                />
-                <input className="mb2" value={baths}
-                    onChange={e => this.setState({ baths: e.target.value })}
-                    type="number" placeholder="Baths"
-                />
-                <input className="mb2" value={pets_allowed}
-                    onChange={e => this.setState({ pets_allowed: e.target.value })}
-                    type="checkbox" placeholder="Pets allowed"
-                />
-                <input className="mb2" value={amenities}
-                    onChange={e => this.setState({ amenities: e.target.value })}
-                    type="text" placeholder="Amenities"
-                />
+            <div className="">
+                {Object.keys(this.state).map((field, idx) => {
+                    return <span>
+                        <input
+                            className="rent-input" name={field} value={this.state[field]}
+                            onChange={::this.changeField}
+                            type={this.fieldType(field)}
+                            placeholder={this.fieldPlaceholder(field)}
+                        />
+                        {idx % 2 != 0 && <br/>}
+                    </span>
+                })}
             </div>
 
             <Mutation mutation={CREATE_RENTP} variables={{ input }}>
-                {createRentp => <button onClick={createRentp}>Send</button>}
+                {(createRentp, {data}) => {
+                    if (data) {
+                        console.log(data)
+                        /*if (data.createRentproperty.status == 200) {
+                            this.cleanFields()
+                        }*/
+                    }
+                    return <button onClick={createRentp}>Send</button>
+                }}
             </Mutation>
         </div>
       }
