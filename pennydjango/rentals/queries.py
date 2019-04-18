@@ -14,7 +14,7 @@ class RentPropertyType(DjangoObjectType):
 
 
 class Query(object):
-    rentproperty = graphene.Field(RentPropertyType, model_id=graphene.UUID())
+    rentproperty = graphene.Field(RentPropertyType, id=graphene.UUID())
     all_rentp = DjangoFilterConnectionField(RentPropertyType)
 
     @staticmethod
@@ -25,7 +25,7 @@ class Query(object):
 
     @staticmethod
     def resolve_rentproperty(root, info, **kwargs):
-        rp_id = kwargs.get("model_id")
+        rp_id = kwargs.get("id")
         if rp_id:
-            return RentProperty.objects.get(model_id=rp_id)
+            return RentProperty.objects.get(id=rp_id)
         return RentProperty.objects.none()

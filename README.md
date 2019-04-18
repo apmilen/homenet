@@ -29,7 +29,7 @@ mkdir -p data/logs
 pg_ctl -D data/database -l data/logs/postgres.log start
 
 # Create role, db and grant privileges
-psql -c "CREATE USER penny WITH PASSWORD 'your_strongest_pass_ever';" postgres
+psql -c "CREATE USER penny WITH PASSWORD 'penny';" postgres
 psql -c "CREATE DATABASE penny OWNER penny;" postgres
 psql -c "GRANT ALL PRIVILEGES ON DATABASE penny TO penny;" postgres
 psql -c "ALTER USER penny CREATEDB;" postgres
