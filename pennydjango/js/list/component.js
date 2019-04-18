@@ -5,7 +5,7 @@ import {GET_ALL_RENT_PROPERTIES} from '@/list/queries'
 
 
 export const RentalPropertyListView = () =>
-    <Query query={GET_ALL_RENT_PROPERTIES}>
+    <Query query={GET_ALL_RENT_PROPERTIES} variables={{}}>
         {({loading, error, data}) => {
             console.log(error)
             if (loading)
