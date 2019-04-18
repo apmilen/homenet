@@ -66,13 +66,11 @@ export const Home = {
     },
     render({client}) {
         return <ApolloProvider client={client}>
-            <center>
-                <h2>Users</h2>
-                <UserList/>
-                <hr/>
-                <h2>Rental Properties</h2>
-                <RentPropertyList/>
-            </center>
+            <h2>Users</h2>
+            <UserList/>
+            <hr/>
+            <h2>Rental Properties</h2>
+            <RentPropertyList/>
         </ApolloProvider>
     },
     mount(props, mount_point) {

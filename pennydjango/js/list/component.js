@@ -6,15 +6,11 @@ import {GET_USERS, GET_RENTPROPERTIES} from '@/list/queries'
 
 
 const RentPropertyListItem = ({pk, price, contact, about, longitude, latitude, address}) =>
-    <div>
-        <ul key={pk} style={{display: 'inline-block', verticalAlign: 'top', marginRight: 20}}>
-            <li>{price}</li>
-            <li>{contact}</li>
-            <li>{about}</li>
-            <li>{longitude}</li>
-            <li>{latitude}</li>
-            <li>{address}</li>
-        </ul>
+    <div class="rental-list-item">
+        <div><b>Price</b> {price}</div>
+        <div><b>Primary</b>Contact: {contact}</div>
+        <div><b>About</b> {about}</div>
+        <div><b>Location</b> {address} ({latitude}, {longitude})</div>
         <iframe width="600" height="300" src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
     </div>
 
@@ -26,9 +22,9 @@ export const RentPropertyList = () =>
                 return 'Loading...'
 
             if (error)
-                return `Unfortunately, got an error! ${error.message}`
+                return `Got an error! ${error.message}`
 
-            console.log(data)
+            // console.log(data)
 
             return <div>
                 {data.rentpropertys.edges.map(({node}) =>
@@ -38,12 +34,11 @@ export const RentPropertyList = () =>
     </Query>
 
 
-const UserListItem = ({pk, username, email}) =>
-    <div>
-        <ul key={pk} style={{display: 'inline-block', verticalAlign: 'top', marginRight: 20}}>
-            <li>{username}</li>
-            <li>{email}</li>
-        </ul>
+const UserListItem = ({pk, username, email, name}) =>
+    <div style={{textAlign: 'left'}}>
+        <div><b>Username:</b> {username}</div>
+        <div><b>Email:</b> {email}</div>
+        <div><b>Name:</b> {name}</div>
     </div>
 
 export const UserList = () =>
@@ -53,9 +48,9 @@ export const UserList = () =>
                 return 'Loading...'
 
             if (error)
-                return `Unfortunately, got an error! ${error.message}`
+                return `Got an error! ${error.message}`
 
-            console.log(data)
+            // console.log(data)
 
             return <div>
                 {data.users.edges.map(({node}) =>

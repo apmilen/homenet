@@ -1,0 +1,8 @@
+.rental-list-item {
+    text-align: left;
+    border: 1px solid gray;
+    width: 800px;
+    padding: 10px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+}
