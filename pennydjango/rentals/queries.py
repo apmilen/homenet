@@ -11,23 +11,22 @@ class RentPropertyType(DjangoObjectType):
 
     class Meta:
         model = RentProperty
+
         filter_fields = ("bedrooms", "publisher")
-        interfaces = (graphene.relay.Node,)
+        interfaces = (graphene.Node,)
 
 
-class Query(object):
-    rentproperty = graphene.Field(RentPropertyType, id=graphene.UUID())
-    all_rentp = DjangoFilterConnectionField(RentPropertyType)
+class Query(graphene.ObjectType):
+    rent_property = graphene.Field(RentPropertyType, id=graphene.UUID())
+    all_rent_property = graphene.List(RentPropertyType)
 
-    @staticmethod
-    def resolve_all_rentp(root, info, **kwargs):
-        output_fields = get_output_fields(info)
-        query = RentProperty.objects.all()
-        return query.only(*output_fields)
+    def resolve_rent_property(self, info, **kwargs):
+        row_id = kwargs.get('id')
 
-    @staticmethod
-    def resolve_rentproperty(root, info, **kwargs):
-        rp_id = kwargs.get("pk")
-        if rp_id:
-            return RentProperty.objects.get(id=rp_id)
-        return RentProperty.objects.none()
+        if row_id is not None:
+            return RentProperty.objects.get(id=row_id)
+
+        return None
+
+    def resolve_all_rent_property(self, info, **kwargs):
+        return RentProperty.objects.all()

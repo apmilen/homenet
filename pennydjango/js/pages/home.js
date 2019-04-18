@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom'
 import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
-import { RetryLink } from 'apollo-link-retry'
+// import { RetryLink } from 'apollo-link-retry'
 import { onError } from 'apollo-link-error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloProvider } from 'react-apollo'
 
-import ListView from "@/list/component"
+import {RentalPropertyListView} from "@/list/component"
 
 
 global.loading = global.loading || {end: Date.now()}
@@ -36,14 +36,14 @@ export const Home = {
     view: 'ui.views.pages.Home',
     init(props) {
         const ErrorHandledLink = onError(({graphQLErrors, networkError}) => {
-            if (graphQLErrors) {
-                for (const {message, locations, path} of graphQLErrors) {
-                    console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
-                }
-            }
-            if (networkError) {
-                console.log(`[Network error]: ${networkError}`)
-            }
+            // if (graphQLErrors) {
+            //     for (const {message, locations, path} of graphQLErrors) {
+            //         console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
+            //     }
+            // }
+            // if (networkError) {
+            //     console.log(`[Network error]: ${networkError}`)
+            // }
         })
         const link = ApolloLink.from([
             // new RetryLink(),
@@ -68,7 +68,7 @@ export const Home = {
     },
     render({client}) {
         return <ApolloProvider client={client}>
-            <ListView/>
+            <RentalPropertyListView/>
         </ApolloProvider>
     },
     mount(props, mount_point) {
