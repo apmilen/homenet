@@ -1,31 +1,34 @@
 import React from 'react'
 
 import {Query} from 'react-apollo'
-import {GET_RENTP} from '@/list/queries'
+import {GET_RENT_PROPERTIES} from '@/list/queries'
 
-const Properties = () =>
-    <Query query={GET_RENTP}>
+
+export const RentalPropertyListView = () =>
+    <Query query={GET_RENT_PROPERTIES} variables={{price__gt: 0}}>
         {({loading, error, data}) => {
-            if (loading) return 'Loading...'
-            if (error) return `Error! ${error.message}`
+            console.log(error)
+            if (loading)
+                return 'Loading...'
 
-            return <>
-                {data.allRentp.edges.map(rentp =>
-                    <ul key={rentp.node.modelId}>
-                        <li>{rentp.node.price}</li>
-                        <li>{rentp.node.contact}</li>
-                        <li>{rentp.node.about}</li>
-                        <li>{rentp.node.longitude}</li>
-                        <li>{rentp.node.latitude}</li>
-                    </ul>
-                )}
-            </>
-            }
-        }
+            if (error)
+                return `Unfortunately, got an error! ${error.message}`
+
+
+            return <div>
+                {/*data.allRentProperty.map(rentp =>
+                    <div>
+                        <ul key={rentp.pk} style={{display: 'inline-block', verticalAlign: 'top', marginRight: 20}}>
+                            <li>{rentp.price}</li>
+                            <li>{rentp.contact}</li>
+                            <li>{rentp.about}</li>
+                            <li>{rentp.longitude}</li>
+                            <li>{rentp.latitude}</li>
+                            <li>{rentp.address}</li>
+                        </ul>
+                        <iframe width="600" height="300" src={`https://maps.google.com/maps?q=${encodeURIComponent(rentp.node.address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
+                    </div>
+                )*/}
+            </div>
+        }}
     </Query>
-
-export default class ListView extends React.Component {
-    render() {
-        return <Properties/>
-    }
-}
