@@ -10,7 +10,7 @@ class CaseInsensitiveUserManager(UserManager):
 
 class User(AbstractUser, BaseModel):
     objects = CaseInsensitiveUserManager()
-    
+
     # id = models.UUIDField
     # username
     # password
@@ -22,4 +22,3 @@ class User(AbstractUser, BaseModel):
     # is_superuser
     # last_login
     # date_joined
-

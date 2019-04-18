@@ -111,6 +111,7 @@ CSRF_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
 CORS_ORIGIN_ALLOW_ALL = True
@@ -275,6 +276,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}
 ]
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -346,7 +348,9 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    GRAPHENE["MIDDLEWARE"] = ['graphene_django.debug.DjangoDebugMiddleware']
+    GRAPHENE["MIDDLEWARE"] = GRAPHENE["MIDDLEWARE"] + [
+        'graphene_django.debug.DjangoDebugMiddleware'
+    ]
 
 # Assertions about the environment
 
