@@ -63,7 +63,7 @@ GRAPHENE = {
     'SCHEMA': 'penny.schema.schema',
     'MIDDLEWARE': []
 }
-ENDPOINT="http://localhost:8000/graphiql"
+ENDPOINT = 'http://127.0.0.1:8000/gql'
 
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
@@ -112,7 +112,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
-CORS_ORIGIN_WHITELIST = ('localhost:8000', '127.0.0.1:8000')
+CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -250,8 +250,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
     'graphene_django',
+    'corsheaders',
     
     'penny',
     'rentals',
