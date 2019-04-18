@@ -7,9 +7,9 @@ const Properties = () =>
     <Query query={GET_RENTP}>
         {({loading, error, data}) => {
             if (loading) return 'Loading...'
-            if (error) return `Error! ${error.message}`
+            if (error) return `Unfortunately, got an error! ${error.message}`
 
-            return <>
+            return <div>
                 {data.allRentp.edges.map(rentp =>
                     <div>
                         <ul key={rentp.node.modelId} style={{display: 'inline-block', verticalAlign: 'top', marginRight: 20}}>
@@ -23,9 +23,8 @@ const Properties = () =>
                         <iframe width="600" height="300" src={`https://maps.google.com/maps?q=${encodeURIComponent(rentp.node.address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`} frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style={{display: 'inline-block'}}></iframe>
                     </div>
                 )}
-            </>
-            }
-        }
+            </div>
+        }}
     </Query>
 
 export default class ListView extends React.Component {
