@@ -1,39 +1,75 @@
 import gql from 'graphql-tag'
 
-export const GET_RENT_PROPERTIES = gql`
-query rentPropertys {
-    rentpropertys {
-        id: pk
-        latitude
-        longitude
-        address
-        about
-        contact
-        price
-        created
-        modified
-        publisher {
-            id: pk
-            username
+export const GET_USERS = gql`
+query users {
+    users {
+        edges {
+            node {
+                id: pk
+                username
+                email
+            }
         }
     }
 }`
 
-export const GET_RENT_PROPERTY = ({id}) => gql`
-query rentProperty($id: UUID!) {
+export const GET_USER = gql`
+query user($username: String!) {
+    user(username: $username) {
+        edges {
+            node {
+                id: pk
+                username
+                email
+            }
+        }
+    }
+}`
+
+export const GET_RENTPROPERTIES = gql`
+query rentpropertys {
+    rentpropertys {
+        edges {
+            node {
+                id: pk
+                latitude
+                longitude
+                address
+                about
+                contact
+                price
+                created
+                modified
+                publisher {
+                    id: pk
+                    username
+                    email
+                }
+            }
+        }
+    }
+}`
+
+export const GET_RENTPROPERTY = gql`
+query rentproperty($id: UUID!) {
     rentproperty(id: $id) {
-        id: pk
-        latitude
-        longitude
-        address
-        about
-        contact
-        price
-        created
-        modified
-        publisher {
-            id: pk
-            username
+        edges {
+            node {
+                id: pk
+                latitude
+                longitude
+                address
+                about
+                contact
+                price
+                created
+                modified
+                publisher {
+                    id: pk
+                    username
+                    email
+                }
+            }
         }
     }
 }`
