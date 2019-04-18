@@ -60,7 +60,7 @@ SITE_ID = 1
 
 WSGI_APPLICATION = 'penny.wsgi.application'
 GRAPHENE = {
-    'SCHEMA': 'penny.schema.schema',
+    'SCHEMA': 'penny.root_schema.schema',
     'MIDDLEWARE': []
 }
 ENDPOINT = 'http://127.0.0.1:8000/gql'

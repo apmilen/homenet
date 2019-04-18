@@ -1,11 +1,11 @@
 import React from 'react'
 
 import {Query} from 'react-apollo'
-import {GET_ALL_RENT_PROPERTIES} from '@/list/queries'
+import {GET_RENT_PROPERTIES} from '@/list/queries'
 
 
 export const RentalPropertyListView = () =>
-    <Query query={GET_ALL_RENT_PROPERTIES} variables={{}}>
+    <Query query={GET_RENT_PROPERTIES} variables={{price__gt: 0}}>
         {({loading, error, data}) => {
             console.log(error)
             if (loading)

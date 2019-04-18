@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export const GET_ALL_RENT_PROPERTIES = gql`
-query allRentProperty {
+export const GET_RENT_PROPERTIES = gql`
+query rentPropertys {
     rentpropertys {
         id: pk
         latitude

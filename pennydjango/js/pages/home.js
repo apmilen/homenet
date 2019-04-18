@@ -50,12 +50,10 @@ export const Home = {
             ErrorHandledLink,
             new HttpLink({
                 uri: props.endpoint,
-                fetchOptions: {mode: 'no-cors'},
-                credentials: "same-origin",
+                // fetchOptions: {mode: 'no-cors'},
+                // credentials: "same-origin",
                 headers: {
                     "X-CSRFToken": getCookie("csrftoken"),
-                    "Accept": "application/json",
-                    'Content-Type': 'application/json'
                 },
             })
         ])
