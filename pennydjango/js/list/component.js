@@ -22,18 +22,17 @@ const RentPropertyListItem = ({pk, price, contact, about, longitude, latitude, a
 export const RentPropertyList = () =>
     <Query query={GET_RENTPROPERTIES}>
         {({loading, error, data}) => {
-            console.log(error)
             if (loading)
                 return 'Loading...'
 
             if (error)
                 return `Unfortunately, got an error! ${error.message}`
 
-            debugger
+            console.log(data)
 
             return <div>
-                {data.rentpropertys.edges.map(props =>
-                    <RentPropertyListItem {...props}/>)}
+                {data.rentpropertys.edges.map(({node}) =>
+                    <RentPropertyListItem {...node}/>)}
             </div>
         }}
     </Query>
