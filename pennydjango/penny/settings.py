@@ -252,10 +252,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'corsheaders',
-    
+
     'penny',
     'rentals',
-    'ui'
+    'ui',
+    'mapwidgets',
 ]
 MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
@@ -314,6 +315,17 @@ ANYMAIL = {
 }
 DEFAULT_FROM_EMAIL = f'support@{DEFAULT_HOST}'
 SERVER_EMAIL = f'server@{DEFAULT_HOST}'
+
+
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 12),
+        ("mapCenterLocationName", "new york"),
+        ("GooglePlaceAutocompleteOptions", {
+            'componentRestrictions': {'country': 'us'}}),
+    ),
+    "GOOGLE_MAP_API_KEY": "<google-map-api-key>"
+}
 
 
 if PY_TYPE == 'pypy':
