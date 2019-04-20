@@ -1,5 +1,8 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils.functional import cached_property
 
 from penny.model_utils import BaseModel
 
@@ -11,8 +14,7 @@ class RentProperty(BaseModel):
     price = models.PositiveIntegerField()
     contact = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=10, decimal_places=7)
-    longitude = models.DecimalField(max_digits=10, decimal_places=7)
+    geopoint = models.CharField(max_length=64)
     # pictures = NOIDEA
     about = models.TextField(max_length=512, blank=True, null=True)
 
@@ -21,3 +23,16 @@ class RentProperty(BaseModel):
     pets_allowed = models.BooleanField(default=True)
 
     amenities = models.TextField()
+
+    @cached_property
+    def coords(self):
+        lon, lat = re.search('\((.+?)\)', self.geopoint).group(1).split()
+        return lat, lon
+
+    @cached_property
+    def latitude(self):
+        return self.coords[0]
+
+    @cached_property
+    def longitude(self):
+        return self.coords[1]

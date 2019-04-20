@@ -1,22 +1,16 @@
-import re
-from decimal import Decimal
-
-
-from django import forms
 from django.contrib import admin
 
 
 from .models import RentProperty
+from .forms import CreateRentPropertyForm
 
 from mapwidgets.widgets import GooglePointFieldWidget
 
 
-class RentPropertyForm(forms.ModelForm):
-    class Meta:
-        model = RentProperty
-        exclude = ('publisher', 'latitude', 'longitude')
+class RentPropertyForm(CreateRentPropertyForm):
+    class Meta(CreateRentPropertyForm.Meta):
         widgets = {
-            'address': GooglePointFieldWidget()
+            'geopoint': GooglePointFieldWidget()
         }
 
 
@@ -31,11 +25,6 @@ class RentPropertyAdmin(admin.ModelAdmin):
     price_tag.short_description = "Price per month"
 
     def save_model(self, request, obj, form, change):
-        # import pdb; pdb.set_trace()
-        lon, lat = re.search('\((.+?)\)', obj.address).group(1).split()
-        obj.latitude = Decimal(lat)
-        obj.longitude = Decimal(lon)
-        # obj.address = f"{lat}, {lon}"
         obj.publisher = request.user
         super().save_model(request, obj, form, change)
 
