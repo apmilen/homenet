@@ -1,9 +1,13 @@
+import os
 import bleach
 import re
 import uuid
+import random
 
 from enum import Enum
 
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import (DecimalField, CharField, IntegerField,
                               AutoField, QuerySet)
@@ -144,3 +148,25 @@ def get_output_fields(info):
               for key in fields_dict
               if key not in ['cursor', "__typename"]]
     return fields
+
+
+def image_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
+    randomstr = ''.join((random.choice(chars)) for x in range(10))
+    return '/'.join([
+        str(instance.rent_property.id),
+        f"{randomstr}{file_extension}"
+    ])
+
+
+def validate_file_size(value):
+    try:
+        if value.size > settings.MAX_FILE_SIZE:
+            max_size = settings.MAX_FILE_SIZE // 10**6
+            raise ValidationError(
+                f"The maximum file size that can be uploaded is {max_size}MB")
+    except FileNotFoundError:
+        pass
+
+    return value

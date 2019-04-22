@@ -56,6 +56,8 @@ INTERNAL_IPS = ['127.0.0.1']
 DEFAULT_HTTP_PROTOCOL = 'http'
 SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MAX_FILE_SIZE = 10485760  # 10MB
 SITE_ID = 1
 
 WSGI_APPLICATION = 'penny.wsgi.application'
@@ -224,6 +226,7 @@ CACHES_DIR = os.path.join(DATA_DIR, 'caches')
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 
 LOGS_DIR = os.path.join(DATA_DIR, 'logs')
 RELOADS_LOGS = os.path.join(LOGS_DIR, 'reloads.log')

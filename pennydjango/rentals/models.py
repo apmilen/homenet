@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.functional import cached_property
 
 from penny.model_utils import BaseModel
+from penny.utils import image_path, validate_file_size
 
 
 class RentProperty(BaseModel):
@@ -36,3 +37,11 @@ class RentProperty(BaseModel):
     @cached_property
     def longitude(self):
         return self.coords[1]
+
+
+class RentPropertyImage(BaseModel):
+    rent_property = models.ForeignKey(RentProperty,
+                                      related_name="images",
+                                      on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=image_path,
+                              validators=[validate_file_size])
