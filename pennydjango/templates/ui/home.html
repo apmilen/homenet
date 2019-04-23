@@ -10,7 +10,7 @@
             <a href="#">
               <div class="card card-smallcard-post card-post--1">
                 <div class="card-post__image text-center">
-                  <img class="box-wd" src="{% static 'images/no-image.png' %}">
+                  <img class="box-wd" src="{{ obj.default_image }}">
                   <a href="#"
                      class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
                 </div>
@@ -20,7 +20,7 @@
                     <tr>
                       <td>{{ obj.bedrooms }} Beds / {{ obj.bath }} Bath
                       </td>
-                      <td>{{ obj.address }} rooms</td>
+                      <td>{{ obj.address|truncatechars:20 }}</td>
                     </tr>
                     <tr>
                       <td><i class="material-icons">pets</i>
@@ -36,6 +36,12 @@
                 </div>
               </div>
             </a>
+          </div>
+        {% empty %}
+          <div class=" col-md-6 ">
+            <div class="alert alert-info">
+            No results were found
+            </div>
           </div>
         {% endfor %}
       </div>

@@ -108,3 +108,6 @@ env/secrets.env
 
 # Database
 data/
+
+# Media
+!data/media/no-image.png

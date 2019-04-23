@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.functional import cached_property
 
+from penny.constants import DEFAUL_RENT_IMAGE
 from penny.model_utils import BaseModel
 from penny.utils import image_path, validate_file_size
 
@@ -37,6 +38,12 @@ class RentProperty(BaseModel):
     @cached_property
     def longitude(self):
         return self.coords[1]
+
+    @cached_property
+    def default_image(self):
+        if self.images.exists():
+            return self.images.first().image.url
+        return DEFAUL_RENT_IMAGE
 
 
 class RentPropertyImage(BaseModel):
