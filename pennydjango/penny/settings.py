@@ -56,6 +56,8 @@ INTERNAL_IPS = ['127.0.0.1']
 DEFAULT_HTTP_PROTOCOL = 'http'
 SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MAX_FILE_SIZE = 10485760  # 10MB
 SITE_ID = 1
 
 WSGI_APPLICATION = 'penny.wsgi.application'
@@ -146,6 +148,8 @@ ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
 
 MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 
+GOOGLE_MAP_API_KEY = _PLACEHOLDER_FOR_UNSET
+
 
 ################################################################################
 ### Internationalization & Formatting Settings
@@ -224,6 +228,7 @@ CACHES_DIR = os.path.join(DATA_DIR, 'caches')
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
 
 LOGS_DIR = os.path.join(DATA_DIR, 'logs')
 RELOADS_LOGS = os.path.join(LOGS_DIR, 'reloads.log')
@@ -252,10 +257,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graphene_django',
     'corsheaders',
-    
+
     'penny',
     'rentals',
-    'ui'
+    'ui',
+    'mapwidgets',
 ]
 MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
@@ -314,6 +320,17 @@ ANYMAIL = {
 }
 DEFAULT_FROM_EMAIL = f'support@{DEFAULT_HOST}'
 SERVER_EMAIL = f'server@{DEFAULT_HOST}'
+
+
+MAP_WIDGETS = {
+    "GooglePointFieldWidget": (
+        ("zoom", 12),
+        ("mapCenterLocationName", "new york"),
+        ("GooglePlaceAutocompleteOptions", {
+            'componentRestrictions': {'country': 'us'}}),
+    ),
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
+}
 
 
 if PY_TYPE == 'pypy':

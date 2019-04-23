@@ -10,7 +10,7 @@ git clone git@github.com:pirate/pennybags.git
 cd pennybags
 
 # Install system packages
-apt install python3.7 python3-pip python3.7-dev libpq-dev postgresql npm
+apt install python3.7 python3-pip python3.7-dev libpq-dev postgresql npm gdal-bin
 
 # install pipenv https://github.com/pypa/pipenv
 python3.7 -m pip install --user pipenv
