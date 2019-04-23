@@ -148,6 +148,8 @@ ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
 
 MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 
+GOOGLE_MAP_API_KEY = _PLACEHOLDER_FOR_UNSET
+
 
 ################################################################################
 ### Internationalization & Formatting Settings
@@ -327,7 +329,7 @@ MAP_WIDGETS = {
         ("GooglePlaceAutocompleteOptions", {
             'componentRestrictions': {'country': 'us'}}),
     ),
-    "GOOGLE_MAP_API_KEY": "<google-map-api-key>"
+    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
 }
 
 
