@@ -50,9 +50,9 @@ class RentPropertyImage(BaseModel):
 
 class Availability(BaseModel):
     agent = models.OneToOneField(User, on_delete=models.CASCADE)
+    reference_property = models.OneToOneField(RentProperty,
+                                              on_delete=models.CASCADE)
 
-    address = models.CharField(max_length=255)
-    center = models.CharField(max_length=64)
     radius = models.PositiveIntegerField(default=10)
 
     start_datetime = models.DateTimeField()
