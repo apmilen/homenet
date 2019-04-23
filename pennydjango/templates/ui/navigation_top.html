@@ -1,7 +1,15 @@
 {% load static %}
 <div class="main-navbar sticky-top bg-white">
 <!-- Main Navbar -->
-    <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
+    <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap p-0">
+
+    {% if user and not user.is_authenticated %}
+      <a class="navbar-brand border-right p-3 lh-25" href="/" >
+        <div class="d-table m-auto">
+          <span class="d-none d-md-inline ml-1">HomeNet Real-Estate</span>
+        </div>
+      </a>
+    {% endif %}
       <form action="/" method="get" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
         <div class="input-group input-group-seamless ml-3">
           <div class="input-group-prepend">

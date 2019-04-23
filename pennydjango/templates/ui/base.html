@@ -61,11 +61,6 @@
         {% block head %}{% endblock %}
     </head>
     <body class="h-100 {{body_classes}} body-{{page_id}}">
-        <div class="container-fluid">
-          <div class="row">
-          </div>
-        </div>
-
         {% block outer %}
             {% block sidebar %}
                 {% if user and user.is_authenticated %}

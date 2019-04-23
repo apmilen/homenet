@@ -2,17 +2,15 @@
 {% load static %}
 
 {% block inner %}
-  <div class="row">
+  <div class="row main-content-row">
     <div class="col-md-6">
       <div class="row">
         {% for obj in object_list %}
           <div class=" col-md-6 ">
             <a href="#">
               <div class="card card-smallcard-post card-post--1">
-                <div class="card-post__image"
-                     style="text-align: center">
-                  <img src="{% static 'images/no-image.png' %}"
-                       style="width: auto">
+                <div class="card-post__image text-center">
+                  <img class="box-wd" src="{% static 'images/no-image.png' %}">
                   <a href="#"
                      class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
                 </div>

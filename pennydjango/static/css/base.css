@@ -1,0 +1,10 @@
+.ln-25 {
+    line-height: 25px;
+}
+.box-wd {
+    max-width: 100%;
+    height: auto;
+}
+.main-content-row {
+    min-height: calc(100vh - 7.5rem);
+}

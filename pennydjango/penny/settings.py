@@ -262,6 +262,7 @@ INSTALLED_APPS = [
     'rentals',
     'ui',
     'mapwidgets',
+    'bootstrap4'
 ]
 MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
