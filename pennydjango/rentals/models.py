@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.functional import cached_property
 
+from penny.models import User
 from penny.model_utils import BaseModel
 from penny.utils import image_path, validate_file_size
 
@@ -45,3 +46,14 @@ class RentPropertyImage(BaseModel):
                                       on_delete=models.CASCADE)
     image = models.ImageField(upload_to=image_path,
                               validators=[validate_file_size])
+
+
+class Availability(BaseModel):
+    agent = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    address = models.CharField(max_length=255)
+    center = models.CharField(max_length=64)
+    radius = models.PositiveIntegerField(default=10)
+
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
