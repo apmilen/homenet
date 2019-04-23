@@ -23,11 +23,11 @@ class AdminImageWidget(AdminFileWidget):
             # defining the filename and the mini filename
             filehead, filetail = os.path.split(value.path)
             basename, ext = os.path.splitext(filetail)
-            mini = basename + '_' + size + ext
+            mini = f"{basename}_{size}{ext}"
             filename = value.path
             mini_filename = os.path.join(filehead, mini)
             filehead, filetail = os.path.split(value.url)
-            mini_url = filehead + '/' + mini
+            mini_url = f"{filehead}/{mini}"
 
             # make sure thumbnail is a small version of the original image
             if os.path.exists(mini_filename):
