@@ -1,61 +1,10 @@
-body {
-    background-color: rgb(51, 51, 51);
+.ln-25 {
+    line-height: 25px;
 }
-
-.user-list-item {
-    display: inline-block;
-    text-align: left;
-    border: 1px solid pink;
-    width: 400px;
-    padding: 10px;
-    border-radius: 14px;
-    margin: 10px;
-    color: #fdfdfd;
+.box-wd {
+    max-width: 100%;
+    height: auto;
 }
-.rental-list-item {
-    text-align: left;
-    border: 1px solid gray;
-    border-radius: 14px;
-    padding: 0px;
-    width: 100%;
-    overflow: hidden;
-    background-color: #fdfdfd;
-}
-.rental-list-item .list-item-content {
-    padding: 10px;
-    height: 250px;
-}
-
-.rental-list-item h3, h4 {
-    width: 100%;
-    text-align: center;
-    font-weight: 200;
-    height: 40px;
-}
-
-.rental-list-item iframe {
-    width: 120%;
-    height: 300px;
-    border: 0;
-    margin-bottom: -20px;
-    border-top: 1px solid gray;
-}
-
-.col-md-3 {
-    padding-left: 4px;
-    padding-right: 4px;
-}
-
-nav.navbar-default {
-    background-color: #1a1a1a;
-    border: 0px;
-    border-radius: 0px;
-    color: #fdfdfd;
-}
-
-h2 {
-    color: #fdfdfd;
-    font-weight: 200;
-    width: 100%;
-    text-align: center;
+.main-content-row {
+    min-height: calc(100vh - 7.5rem);
 }
