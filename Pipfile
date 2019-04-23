@@ -25,6 +25,8 @@ django-pdb = "*"
 bleach = "*"
 django-filter = "*"
 django-cors-headers = "*"
+django-map-widgets = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.7"
