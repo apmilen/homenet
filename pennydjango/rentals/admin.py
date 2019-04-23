@@ -1,14 +1,13 @@
 import os
 from PIL import Image
 
-from django import forms
 from django.db import models
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 
 from .models import RentProperty, RentPropertyImage, Availability
-from .forms import CreateRentPropertyForm
+from .forms import CreateRentPropertyForm, AvailabilityForm
 
 from mapwidgets.widgets import GooglePointFieldWidget
 
@@ -90,24 +89,15 @@ class RentPropertyAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-class AvailabilityForm(forms.ModelForm):
-    radius = forms.IntegerField(initial=10)
-
-    rps = RentProperty.objects.only('address').all()
-    RENTP_CHOICES = ((str(rp.id), rp.address) for rp in rps)
-    reference_property = forms.ChoiceField(choices=RENTP_CHOICES)
-
-    class Meta:
-        model = Availability
-        exclude = ("address", "center")
-
-
 class AvailabilityAdmin(admin.ModelAdmin):
     form = AvailabilityForm
+    list_display = ('agent', 'location', 'start_datetime', 'end_datetime')
+
+    def location(self, obj):
+        return obj.reference_property.address
 
     def save_model(self, request, obj, form, change):
-        import pdb; pdb.set_trace()
-        # obj.address = 
+        obj.agent = request.user
         super().save_model(request, obj, form, change)
 
 
