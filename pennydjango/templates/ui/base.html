@@ -25,19 +25,22 @@
         {% block metatags %}{% endblock %}
 
 
-        <link rel="preload" as="style" href="{% http2static 'css/bootstrap.min.css' '3' %}" crossorigin>
-        <link rel="preload" as="style" href="{% http2static 'css/font-awesome.min.css' '4.7.0' %}" crossorigin>
+        <link rel="preload" as="style" href="{% http2static 'css/bootstrap.min.css' '4' %}" crossorigin>
+        <link rel="preload" as="style" href="{% http2static 'css/fa-all.min.css' '5' %}" crossorigin>
+        <link rel="preload" as="style" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
         <link rel="preload" as="style" href="{% http2static 'css/base.css' GIT_SHA %}" crossorigin>
-
         <link rel="preload" as="style" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" crossorigin>
-        <link rel="preload" as="font" type="font/woff2" href="{% http2static 'fonts/fontawesome-webfont.woff2' '4.7.0' %}" crossorigin="anonymous">
+
         {% if custom_stylesheet %}
             <link rel="preload" as="style" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" crossorigin>
         {% endif %}
         {% block preloads %}{% endblock %}
 
-        <link rel="stylesheet" href="{% http2static 'css/bootstrap.min.css' '3' %}" type="text/css" crossorigin>
-        <link rel="stylesheet" href="{% http2static 'css/font-awesome.min.css' '4.7.0' %}" type="text/css" crossorigin>
+        <link rel="stylesheet" href="{% http2static 'css/bootstrap.min.css' '4' %}" type="text/css" crossorigin>
+        <link rel="stylesheet" href="{% http2static 'css/fa-all.min.css' '5' %}" type="text/css" crossorigin>
+        <link rel="stylesheet" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
         <link rel="stylesheet" href="{% http2static 'css/base.css' GIT_SHA %}" type="text/css" crossorigin>
         <link rel="stylesheet" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" type="text/css" crossorigin>
         {% if custom_stylesheet %}
@@ -51,35 +54,72 @@
             window.DEBUG = {{DEBUG|json}};
             window.ENVIRONMENT = '{{ENVIRONMENT}}';
             window.GIT_SHA = '{{GIT_SHA}}';
+
         </script>
 
 
         {% block head %}{% endblock %}
     </head>
-    <body class="{{body_classes}} body-{{page_id}}">
+    <body class="h-100 {{body_classes}} body-{{page_id}}">
+        <div class="container-fluid">
+          <div class="row">
+          </div>
+        </div>
 
         {% block outer %}
-            {% block header %}
-                {% include 'ui/navigation.html' %}
+            {% block sidebar %}
+                {% if user and user.is_authenticated %}
+                    {% include 'ui/navigation_left.html' %}
+                {% endif %}
             {% endblock %}
 
-            <div class="container-fluid inner-content">
-                {% block inner %}
+            <main class="main-content{% if user and user.is_authenticated %} col-lg-10 col-md-9  offset-lg-2 offset-md-3 {% endif %} col-sm-12 p-0">
+                {% block topbar %}
+                    {% include 'ui/navigation_top.html' %}
                 {% endblock %}
-            </div>
-{##}
-{#            {% block footer %}#}
-{#                {% include 'ui/footer.html' %}#}
-{#            {% endblock %}#}
+
+                <div class="main-content-container container-fluid px-4">
+                    {% block inner %}
+                    {% endblock %}
+                </div>
+
+                {% block footer %}
+                    {% include 'ui/footer.html' %}
+                {% endblock %}
+            </main>
+
         {% endblock %}
 
         <script src="{% http2static 'js/overrides.js' GIT_SHA %}" type="text/javascript" crossorigin></script>
         <script src="{% http2static 'js/jquery-3.2.1.min.js' GIT_SHA %}" type="text/javascript" crossorigin></script>
 
-        <script src="{% static 'js/bootstrap.min.js' '3' %}" type="text/javascript" crossorigin></script>
+        <script src="{% static 'js/bootstrap.min.js' '4' %}" type="text/javascript" crossorigin></script>
         <script src="{% static 'js/modernizr.min.js' '1' %}" type="text/javascript" crossorigin></script>
-        <script src="{% static 'js/simple-scrollbar.min.js' '1' %}" type="text/javascript" crossorigin></script>
+        <script>
+            $(document).ready(function () {
 
+                $.extend($.easing, {
+                    easeOutSine: function easeOutSine(x, t, b, c, d) {
+                        return c * Math.sin(t / d * (Math.PI / 2)) + b;
+                    }
+                });
+                const slideConfig = {
+                    duration: 270,
+                    easing: 'easeOutSine'
+                };
+                // Add dropdown animations when toggled.
+                $(':not(.main-sidebar--icons-only) .dropdown').on('show.bs.dropdown', function () {
+                    $(this).find('.dropdown-menu').first().stop(true, true).slideDown(slideConfig);
+                });
+
+                $(':not(.main-sidebar--icons-only) .dropdown').on('hide.bs.dropdown', function () {
+                    $(this).find('.dropdown-menu').first().stop(true, true).slideUp(slideConfig);
+                });//Sidebar toggles
+                $('.toggle-sidebar').click(function (e) {
+                    $('.main-sidebar').toggleClass('open');
+                });
+            });
+        </script>
         {% block tail %}{% endblock %}
 
     </body>

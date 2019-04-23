@@ -11,35 +11,7 @@ from penny.utils import ExtendedEncoder
 logger = logging.getLogger()
 
 
-class HttpResponseWithCallback(HttpResponse):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request')
-        self.callback = kwargs.pop('callback')
-        super().__init__(*args, **kwargs)
-
-    def close(self):
-        """Trigger a callback after sending the response to the client
-        Good for deferring expensive processing that can be done later without
-        holding up the response to the client.
-        """
-        super().close()
-        self.callback(request=self.request, response=self)
-
-
-class APIView(View):
-    def respond(self, data=None, errors=None, **kwargs):
-        response = {
-            'success': not errors,
-            'errors': errors or [],
-            **(data or {}),
-        }
-        if errors and 'status' not in kwargs:
-            kwargs = {**kwargs, 'status': 500}
-
-        return JsonResponse(response, encoder=ExtendedEncoder, **kwargs)
-
-
-class BaseView(View):
+class BaseContextMixin(object):
     title = None               # type: str
     template = 'ui/base.html'  # type: str
     component = None           # type: str
@@ -97,6 +69,42 @@ class BaseView(View):
         context.update(page_context)
 
         return context
+
+    def get_context_data(self, **kwargs):
+        context = self.get_context(self.request)
+        context.update(kwargs)
+        return super().get_context_data(**context)
+
+
+class HttpResponseWithCallback(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        self.callback = kwargs.pop('callback')
+        super().__init__(*args, **kwargs)
+
+    def close(self):
+        """Trigger a callback after sending the response to the client
+        Good for deferring expensive processing that can be done later without
+        holding up the response to the client.
+        """
+        super().close()
+        self.callback(request=self.request, response=self)
+
+
+class APIView(View):
+    def respond(self, data=None, errors=None, **kwargs):
+        response = {
+            'success': not errors,
+            'errors': errors or [],
+            **(data or {}),
+        }
+        if errors and 'status' not in kwargs:
+            kwargs = {**kwargs, 'status': 500}
+
+        return JsonResponse(response, encoder=ExtendedEncoder, **kwargs)
+
+
+class BaseView(BaseContextMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context(request, *args, **kwargs)
