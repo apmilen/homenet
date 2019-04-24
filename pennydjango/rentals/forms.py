@@ -16,7 +16,7 @@ class RentPropertyModelChoiceField(forms.ModelChoiceField):
 
 class AvailabilityForm(forms.ModelForm):
     reference_property = RentPropertyModelChoiceField(
-        queryset=RentProperty.objects.all()
+        queryset=RentProperty.objects.filter(is_listed=True)
     )
 
     class Meta:
