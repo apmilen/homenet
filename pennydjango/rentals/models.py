@@ -1,5 +1,6 @@
 import re
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.functional import cached_property
@@ -43,7 +44,7 @@ class RentProperty(BaseModel):
     def default_image(self):
         if self.images.exists():
             return self.images.first().image.url
-        return DEFAUL_RENT_IMAGE
+        return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
 
 
 class RentPropertyImage(BaseModel):
