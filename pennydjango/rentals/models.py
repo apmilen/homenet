@@ -50,9 +50,9 @@ class RentPropertyImage(BaseModel):
 
 
 class Availability(BaseModel):
-    agent = models.OneToOneField(User, on_delete=models.CASCADE)
-    reference_property = models.OneToOneField(RentProperty,
-                                              on_delete=models.CASCADE)
+    agent = models.ForeignKey(User, on_delete=models.CASCADE)
+    reference_property = models.ForeignKey(RentProperty,
+                                           on_delete=models.CASCADE)
 
     radius = models.PositiveIntegerField(default=1000)
 
