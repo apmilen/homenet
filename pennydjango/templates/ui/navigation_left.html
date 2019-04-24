@@ -24,15 +24,21 @@
   <div class="nav-wrapper">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link active" href="/admin/rentals/rentproperty/add/">
+        <a class="nav-link" href="/admin/rentals/rentproperty/add/">
           <i class="material-icons">add</i>
           <span>Add Listing</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link " href="/admin/rentals/rentproperty/">
+        <a class="nav-link" href="/admin/rentals/rentproperty/">
           <i class="material-icons">edit</i>
           <span>Edit Listings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'schedule' %}">
+          <i class="material-icons">schedule</i>
+          <span>Schedule</span>
         </a>
       </li>
 {#      <li class="nav-item">#}

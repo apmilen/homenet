@@ -1,0 +1,65 @@
+{% extends 'ui/base.html' %}
+{% load static %}
+
+{% block inner %}
+  <div class="row main-content-row">
+
+      <div class="row">
+        {% for obj in object_list %}
+          <div class=" col-md-6 ">
+            <a href="#">
+              <div class="card card-smallcard-post card-post--1">
+                <!-- <div class="card-post__image text-center">
+                  <img class="box-wd" src="{% static 'images/no-image.png' %}">
+                  <a href="#"
+                     class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
+                </div> -->
+                <div class="card-body p-0 pb-3 text-center">
+                  <table class="table mb-0">
+                    <tbody>
+                    <tr>
+                      <td>{{ obj.reference_property.address }}</td>
+                      <td>TD2</td>
+                    </tr>
+                    <tr>
+                      <td><i class="material-icons">watch_later</i>
+                        {{ obj.start_datetime }}
+                      </td>
+                      <td><i class="material-icons">access_time</i>
+                        {{ obj.end_datetime }}
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endfor %}
+
+        <div class=" col-md-6 ">
+          <div class="card card-smallcard-post card-post--1">
+            <!-- <div class="card-post__image text-center">
+              <img class="box-wd" src="{% static 'images/no-image.png' %}">
+              <a href="#"
+                 class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
+            </div> -->
+            <div class="card-body p-0 pb-3 text-center">
+              <form action="#" method="post">
+                {% csrf_token %}
+                <table class="table mb-0">
+                  <tbody>
+                  {{ form.as_table }}
+                  </tbody>
+                </table>
+                <input type="submit" value="Submit">
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+  </div>
+{% endblock %}
