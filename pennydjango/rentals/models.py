@@ -53,7 +53,7 @@ class Availability(BaseModel):
     reference_property = models.OneToOneField(RentProperty,
                                               on_delete=models.CASCADE)
 
-    radius = models.PositiveIntegerField(default=10)
+    radius = models.PositiveIntegerField(default=1000)
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
