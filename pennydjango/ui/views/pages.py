@@ -2,8 +2,10 @@ from django.conf import settings
 from django.utils import timezone
 from django.views.generic.list import ListView
 
-from rentals.models import RentProperty, Availability
-from rentals.forms import AvailabilityForm
+from penny.models import Availability
+from penny.forms import AvailabilityForm
+
+from rentals.models import RentProperty
 
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
