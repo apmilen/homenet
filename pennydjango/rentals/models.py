@@ -19,13 +19,13 @@ class RentProperty(BaseModel):
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=64)
     # pictures = NOIDEA
-    about = models.TextField(max_length=512, blank=True, null=True)
+    about = models.TextField(max_length=1024, blank=True, null=True)
 
     bedrooms = models.IntegerField()
     baths = models.IntegerField()
     pets_allowed = models.BooleanField(default=True)
 
-    amenities = models.TextField()
+    amenities = models.CharField(max_length=255)
 
     @cached_property
     def coords(self):
