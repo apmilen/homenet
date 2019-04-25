@@ -3,6 +3,7 @@ import re
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 from django.utils.functional import cached_property
 
 from penny.models import User
@@ -70,3 +71,7 @@ class Availability(BaseModel):
     @cached_property
     def available_time(self):
         return self.end_datetime - self.start_datetime
+
+    @cached_property
+    def is_active(self):
+        return self.start_datetime <= timezone.now() <= self.end_datetime

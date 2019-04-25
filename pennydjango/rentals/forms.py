@@ -24,3 +24,9 @@ class AvailabilityForm(forms.ModelForm):
     class Meta:
         model = Availability
         exclude = ("agent", )
+        widgets = {
+            'radius': forms.NumberInput(attrs={
+                'step': 100,
+                'max': 10000,
+            }),
+        }

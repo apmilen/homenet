@@ -5,46 +5,50 @@
 {% block inner %}
   <div class="row main-content-row">
 
+      <br/>
       <div class="row">
         {% for obj in object_list %}
-          <div class=" col-md-6 ">
+          <div class=" col-md-4 ">
 
               <div class="card card-smallcard-post card-post--1">
                 <div class="card-post__image text-center">
                   <div id="map_{{ obj.id }}" style="height: 200px; width: 100%;"></div>
                 </div>
-                <div class="card-body p-0 pb-3 text-center">
+                <div class="card-body p-0 pb-3 text-center"
+                     style="{% if obj.is_active %}background-color: lightgreen{% endif %}">
                   <table class="table mb-0">
                     <tbody>
                     <tr>
-                      <td>
+                      <td><i class="material-icons">explore</i>
                         {{ obj.reference_property.address }}
                       </td>
-                      <td>{{ obj.available_time }}</td>
+                    </tr>
+                    <tr>
+                      <td><i class="material-icons">work</i>
+                        Duty time: {{ obj.available_time }}
+                      </td>
                     </tr>
                     <tr>
                       <td><i class="material-icons">watch_later</i>
-                        {{ obj.start_datetime|naturaltime }}
+                        Starting: {{ obj.start_datetime|naturaltime }}
                       </td>
+                    </tr>
+                    <tr>
                       <td><i class="material-icons">access_time</i>
-                        {{ obj.end_datetime|naturaltime }}
+                        Until: {{ obj.end_datetime|naturaltime }}
                       </td>
                     </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
+              <br/>
 
           </div>
         {% endfor %}
 
-        <div class=" col-md-6 ">
+        <div class=" col-md-4 ">
           <div class="card card-smallcard-post card-post--1">
-            <!-- <div class="card-post__image text-center">
-              <img class="box-wd" src="{% static 'images/no-image.png' %}">
-              <a href="#"
-                 class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
-            </div> -->
             <div class="card-body p-0 pb-3 text-center">
               <form autocomplete="off" action="#" method="post">
                 {% csrf_token %}
