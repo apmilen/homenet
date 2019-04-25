@@ -16,7 +16,7 @@
               <div class="card card-smallcard-post card-post--1">
                 <div class="card-post__image text-center">
                   <div id="map_{{ obj.id }}" style="height: 200px; width: 100%;"></div>
-                  <a href="#"
+                  <a href="{% url 'schedule-delete' pk=obj.pk %}"
                      class="card-post__category badge badge-pill badge-dark">
                         <font size="4em"><i class="material-icons">delete_outline</i></font>
                      </a>

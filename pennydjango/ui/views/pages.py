@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.shortcuts import redirect
 from django.http import HttpResponseForbidden
 from django.views.generic.list import ListView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, DeleteView
 
 from penny.models import Availability
 from penny.forms import AvailabilityForm
@@ -82,3 +82,15 @@ class Schedule(BaseContextMixin, FormMixin, ListView):
         obj.agent = agent
         obj.save()
         return super().form_valid(form)
+
+
+class ScheduleDelete(DeleteView):
+    model = Availability
+
+    def get_success_url(self):
+        return reverse('schedule')
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        return self.delete(request, *args, **kwargs)
