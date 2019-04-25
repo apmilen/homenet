@@ -66,3 +66,7 @@ class Availability(BaseModel):
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
+
+    @cached_property
+    def available_time(self):
+        return self.end_datetime - self.start_datetime

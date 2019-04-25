@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.utils import timezone
 from django.views.generic.list import ListView
 
 from rentals.models import RentProperty, Availability
@@ -37,15 +39,21 @@ class Schedule(BaseContextMixin, ListView):
     title = 'Schedule'
 
     def get_queryset(self):
-        return Availability.objects.filter(agent=self.request.user)
+        return Availability.objects.filter(
+            agent=self.request.user,
+            end_datetime__gte=timezone.now()
+        ).order_by('start_datetime')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = AvailabilityForm()
+        context['api_key'] = settings.GOOGLE_MAP_API_KEY
         return context
 
     def post(self, request, *args, **kwargs):
         form = AvailabilityForm(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.agent = request.user
+            obj.save()
         return super().get(request, *args, **kwargs)

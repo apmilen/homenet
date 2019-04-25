@@ -18,6 +18,8 @@ class AvailabilityForm(forms.ModelForm):
     reference_property = RentPropertyModelChoiceField(
         queryset=RentProperty.objects.filter(is_listed=True)
     )
+    start_datetime = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
+    end_datetime = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
 
     class Meta:
         model = Availability
