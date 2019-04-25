@@ -6,7 +6,7 @@ from ui.views.pages import Home, Schedule
 from ui.views.accounts import Signup
 
 urlpatterns = [
-    path('', Home.as_view()),
+    path('', Home.as_view(), name="home"),
     path('schedule', Schedule.as_view(), name='schedule'),
     path('signup', Signup.as_view(), name='signup'),
 ]

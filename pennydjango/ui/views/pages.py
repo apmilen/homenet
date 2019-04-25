@@ -1,6 +1,10 @@
 from django.conf import settings
 from django.utils import timezone
+from django.urls import reverse
+from django.shortcuts import redirect
+from django.http import HttpResponseForbidden
 from django.views.generic.list import ListView
+from django.views.generic.edit import FormMixin
 
 from penny.models import Availability
 from penny.forms import AvailabilityForm
@@ -37,8 +41,10 @@ class Home(BaseContextMixin, ListView):
         return {'search': self.search_value}
 
 
-class Schedule(BaseContextMixin, ListView):
+class Schedule(BaseContextMixin, FormMixin, ListView):
     title = 'Schedule'
+    form_class = AvailabilityForm
+    template_name = 'penny/schedule.html'
 
     def get_queryset(self):
         return Availability.objects.filter(
@@ -48,14 +54,31 @@ class Schedule(BaseContextMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = AvailabilityForm()
+        context['form'] = self.get_form()
         context['api_key'] = settings.GOOGLE_MAP_API_KEY
         return context
 
-    def post(self, request, *args, **kwargs):
-        form = AvailabilityForm(request.POST)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.agent = request.user
-            obj.save()
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(reverse('home'))
+
         return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('schedule')
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form, request.user)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form, agent):
+        obj = form.save(commit=False)
+        obj.agent = agent
+        obj.save()
+        return super().form_valid(form)
