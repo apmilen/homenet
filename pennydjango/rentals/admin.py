@@ -2,13 +2,12 @@ import os
 from PIL import Image
 
 from django.db import models
-from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 
-from .models import RentProperty, RentPropertyImage, Availability
-from .forms import CreateRentPropertyForm, AvailabilityForm
+from .models import RentProperty, RentPropertyImage
+from .forms import CreateRentPropertyForm
 
 from mapwidgets.widgets import GooglePointFieldWidget
 
@@ -90,37 +89,4 @@ class RentPropertyAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
-class AvailabilityAdmin(admin.ModelAdmin):
-    form = AvailabilityForm
-    list_display = ('agent', 'location', 'start_datetime', 'end_datetime')
-
-    readonly_fields = ('latitude', 'longitude')
-
-    def location(self, obj):
-        return obj.reference_property.address
-
-    def latitude(self, obj):
-        return obj.reference_property.latitude
-
-    def longitude(self, obj):
-        return obj.reference_property.longitude
-
-    def save_model(self, request, obj, form, change):
-        obj.agent = request.user
-        super().save_model(request, obj, form, change)
-
-    class Media:
-        if hasattr(settings, 'GOOGLE_MAP_API_KEY')\
-                and settings.GOOGLE_MAP_API_KEY:
-            css = {
-                'all': ('css/admin/map_circle.css',),
-            }
-            js = (
-                'https://maps.googleapis.com/maps/api/js?key={}'
-                .format(settings.GOOGLE_MAP_API_KEY),
-                'js/admin/map_circle.js'
-            )
-
-
 admin.site.register(RentProperty, RentPropertyAdmin)
-admin.site.register(Availability, AvailabilityAdmin)
