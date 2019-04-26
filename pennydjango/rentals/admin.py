@@ -6,10 +6,9 @@ from django.db import models
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 
+from penny.widgets import TaggitInput, GooglePointFieldWidgetJQuery
 from .models import RentProperty, RentPropertyImage
 from .forms import CreateRentPropertyForm
-
-from mapwidgets.widgets import GooglePointFieldWidget
 
 
 class AdminImageWidget(AdminFileWidget):
@@ -61,7 +60,8 @@ class AdminImageWidget(AdminFileWidget):
 class RentPropertyForm(CreateRentPropertyForm):
     class Meta(CreateRentPropertyForm.Meta):
         widgets = {
-            'geopoint': GooglePointFieldWidget()
+            'geopoint': GooglePointFieldWidgetJQuery,
+            'amenities': TaggitInput
         }
 
 

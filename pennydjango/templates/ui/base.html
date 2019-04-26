@@ -4,118 +4,139 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="language" content="en">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>{% block title %}Home{% endblock %} | Pennybag, Secret real state app</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="language" content="en">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>{% block title %}Home{% endblock %} | Pennybag, Secret real state app</title>
 
-        <meta name="description" content="">
-        <meta name="keywords" content="realstate">
+  <meta name="description" content="">
+  <meta name="keywords" content="realstate">
 
-{#        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">#}
-{#        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">#}
-{#        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">#}
-{#        <link rel="manifest" href="/manifest.json">#}
-        <meta name="theme-color" content="#222">
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
-        <meta name="apple-mobile-web-app-title" content="Pennybag">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        {% block metatags %}{% endblock %}
-
-
-        <link rel="preload" as="style" href="{% http2static 'css/bootstrap.min.css' '4' %}" crossorigin>
-        <link rel="preload" as="style" href="{% http2static 'css/fa-all.min.css' '5' %}" crossorigin>
-        <link rel="preload" as="style" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
-        <link rel="preload" as="style" href="{% http2static 'css/base.css' GIT_SHA %}" crossorigin>
-        <link rel="preload" as="style" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" crossorigin>
-
-        {% if custom_stylesheet %}
-            <link rel="preload" as="style" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" crossorigin>
-        {% endif %}
-        {% block preloads %}{% endblock %}
-
-        <link rel="stylesheet" href="{% http2static 'css/bootstrap.min.css' '4' %}" type="text/css" crossorigin>
-        <link rel="stylesheet" href="{% http2static 'css/fa-all.min.css' '5' %}" type="text/css" crossorigin>
-        <link rel="stylesheet" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
-        <link rel="stylesheet" href="{% http2static 'css/base.css' GIT_SHA %}" type="text/css" crossorigin>
-        <link rel="stylesheet" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" type="text/css" crossorigin>
-        {% if custom_stylesheet %}
-            <link rel="stylesheet" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" type="text/css" crossorigin>
-        {% endif %}
-
-        <script>
-            window.loading = {head: Date.now()};
-            window.title = {{title|json}};
-            window.user = {{user|json}};
-            window.DEBUG = {{DEBUG|json}};
-            window.ENVIRONMENT = '{{ENVIRONMENT}}';
-            window.GIT_SHA = '{{GIT_SHA}}';
-
-        </script>
+  {#        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">#}
+  {#        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">#}
+  {#        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">#}
+  {#        <link rel="manifest" href="/manifest.json">#}
+  <meta name="theme-color" content="#222">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-title" content="Pennybag">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  {% block metatags %}{% endblock %}
 
 
-        {% block head %}{% endblock %}
-    </head>
-    <body class="h-100 {{body_classes}} body-{{page_id}}">
-        {% block outer %}
-            {% block sidebar %}
-                {% if user and user.is_authenticated %}
-                    {% include 'ui/navigation_left.html' %}
-                {% endif %}
-            {% endblock %}
+  <link rel="preload" as="style" href="{% http2static 'css/bootstrap.min.css' '4' %}" crossorigin>
+  <link rel="preload" as="style" href="{% http2static 'css/fa-all.min.css' '5' %}" crossorigin>
+  <link rel="preload" as="style" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
+  <link rel="preload" as="style" href="{% http2static 'css/base.css' GIT_SHA %}" crossorigin>
+  <link rel="preload" as="style" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" crossorigin>
 
-            <main class="main-content{% if user and user.is_authenticated %} col-lg-10 col-md-9  offset-lg-2 offset-md-3 {% endif %} col-sm-12 p-0">
-                {% block topbar %}
-                    {% include 'ui/navigation_top.html' %}
-                {% endblock %}
+  {% if custom_stylesheet %}
+    <link rel="preload" as="style" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" crossorigin>
+  {% endif %}
+  {% block preloads %}{% endblock %}
 
-                <div class="main-content-container container-fluid px-4">
-                    {% block inner %}
-                    {% endblock %}
-                </div>
+  <link rel="stylesheet" href="{% http2static 'css/bootstrap.min.css' '4' %}" type="text/css" crossorigin>
+  <link rel="stylesheet" href="{% http2static 'css/fa-all.min.css' '5' %}" type="text/css" crossorigin>
+  <link rel="stylesheet" href="{% http2static 'css/shards-dashboards.1.1.0.min.css' '1' %}" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" crossorigin>
+  <link rel="stylesheet" href="{% http2static 'css/base.css' GIT_SHA %}" type="text/css" crossorigin>
+  <link rel="stylesheet" href="{% http2static 'css/base.mobile.css' GIT_SHA %}" type="text/css" crossorigin>
+  {% if custom_stylesheet %}
+    <link rel="stylesheet" href="{% http2static 'css/'|add:custom_stylesheet GIT_SHA %}" type="text/css" crossorigin>
+  {% endif %}
 
-                {% block footer %}
-                    {% include 'ui/footer.html' %}
-                {% endblock %}
-            </main>
+  <script>
+      window.loading = {head: Date.now()};
+      window.title = {{title|json}};
+      window.user = {{user|json}};
+      window.DEBUG = {{DEBUG|json}};
+      window.ENVIRONMENT = '{{ENVIRONMENT}}';
+      window.GIT_SHA = '{{GIT_SHA}}';
 
-        {% endblock %}
+  </script>
 
-        <script src="{% http2static 'js/overrides.js' GIT_SHA %}" type="text/javascript" crossorigin></script>
-        <script src="{% http2static 'js/jquery-3.2.1.min.js' GIT_SHA %}" type="text/javascript" crossorigin></script>
 
-        <script src="{% static 'js/bootstrap.min.js' '4' %}" type="text/javascript" crossorigin></script>
-        <script src="{% static 'js/modernizr.min.js' '1' %}" type="text/javascript" crossorigin></script>
-        <script>
-            $(document).ready(function () {
+  {% block head %}{% endblock %}
+</head>
+<body class="h-100 {{body_classes}} body-{{page_id}}">
+{% block outer %}
+  {% block sidebar %}
+    {% if user and user.is_authenticated %}
+      {% include 'ui/navigation_left.html' %}
+    {% endif %}
+  {% endblock %}
 
-                $.extend($.easing, {
-                    easeOutSine: function easeOutSine(x, t, b, c, d) {
-                        return c * Math.sin(t / d * (Math.PI / 2)) + b;
-                    }
-                });
-                const slideConfig = {
-                    duration: 270,
-                    easing: 'easeOutSine'
-                };
-                // Add dropdown animations when toggled.
-                $(':not(.main-sidebar--icons-only) .dropdown').on('show.bs.dropdown', function () {
-                    $(this).find('.dropdown-menu').first().stop(true, true).slideDown(slideConfig);
-                });
+  <main class="main-content{% if user and user.is_authenticated %} col-lg-10 col-md-9  offset-lg-2 offset-md-3 {% endif %} col-sm-12 p-0">
+    {% block topbar %}
+      {% include 'ui/navigation_top.html' %}
+    {% endblock %}
 
-                $(':not(.main-sidebar--icons-only) .dropdown').on('hide.bs.dropdown', function () {
-                    $(this).find('.dropdown-menu').first().stop(true, true).slideUp(slideConfig);
-                });//Sidebar toggles
-                $('.toggle-sidebar').click(function (e) {
-                    $('.main-sidebar').toggleClass('open');
-                });
-            });
-        </script>
-        {% block tail %}{% endblock %}
+    <div class="main-content-container container-fluid px-4">
+      {% block inner %}
+        <div class="row">
+          <div class="col-xs-12 col-sm-8 offset-sm-2">
+            <div class="page-header row no-gutters py-4 mb-3 border-bottom text-center">
+              <div class="col-12 text-center mb-0">
+                <h3 class="page-title">{% block inner_title %}{% endblock inner_title %}</h3>
+              </div>
+            </div>
+            <div class="card card-small mb-4">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item p-3">
+                  <div class="row">
+                    <div class="col">
+                      {% block inner_content %}
 
-    </body>
+                      {% endblock inner_content %}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+    </div>
+    {% block footer %}
+      {% include 'ui/footer.html' %}
+    {% endblock %}
+  </main>
+
+{% endblock %}
+
+<script src="{% static 'js/overrides.js' %}" type="text/javascript" crossorigin></script>
+<script src="{% static 'js/jquery-3.2.1.min.js' %}" type="text/javascript" crossorigin></script>
+
+<script src="{% static 'js/bootstrap.min.js' '4' %}" type="text/javascript" crossorigin></script>
+<script src="{% static 'js/modernizr.min.js' '1' %}" type="text/javascript" crossorigin></script>
+<script>
+    $(document).ready(function () {
+
+        $.extend($.easing, {
+            easeOutSine: function easeOutSine(x, t, b, c, d) {
+                return c * Math.sin(t / d * (Math.PI / 2)) + b;
+            }
+        });
+        const slideConfig = {
+            duration: 270,
+            easing: 'easeOutSine'
+        };
+        // Add dropdown animations when toggled.
+        $(':not(.main-sidebar--icons-only) .dropdown').on('show.bs.dropdown', function () {
+            $(this).find('.dropdown-menu').first().stop(true, true).slideDown(slideConfig);
+        });
+
+        $(':not(.main-sidebar--icons-only) .dropdown').on('hide.bs.dropdown', function () {
+            $(this).find('.dropdown-menu').first().stop(true, true).slideUp(slideConfig);
+        });//Sidebar toggles
+        $('.toggle-sidebar').click(function (e) {
+            $('.main-sidebar').toggleClass('open');
+        });
+    });
+</script>
+{% block tail %}{% endblock %}
+
+</body>
 </html>
