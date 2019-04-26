@@ -1,13 +1,16 @@
 {% extends 'ui/base.html' %}
 {% load static %}
 
-{% block topbar %}
-{% endblock %}
 
 {% block inner %}
   <center>
-    <br/><br/><br/><br/>
-    <h2>{{ object.username }}</h2>
-    <h4>{{ object.first_name }} {{ object.second_name }}</h2>
+    <br/><br/>
+    <img class="rounded-circle user-avatar" src="{{ object.avatar_url }}" alt="User Avatar">
+    <br/><br/>
+    <h2>{{ object.first_name }} {{ object.second_name }}</h2>
+    <h4>@{{ object.username }}</h4>
+    <h6>{{ object.email }}</h6>
+    <br/><br/>
+    <p>Last login: {{ object.last_login }}</p>
   </center>
 {% endblock %}

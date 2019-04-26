@@ -7,6 +7,8 @@ from django.views.generic.detail import DetailView
 from penny.models import User
 from penny.forms import CustomUserCreationForm
 
+from ui.views.base_views import BaseContextMixin
+
 
 class Signup(CreateView):
     model = User
@@ -20,8 +22,9 @@ class Signup(CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UserProfile(DetailView):
+class UserProfile(BaseContextMixin, DetailView):
     model = User
+    custom_stylesheet = 'user.css'
 
     def get_object(self):
         return get_object_or_404(User, username=self.kwargs.get('username'))
