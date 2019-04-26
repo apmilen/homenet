@@ -28,3 +28,7 @@ class UserProfile(BaseContextMixin, DetailView):
 
     def get_object(self):
         return get_object_or_404(User, username=self.kwargs.get('username'))
+
+    def context(self, request, *args, **kwargs):
+        is_me = self.object == request.user
+        return {'is_me': is_me}
