@@ -1,0 +1,13 @@
+{% extends 'ui/base.html' %}
+{% load static %}
+
+{% block topbar %}
+{% endblock %}
+
+{% block inner %}
+  <center>
+    <br/><br/><br/><br/>
+    <h2>{{ object.username }}</h2>
+    <h4>{{ object.first_name }} {{ object.second_name }}</h2>
+  </center>
+{% endblock %}
