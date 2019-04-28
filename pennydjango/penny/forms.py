@@ -21,7 +21,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    avatar = forms.ImageField(required=False)
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
     first_name = forms.CharField(label='Name', required=False)
 
     class Meta():
