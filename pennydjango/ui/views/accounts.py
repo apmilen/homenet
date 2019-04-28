@@ -32,6 +32,9 @@ class UserProfile(BaseContextMixin, DetailView):
         return get_object_or_404(User, username=self.kwargs.get('username'))
 
     def context(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return {'is_me': False}
+
         profile_form = UserProfileForm(instance=request.user)
         password_form = PasswordChangeForm(request.user)
         redirect = False
@@ -43,7 +46,6 @@ class UserProfile(BaseContextMixin, DetailView):
                     request.FILES,
                     instance=request.user
                 )
-                # import ipdb; ipdb.set_trace()
                 if profile_form.is_valid():
                     profile_form.save()
                     redirect = True

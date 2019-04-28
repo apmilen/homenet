@@ -6,7 +6,9 @@
 {% block inner %}
   <center>
     <br/><br/>
-    <img class="rounded-circle user-avatar" src="{{ object.avatar_url }}" alt="User Avatar">
+    <div class="user-avatar">
+      <div class="circle-avatar" style="background-image:url({{ object.avatar_url  }})"></div>
+    </div>
     <br/><br/><br/>
     <h2>{{ object.first_name }}
     </h2>
