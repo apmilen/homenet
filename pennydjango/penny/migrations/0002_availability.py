@@ -9,7 +9,6 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rentals', '0006_rentproperty_is_listed'),
         ('penny', '0001_initial'),
     ]
 
