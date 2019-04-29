@@ -35,45 +35,41 @@ class UserProfile(BaseContextMixin, DetailView):
         if not request.user.is_authenticated:
             return {'is_me': False}
 
-        profile_form = UserProfileForm(instance=request.user)
-        password_form = PasswordChangeForm(request.user)
-        redirect = False
-
-        if request.method == 'POST':
-            if request.POST.get('type') == 'edit_profile':
-                profile_form = UserProfileForm(
-                    request.POST,
-                    request.FILES,
-                    instance=request.user
-                )
-                if profile_form.is_valid():
-                    profile_form.save()
-                    redirect = True
-
-            if request.POST.get('type') == 'password_change':
-                password_form = PasswordChangeForm(request.user, request.POST)
-                if password_form.is_valid():
-                    user = password_form.save()
-                    update_session_auth_hash(request, user)
-                    redirect = True
-
-        is_me = self.object == request.user
         return {
-            'is_me': is_me,
-            'profile_form': profile_form,
-            'password_form': password_form,
-            'redirect': redirect
+            'is_me': self.object == request.user,
+            'profile_form': UserProfileForm(instance=request.user),
+            'password_form': PasswordChangeForm(request.user)
         }
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return HttpResponseForbidden()
 
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-        if context.get('redirect'):
-            return HttpResponseRedirect(reverse(
-                'userprofile', args=[request.user]
-            ))
+        forms = {}
+        if request.POST.get('type') == 'edit_profile':
+            profile_form = UserProfileForm(
+                request.POST,
+                request.FILES,
+                instance=request.user
+            )
+            if profile_form.is_valid():
+                profile_form.save()
+                return self.redirect(request.user.username)
+            else:
+                forms.update({'profile_form': profile_form})
 
+        if request.POST.get('type') == 'password_change':
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                return self.redirect(request.user.username)
+            else:
+                forms.update({'password_form': password_form})
+
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object, **forms)
         return self.render_to_response(context)
+
+    def redirect(self, username):
+        return HttpResponseRedirect(reverse('userprofile', args=[username]))
