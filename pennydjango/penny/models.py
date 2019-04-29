@@ -3,7 +3,8 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.contrib.auth.models import AbstractUser, UserManager
 
-from .model_utils import BaseModel
+from penny.model_utils import BaseModel
+from penny.constants import NEIGHBORHOODS, DAYS
 
 
 class CaseInsensitiveUserManager(UserManager):
@@ -29,18 +30,39 @@ class User(AbstractUser, BaseModel):
 
 class Availability(BaseModel):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
-    reference_property = models.ForeignKey('rentals.RentProperty',
-                                           on_delete=models.CASCADE)
 
-    radius = models.PositiveIntegerField(default=1000)
+    neighborhood = models.CharField(
+        choices=NEIGHBORHOODS,
+        max_length=128
+    )
 
-    start_datetime = models.DateTimeField()
-    end_datetime = models.DateTimeField()
+    start_day = models.CharField(
+        choices=((d, d) for d in DAYS),
+        max_length=16
+    )
+    end_day = models.CharField(
+        choices=((d, d) for d in DAYS),
+        max_length=16
+    )
+
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    @cached_property
+    def neighborhood_name(self):
+        return dict(NEIGHBORHOODS).get(self.neighborhood)
 
     @cached_property
     def available_time(self):
-        return self.end_datetime - self.start_datetime
+        return self.end_time.hour - self.start_time.hour
 
     @cached_property
     def is_active(self):
-        return self.start_datetime <= timezone.now() <= self.end_datetime
+        dt_now = timezone.now()
+        start_day = DAYS.index(self.start_day)
+        end_day = DAYS.index(self.end_day)
+        conditions = (
+            self.start_time <= dt_now.time() <= self.end_time,
+            start_day <= dt_now.weekday() <= end_day
+        )
+        return all(conditions)

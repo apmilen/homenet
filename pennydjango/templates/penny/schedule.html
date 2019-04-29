@@ -1,6 +1,5 @@
 {% extends 'ui/base.html' %}
 {% load static %}
-{% load humanize %}
 {% load bootstrap4 %}
 
 {% bootstrap_messages %}
@@ -11,11 +10,12 @@
       <br/>
       <div class="row">
         {% for obj in object_list %}
-          <div class=" col-md-4 ">
+          <div class=" col-md-6 ">
 
-              <div class="card card-smallcard-post card-post--1">
-                <div class="card-post__image text-center">
-                  <div id="map_{{ obj.id }}" style="height: 200px; width: 100%;"></div>
+              <div class="card card-smallcard-post card-post--1" style="min-width: 280px">
+                <div>
+                  <iframe src='https://maps.google.com/maps?q={{ obj.neighborhood_name|urlencode }}+new+york&t=&z=13&ie=UTF8&iwloc=&output=embed'
+                          frameborder="0" width="100%" height="300px" scrolling="no"></iframe>
                   <a href="{% url 'schedule-delete' pk=obj.pk %}"
                      class="card-post__category badge badge-pill badge-dark">
                         <font size="4em"><i class="material-icons">delete_outline</i></font>
@@ -27,22 +27,22 @@
                     <tbody>
                     <tr>
                       <td><i class="material-icons">explore</i>
-                        {{ obj.reference_property.address }}
+                        {{ obj.neighborhood_name }}
                       </td>
                     </tr>
                     <tr>
                       <td><i class="material-icons">work</i>
-                        Duty time: {{ obj.available_time }}
+                        Duty time: {{ obj.available_time }}hrs
                       </td>
                     </tr>
                     <tr>
                       <td><i class="material-icons">watch_later</i>
-                        Starting: {{ obj.start_datetime|naturaltime }}
+                        {{ obj.start_day }} - {{ obj.end_day }}
                       </td>
                     </tr>
                     <tr>
                       <td><i class="material-icons">access_time</i>
-                        Until: {{ obj.end_datetime|naturaltime }}
+                        {{ obj.start_time }} - {{ obj.end_time }}
                       </td>
                     </tr>
                     </tbody>
@@ -54,8 +54,8 @@
           </div>
         {% endfor %}
 
-        <div class="col-md-4">
-          <div class="card">
+        <div class="col-md-6">
+          <div class="card" style="min-width: 280px">
             <div class="card-body p-3 text-center">
               <h5 class="card-title">Create itinerary</h5>
               <form autocomplete="off" action="#" method="post">
@@ -83,50 +83,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
   <script>
     $(function () {
-      $("#id_start_datetime").datetimepicker({
-        format: 'd/m/Y H:i',
+      $("#id_start_time").datetimepicker({
+        datepicker:false, format: 'H:i',
       });
-      $("#id_end_datetime").datetimepicker({
-        format: 'd/m/Y H:i',
+      $("#id_end_time").datetimepicker({
+        datepicker:false, format: 'H:i',
       });
     });
-  </script>
-
-  <script>
-    function initMaps() {
-      var mapEl, center, radius, map, area;
-      {% for obj in object_list %}
-        mapEl = document.getElementById('map_{{ obj.id }}')
-
-        center = {
-          lat: {{ obj.reference_property.latitude }},
-          lng: {{ obj.reference_property.longitude }}
-        }
-        radius = {{ obj.radius|stringformat:"d" }}
-
-        map = new google.maps.Map(mapEl, {
-          zoom: 12,
-          center,
-          disableDefaultUI: true,
-          zoomControl: true,
-        });
-
-        area = new google.maps.Circle({
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35,
-          map,
-          center,
-          radius
-        });
-
-        map.fitBounds(area.getBounds())
-      {% endfor %}
-    }
-  </script>
-  <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMaps">
   </script>
 {% endblock %}

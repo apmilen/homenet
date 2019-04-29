@@ -4,8 +4,6 @@ from django.core.exceptions import ValidationError
 
 from penny.models import User, Availability
 
-from rentals.models import RentProperty
-
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -28,18 +26,7 @@ class RentPropertyModelChoiceField(forms.ModelChoiceField):
 
 
 class AvailabilityForm(forms.ModelForm):
-    reference_property = RentPropertyModelChoiceField(
-        queryset=RentProperty.objects.filter(is_listed=True)
-    )
-    start_datetime = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
-    end_datetime = forms.DateTimeField(input_formats=['%d/%m/%Y %H:%M'])
 
     class Meta:
         model = Availability
         exclude = ("agent", )
-        widgets = {
-            'radius': forms.NumberInput(attrs={
-                'step': 100,
-                'max': 10000,
-            }),
-        }

@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.utils import timezone
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.http import HttpResponseForbidden
@@ -47,15 +45,11 @@ class Schedule(BaseContextMixin, FormMixin, ListView):
     template_name = 'penny/schedule.html'
 
     def get_queryset(self):
-        return Availability.objects.filter(
-            agent=self.request.user,
-            end_datetime__gte=timezone.now()
-        ).order_by('start_datetime')
+        return Availability.objects.filter(agent=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
-        context['api_key'] = settings.GOOGLE_MAP_API_KEY
         return context
 
     def get(self, request, *args, **kwargs):
