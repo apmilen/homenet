@@ -14,7 +14,7 @@
 
               <div class="card card-smallcard-post card-post--1">
                 <div>
-                  <iframe src='https://maps.google.com/maps?q={{ obj.neighborhood_name|urlencode }}+new+york&t=&z=13&ie=UTF8&iwloc=&output=embed'
+                  <iframe src='https://maps.google.com/maps?q={{ obj.get_neighborhood_display|urlencode }}+new+york&t=&z=13&ie=UTF8&iwloc=&output=embed'
                           frameborder="0" width="100%" height="300px" scrolling="no"></iframe>
                   <a href="{% url 'schedule-delete' pk=obj.pk %}"
                      class="card-post__category badge badge-pill badge-dark">
@@ -27,7 +27,7 @@
                     <tbody>
                     <tr>
                       <td><i class="material-icons">explore</i>
-                        {{ obj.neighborhood_name }}
+                        {{ obj.get_neighborhood_display }}
                       </td>
                     </tr>
                     <tr>

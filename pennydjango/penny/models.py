@@ -49,10 +49,6 @@ class Availability(BaseModel):
     end_time = models.TimeField()
 
     @cached_property
-    def neighborhood_name(self):
-        return dict(NEIGHBORHOODS).get(self.neighborhood)
-
-    @cached_property
     def available_time(self):
         return self.end_time.hour - self.start_time.hour
 
