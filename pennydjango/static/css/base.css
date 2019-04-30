@@ -33,3 +33,12 @@
 img.d-block.w-100 {
     height: 350px;
 }
+
+ul.ul-2 {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+ul.ul-2 > li {
+    text-transform: capitalize;
+}

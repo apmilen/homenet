@@ -33,44 +33,44 @@
       </div>
       <div class="card card-smallcard-post card-post--1 card-listing">
         <div class="card-body p-0 text-center row m-0">
-          <div class="col-4 wrap-info p-0 pt-1 pb-1  border border"
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border border"
                data-toggle="tooltip"
                title="${{ object.price }}/Month">
             ${{ object.price }}/Month
           </div>
-          <div class="col-4 wrap-info p-0 pt-1 pb-1  border"
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.bedrooms }} Beds">
             {{ object.bedrooms }} Beds
           </div>
-          <div class="col-4 wrap-info p-0 pt-1 pb-1  border"
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.baths }} Bath">
             {{ object.baths }} Bath
           </div>
-          <div class="col-4 p-0 pt-1 pb-1  border">
+          <div class="col-4 p-0 pt-2 pb-2  border">
             Pets: {{ object.pets_allowed|yesno:"Yes,No,Maybe" }}
           </div>
-          <div class="col-8 wrap-info p-0 pt-1 pb-1  border"
+          <div class="col-8 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.address }}">
             {{ object.address }}
           </div>
-          <div class="col-md-8 col-12 p-0 pt-1 pb-1  border">
-            <div class="col-12 text-justify border-bottom">
+          <div class="col-md-8 col-12 p-0 pt-2 pb-2  border">
+            <div class="col-12 text-justify border-bottom pt-2">
                 <p><b>About the place</b></p>
                 <p>{{ object.about }}</p>
             </div>
-            <div class="col-12 text-justify border-top">
+            <div class="col-12 text-justify border-top pt-2">
               <p><b>Amenities</b></p>
-                <ul>
+                <ul class="ul-2">
                   {% for amenity in object.amenities_list %}
                     <li>{{ amenity }}</li>
                   {% endfor %}
                 </ul>
             </div>
           </div>
-          <div class="col-md-4 col-12  p-0 pt-1 pb-1  border">
+          <div class="col-md-4 col-12  p-0 pt-2 pb-2  border">
                 <p><b>Contact</b></p>
                 <p>{{ object.contact }}</p>
           </div>
