@@ -20,11 +20,6 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
 
-class RentPropertyModelChoiceField(forms.ModelChoiceField):
-    def label_from_instance(self, obj):
-        return obj.address
-
-
 class AvailabilityForm(forms.ModelForm):
 
     class Meta:
