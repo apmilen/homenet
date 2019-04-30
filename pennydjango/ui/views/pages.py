@@ -79,8 +79,3 @@ class ScheduleDelete(DeleteView):
 
     def get_success_url(self):
         return reverse('schedule')
-
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        return self.delete(request, *args, **kwargs)
