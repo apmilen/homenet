@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
@@ -17,3 +18,12 @@ class CustomUserCreationForm(UserCreationForm):
                 'That email is already in use with a different account'
             )
         return email
+
+
+class UserProfileForm(forms.ModelForm):
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
+    first_name = forms.CharField(label='Name', required=False)
+
+    class Meta:
+        model = User
+        fields = ('avatar', 'first_name')

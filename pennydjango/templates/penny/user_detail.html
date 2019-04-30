@@ -1,0 +1,58 @@
+{% extends 'ui/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+
+{% block inner %}
+  <center>
+    <br/><br/>
+    <div class="user-avatar">
+      <div class="circle-avatar" style="background-image:url({{ object.avatar_url  }})"></div>
+    </div>
+    <br/><br/><br/>
+    <h2>{{ object.first_name }}
+    </h2>
+
+    <h4>@{{ object.username }}</h4>
+    <h6>{{ object.email }}</h6>
+
+    {% if is_me %}
+      <a data-toggle="collapse" href="#profile_form" aria-expanded="false" aria-controls="profile_form">
+        Edit profile
+      </a>
+      <br/><br/>
+      <div id="profile_form" class="collapse {% if profile_form.errors %}show{% endif %}">
+        <form class="password-form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% bootstrap_form profile_form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">
+              Edit
+            </button>
+          {% endbuttons %}
+          <input type="hidden" name="type" value="edit_profile">
+        </form>
+        <br/>
+      </div>
+      <a data-toggle="collapse" href="#password_form" aria-expanded="false" aria-controls="password_form">
+        Change password
+      </a>
+      <br/><br/>
+      <div id="password_form" class="collapse {% if password_form.errors %}show{% endif %}">
+        <form class="password-form" method="post">
+          {% csrf_token %}
+          {% bootstrap_form password_form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">
+              Change
+            </button>
+          {% endbuttons %}
+          <input type="hidden" name="type" value="password_change">
+        </form>
+        <br/>
+      </div>
+      <p>Last login: {{ object.last_login }}</p>
+    {% endif %}
+
+  </center>
+{% endblock %}
