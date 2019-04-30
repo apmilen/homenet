@@ -47,6 +47,10 @@ class RentProperty(BaseModel):
             return self.images.first().image.url
         return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
 
+    @cached_property
+    def amenities_list(self):
+        return self.amenities.split(",")
+
 
 class RentPropertyImage(BaseModel):
     rent_property = models.ForeignKey(RentProperty,

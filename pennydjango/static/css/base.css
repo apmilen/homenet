@@ -5,6 +5,7 @@
     width: 100%;
     height: 190px;
 }
+.mx-w-250{max-width: 250px;}
 .main-content-row {
     min-height: calc(100vh - 7.5rem);
 }
@@ -27,4 +28,8 @@
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 100px;
+}
+
+img.d-block.w-100 {
+    height: 350px;
 }
