@@ -8,3 +8,15 @@
 .main-content-row {
     min-height: calc(100vh - 7.5rem);
 }
+div.circle-avatar{
+    padding-top:100%;
+    border-radius:50%;
+
+    background-position-y: center;
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.dropdown-toggle.no-caret::after {
+    display:none;
+}
