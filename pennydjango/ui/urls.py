@@ -8,7 +8,7 @@ urlpatterns = [
     path(
         'listings/detail/<pk>', ListingDetail.as_view(), name='listing_detail'
     ),
-    path('user/<username>/', UserProfile.as_view(), name="userprofile")
+    path('user/<username>/', UserProfile.as_view(), name="userprofile"),
     path('signup', Signup.as_view(), name='signup'),
     path('', Home.as_view()),
 ]
