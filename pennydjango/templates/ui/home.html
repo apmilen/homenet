@@ -3,31 +3,33 @@
 
 {% block inner %}
   <div class="row main-content-row">
-    <div class="col-md-6">
+    <div class="col-md-6 main-scroll">
       <div class="row">
         {% for obj in object_list %}
-          <div class=" col-md-6 ">
-            <a href="#">
-              <div class="card card-smallcard-post card-post--1">
+          <div class="col-lg-6 col-md-12 p-1">
+              <div class="card card-smallcard-post card-post--1 card-listing">
                 <div class="card-post__image text-center">
                   <img class="box-wd" src="{{ obj.default_image }}">
-                  <a href="#"
-                     class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</a>
+                  <span class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</span>
                 </div>
-                <div class="card-body p-0 pb-3 text-center">
-                  <table class="table mb-0">
+                <div class="card-body p-0 text-center">
+                  <table class="table mb-0 listing-info">
                     <tbody>
                     <tr>
-                      <td>{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
+                      <td class="wrap-info" data-toggle="tooltip" title="{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath">
+                        {{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
                       </td>
-                      <td>{{ obj.address|truncatechars:20 }}</td>
+                      <td class="wrap-info" colspan="2" data-toggle="tooltip" title="{{ obj.address }}">
+                        {{ obj.address|truncatechars:20 }}
+                      </td>
                     </tr>
                     <tr>
-                      <td><i class="material-icons">pets</i>
-                        Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}
-                      </td>
-                      <td><i class="material-icons">share</i>
-                        Share
+                      <td>Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}</td>
+                      <td>
+                        <a href="{% url 'listing_detail' pk=obj.pk %}">
+                          <i class="material-icons">home</i>
+                          Detail
+                        </a>
                       </td>
                       {# TODO: add some behaviour #}
                     </tr>
@@ -35,10 +37,9 @@
                   </table>
                 </div>
               </div>
-            </a>
           </div>
         {% empty %}
-          <div class=" col-md-6 ">
+          <div class=" col-md-6 p-0">
             <div class="alert alert-info">
             No results were found
             </div>
@@ -46,7 +47,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 p-0">
       <iframe src='https://maps.google.com/maps?q={{ object_list.0.address|urlencode }}&t=&z=13&ie=UTF8&iwloc=&output=embed'
               frameborder="0" width="100%" height="100%" scrolling="no"
               marginheight="0" marginwidth="0"
