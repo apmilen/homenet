@@ -20,6 +20,15 @@ class CustomUserCreationForm(UserCreationForm):
         return email
 
 
+class UserProfileForm(forms.ModelForm):
+    avatar = forms.ImageField(required=False, widget=forms.FileInput)
+    first_name = forms.CharField(label='Name', required=False)
+
+    class Meta:
+        model = User
+        fields = ('avatar', 'first_name')
+
+
 class AvailabilityForm(forms.ModelForm):
 
     class Meta:
