@@ -47,10 +47,8 @@ class Schedule(BaseContextMixin, FormMixin, ListView):
     def get_queryset(self):
         return Availability.objects.filter(agent=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = self.get_form()
-        return context
+    def context(self, request, *args, **kwargs):
+        return {'form': self.get_form()}
 
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -68,15 +66,12 @@ class Schedule(BaseContextMixin, FormMixin, ListView):
         self.object_list = self.get_queryset()
         form = self.get_form()
         if form.is_valid():
-            return self.form_valid(form, request.user)
+            obj = form.save(commit=False)
+            obj.agent = request.user
+            obj.save()
+            return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
-    def form_valid(self, form, agent):
-        obj = form.save(commit=False)
-        obj.agent = agent
-        obj.save()
-        return super().form_valid(form)
 
 
 class ScheduleDelete(DeleteView):
