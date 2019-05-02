@@ -27,8 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('graphiql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
     path('gql', csrf_exempt(GraphQLView.as_view())),
-    path('', include("ui.urls")),
-    path('select2/', include('django_select2.urls')),
+    path('', include("ui.urls"))
 ]
 
 
