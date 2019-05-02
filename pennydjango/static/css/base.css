@@ -2,9 +2,10 @@
     line-height: 25px;
 }
 .box-wd {
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 190px;
 }
+.mx-w-250{max-width: 250px;}
 .main-content-row {
     min-height: calc(100vh - 7.5rem);
 }
@@ -19,4 +20,37 @@ div.circle-avatar{
 }
 .dropdown-toggle.no-caret::after {
     display:none;
+}
+.main-scroll{
+    height: calc(100vh - 7.5rem);
+    overflow-y: auto;
+}
+.card.card-listing {
+    box-shadow: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+.card span.badge.badge-pill {
+    font-size: 100%;
+}
+
+.listing-info .wrap-info{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100px;
+}
+
+img.d-block.w-100 {
+    height: 350px;
+}
+
+ul.ul-2 {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+ul.ul-2 > li {
+    text-transform: capitalize;
 }

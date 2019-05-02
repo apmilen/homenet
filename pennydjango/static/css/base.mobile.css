@@ -1,0 +1,10 @@
+@media (max-width:764px) {
+
+    img.d-block.w-100 {
+        height: 200px;
+    }
+    .main-scroll{
+        height: auto;
+        overflow-y: initial;
+    }
+}

@@ -97,7 +97,7 @@
             </div>
           </div>
         </div>
-      {% endblock %}
+      {% endblock inner %}
     </div>
     {% block footer %}
       {% include 'ui/footer.html' %}
@@ -109,7 +109,7 @@
 <script src="{% static 'js/overrides.js' %}" type="text/javascript" crossorigin></script>
 <script src="{% static 'js/jquery-3.2.1.min.js' %}" type="text/javascript" crossorigin></script>
 
-<script src="{% static 'js/bootstrap.min.js' '4' %}" type="text/javascript" crossorigin></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' '4' %}" type="text/javascript" crossorigin></script>
 <script src="{% static 'js/modernizr.min.js' '1' %}" type="text/javascript" crossorigin></script>
 <script>
     $(document).ready(function () {
@@ -134,6 +134,7 @@
         $('.toggle-sidebar').click(function (e) {
             $('.main-sidebar').toggleClass('open');
         });
+        $('[data-toggle="tooltip"]').tooltip()
     });
 </script>
 {% block tail %}{% endblock %}
