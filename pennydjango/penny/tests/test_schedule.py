@@ -16,7 +16,7 @@ class ScheduleTests(TestCase):
             password='alalalalong'
         )
         self.form_data = {
-            'neighborhood': random.choice(NEIGHBORHOODS)[0],
+            'neighborhood': random.choice(random.choice(NEIGHBORHOODS)[1])[0],
             'start_day': random.choice(DAYS),
             'end_day': random.choice(DAYS),
             'start_time': '08:20',
@@ -41,11 +41,13 @@ class ScheduleTests(TestCase):
 
     def test_view(self):
         response = self.client.post(reverse('schedule'))
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/accounts/login/?next=/schedule")
 
         self.client.login(username='test_pub', password='alalalalong')
         response = self.client.post(reverse('schedule'), self.form_data)
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/schedule")
 
         obj = Availability.objects.get()
         self.assertEqual(obj.agent.username, self.test_user.username)
@@ -56,6 +58,19 @@ class ScheduleTests(TestCase):
             obj.start_time.strftime('%H:%M'), self.form_data['start_time'])
         self.assertEqual(
             obj.end_time.strftime('%H:%M'), self.form_data['end_time'])
+
+    def test_delete(self):
+        obj = Availability.objects.create(
+            agent=self.test_user, **self.form_data)
+
+        response = self.client.post(reverse('schedule-delete', args=[obj.id]))
+        self.assertEqual(response.status_code, 302)
+        assert Availability.objects.filter(id=obj.id).exists()
+
+        self.client.login(username='test_pub', password='alalalalong')
+        response = self.client.post(reverse('schedule-delete', args=[obj.id]))
+        self.assertEqual(response.status_code, 302)
+        assert not Availability.objects.filter(id=obj.id).exists()
 
     def tearDown(self):
         self.test_user.delete()

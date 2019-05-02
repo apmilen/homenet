@@ -39,13 +39,12 @@ class AvailabilityForm(forms.ModelForm):
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
 
-        if start_time and end_time:
-            if start_time.hour >= end_time.hour:
-                st_str = start_time.strftime('%H:%M')
-                self._errors['end_time'] = self.error_class([
-                    f'Ending time must be later than {st_str}'])
+        if start_time and end_time and start_time.hour >= end_time.hour:
+            st_str = start_time.strftime('%H:%M')
+            error_msg = f"Ending time must be later than {st_str}"
+            self.add_error('end_time', error_msg)
 
-        return self.cleaned_data
+        return cleaned_data
 
     class Meta:
         model = Availability

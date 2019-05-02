@@ -1,12 +1,16 @@
 {% extends 'ui/base.html' %}
 {% load static %}
+{% load utils %}
 {% load bootstrap4 %}
 
 {% bootstrap_messages %}
 
+
 {% block head %}
+<link rel="stylesheet" href="{% http2static 'css/jquery.datetimepicker.min.css' %}" type="text/css" crossorigin>
 {{ form.media.css }}
 {% endblock %}
+
 
 {% block inner %}
   <div class="row main-content-row">
@@ -116,8 +120,8 @@
 
 
 {% block tail %}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}" type="text/javascript" crossorigin></script>
+
   <script>
     $(function () {
       $("#id_start_time").datetimepicker({
@@ -128,5 +132,6 @@
       });
     });
   </script>
+
   {{ form.media.js }}
 {% endblock %}
