@@ -31,6 +31,20 @@ class UserProfileForm(forms.ModelForm):
 
 class AvailabilityForm(forms.ModelForm):
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+
+        if start_time and end_time:
+            if start_time.hour >= end_time.hour:
+                st_str = start_time.strftime('%H:%M')
+                self._errors['end_time'] = self.error_class([
+                    f'Ending time must be later than {st_str}'])
+
+        return self.cleaned_data
+
     class Meta:
         model = Availability
         exclude = ("agent", )
