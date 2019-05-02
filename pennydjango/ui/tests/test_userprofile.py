@@ -1,19 +1,22 @@
+import os
 from django.urls import reverse
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
 
 from penny.models import User
 from penny.forms import UserProfileForm
 
 
-class UserProfileTests(TestCase):
+class UserProfileTest(TestCase):
     def setUp(self):
         self.test_user = User.objects.create_user(
             email='test@test.com',
             username='test_pub',
             password='alalalalong'
         )
-        self.pic_path = 'pennydjango/static/images/blank-profile-picture.png'
+        blank_img = "blank-profile-picture.png"
+        self.pic_path = f'{settings.BASE_DIR}/static/images/{blank_img}'
 
     def test_profile(self):
         response = self.client.get(reverse(
@@ -51,4 +54,8 @@ class UserProfileTests(TestCase):
         )
 
     def tearDown(self):
+        self.test_user.refresh_from_db()
+        if self.test_user.avatar:
+            os.remove(self.test_user.avatar.path)
+            os.rmdir(f"{settings.DATA_DIR}/media/{str(self.test_user.id)}/")
         self.test_user.delete()

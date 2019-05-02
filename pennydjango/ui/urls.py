@@ -1,11 +1,15 @@
 from django.urls import path
 
 from ui.views.pages import Home, Schedule, ScheduleDelete
+from ui.views.listings import ListingDetail
 from ui.views.accounts import Signup, UserProfile
 
 
 urlpatterns = [
     path('', Home.as_view(), name="home"),
+    path(
+        'listings/detail/<pk>', ListingDetail.as_view(), name='listing_detail'
+    ),
     path('schedule', Schedule.as_view(), name='schedule'),
     path('schedule/delete/<uuid:pk>',
          ScheduleDelete.as_view(), name='schedule-delete'),

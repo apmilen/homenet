@@ -28,7 +28,8 @@ class RentProperty(BaseModel):
     baths = models.IntegerField()
     pets_allowed = models.BooleanField(default=True)
 
-    amenities = models.CharField(max_length=255)
+    amenities = models.CharField(max_length=255,
+                                 help_text="Press Enter to add another amenity")
 
     @cached_property
     def coords(self):
@@ -48,6 +49,10 @@ class RentProperty(BaseModel):
         if self.images.exists():
             return self.images.first().image.url
         return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
+
+    @cached_property
+    def amenities_list(self):
+        return self.amenities.split(",")
 
 
 class RentPropertyImage(BaseModel):
