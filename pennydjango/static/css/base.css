@@ -54,3 +54,7 @@ ul.ul-2 {
 ul.ul-2 > li {
     text-transform: capitalize;
 }
+ul li {
+    list-style-type: none !important;
+    padding: 0 !important;
+}

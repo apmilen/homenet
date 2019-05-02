@@ -1,0 +1,25 @@
+{% extends "ui/base.html" %}
+{% load static admin_list %}
+
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/changelists.css' %}">
+{% endblock %}
+
+
+{% block inner %}
+    <div id="content-main">
+        <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+            <form id="changelist-form" method="post" novalidate>{% csrf_token %}
+                {% if action_form and actions_on_top and cl.show_admin_actions %}
+                    {% admin_actions %}
+                {% endif %}
+
+                {% result_list cl %}
+
+                {% pagination cl %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
