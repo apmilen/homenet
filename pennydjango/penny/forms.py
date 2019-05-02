@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
+from django_select2.forms import Select2Widget
+
 from penny.models import User, Availability
 
 
@@ -48,3 +50,6 @@ class AvailabilityForm(forms.ModelForm):
     class Meta:
         model = Availability
         exclude = ("agent", )
+        widgets = {
+            'neighborhood': Select2Widget
+        }

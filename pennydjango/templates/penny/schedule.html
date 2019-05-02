@@ -4,6 +4,10 @@
 
 {% bootstrap_messages %}
 
+{% block head %}
+{{ form.media.css }}
+{% endblock %}
+
 {% block inner %}
   <div class="row main-content-row">
 
@@ -124,4 +128,5 @@
       });
     });
   </script>
+  {{ form.media.js }}
 {% endblock %}
