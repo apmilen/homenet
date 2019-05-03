@@ -229,6 +229,7 @@ CACHES_DIR = os.path.join(DATA_DIR, 'caches')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
+STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 
 LOGS_DIR = os.path.join(DATA_DIR, 'logs')
 RELOADS_LOGS = os.path.join(LOGS_DIR, 'reloads.log')
