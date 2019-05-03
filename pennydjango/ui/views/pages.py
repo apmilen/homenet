@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.http import Http404
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormMixin, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -44,7 +45,8 @@ class Schedule(LoginRequiredMixin, BaseContextMixin, FormMixin, ListView):
     template_name = 'penny/schedule.html'
 
     def get_queryset(self):
-        return Availability.objects.filter(agent=self.request.user)
+        # return Availability.objects.filter(agent=self.request.user)
+        return Availability.objects.all()
 
     def context(self, request, *args, **kwargs):
         return {'form': self.get_form()}
@@ -69,3 +71,9 @@ class ScheduleDelete(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('schedule')
+
+    def get_object(self, queryset=None):
+        obj = super().get_object()
+        if not obj.agent == self.request.user:
+            raise Http404
+        return obj

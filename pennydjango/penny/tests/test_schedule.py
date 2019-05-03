@@ -15,6 +15,11 @@ class ScheduleTests(TestCase):
             username='test_pub',
             password='alalalalong'
         )
+        self.test_user_2 = User.objects.create_user(
+            email='test2@test.com',
+            username='test_pub2',
+            password='alalalalong'
+        )
         self.form_data = {
             'neighborhood': random.choice(random.choice(NEIGHBORHOODS)[1])[0],
             'start_day': random.choice(DAYS),
@@ -67,7 +72,15 @@ class ScheduleTests(TestCase):
         self.assertEqual(response.status_code, 302)
         assert Availability.objects.filter(id=obj.id).exists()
 
-        self.client.login(username='test_pub', password='alalalalong')
+        self.client.login(
+            username=self.test_user_2.username, password='alalalalong')
+        response = self.client.post(reverse('schedule-delete', args=[obj.id]))
+        self.assertEqual(response.status_code, 404)
+        assert Availability.objects.filter(id=obj.id).exists()
+
+        self.client.logout()
+        self.client.login(
+            username=self.test_user.username, password='alalalalong')
         response = self.client.post(reverse('schedule-delete', args=[obj.id]))
         self.assertEqual(response.status_code, 302)
         assert not Availability.objects.filter(id=obj.id).exists()
