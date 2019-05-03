@@ -27,14 +27,14 @@
       </form>
       <ul class="navbar-nav border-left flex-row ">
           {% if request.user.is_authenticated %}
-        <li class="nav-item border-right dropdown notifications">
+        <!--<li class="nav-item border-right dropdown notifications">
           <a class="nav-link nav-link-icon text-center" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="nav-link-icon__wrapper">
-              <i class="material-icons">&#xE7F4;</i>
+              <i class="material-icons">notifications</i>
               <span class="badge badge-pill badge-danger">0</span>
             </div>
           </a>
-          <!--<div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">
+          <div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">
             <a class="dropdown-item" href="#">
               <div class="notification__icon-wrapper">
                 <div class="notification__icon">
@@ -60,34 +60,34 @@
               </div>
             </a>
             <a class="dropdown-item notification__all text-center" href="#"> View all Notifications </a>
-          </div>-->
-        </li>
+          </div>
+        </li>-->
       {% endif %}
       {% if request.user.is_authenticated %}
         <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-nowrap px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                  <img class="user-avatar rounded-circle mr-2" src="{% static 'images/blank-profile-picture.png' %}" alt="User Avatar">
-                <span class="d-none d-md-inline-block">{{ user.username }}</span>
+              <a class="nav-link dropdown-toggle text-nowrap px-2 no-caret" data-toggle="dropdown"
+                 href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  <div class="circle-avatar" style="background-image:url({{ request.user.avatar_url  }})"></div>
               </a>
-              <div class="dropdown-menu dropdown-menu-small">
-                <a class="dropdown-item" href="/">
-                  <i class="material-icons">&#xE7FD;</i> Profile</a>
+              <div class="dropdown-menu dropdown-menu-small dropdown-menu-md-right">
+                <a class="dropdown-item" href="{% url 'userprofile' username=user.username %}">
+                  <i class="material-icons">person</i>&nbsp;Profile</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="accounts/logout">
-                  <i class="material-icons text-danger">&#xE879;</i> Logout </a>
+                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                  <i class="material-icons text-danger">exit_to_app</i>&nbsp;Logout</a>
               </div>
         </li>
       {% else %}
         <li class="nav-item">
-          <a class="nav-link text-nowrap px-3" href="accounts/login" role="button" >
+          <a class="nav-link text-nowrap px-3" href="{% url 'login' %}" role="button" >
             <span class="d-none d-md-inline-block">Login</span>
           </a>
         </li>
        {% endif %}
       </ul>
       <nav class="nav">
-        <a href="#" class="nav-link nav-link-icon toggle-sidebar d-md-inline d-lg-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
-          <i class="material-icons">&#xE5D2;</i>
+        <a href="#" class="nav-link nav-link-icon toggle-sidebar d-sm-inline d-md-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
+          <i class="material-icons">menu</i>
         </a>
       </nav>
     </nav>

@@ -160,6 +160,14 @@ def image_path(instance, filename):
     ])
 
 
+def avatar_path(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    return '/'.join([
+        str(instance.id),
+        f"avatar{file_extension}"
+    ])
+
+
 def validate_file_size(value):
     try:
         if value.size > settings.MAX_FILE_SIZE:

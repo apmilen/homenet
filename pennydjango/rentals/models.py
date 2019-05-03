@@ -14,18 +14,22 @@ class RentProperty(BaseModel):
     publisher = models.ForeignKey(get_user_model(),
                                   related_name="rent_properties",
                                   on_delete=models.CASCADE)
+
+    is_listed = models.BooleanField(default=True)
+
     price = models.PositiveIntegerField()
     contact = models.CharField(max_length=255)
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=64)
-    # pictures = NOIDEA
+
     about = models.TextField(max_length=1024, blank=True, null=True)
 
     bedrooms = models.IntegerField()
     baths = models.IntegerField()
     pets_allowed = models.BooleanField(default=True)
 
-    amenities = models.CharField(max_length=255)
+    amenities = models.CharField(max_length=255,
+                                 help_text="Press Enter to add another amenity")
 
     @cached_property
     def coords(self):
@@ -45,6 +49,10 @@ class RentProperty(BaseModel):
         if self.images.exists():
             return self.images.first().image.url
         return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
+
+    @cached_property
+    def amenities_list(self):
+        return self.amenities.split(",")
 
 
 class RentPropertyImage(BaseModel):

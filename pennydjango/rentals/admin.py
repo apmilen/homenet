@@ -1,8 +1,8 @@
 import os
 from PIL import Image
 
-from django.contrib import admin
 from django.db import models
+from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 

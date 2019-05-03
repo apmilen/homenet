@@ -1,10 +1,59 @@
-.ln-25 {
-    line-height: 25px;
+/* Main Content */
+.main-content-row {min-height: calc(100vh - 7.5rem);}
+
+.ln-25 {line-height: 25px;}
+.mx-w-250{max-width: 250px;}
+.box-wd {width: 100%;height: 190px;}
+.main-scroll{
+    height: calc(100vh - 7.5rem);
+    overflow-y: auto;
 }
-.box-wd {
-    max-width: 100%;
-    height: auto;
+
+/* Nav bars */
+div.circle-avatar{
+    padding-top:100%;
+    border-radius:50%;
+
+    background-position-y: center;
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
-.main-content-row {
-    min-height: calc(100vh - 7.5rem);
+.dropdown-toggle.no-caret::after {
+    display:none;
+}
+
+/* Cards */
+.card.card-listing {
+    box-shadow: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+}
+.card span.badge.badge-pill {
+    font-size: 100%;
+}
+
+.listing-info .wrap-info{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100px;
+}
+.card-post__category.left-badge {
+    right: initial;
+    left: .9375rem;
+}
+
+img.d-block.w-100 {
+    height: 350px;
+}
+
+ul.ul-2 {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+}
+ul.ul-2 > li {
+    text-transform: capitalize;
 }
