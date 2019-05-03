@@ -263,6 +263,7 @@ INSTALLED_APPS = [
     'ui',
     'mapwidgets',
     'bootstrap4',
+    'django_select2',
 ]
 MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',

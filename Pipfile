@@ -28,6 +28,7 @@ django-cors-headers = "*"
 django-map-widgets = "*"
 pillow = "*"
 django-bootstrap4 = "*"
+django-select2 = "*"
 
 [requires]
 python_version = "3.7"

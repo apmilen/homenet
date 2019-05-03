@@ -2,7 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
-from penny.models import User
+from django_select2.forms import Select2Widget
+
+from penny.models import User, Availability
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -27,3 +29,26 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('avatar', 'first_name')
+
+
+class AvailabilityForm(forms.ModelForm):
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+
+        if start_time and end_time and start_time.hour >= end_time.hour:
+            st_str = start_time.strftime('%H:%M')
+            error_msg = f"Ending time must be later than {st_str}"
+            self.add_error('end_time', error_msg)
+
+        return cleaned_data
+
+    class Meta:
+        model = Availability
+        exclude = ("agent", )
+        widgets = {
+            'neighborhood': Select2Widget
+        }

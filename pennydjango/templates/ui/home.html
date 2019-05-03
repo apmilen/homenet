@@ -10,6 +10,13 @@
             <div class="card card-smallcard-post card-post--1 card-listing">
               <div class="card-post__image text-center">
                 <img class="box-wd" src="{{ obj.default_image }}">
+                {% if request.user and request.user.is_staff %}
+                  <a class="card-post__category left-badge badge badge-pill badge-info"
+                     href="{% url 'admin:rentals_rentproperty_change' obj.id %}">
+                    <i  class="material-icons">edit</i>
+                    Edit
+                  </a>
+                {% endif %}
                 <span class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</span>
               </div>
               <div class="card-body p-0 text-center">
