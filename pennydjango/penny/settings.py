@@ -50,10 +50,11 @@ _PLACEHOLDER_FOR_UNSET = 'set-this-value-in-secrets.env'
 ################################################################################
 DEBUG = False
 SERVE_STATIC = False
-DEFAULT_HOST = 'homenet.zalad.io'
+DEFAULT_HOST = 'localhost'
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
 DEFAULT_HTTP_PROTOCOL = 'http'
+DEFAULT_HTTP_PORT = 8000
 SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
@@ -65,7 +66,6 @@ GRAPHENE = {
     'SCHEMA': 'penny.root_schema.schema',
     'MIDDLEWARE': []
 }
-ENDPOINT = 'http://127.0.0.1:8000/gql'
 
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
@@ -244,6 +244,7 @@ DATA_DIRS = [
 ### Django Core Setup
 ################################################################################
 BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
+ENDPOINT = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}/gql'
 
 AUTH_USER_MODEL = 'penny.User'
 ROOT_URLCONF = 'penny.urls'
