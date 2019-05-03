@@ -28,13 +28,14 @@
   <div class="nav-wrapper">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link {% if 'rentproperty/add' in request.path %}active{% endif %}" href="/admin/rentals/rentproperty/add/">
+        <a class="nav-link {% if 'rentproperty/add' in request.path %}active{% endif %}"
+           href="{% url 'admin:rentals_rentproperty_add' %}">
           <i class="material-icons">add</i>
           <span>Add Listing</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/rentals/rentproperty/">
+        <a class="nav-link " href="{% url 'admin:rentals_rentproperty_changelist' %}">
           <i class="material-icons">edit</i>
           <span>Edit Listings</span>
         </a>
