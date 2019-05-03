@@ -60,7 +60,7 @@
 
   {% block head %}{% endblock %}
 </head>
-<body class="h-100 {{body_classes}} body-{{page_id}}">
+<body class="h-100 {{body_classes}} body-{{page_id}} {% block bodyclass %}{% endblock %}">
 {% block outer %}
   {% block sidebar %}
     {% if user and user.is_authenticated %}
