@@ -50,7 +50,7 @@ _PLACEHOLDER_FOR_UNSET = 'set-this-value-in-secrets.env'
 ################################################################################
 DEBUG = False
 SERVE_STATIC = False
-DEFAULT_HOST = 'hut.zalad.io'
+DEFAULT_HOST = 'homenet.zalad.io'
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
 DEFAULT_HTTP_PROTOCOL = 'http'
@@ -141,7 +141,6 @@ SENTRY_PROJECT_ID = _PLACEHOLDER_FOR_UNSET
 SENTRY_DSN_KEY = _PLACEHOLDER_FOR_UNSET
 SENTRY_DSN_SECRET = _PLACEHOLDER_FOR_UNSET
 
-
 ZULIP_SERVER = 'https://monadical.zulip.sweeting.me/api'
 ZULIP_EMAIL = 'prod-events-bot@monadical.zulip.sweeting.me'
 ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
@@ -215,9 +214,10 @@ SECURE_SETTINGS_SOURCES = (ENV_SECRETS_FILE, 'os.environ')
 SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
-    'MAILGUN_API_KEY',
-    'ZULIP_API_KEY',
-    'SENTRY_DSN_KEY',
+    'GOOGLE_MAP_API_KEY',
+    #'MAILGUN_API_KEY',
+    #'ZULIP_API_KEY',
+    #'SENTRY_DSN_KEY',
 )
 
 ################################################################################
