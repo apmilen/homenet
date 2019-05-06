@@ -29,12 +29,12 @@
 
                   <!-- Button trigger modal -->
                   <button type="button" class="card-post__category badge badge-pill badge-dark"
-                          data-toggle="modal" data-target="#deleteModal">
+                          data-toggle="modal" data-target="#deleteModal_{{ obj.id }}">
                     <font size="4em"><i class="material-icons">delete_outline</i></font>
                   </button>
 
                   <!-- Modal -->
-                  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                  <div class="modal fade" id="deleteModal_{{ obj.id }}" tabindex="-1" role="dialog"
                        aria-labelledby="deleteModalLabel" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                       <div class="modal-content">
