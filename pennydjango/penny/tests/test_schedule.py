@@ -86,5 +86,5 @@ class ScheduleTests(TestCase):
         assert not Availability.objects.filter(id=obj.id).exists()
 
     def tearDown(self):
-        self.test_user.delete()
+        User.objects.all().delete()
         Availability.objects.all().delete()

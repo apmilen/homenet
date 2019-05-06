@@ -19,7 +19,7 @@ class SimpleRentTest(TestCase):
             contact='bob at 018000-marley',
             address='420 love street',
             geopoint="POINT (-73.92617910000001 40.7106363)",
-            about='no rooftop so you can view the stars at night',
+            about='no roof so you can view the stars at night',
             bedrooms=3,
             baths=2,
         )

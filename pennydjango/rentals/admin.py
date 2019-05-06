@@ -13,7 +13,6 @@ from .forms import CreateRentPropertyForm
 
 class AdminImageWidget(AdminFileWidget):
     def render(self, name, value, attrs=None, renderer=None):
-        # return super().render(name, value, attrs, renderer)
         output = []
         if value and getattr(value, "url", None):
 
