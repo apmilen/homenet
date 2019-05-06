@@ -60,7 +60,7 @@
 
   {% block head %}{% endblock %}
 </head>
-<body class="h-100 {{body_classes}} body-{{page_id}}">
+<body class="h-100 {{body_classes}} body-{{page_id}} {% block bodyclass %}{% endblock %}">
 {% block outer %}
   {% block sidebar %}
     {% if user and user.is_authenticated %}
@@ -73,7 +73,7 @@
       {% include 'ui/navigation_top.html' %}
     {% endblock %}
 
-    <div class="main-content-container container-fluid">
+    <div class="main-content-container container-fluid {% block main-content-container-classes %}{% endblock %}">
       {% block inner %}
         <div class="row">
           <div class="col-xs-12 col-sm-8 offset-sm-2">

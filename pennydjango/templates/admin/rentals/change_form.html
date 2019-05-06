@@ -1,0 +1,58 @@
+{% extends "ui/base.html" %}
+{% load i18n static admin_modify %}
+
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}">
+    {{ media }}
+
+    <style type="text/css">
+        ul li { list-style-type: none; }
+        .submit-row a.deletelink { box-sizing: unset; }
+        .field-geopoint > div { width: 100%; }
+        tr.dynamic-images { display: table-row; }
+    </style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% block main-content-container-classes %}main-scroll{% endblock %}
+
+{% block inner %}
+    <div id="content-main">
+
+        <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}
+              action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>
+            {% csrf_token %}
+
+            {% if errors %}
+                <p class="errornote">
+                    {% if errors|length == 1 %}
+                        {% trans "Please correct the error below." %}
+                    {% else %}
+                        {% trans "Please correct the errors below." %}
+                    {% endif %}
+                </p>
+                {{ adminform.form.non_field_errors }}
+            {% endif %}
+
+
+            {% for fieldset in adminform %}
+                {% include "admin/includes/fieldset.html" %}
+            {% endfor %}
+
+            {% for inline_admin_formset in inline_admin_formsets %}
+                {% include inline_admin_formset.opts.template %}
+            {% endfor %}
+
+            {% submit_row %}
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block tail %}
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" type="text/javascript" crossorigin></script>
+    <script src="{% static 'js/tag-it.min.js' %}" type="text/javascript" crossorigin></script>
+{% endblock %}

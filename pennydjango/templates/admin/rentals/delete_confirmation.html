@@ -1,0 +1,60 @@
+{% extends "ui/base.html" %}
+{% load i18n static %}
+
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
+    {{ media }}
+    <script type="text/javascript" src="{% static 'admin/js/cancel.js' %}"></script>
+    <style type="text/css">
+        ul li { list-style-type: none; }
+        .delete-confirmation form .cancel-link { box-sizing: unset; }
+    </style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block inner_title %}{% trans "Are you sure?" %}{% endblock inner_title %}
+
+{% block inner_content %}
+    {% if perms_lacking %}
+        <p>
+            {% blocktrans with escaped_object=object %}
+                Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:
+            {% endblocktrans %}
+        </p>
+        <ul>
+            {% for obj in perms_lacking %}
+                <li>{{ obj }}</li>
+            {% endfor %}
+        </ul>
+    {% elif protected %}
+        <p>
+            {% blocktrans with escaped_object=object %}
+                Deleting the {{ object_name }} '{{ escaped_object }}' would require deleting the following protected related objects:
+            {% endblocktrans %}
+        </p>
+        <ul>
+            {% for obj in protected %}
+                <li>{{ obj }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>
+            {% blocktrans with escaped_object=object %}
+                Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"? All of the following related items will be deleted:
+            {% endblocktrans %}
+        </p>
+        
+        {% include "admin/includes/object_delete_summary.html" %}
+
+        <br/>
+        <form method="post">{% csrf_token %}
+            <input type="hidden" name="post" value="yes">
+            <input type="submit" value="{% trans 'Yes, I\'m sure' %}">
+            <a href="#" class="button cancel-link">
+                {% trans "No, take me back" %}
+            </a>
+        </form>
+    {% endif %}
+{% endblock %}

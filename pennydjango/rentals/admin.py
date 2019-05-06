@@ -90,3 +90,4 @@ class RentPropertyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(RentProperty, RentPropertyAdmin)
+admin.site.site_header = 'HomeNet Admin'
