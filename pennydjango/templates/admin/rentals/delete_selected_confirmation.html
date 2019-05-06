@@ -6,6 +6,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
     {{ media }}
     <script type="text/javascript" src="{% static 'admin/js/cancel.js' %}"></script>
+    <style type="text/css">
+        ul li { list-style-type: none; }
+        .delete-confirmation form .cancel-link { box-sizing: unset; }
+    </style>
 {% endblock %}
 
 

@@ -6,9 +6,18 @@
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}">
     {{ media }}
+
+    <style type="text/css">
+        ul li { list-style-type: none; }
+        .submit-row a.deletelink { box-sizing: unset; }
+        .field-geopoint > div { width: 100%; }
+        tr.dynamic-images { display: table-row; }
+    </style>
 {% endblock %}
 
 {% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% block main-content-container-classes %}main-scroll{% endblock %}
 
 {% block inner %}
     <div id="content-main">
