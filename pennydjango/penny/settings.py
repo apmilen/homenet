@@ -50,10 +50,11 @@ _PLACEHOLDER_FOR_UNSET = 'set-this-value-in-secrets.env'
 ################################################################################
 DEBUG = False
 SERVE_STATIC = False
-DEFAULT_HOST = 'hut.zalad.io'
+DEFAULT_HOST = 'localhost'
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1']
 DEFAULT_HTTP_PROTOCOL = 'http'
+DEFAULT_HTTP_PORT = 8000
 SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
@@ -65,7 +66,6 @@ GRAPHENE = {
     'SCHEMA': 'penny.root_schema.schema',
     'MIDDLEWARE': []
 }
-ENDPOINT = 'http://127.0.0.1:8000/gql'
 
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
@@ -141,7 +141,6 @@ SENTRY_PROJECT_ID = _PLACEHOLDER_FOR_UNSET
 SENTRY_DSN_KEY = _PLACEHOLDER_FOR_UNSET
 SENTRY_DSN_SECRET = _PLACEHOLDER_FOR_UNSET
 
-
 ZULIP_SERVER = 'https://monadical.zulip.sweeting.me/api'
 ZULIP_EMAIL = 'prod-events-bot@monadical.zulip.sweeting.me'
 ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
@@ -215,9 +214,10 @@ SECURE_SETTINGS_SOURCES = (ENV_SECRETS_FILE, 'os.environ')
 SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
-    'MAILGUN_API_KEY',
-    'ZULIP_API_KEY',
-    'SENTRY_DSN_KEY',
+    'GOOGLE_MAP_API_KEY',
+    #'MAILGUN_API_KEY',
+    #'ZULIP_API_KEY',
+    #'SENTRY_DSN_KEY',
 )
 
 ################################################################################
@@ -229,6 +229,7 @@ CACHES_DIR = os.path.join(DATA_DIR, 'caches')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 STATICFILES_DIR = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(DATA_DIR, 'media')
+STATIC_ROOT = os.path.join(DATA_DIR, 'static')
 
 LOGS_DIR = os.path.join(DATA_DIR, 'logs')
 RELOADS_LOGS = os.path.join(LOGS_DIR, 'reloads.log')
@@ -244,6 +245,7 @@ DATA_DIRS = [
 ### Django Core Setup
 ################################################################################
 BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
+ENDPOINT = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}/gql'
 
 AUTH_USER_MODEL = 'penny.User'
 ROOT_URLCONF = 'penny.urls'

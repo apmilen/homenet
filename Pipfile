@@ -28,6 +28,7 @@ django-cors-headers = "*"
 django-map-widgets = "*"
 pillow = "*"
 django-bootstrap4 = "*"
+ipython = "*"
 django-select2 = "*"
 
 [requires]
