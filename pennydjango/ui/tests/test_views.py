@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from penny.models import User
 from rentals.tests.test_utils import SimpleRentTest
-from rentals.forms import CreateRentPropertyForm
+from rentals.forms import RentPropertyForm
 
 
 class SimpleViewTest(TestCase):
@@ -91,7 +91,7 @@ class RentPropertyTest(SimpleRentTest):
         self.assertEqual(response.status_code, 200)
 
     def test_form(self):
-        form = CreateRentPropertyForm({
+        form = RentPropertyForm({
             'is_listed': True,
             'price': 999,
             'contact': 'bob at 018000-marley',

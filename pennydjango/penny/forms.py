@@ -48,7 +48,9 @@ class AvailabilityForm(forms.ModelForm):
 
     class Meta:
         model = Availability
-        exclude = ("agent", )
+        fields = (
+            "neighborhood", "start_day", "end_day", "start_time", "end_time"
+        )
         widgets = {
             'neighborhood': Select2Widget
         }

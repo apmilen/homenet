@@ -6,9 +6,8 @@ from django.contrib import admin
 from django.contrib.admin.widgets import AdminFileWidget
 from django.utils.safestring import mark_safe
 
-from penny.widgets import TaggitInput, GooglePointFieldWidgetJQuery
-from .models import RentProperty, RentPropertyImage
-from .forms import CreateRentPropertyForm
+from rentals.models import RentProperty, RentPropertyImage
+from rentals.forms import RentPropertyForm
 
 
 class AdminImageWidget(AdminFileWidget):
@@ -50,18 +49,8 @@ class AdminImageWidget(AdminFileWidget):
                 </a>
             ''')
 
-        output.append(super(AdminFileWidget, self).render(
-            name, value, attrs, renderer
-        ))
+        output.append(super().render(name, value, attrs, renderer))
         return mark_safe(u''.join(output))
-
-
-class RentPropertyForm(CreateRentPropertyForm):
-    class Meta(CreateRentPropertyForm.Meta):
-        widgets = {
-            'geopoint': GooglePointFieldWidgetJQuery,
-            'amenities': TaggitInput
-        }
 
 
 class RentPropertyImageInline(admin.TabularInline):

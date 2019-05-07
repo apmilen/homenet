@@ -2,7 +2,7 @@ import json
 import graphene
 
 from .queries import RentPropertyType
-from .forms import CreateRentPropertyForm
+from rentals.forms import RentPropertyForm
 
 
 class RentPropertyInput(graphene.InputObjectType):
@@ -32,7 +32,7 @@ class CreateRentPropertyMutation(graphene.relay.ClientIDMutation):
             return CreateRentPropertyMutation(status=403)
 
         data = kwargs.get("rentproperty")
-        form = CreateRentPropertyForm(data=data)
+        form = RentPropertyForm(data=data)
         # Here we would usually use Django forms to validate the input
         if not form.is_valid():
             return CreateRentPropertyMutation(
