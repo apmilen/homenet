@@ -19,6 +19,7 @@ class RentPropertyForm(forms.ModelForm):
             "bedrooms", "baths", "pets_allowed", "amenities"
         )
         widgets = {
+            'address': forms.HiddenInput(),
             'geopoint': GooglePointFieldWidgetJQuery,
             'amenities': TaggitInput
         }
