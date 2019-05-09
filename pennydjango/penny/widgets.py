@@ -16,6 +16,7 @@ class GooglePointFieldWidgetJQuery(GooglePointFieldWidget):
 
         js = [
             "js/jquery-3.2.1.min.js",
+            "js/mw-custom-utils.js",
             "https://maps.googleapis.com/maps/api/js?libraries=places&language={}&key={}".format(
                 mw_settings.LANGUAGE, mw_settings.GOOGLE_MAP_API_KEY
             )
