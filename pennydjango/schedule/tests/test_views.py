@@ -3,9 +3,10 @@ import random
 from django.urls import reverse
 from django.test import TestCase
 
-from penny.models import User, Availability
 from penny.constants import NEIGHBORHOODS, DAYS
-from penny.forms import AvailabilityForm
+from penny.models import User
+from schedule.models import Availability
+from schedule.forms import AvailabilityForm
 
 
 class ScheduleTests(TestCase):
@@ -47,12 +48,12 @@ class ScheduleTests(TestCase):
     def test_view(self):
         response = self.client.post(reverse('schedule'))
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/accounts/login/?next=/schedule")
+        self.assertEqual(response.url, "/accounts/login/?next=/schedule/")
 
         self.client.login(username='test_pub', password='alalalalong')
         response = self.client.post(reverse('schedule'), self.form_data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/schedule")
+        self.assertEqual(response.url, "/schedule/")
 
         obj = Availability.objects.get()
         self.assertEqual(obj.agent.username, self.test_user.username)
