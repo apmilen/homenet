@@ -5,7 +5,7 @@ from django.utils.functional import cached_property
 from django.contrib.auth.models import AbstractUser, UserManager
 
 from penny.model_utils import BaseModel
-from penny.constants import DEFAUL_AVATAR, NEIGHBORHOODS, DAYS
+from penny.constants import DEFAUL_AVATAR, NEIGHBORHOODS, DAYS, USER_TYPE
 from penny.utils import avatar_path, validate_file_size
 
 
@@ -35,11 +35,25 @@ class User(AbstractUser, BaseModel):
         blank=True, null=True
     )
 
+    user_type = models.CharField(max_length=255, choices=USER_TYPE)
+
     @cached_property
     def avatar_url(self):
         if self.avatar:
             return self.avatar.url
         return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
+
+    def __getattr__(self, name):
+        """
+        Used to compute an attribute starting with 'is_user_' followed by a
+        user type, returning True if the user is that type, False otherwise
+        :param name: attribute name starting with 'is_user_'
+        :return: Boolean True if is the specified user type
+        """
+        if name.startswith('is_user_'):
+            usertype = name[8:]
+            return usertype == str(self.user_type)
+        raise AttributeError(f"{self} object has not attribute '{name}'")
 
 
 class Availability(BaseModel):
