@@ -41,6 +41,25 @@ class User(AbstractUser, BaseModel):
             return self.avatar.url
         return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
 
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'email',
+                'username',
+                'first_name',
+                'last_name',
+                'date_joined',
+                'avatar_url',
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'is_authenticated',
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
+
 
 class Availability(BaseModel):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
