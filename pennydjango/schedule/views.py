@@ -15,8 +15,7 @@ class Schedule(LoginRequiredMixin, BaseContextMixin, FormMixin, ListView):
     template_name = 'penny/schedule.html'
 
     def get_queryset(self):
-        # return Availability.objects.filter(agent=self.request.user)
-        return Availability.objects.all()
+        return Availability.objects.filter(agent=self.request.user)
 
     def context(self, request, *args, **kwargs):
         return {'form': self.get_form()}
