@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import FormControl from 'react-bootstrap/FormControl'
+
 import {tooltip} from '@/util/dom'
 
 
@@ -20,22 +22,49 @@ class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            hover_address: null
+            searching_text: '',
+            hover_address: props.listings[0].address
         }
     }
     hoverOn(address) {
         this.setState({hover_address: address})
     }
-    
-    render() {
+    searching(e) {
+        this.setState({searching_text: e.target.value})
+    }
+    filteredListings() {
         const {listings} = this.props
+        let filtered_listings = listings
+
+        const query = this.state.searching_text.toLowerCase()
+
+        filtered_listings = filtered_listings.filter(
+            listing => (
+                listing.address.toLowerCase().includes(query)
+                || listing.about.toLowerCase().includes(query)
+                || listing.amenities.toLowerCase().includes(query)
+            )
+        )
+
+        return filtered_listings
+    }
+    render() {
+        const filtered_listings = this.filteredListings()
         const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
-        return (
-            <div class="row main-content-row">
+        return <div class="content-wrapper">
+            <div class="row filters-bar">
+                <FormControl id='search-input'
+                             type='text'
+                             value={this.state.searching_text}
+                             placeholder='Search for something you like :)'
+                             onChange={::this.searching} />
+
+            </div>
+            <div class="row">
                 <div class="col-md-6 main-scroll">
                     <div class="row">
-                        {listings.map(listing =>
+                        {filtered_listings.map(listing =>
                             <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"
                                  onMouseEnter={() => {this.hoverOn(listing.address)}}>
                                 <div class="card-post__image text-center">
@@ -84,7 +113,7 @@ class Listings extends React.Component {
                     <MapPanel address={this.state.hover_address}/>
                 </div>
             </div>
-        )
+        </div>
     }
 }
 

@@ -9,6 +9,11 @@
     overflow-y: auto;
 }
 
+.content-wrapper {
+    display: flex;
+    flex-flow: column;
+}
+
 /* Nav bars */
 div.circle-avatar{
     padding-top:100%;
@@ -21,6 +26,10 @@ div.circle-avatar{
 }
 .dropdown-toggle.no-caret::after {
     display:none;
+}
+.filters-bar {
+    margin: auto;
+    padding: 5px;
 }
 
 /* Cards */
