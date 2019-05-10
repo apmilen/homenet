@@ -62,11 +62,6 @@ MAX_FILE_SIZE = 10485760  # 10MB
 SITE_ID = 1
 
 WSGI_APPLICATION = 'penny.wsgi.application'
-GRAPHENE = {
-    'SCHEMA': 'penny.root_schema.schema',
-    'MIDDLEWARE': []
-}
-
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
 IPYTHON_ARGUMENTS = ['--no-confirm-exit', '--no-banner']
@@ -257,16 +252,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'graphene_django',
     'corsheaders',
-
     'penny',
     'rentals',
     'ui',
+    'schedule',
     'mapwidgets',
     'bootstrap4',
     'django_select2',
 ]
+
 MIDDLEWARE = [
     'penny.middleware.http2_middleware.HTTP2PushMiddleware',
     'penny.middleware.x_forwarded_for.XForwardedForMiddleware',
@@ -367,7 +362,6 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    GRAPHENE["MIDDLEWARE"] = ['graphene_django.debug.DjangoDebugMiddleware']
 
 # Assertions about the environment
 

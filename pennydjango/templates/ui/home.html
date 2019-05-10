@@ -7,44 +7,39 @@
       <div class="row">
         {% for obj in object_list %}
           <div class="col-lg-6 col-md-12 p-1">
-            <div class="card card-smallcard-post card-post--1 card-listing">
-              <div class="card-post__image text-center">
-                <img class="box-wd" src="{{ obj.default_image }}">
-                {% if request.user and request.user.is_staff %}
-                  <a class="card-post__category left-badge badge badge-pill badge-info"
-                     href="{% url 'admin:rentals_rentproperty_change' obj.id %}">
-                    <i  class="material-icons">edit</i>
-                    Edit
-                  </a>
-                {% endif %}
-                <span class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</span>
+
+            <a href="{% url 'listing_detail' pk=obj.pk %}">
+              <div class="card card-smallcard-post card-post--1 card-listing">
+                <div class="card-post__image text-center">
+                  <img class="box-wd" src="{{ obj.default_image }}">
+                  <span class="card-post__category badge badge-pill badge-dark">${{ obj.price }}</span>
+                </div>
+                <div class="card-body p-0 text-center">
+                  <table class="table mb-0 listing-info">
+                    <tbody>
+                    <tr>
+                      <td class="wrap-info" data-toggle="tooltip"
+                          title="{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath">
+                        {{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
+                      </td>
+                      <td class="wrap-info" colspan="2" data-toggle="tooltip"
+                          title="{{ obj.address }}">
+                        {{ obj.address|truncatechars:20 }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}</td>
+                      <td>
+                        <i class="material-icons">place</i>
+                        Map
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              <div class="card-body p-0 text-center">
-                <table class="table mb-0 listing-info">
-                  <tbody>
-                  <tr>
-                    <td class="wrap-info" data-toggle="tooltip"
-                        title="{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath">
-                      {{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
-                    </td>
-                    <td class="wrap-info" colspan="2" data-toggle="tooltip"
-                        title="{{ obj.address }}">
-                      {{ obj.address|truncatechars:20 }}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}</td>
-                    <td>
-                      <a href="{% url 'listing_detail' pk=obj.pk %}">
-                        <i class="material-icons">home</i>
-                        Detail
-                      </a>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+
+            </a>
           </div>
         {% empty %}
           <div class=" col-md-6 p-0">
