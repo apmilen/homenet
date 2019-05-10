@@ -13,6 +13,10 @@ class CustomUserCreationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
+        if not email:
+            raise ValidationError(
+                'Email cannot be empty'
+            )
         if User.objects.filter(email=email).exists():
             raise ValidationError(
                 'That email is already in use with a different account'

@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import PasswordChangeForm
 
+from penny.constants import CLIENT_TYPE
 from penny.models import User
 from penny.forms import CustomUserCreationForm, UserProfileForm
 
@@ -19,7 +20,9 @@ class Signup(CreateView):
     success_url = '/'
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        self.object.user_type = CLIENT_TYPE
+        self.object.save()
         login(self.request, self.object)
         return HttpResponseRedirect(self.get_success_url())
 

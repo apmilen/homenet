@@ -2,14 +2,14 @@ from django.urls import reverse
 from django.http import Http404
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormMixin, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
+from penny.mixins import AgentRequiredMixin
 from schedule.models import Availability
 from schedule.forms import AvailabilityForm
 from ui.views.base_views import BaseContextMixin
 
 
-class Schedule(LoginRequiredMixin, BaseContextMixin, FormMixin, ListView):
+class Schedule(AgentRequiredMixin, BaseContextMixin, FormMixin, ListView):
     title = 'Schedule'
     form_class = AvailabilityForm
     template_name = 'penny/schedule.html'
@@ -35,14 +35,14 @@ class Schedule(LoginRequiredMixin, BaseContextMixin, FormMixin, ListView):
             return self.form_invalid(form)
 
 
-class ScheduleDelete(LoginRequiredMixin, DeleteView):
+class ScheduleDelete(AgentRequiredMixin, DeleteView):
     model = Availability
 
     def get_success_url(self):
         return reverse('schedule')
 
     def get_object(self, queryset=None):
-        obj = super().get_object()
+        obj = super().get_object(queryset=queryset)
         if not obj.agent == self.request.user:
             raise Http404
         return obj
