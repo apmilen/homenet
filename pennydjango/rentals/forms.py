@@ -9,6 +9,7 @@ class RentPropertyForm(forms.ModelForm):
     is_listed = forms.BooleanField(
         label="Show listing",
         initial=True,
+        required=False,
         help_text="Uncheck to make it private (draft)."
     )
 
