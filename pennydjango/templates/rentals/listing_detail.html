@@ -31,6 +31,13 @@
           <span class="sr-only">Next</span>
         </a>
       </div>
+{#        {% if request.user.is_authenticated and request.user.perms.has_admin_access %}#}
+{#          <a class="card-post__category left-badge badge badge-pill badge-info"#}
+{#             href="{% url 'admin:rentals_rentproperty_change' object.id %}">#}
+{#            <i  class="material-icons">edit</i>#}
+{#            Edit#}
+{#          </a>#}
+{#        {% endif %}#}
       <div class="card card-smallcard-post card-post--1 card-listing">
         <div class="card-body p-0 text-center row m-0">
           <div class="col-4 wrap-info p-0 pt-2 pb-2  border border"
