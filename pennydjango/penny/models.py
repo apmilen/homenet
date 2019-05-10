@@ -105,26 +105,13 @@ class PermissionManager:
         self.user = user
 
     def has_admin_access(self):
-        return any([
-            self.user.is_superuser,
-            self.user.is_user_admin
-        ])
+        return self.user.is_superuser or self.user.is_user_admin
 
     def has_agent_access(self):
-        return any([
-            self.has_admin_access(),
-            self.user.is_user_agent
-        ])
+        return self.user.is_user_agent or self.has_admin_access()
 
     def has_client_access(self):
-        return any([
-            self.has_admin_access(),
-            self.user.is_user_client
-        ])
+        return self.user.is_user_client or self.has_admin_access()
 
     def has_client_or_agent_access(self):
-        return any([
-            self.has_admin_access(),
-            self.user.is_user_agent,
-            self.user.is_user_client
-        ])
+        return self.has_client_access() or self.has_agent_access()
