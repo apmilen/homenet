@@ -3,7 +3,7 @@ import random
 from django.urls import reverse
 from django.test import TestCase
 
-from penny.constants import NEIGHBORHOODS, DAYS
+from penny.constants import NEIGHBORHOODS, DAYS, AGENT_TYPE, CLIENT_TYPE
 from penny.models import User
 from schedule.models import Availability
 from schedule.forms import AvailabilityForm
@@ -14,12 +14,20 @@ class ScheduleTests(TestCase):
         self.test_user = User.objects.create_user(
             email='test@test.com',
             username='test_pub',
-            password='alalalalong'
+            password='test',
+            user_type=AGENT_TYPE
         )
         self.test_user_2 = User.objects.create_user(
             email='test2@test.com',
             username='test_pub2',
-            password='alalalalong'
+            password='test',
+            user_type=AGENT_TYPE
+        )
+        self.test_user_3 = User.objects.create_user(
+            email='test3@test.com',
+            username='test_pub3',
+            password='test',
+            user_type=CLIENT_TYPE
         )
         self.form_data = {
             'neighborhood': random.choice(random.choice(NEIGHBORHOODS)[1])[0],
@@ -45,12 +53,20 @@ class ScheduleTests(TestCase):
         error_keys = {'neighborhood', 'start_day', 'end_day', 'end_time'}
         assert error_keys.issubset(form2.errors)
 
-    def test_view(self):
+    def test_view_post(self):
+        # non logged in
         response = self.client.post(reverse('schedule'))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/accounts/login/?next=/schedule/")
 
-        self.client.login(username='test_pub', password='alalalalong')
+        # Client logged in
+        self.client.login(username='test_pub3', password='test')
+        response = self.client.post(reverse('schedule'))
+        self.assertEqual(response.status_code, 403)
+        self.client.logout()
+
+        # Agent logged in
+        self.client.login(username='test_pub', password='test')
         response = self.client.post(reverse('schedule'), self.form_data)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, "/schedule/")
@@ -61,9 +77,12 @@ class ScheduleTests(TestCase):
         self.assertEqual(obj.start_day, self.form_data['start_day'])
         self.assertEqual(obj.end_day, self.form_data['end_day'])
         self.assertEqual(
-            obj.start_time.strftime('%H:%M'), self.form_data['start_time'])
+            obj.start_time.strftime('%H:%M'), self.form_data['start_time']
+        )
         self.assertEqual(
-            obj.end_time.strftime('%H:%M'), self.form_data['end_time'])
+            obj.end_time.strftime('%H:%M'), self.form_data['end_time']
+        )
+        self.assertEqual(obj.agent_id, self.test_user.id)
 
     def test_delete(self):
         obj = Availability.objects.create(
@@ -71,20 +90,28 @@ class ScheduleTests(TestCase):
 
         response = self.client.post(reverse('schedule-delete', args=[obj.id]))
         self.assertEqual(response.status_code, 302)
-        assert Availability.objects.filter(id=obj.id).exists()
+        self.assertTrue(Availability.objects.filter(id=obj.id).exists())
 
+        # non logged in
         self.client.login(
-            username=self.test_user_2.username, password='alalalalong')
+            username=self.test_user_2.username, password='test')
         response = self.client.post(reverse('schedule-delete', args=[obj.id]))
         self.assertEqual(response.status_code, 404)
-        assert Availability.objects.filter(id=obj.id).exists()
+        self.assertTrue(Availability.objects.filter(id=obj.id).exists())
 
+        # Client logged in
+        self.client.login(username='test_pub3', password='test')
+        response = self.client.post(reverse('schedule-delete', args=[obj.id]))
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Availability.objects.filter(id=obj.id).exists())
         self.client.logout()
+
+        # Agent logged in
         self.client.login(
-            username=self.test_user.username, password='alalalalong')
+            username=self.test_user.username, password='test')
         response = self.client.post(reverse('schedule-delete', args=[obj.id]))
         self.assertEqual(response.status_code, 302)
-        assert not Availability.objects.filter(id=obj.id).exists()
+        self.assertFalse(Availability.objects.filter(id=obj.id).exists())
 
     def tearDown(self):
         User.objects.all().delete()

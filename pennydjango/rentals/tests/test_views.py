@@ -12,9 +12,9 @@ class DetailListingTest(SimpleRentTest):
         response = self.client.get(reverse('listing_detail',
                                            kwargs={'pk': p_id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)
+        # Logged in
         self.client.login(username=self.test_user.username,
                           password='correcthorsebatterystaple')
-        # Logged in
         response = self.client.get(reverse('listing_detail',
                                            kwargs={'pk': p_id}))
         self.assertEqual(response.status_code, HTTPStatus.OK)

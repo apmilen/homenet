@@ -226,8 +226,12 @@ NEIGHBORHOODS = (
 DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday',
         'Friday', 'Saturday', 'Sunday']
 
+ADMIN_TYPE = 'admin'
+AGENT_TYPE = 'agent'
+CLIENT_TYPE = 'client'
+
 USER_TYPE = (
-    ('admin', 'Admin'),
-    ('agent', 'Agent'),
-    ('client', 'Client')
+    (ADMIN_TYPE, 'Admin'),
+    (AGENT_TYPE, 'Agent'),
+    (CLIENT_TYPE, 'Client')
 )
