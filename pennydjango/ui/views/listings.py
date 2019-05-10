@@ -34,7 +34,8 @@ class Listings(PublicReactView):
                 'pets_allowed': 'Yes' if rp.pets_allowed else 'No',
                 'amenities': rp.amenities_list,
                 'detail_link': reverse('listing_detail', args=[str(rp.id)]),
-                'edit_link': reverse('admin:rentals_rentproperty_change', args=[str(rp.id)])
+                'edit_link': reverse(
+                    'admin:rentals_rentproperty_change', args=[str(rp.id)])
             } for rp in rent_properties
         ]
 
