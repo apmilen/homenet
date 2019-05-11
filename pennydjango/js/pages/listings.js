@@ -2,6 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import FormControl from 'react-bootstrap/FormControl'
+import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
+import InputGroup from 'react-bootstrap/InputGroup'
+import Popover from 'react-bootstrap/Popover'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Container from 'react-bootstrap/Container'
 
 import {tooltip} from '@/util/dom'
 
@@ -22,21 +29,28 @@ class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            searching_text: '',
+            filters: {
+                searching_text: '',
+                price_min: '',
+                price_max: '',
+            },
             hover_address: props.listings[0].address
         }
     }
     hoverOn(address) {
         this.setState({hover_address: address})
     }
-    searching(e) {
-        this.setState({searching_text: e.target.value})
+    filtering(e) {
+        let {filters} = this.state
+        filters[e.target.id] = e.target.value
+        this.setState(filters)
     }
     filteredListings() {
         const {listings} = this.props
         let filtered_listings = listings
 
-        const query = this.state.searching_text.toLowerCase()
+        const {filters} = this.state
+        const query = filters.searching_text.toLowerCase()
 
         filtered_listings = filtered_listings.filter(
             listing => (
@@ -46,21 +60,61 @@ class Listings extends React.Component {
             )
         )
 
+        filtered_listings = filtered_listings.filter(
+            listing => (
+                listing.price >= (filters.price_min || 0)
+                && listing.price <= (filters.price_max || Infinity)
+            )
+        )
+
         return filtered_listings
     }
     render() {
         const filtered_listings = this.filteredListings()
+        const {filters} = this.state
         const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
         return <div class="content-wrapper">
-            <div class="row filters-bar">
-                <FormControl id='search-input'
-                             type='text'
-                             value={this.state.searching_text}
-                             placeholder='Search for something you like :)'
-                             onChange={::this.searching} />
+            <Container className='filters-bar'>
+                    <Row className="justify-content-md-center">
+                        <Col xs='7' md='5' lg='3'>
+                            <FormControl id='searching_text' size="sm"
+                                         type='text'
+                                         value={filters.searching_text}
+                                         placeholder='Search for something you like :)'
+                                         onChange={::this.filtering} />
+                        </Col>
+                        <Col xs='5' md='4' lg='3'>
+                            <OverlayTrigger trigger="click"
+                                            placement='bottom'
+                                            overlay={
+                                <Popover title='Type range'>
+                                    <Row>
+                                        <InputGroup>
+                                            <InputGroup.Text>Min:</InputGroup.Text>
+                                            <FormControl id='price_min' xs='3'
+                                                         type='number' min='0'
+                                                         value={filters.price_min}
+                                                         onChange={::this.filtering}
+                                                         placeholder='0'/>&nbsp;
 
-            </div>
+                                            <InputGroup.Text>Max:</InputGroup.Text>
+                                            <FormControl id='price_max' xs='3'
+                                                         type='number' min='0'
+                                                         value={filters.price_max}
+                                                         onChange={::this.filtering}
+                                                         placeholder='9999'/>
+                                        </InputGroup>
+                                    </Row>
+                                </Popover>
+                            }>
+                                <Button variant="outline-secondary" size="sm">
+                                    Price {filters.price_min} {filters.price_max}
+                                </Button>
+                            </OverlayTrigger>
+                        </Col>
+                    </Row>
+            </Container>
             <div class="row">
                 <div class="col-md-6 main-scroll">
                     <div class="row">
