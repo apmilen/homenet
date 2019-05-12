@@ -1,16 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import FormControl from 'react-bootstrap/FormControl'
-import Button from 'react-bootstrap/Button'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import InputGroup from 'react-bootstrap/InputGroup'
-import Popover from 'react-bootstrap/Popover'
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
-import Container from 'react-bootstrap/Container'
+import {
+    FormControl, Row, InputGroup, Container, ButtonToolbar, DropdownButton
+} from 'react-bootstrap'
 
 import {tooltip} from '@/util/dom'
+
+
+const FILTER_N_BEDS = [1, 2, 3, 4]
+const FILTER_MAX_N_BEDS = FILTER_N_BEDS.slice(-1)[0]
 
 
 class MapPanel extends React.Component {
@@ -33,6 +32,7 @@ class Listings extends React.Component {
                 searching_text: '',
                 price_min: '',
                 price_max: '',
+                beds: new Set(FILTER_N_BEDS),
             },
             hover_address: props.listings[0].address
         }
@@ -43,6 +43,15 @@ class Listings extends React.Component {
     filtering(e) {
         let {filters} = this.state
         filters[e.target.id] = e.target.value
+        this.setState(filters)
+    }
+    filterBeds(e) {
+        let {filters} = this.state
+        const num = parseInt(e.target.getAttribute('data-value'))
+        if (filters.beds.has(num))
+            filters.beds.delete(num)
+        else
+            filters.beds.add(num)
         this.setState(filters)
     }
     filteredListings() {
@@ -67,6 +76,13 @@ class Listings extends React.Component {
             )
         )
 
+        filtered_listings = filtered_listings.filter(
+            listing => (
+                filters.beds.has(listing.bedrooms)
+                || (filters.beds.has(FILTER_MAX_N_BEDS) && listing.bedrooms >= FILTER_MAX_N_BEDS)
+            )
+        )
+
         return filtered_listings
     }
     render() {
@@ -77,46 +93,52 @@ class Listings extends React.Component {
         return <div class="content-wrapper">
             <Container className='filters-bar'>
                     <Row className="justify-content-md-center">
-                        <Col xs='7' md='5' lg='3'>
-                            <FormControl id='searching_text' size="sm"
-                                         type='text'
-                                         value={filters.searching_text}
-                                         placeholder='Search for something you like :)'
-                                         onChange={::this.filtering} />
-                        </Col>
-                        <Col xs='5' md='4' lg='3'>
-                            <OverlayTrigger trigger="click"
-                                            placement='bottom'
-                                            overlay={
-                                <Popover title='Type range'>
-                                    <Row>
-                                        <InputGroup>
-                                            <InputGroup.Text>Min:</InputGroup.Text>
-                                            <FormControl id='price_min' xs='3'
-                                                         type='number' min='0'
-                                                         value={filters.price_min}
-                                                         onChange={::this.filtering}
-                                                         placeholder='0'/>&nbsp;
 
-                                            <InputGroup.Text>Max:</InputGroup.Text>
-                                            <FormControl id='price_max' xs='3'
-                                                         type='number' min='0'
-                                                         value={filters.price_max}
-                                                         onChange={::this.filtering}
-                                                         placeholder='9999'/>
-                                        </InputGroup>
-                                    </Row>
-                                </Popover>
-                            }>
-                                <Button variant="outline-secondary" size="sm">
-                                    Price {filters.price_min} {filters.price_max}
-                                </Button>
-                            </OverlayTrigger>
-                        </Col>
+                        <ButtonToolbar>
+                            <div style={{width: '20vh'}}>
+                                <FormControl id='searching_text' size="sm"
+                                             type='text'
+                                             value={filters.searching_text}
+                                             placeholder='Search for something you like :)'
+                                             onChange={::this.filtering} />
+                            </div>&nbsp;
+                            <DropdownButton title='Price'>
+                                <Container style={{width: 300}}>
+                                    <InputGroup>
+                                        <InputGroup.Text>Min:</InputGroup.Text>
+                                        <FormControl id='price_min' xs='3' step='100'
+                                                     type='number' min='0'
+                                                     value={filters.price_min}
+                                                     onChange={::this.filtering}
+                                                     placeholder='0'/>&nbsp;
+
+                                        <InputGroup.Text>Max:</InputGroup.Text>
+                                        <FormControl id='price_max' xs='3' step='100'
+                                                     type='number' min='0'
+                                                     value={filters.price_max}
+                                                     onChange={::this.filtering}
+                                                     placeholder='9999'/>
+                                    </InputGroup>
+                                </Container>
+                            </DropdownButton>
+                            &nbsp;
+                            <DropdownButton title='Bedrooms'>
+                                <div className='beds-container'>
+                                    {FILTER_N_BEDS.map(n_beds =>
+                                        <div data-value={n_beds}
+                                             className={`bed-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
+                                             onClick={::this.filterBeds}>
+                                            {n_beds}{n_beds == FILTER_N_BEDS.slice(-1)[0] && '+'}
+                                        </div>
+                                    )}
+                                </div>
+                            </DropdownButton>
+                        </ButtonToolbar>
                     </Row>
             </Container>
             <div class="row">
                 <div class="col-md-6 main-scroll">
+                    <center><h6>{filtered_listings.length} results</h6></center>
                     <div class="row">
                         {filtered_listings.map(listing =>
                             <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"

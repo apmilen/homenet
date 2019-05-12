@@ -30,6 +30,23 @@ div.circle-avatar{
 .filters-bar {
     padding: 5px;
 }
+.beds-container {
+    padding: 3px;
+    display: flex;
+    flex-direction: row;
+}
+.bed-div {
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    color: #000000bd;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+.bed-div.selected {
+    background-color: #679df6;
+}
 
 /* Cards */
 .card.card-listing {
