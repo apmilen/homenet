@@ -11,6 +11,9 @@ import {tooltip} from '@/util/dom'
 const FILTER_N_BEDS = [1, 2, 3, 4]
 const FILTER_MAX_N_BEDS = FILTER_N_BEDS.slice(-1)[0]
 
+const FILTER_N_BATHS = [0, 1, 2, 3]
+const FILTER_MAX_N_BATHS = FILTER_N_BATHS.slice(-1)[0]
+
 
 class MapPanel extends React.Component {
     render() {
@@ -33,6 +36,7 @@ class Listings extends React.Component {
                 price_min: '',
                 price_max: '',
                 beds: new Set(FILTER_N_BEDS),
+                baths: new Set(FILTER_N_BATHS),
             },
             hover_address: props.listings[0].address
         }
@@ -45,13 +49,14 @@ class Listings extends React.Component {
         filters[e.target.id] = e.target.value
         this.setState(filters)
     }
-    filterBeds(e) {
+    filterRooms(e) {
         let {filters} = this.state
         const num = parseInt(e.target.getAttribute('data-value'))
-        if (filters.beds.has(num))
-            filters.beds.delete(num)
+        const room_type = e.target.getAttribute('data-name')
+        if (filters[room_type].has(num))
+            filters[room_type].delete(num)
         else
-            filters.beds.add(num)
+            filters[room_type].add(num)
         this.setState(filters)
     }
     filteredListings() {
@@ -83,6 +88,13 @@ class Listings extends React.Component {
             )
         )
 
+        filtered_listings = filtered_listings.filter(
+            listing => (
+                filters.baths.has(listing.baths)
+                || (filters.baths.has(FILTER_MAX_N_BATHS) && listing.baths >= FILTER_MAX_N_BATHS)
+            )
+        )
+
         return filtered_listings
     }
     render() {
@@ -107,14 +119,14 @@ class Listings extends React.Component {
                                     <InputGroup>
                                         <InputGroup.Text>Min:</InputGroup.Text>
                                         <FormControl id='price_min' xs='3' step='100'
-                                                     type='number' min='0'
+                                                     type='number' min='0' max={filters.price_max}
                                                      value={filters.price_min}
                                                      onChange={::this.filtering}
                                                      placeholder='0'/>&nbsp;
 
                                         <InputGroup.Text>Max:</InputGroup.Text>
                                         <FormControl id='price_max' xs='3' step='100'
-                                                     type='number' min='0'
+                                                     type='number' min={filters.price_min}
                                                      value={filters.price_max}
                                                      onChange={::this.filtering}
                                                      placeholder='9999'/>
@@ -123,12 +135,24 @@ class Listings extends React.Component {
                             </DropdownButton>
                             &nbsp;
                             <DropdownButton title='Bedrooms'>
-                                <div className='beds-container'>
+                                <div className='rooms-container'>
                                     {FILTER_N_BEDS.map(n_beds =>
-                                        <div data-value={n_beds}
-                                             className={`bed-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
-                                             onClick={::this.filterBeds}>
+                                        <div data-value={n_beds} data-name='beds'
+                                             className={`room-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
+                                             onClick={::this.filterRooms}>
                                             {n_beds}{n_beds == FILTER_N_BEDS.slice(-1)[0] && '+'}
+                                        </div>
+                                    )}
+                                </div>
+                            </DropdownButton>
+                            &nbsp;
+                            <DropdownButton title='Baths'>
+                                <div className='rooms-container'>
+                                    {FILTER_N_BATHS.map(n_baths =>
+                                        <div data-value={n_baths} data-name='baths'
+                                             className={`room-div ${filters.baths.has(n_baths) ? 'selected' : ''}`}
+                                             onClick={::this.filterRooms}>
+                                            {n_baths}{n_baths == FILTER_N_BATHS.slice(-1)[0] && '+'}
                                         </div>
                                     )}
                                 </div>

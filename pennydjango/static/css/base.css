@@ -30,12 +30,12 @@ div.circle-avatar{
 .filters-bar {
     padding: 5px;
 }
-.beds-container {
+.rooms-container {
     padding: 3px;
     display: flex;
     flex-direction: row;
 }
-.bed-div {
+.room-div {
     width: 100%;
     height: 100%;
     padding: 6px;
@@ -44,7 +44,7 @@ div.circle-avatar{
     user-select: none;
     cursor: pointer;
 }
-.bed-div.selected {
+.room-div.selected {
     background-color: #679df6;
 }
 
