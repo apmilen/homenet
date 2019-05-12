@@ -30,7 +30,7 @@ class Listings(PublicReactView):
                 'about': rp.about,
                 'bedrooms': rp.bedrooms,
                 'baths': rp.baths,
-                'pets_allowed': 'Yes' if rp.pets_allowed else 'No',
+                'pets_allowed': rp.pets_allowed,
                 'amenities': rp.amenities,
                 'detail_link': reverse('listing_detail', args=[str(rp.id)]),
                 'edit_link': reverse(
