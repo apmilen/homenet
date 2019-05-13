@@ -1,6 +1,7 @@
 import re
 
 from django.conf import settings
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.functional import cached_property
@@ -53,6 +54,36 @@ class RentProperty(BaseModel):
     @cached_property
     def amenities_list(self):
         return self.amenities.split(",")
+
+    @cached_property
+    def detail_link(self):
+        return reverse('listing_detail', args=[str(self.id)])
+
+    @cached_property
+    def edit_link(self):
+        return reverse(
+            'admin:rentals_rentproperty_change', args=[str(self.id)])
+
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'default_image',
+                'price',
+                'contact',
+                'address',
+                'latitude',
+                'longitude',
+                'about',
+                'bedrooms',
+                'baths',
+                'pets_allowed',
+                'amenities',
+                'detail_link',
+                'edit_link',
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
 
 
 class RentPropertyImage(BaseModel):

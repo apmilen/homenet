@@ -1,4 +1,3 @@
-from django.urls import reverse
 from django.views.generic import DetailView
 
 from rentals.models import RentProperty
@@ -20,26 +19,9 @@ class Listings(PublicReactView):
             query_filter.update({'address__icontains': search_param})
 
         rent_properties = RentProperty.objects.filter(**query_filter)
-        listings = [
-            {
-                'default_image': rp.default_image,
-                'price': rp.price,
-                'contact': rp.contact,
-                'address': rp.address,
-                'coords': ','.join(rp.coords),
-                'about': rp.about,
-                'bedrooms': rp.bedrooms,
-                'baths': rp.baths,
-                'pets_allowed': rp.pets_allowed,
-                'amenities': rp.amenities,
-                'detail_link': reverse('listing_detail', args=[str(rp.id)]),
-                'edit_link': reverse(
-                    'admin:rentals_rentproperty_change', args=[str(rp.id)])
-            } for rp in rent_properties
-        ]
 
         return {
-            'listings': listings
+            'listings': [rp.__json__() for rp in rent_properties]
         }
 
 
