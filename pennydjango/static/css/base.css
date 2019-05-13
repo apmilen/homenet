@@ -58,6 +58,18 @@ div.circle-avatar{
 .card span.badge.badge-pill {
     font-size: 100%;
 }
+.card-listing .overlay {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+.card-listing a {
+    position:absolute;
+    z-index: 2;
+}
 
 .listing-info .wrap-info{
     white-space: nowrap;

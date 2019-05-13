@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {
-    FormControl, Row, InputGroup, Container, ButtonToolbar, DropdownButton, Button
+    Row, Col, FormControl, InputGroup, Container, ButtonToolbar, DropdownButton, Button
 } from 'react-bootstrap'
 
 import {tooltip} from '@/util/dom'
@@ -24,6 +24,56 @@ class MapPanel extends React.Component {
                 frameborder="0" width="100%" height="100%" scrolling="no"
                 marginheight="0" marginwidth="0"
                 style={{display: 'inline-block'}}></iframe>
+        )
+    }
+}
+
+
+class ListingCard extends React.Component {
+    render() {
+        const {listing, hoverOn} = this.props
+        const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
+
+        return (
+            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"
+                 onMouseEnter={() => {hoverOn(listing.address)}}>
+                <a className="overlay" href={listing.detail_link}></a>
+                <div class="card-post__image text-center">
+                    <img class="box-wd" src={listing.default_image} />
+
+                    {edit_button &&
+                        <a class="card-post__category left-badge badge badge-pill badge-info"
+                           href={listing.edit_link}>
+                            <i  class="material-icons">edit</i>
+                            Edit
+                        </a>
+                    }
+                  
+                    <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+                </div>
+                <div class="card-body p-0 text-center">
+                    <table class="table mb-0 listing-info">
+                        <tbody>
+                            <tr>
+                                <td class="wrap-info"
+                                    {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
+                                    {listing.bedrooms} Beds / {listing.baths} Bath
+                                </td>
+                                <td class="wrap-info" colspan="2"
+                                    {...tooltip(listing.address)}>
+                                    {listing.address}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Pets: {listing.pets_allowed ? 'Yes' : 'No'}</td>
+                                <td>
+                                    <i class="material-icons">place</i>Map
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         )
     }
 }
@@ -119,7 +169,6 @@ class Listings extends React.Component {
     render() {
         const filtered_listings = this.filteredListings()
         const {filters} = this.state
-        const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
         return <div class="content-wrapper">
             <Container className='filters-bar'>
@@ -184,59 +233,19 @@ class Listings extends React.Component {
                         </ButtonToolbar>
                     </Row>
             </Container>
-            <div class="row">
-                <div class="col-md-6 main-scroll">
+            <Row>
+                <Col md='6' className="main-scroll">
                     <center><h6>{filtered_listings.length} results</h6></center>
-                    <div class="row">
+                    <Row>
                         {filtered_listings.map(listing =>
-                            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"
-                                 onMouseEnter={() => {this.hoverOn(listing.address)}}>
-                                <div class="card-post__image text-center">
-                                    <img class="box-wd" src={listing.default_image} />
-
-                                    {edit_button &&
-                                        <a class="card-post__category left-badge badge badge-pill badge-info"
-                                           href={listing.edit_link}>
-                                            <i  class="material-icons">edit</i>
-                                            Edit
-                                        </a>
-                                    }
-                                  
-                                    <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
-                                </div>
-                                <div class="card-body p-0 text-center">
-                                    <table class="table mb-0 listing-info">
-                                        <tbody>
-                                            <tr>
-                                                <td class="wrap-info"
-                                                    {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
-                                                    {listing.bedrooms} Beds / {listing.baths} Bath
-                                                </td>
-                                                <td class="wrap-info" colspan="2"
-                                                    {...tooltip(listing.address)}>
-                                                    {listing.address}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Pets: {listing.pets_allowed ? 'Yes' : 'No'}</td>
-                                                <td>
-                                                    <a href={listing.detail_link}>
-                                                        <i class="material-icons">home</i>
-                                                        Detail
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <ListingCard listing={listing} hoverOn={::this.hoverOn} />
                         )}
-                    </div>
-                </div>
-                <div class="col-md-6 p-0 map-panel">
+                    </Row>
+                </Col>
+                <Col md='6' className="map-panel">
                     <MapPanel address={this.state.hover_address}/>
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
     }
 }
