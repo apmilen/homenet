@@ -17,4 +17,6 @@
   <input type="hidden" name="next"
          value="{{ next|default:'/' }}">
 </form>
+  <hr>
+  <span class="text-center">Don't have a client account yet? <a href="{% url 'signup' %}">Sign up</a> </span>
 {% endblock %}
