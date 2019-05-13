@@ -79,6 +79,95 @@ class ListingCard extends React.Component {
 }
 
 
+class FiltersBar extends React.Component {
+    filtering(e) {
+        let {filters} = this.props
+        filters[e.target.id] = e.target.value
+        this.props.updateFilters(filters)
+    }
+    filterRooms(e) {
+        let {filters} = this.props
+        const num = parseInt(e.target.getAttribute('data-value'))
+        const room_type = e.target.getAttribute('data-name')
+        if (filters[room_type].has(num))
+            filters[room_type].delete(num)
+        else
+            filters[room_type].add(num)
+        this.props.updateFilters(filters)
+    }
+    switchPets(e) {
+        let {filters} = this.props
+        filters.pets_allowed = filters.pets_allowed + 1
+        if(filters.pets_allowed >= FILTER_PETS.length)
+            filters.pets_allowed = 0
+        this.props.updateFilters(filters)
+    }
+    render() {
+        const {filters} = this.props
+
+        return (
+            <div className='filters-bar'>
+                <ButtonToolbar>
+                    <div style={{width: '20vh'}}>
+                        <FormControl id='searching_text' size="sm"
+                                     type='text'
+                                     value={filters.searching_text}
+                                     placeholder='Search for something you like :)'
+                                     onChange={::this.filtering} />
+                    </div>&nbsp;
+                    <DropdownButton title='Price'>
+                        <InputGroup style={{width: 300}}>
+                            <InputGroup.Text>Min:</InputGroup.Text>
+                            <FormControl id='price_min' xs='3' step='100'
+                                         type='number' min='0' max={filters.price_max}
+                                         value={filters.price_min}
+                                         onChange={::this.filtering}
+                                         placeholder='0'/>&nbsp;
+
+                            <InputGroup.Text>Max:</InputGroup.Text>
+                            <FormControl id='price_max' xs='3' step='100'
+                                         type='number' min={filters.price_min}
+                                         value={filters.price_max}
+                                         onChange={::this.filtering}
+                                         placeholder='9999'/>
+                        </InputGroup>
+                    </DropdownButton>
+                    &nbsp;
+                    <DropdownButton title='Bedrooms'>
+                        <div className='rooms-container'>
+                            {FILTER_N_BEDS.map(n_beds =>
+                                <div data-value={n_beds} data-name='beds'
+                                     className={`room-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
+                                     onClick={::this.filterRooms}>
+                                    {n_beds}{n_beds == FILTER_N_BEDS.slice(-1)[0] && '+'}
+                                </div>
+                            )}
+                        </div>
+                    </DropdownButton>
+                    &nbsp;
+                    <DropdownButton title='Baths'>
+                        <div className='rooms-container'>
+                            {FILTER_N_BATHS.map(n_baths =>
+                                <div data-value={n_baths} data-name='baths'
+                                     className={`room-div ${filters.baths.has(n_baths) ? 'selected' : ''}`}
+                                     onClick={::this.filterRooms}>
+                                    {n_baths}{n_baths == FILTER_N_BATHS.slice(-1)[0] && '+'}
+                                </div>
+                            )}
+                        </div>
+                    </DropdownButton>
+                    &nbsp;
+                    <Button variant='primary'
+                            onClick={::this.switchPets}>
+                        Pets: {FILTER_PETS[filters.pets_allowed]}
+                    </Button>
+                </ButtonToolbar>
+            </div>
+        )
+    }
+}
+
+
 class Listings extends React.Component {
     constructor(props) {
         super(props)
@@ -97,26 +186,7 @@ class Listings extends React.Component {
     hoverOn(address) {
         this.setState({hover_address: address})
     }
-    filtering(e) {
-        let {filters} = this.state
-        filters[e.target.id] = e.target.value
-        this.setState(filters)
-    }
-    filterRooms(e) {
-        let {filters} = this.state
-        const num = parseInt(e.target.getAttribute('data-value'))
-        const room_type = e.target.getAttribute('data-name')
-        if (filters[room_type].has(num))
-            filters[room_type].delete(num)
-        else
-            filters[room_type].add(num)
-        this.setState(filters)
-    }
-    switchPets(e) {
-        let {filters} = this.state
-        filters.pets_allowed = filters.pets_allowed + 1
-        if(filters.pets_allowed >= FILTER_PETS.length)
-            filters.pets_allowed = 0
+    updateFilters(filters) {
         this.setState(filters)
     }
     filteredListings() {
@@ -168,67 +238,10 @@ class Listings extends React.Component {
     }
     render() {
         const filtered_listings = this.filteredListings()
-        const {filters} = this.state
 
         return <div class="content-wrapper">
             <Row className="justify-content-md-center">
-                <div className='filters-bar'>
-                    <ButtonToolbar>
-                        <div style={{width: '20vh'}}>
-                            <FormControl id='searching_text' size="sm"
-                                         type='text'
-                                         value={filters.searching_text}
-                                         placeholder='Search for something you like :)'
-                                         onChange={::this.filtering} />
-                        </div>&nbsp;
-                        <DropdownButton title='Price'>
-                            <InputGroup style={{width: 300}}>
-                                <InputGroup.Text>Min:</InputGroup.Text>
-                                <FormControl id='price_min' xs='3' step='100'
-                                             type='number' min='0' max={filters.price_max}
-                                             value={filters.price_min}
-                                             onChange={::this.filtering}
-                                             placeholder='0'/>&nbsp;
-
-                                <InputGroup.Text>Max:</InputGroup.Text>
-                                <FormControl id='price_max' xs='3' step='100'
-                                             type='number' min={filters.price_min}
-                                             value={filters.price_max}
-                                             onChange={::this.filtering}
-                                             placeholder='9999'/>
-                            </InputGroup>
-                        </DropdownButton>
-                        &nbsp;
-                        <DropdownButton title='Bedrooms'>
-                            <div className='rooms-container'>
-                                {FILTER_N_BEDS.map(n_beds =>
-                                    <div data-value={n_beds} data-name='beds'
-                                         className={`room-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
-                                         onClick={::this.filterRooms}>
-                                        {n_beds}{n_beds == FILTER_N_BEDS.slice(-1)[0] && '+'}
-                                    </div>
-                                )}
-                            </div>
-                        </DropdownButton>
-                        &nbsp;
-                        <DropdownButton title='Baths'>
-                            <div className='rooms-container'>
-                                {FILTER_N_BATHS.map(n_baths =>
-                                    <div data-value={n_baths} data-name='baths'
-                                         className={`room-div ${filters.baths.has(n_baths) ? 'selected' : ''}`}
-                                         onClick={::this.filterRooms}>
-                                        {n_baths}{n_baths == FILTER_N_BATHS.slice(-1)[0] && '+'}
-                                    </div>
-                                )}
-                            </div>
-                        </DropdownButton>
-                        &nbsp;
-                        <Button variant='primary'
-                                onClick={::this.switchPets}>
-                            Pets: {FILTER_PETS[filters.pets_allowed]}
-                        </Button>
-                    </ButtonToolbar>
-                </div>
+                <FiltersBar filters={this.state.filters} updateFilters={::this.updateFilters}/>
             </Row>
             <Row>
                 <Col md='6' className="main-scroll">
