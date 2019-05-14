@@ -1,4 +1,5 @@
 {% load static %}
+
 <div class="main-navbar sticky-top bg-white">
 <!-- Main Navbar -->
   <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap p-0">
@@ -9,23 +10,44 @@
       </div>
     </a>
 
-    <ul class="navbar-nav border-left flex-row ml-auto">
+    <ul class="navbar-nav flex-row ml-auto">
     {% if request.user.is_authenticated %}
-      <li class="nav-item dropdown">
-            <a class="nav-link p-0" data-toggle="dropdown"
-               href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                <div class="m-auto" style="max-width: 2.75rem">
-                  <div class="circle-avatar" style="background-image:url({{ request.user.avatar_url  }})"></div>
-                </div>
-            </a>
+      <li class="nav-item border-right pr-2">
+        <a href="{% url 'userprofile' username=user.username %}">
+          <div class="p-1" style="width: 2.75rem">
+            <div class="circle-avatar" style="background-image:url({{ request.user.avatar_url  }})"></div>
+          </div>
+        </a>
+      </li>
 
-            <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
-              <a class="dropdown-item" href="{% url 'userprofile' username=user.username %}">
-                <i class="material-icons">person</i>&nbsp;Profile</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                <i class="material-icons text-danger">exit_to_app</i>&nbsp;Logout</a>
-            </div>
+      <li class="nav-item px-2 dropdown">
+        <a class="nav-link p-0" data-toggle="dropdown" style="min-width: 0"
+           href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <i class="material-icons" style="font-size: 36px">menu</i>
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'admin:rentals_rentproperty_add' %}">
+            <i class="material-icons">add</i>
+            <span>Add Listing</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'admin:rentals_rentproperty_changelist' %}">
+            <i class="material-icons">edit</i>
+            <span>Edit Listings</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="{% url 'schedule' %}">
+            <i class="material-icons">schedule</i>
+            <span>Schedule</span>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+            <i class="material-icons text-danger">exit_to_app</i>
+            <span>Logout</span>
+          </a>
+        </div>
+
       </li>
     {% else %}
       <li class="nav-item">
