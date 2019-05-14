@@ -1,94 +1,40 @@
 {% load static %}
 <div class="main-navbar sticky-top bg-white">
 <!-- Main Navbar -->
-    <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap p-0">
+  <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap p-0">
 
-    {% if user and not user.is_authenticated %}
-      <a class="navbar-brand border-right p-3 lh-25" href="/" >
-        <div class="d-table m-auto">
-          <span class="d-none d-md-inline ml-1">HomeNet Real-Estate</span>
-        </div>
-      </a>
-    {% endif %}
-      <form method="get" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
-        <div class="input-group input-group-seamless ml-3">
-          <div class="input-group-prepend">
-            <div class="input-group-text">
-              <i class="fas fa-search"></i>
-            </div>
-          </div>
-          <input class="navbar-search form-control"
-                 name="search"
-                 type="text"
-                 value="{{ search|default:"" }}"
-                 placeholder="Search for listings..."
-                 aria-label="Search">
-        </div>
-      </form>
-      <ul class="navbar-nav border-left flex-row ">
-          {% if request.user.is_authenticated %}
-        <!--<li class="nav-item border-right dropdown notifications">
-          <a class="nav-link nav-link-icon text-center" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <div class="nav-link-icon__wrapper">
-              <i class="material-icons">notifications</i>
-              <span class="badge badge-pill badge-danger">0</span>
-            </div>
-          </a>
-          <div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="#">
-              <div class="notification__icon-wrapper">
-                <div class="notification__icon">
-                  <i class="material-icons">&#xE6E1;</i>
-                </div>
-              </div>
-              <div class="notification__content">
-                <span class="notification__category">Analytics</span>
-                <p>Your website’s active users count increased by
-                  <span class="text-success text-semibold">28%</span> in the last week. Great job!</p>
-              </div>
-            </a>
-            <a class="dropdown-item" href="#">
-              <div class="notification__icon-wrapper">
-                <div class="notification__icon">
-                  <i class="material-icons">&#xE8D1;</i>
-                </div>
-              </div>
-              <div class="notification__content">
-                <span class="notification__category">Sales</span>
-                <p>Last week your store’s sales count decreased by
-                  <span class="text-danger text-semibold">5.52%</span>. It could have been worse!</p>
-              </div>
-            </a>
-            <a class="dropdown-item notification__all text-center" href="#"> View all Notifications </a>
-          </div>
-        </li>-->
-      {% endif %}
-      {% if request.user.is_authenticated %}
-        <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-nowrap px-2 no-caret" data-toggle="dropdown"
-                 href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    <a class="navbar-brand border-right p-2" href="{% url 'listings' %}" >
+      <div class="d-table m-auto">
+        <span class="ml-1">HomeNet <span class="d-none d-md-inline">Real-Estate</span></span>
+      </div>
+    </a>
+
+    <ul class="navbar-nav border-left flex-row ml-auto">
+    {% if request.user.is_authenticated %}
+      <li class="nav-item dropdown">
+            <a class="nav-link p-0" data-toggle="dropdown"
+               href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <div class="m-auto" style="max-width: 2.75rem">
                   <div class="circle-avatar" style="background-image:url({{ request.user.avatar_url  }})"></div>
-              </a>
-              <div class="dropdown-menu dropdown-menu-small dropdown-menu-md-right">
-                <a class="dropdown-item" href="{% url 'userprofile' username=user.username %}">
-                  <i class="material-icons">person</i>&nbsp;Profile</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                  <i class="material-icons text-danger">exit_to_app</i>&nbsp;Logout</a>
-              </div>
-        </li>
-      {% else %}
-        <li class="nav-item">
-          <a class="nav-link text-nowrap px-3" href="{% url 'login' %}" role="button" >
-            <span class="d-none d-md-inline-block">Login</span>
-          </a>
-        </li>
-       {% endif %}
-      </ul>
-      <nav class="nav">
-        <a href="#" class="nav-link nav-link-icon toggle-sidebar d-sm-inline d-md-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
-          <i class="material-icons">menu</i>
+                </div>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
+              <a class="dropdown-item" href="{% url 'userprofile' username=user.username %}">
+                <i class="material-icons">person</i>&nbsp;Profile</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                <i class="material-icons text-danger">exit_to_app</i>&nbsp;Logout</a>
+            </div>
+      </li>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link text-nowrap px-3" href="{% url 'login' %}" role="button" >
+          Login
         </a>
-      </nav>
-    </nav>
+      </li>
+     {% endif %}
+    </ul>
+
+  </nav>
 </div>

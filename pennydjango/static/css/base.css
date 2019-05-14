@@ -9,15 +9,14 @@
     overflow-y: auto;
 }
 
-.content-wrapper {
-    display: flex;
-    flex-flow: column;
+/* Nav bars */
+.main-navbar .navbar {
+    height: 2.75rem;
 }
 
-/* Nav bars */
 div.circle-avatar{
-    padding-top:100%;
-    border-radius:50%;
+    padding-top: 100%;
+    border-radius: 50%;
 
     background-position-y: center;
     background-position-x: center;
@@ -95,11 +94,9 @@ ul.ul-2 > li {
     text-transform: capitalize;
 }
 
-
 .map-panel {
     overflow: hidden;
-}
-.map-panel iframe {
-    width: 112%;
-    height: 103%;
+    width: 50%;
+    padding-right: 0;
+    padding-left: 0;
 }

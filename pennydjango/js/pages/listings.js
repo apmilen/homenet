@@ -108,7 +108,7 @@ class FiltersBar extends React.Component {
         return (
             <div className='filters-bar'>
                 <ButtonToolbar>
-                    <div style={{width: '20vh'}}>
+                    <div style={{width: '20vw', minWidth: 180}}>
                         <FormControl id='searching_text' size="sm"
                                      type='text'
                                      value={filters.searching_text}
@@ -239,8 +239,8 @@ class Listings extends React.Component {
     render() {
         const filtered_listings = this.filteredListings()
 
-        return <div class="content-wrapper">
-            <Row className="justify-content-md-center">
+        return <span>
+            <Row className="justify-content-center">
                 <FiltersBar filters={this.state.filters} updateFilters={::this.updateFilters}/>
             </Row>
             <Row>
@@ -256,7 +256,7 @@ class Listings extends React.Component {
                     <MapPanel address={this.state.hover_address}/>
                 </Col>
             </Row>
-        </div>
+        </span>
     }
 }
 
