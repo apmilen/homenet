@@ -8,7 +8,7 @@
 {{ form.fields.listing_type.widget.media.css }}
 {% endblock head %}
 
-{% block inner %}
+{% block inner_content %}
 
   <form method="post" action="{% url 'signup' %}">
     {{ form.fields.geopoint.widget.media }}
@@ -20,7 +20,7 @@
       </button>
     {% endbuttons %}
   </form>
-{% endblock inner %}
+{% endblock inner_content %}
 
 
 {% block tail %}
