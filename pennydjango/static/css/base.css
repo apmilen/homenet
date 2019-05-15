@@ -100,3 +100,7 @@ ul.ul-2 > li {
     padding-right: 0;
     padding-left: 0;
 }
+
+.select2.select2-container {
+    width: 100% !important;
+}
