@@ -254,7 +254,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'penny',
-    'rentals',
+    'listings',
     'ui',
     'schedule',
     'mapwidgets',

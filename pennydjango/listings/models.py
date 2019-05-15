@@ -15,6 +15,7 @@ from listings.constants import (
 class Listing(BaseModel):
     created_by = models.ForeignKey(
         User,
+        null=True,
         on_delete=models.SET_NULL,
         related_name='listings_created'
     )
@@ -27,7 +28,6 @@ class Listing(BaseModel):
         max_length=100, choices=MOVE_IN_COST
     )
     owner_pays = models.PositiveSmallIntegerField(
-        max_value=100,
         verbose_name='Owner pays (private)',
         help_text='Private'
     )
@@ -50,6 +50,8 @@ class Listing(BaseModel):
     neighborhood = models.CharField(max_length=100, choices=NEIGHBORHOODS)
     listing_agent = models.ForeignKey(
         User,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='Listing Agent (Private)',
         related_name='listings',
         limit_choices_to={
@@ -58,6 +60,8 @@ class Listing(BaseModel):
     )
     sales_agent = models.ForeignKey(
         User,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='Sales Agent',
         related_name='listings_as_sales',
         limit_choices_to={
@@ -114,8 +118,8 @@ class ListingDetail(BaseModel):
                    'contact with the owner to prove you can post this listing')
     )
     floorplans = models.FileField(null=True)
-    exclusive = models.models.BooleanField(default=False)
-    private = models.models.BooleanField(default=False)
+    exclusive = models.BooleanField(default=False)
+    private = models.BooleanField(default=False)
     # office = models.ForeignKey('penny.Office', on_delete=models.SET_NULL)
 
 
