@@ -1,11 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 
-from ui.views.pages import Home
 from ui.views.accounts import Signup, UserProfile
 
 
 urlpatterns = [
-    path('', Home.as_view(), name="home"),
+    path('', include("rentals.urls")),
     path('user/<username>/', UserProfile.as_view(), name="userprofile"),
     path('signup', Signup.as_view(), name='signup'),
 ]
