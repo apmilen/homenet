@@ -37,6 +37,7 @@ class Listing(BaseModel):
     agent_notes = models.TextField(max_length=250)
     description = models.TextField(max_length=500)
     bedrooms = models.DecimalField(max_digits=3, decimal_places=1)
+    bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
     size = models.PositiveSmallIntegerField(help_text='sq.feet')
     date_available = models.DateField()
     term = models.CharField(max_length=100)

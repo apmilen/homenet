@@ -1,0 +1,39 @@
+{% extends 'ui/base.html' %}
+{% load bootstrap4 utils static %}
+
+{% bootstrap_messages %}
+
+{% block head %}
+<link rel="stylesheet" href="{% http2static 'css/jquery.datetimepicker.min.css' %}" type="text/css" crossorigin>
+{{ form.fields.listing_type.widget.media.css }}
+{% endblock head %}
+
+{% block inner %}
+
+  <form method="post" action="{% url 'signup' %}">
+    {{ form.fields.geopoint.widget.media }}
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+      <button type="submit" class="btn btn-primary">
+        Submit
+      </button>
+    {% endbuttons %}
+  </form>
+{% endblock inner %}
+
+
+{% block tail %}
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}" type="text/javascript" crossorigin></script>
+
+  <script>
+    $(document).ready(() => {
+
+      $("#id_date_available").datetimepicker({
+        timepicker:false, format: 'd/m/Y',
+      });
+    })
+  </script>
+
+  {{ form.fields.listing_type.widget.media.js }}
+{% endblock tail %}

@@ -23,7 +23,7 @@ class Home(BaseContextMixin, ListView):
     def get_queryset(self):
         value = self.search_value
         self.queryset = super().get_queryset()
-        self.queryset = self.queryset.select_related('detail', 'photos')
+        self.queryset = self.queryset.select_related('detail')
         if value:
             self.queryset = self.queryset.filter(address__icontains=value)
         return self.queryset
