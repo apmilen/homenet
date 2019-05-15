@@ -18,9 +18,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from penny.views import Users
+
 
 urlpatterns = [
     path('', include("ui.urls")),
+    path('users/', Users.as_view(), name='users'),
     path('schedule/', include("schedule.urls")),
     path('accounts/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
