@@ -155,7 +155,7 @@ def image_path(instance, filename):
     chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     randomstr = ''.join((random.choice(chars)) for x in range(10))
     return '/'.join([
-        str(instance.rent_property.id),
+        str(instance.listing_id),
         f"{randomstr}{file_extension}"
     ])
 
