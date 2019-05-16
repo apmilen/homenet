@@ -1,9 +1,10 @@
 from ui.views.base_views import PublicReactView
 
 from penny.models import User
+from penny.mixins import AdminRequiredMixin
 
 
-class Users(PublicReactView):
+class Users(AdminRequiredMixin, PublicReactView):
     title = "Users"
     component = 'pages/users.js'
 

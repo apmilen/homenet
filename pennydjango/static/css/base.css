@@ -66,3 +66,16 @@ ul.ul-2 > li {
     width: 112%;
     height: 103%;
 }
+
+.overlay-parent .overlay {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+.overlay-parent a {
+    position:absolute;
+    z-index: 2;
+}
