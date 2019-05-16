@@ -62,12 +62,6 @@ class User(AbstractUser, BaseModel):
         super().__init__(*args, **kwargs)
         self.perms = PermissionManager(self)
 
-    @cached_property
-    def avatar_url(self):
-        if self.avatar:
-            return self.avatar.url
-        return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
-
     def __json__(self, *attrs):
         return {
             **self.attrs(
@@ -82,6 +76,8 @@ class User(AbstractUser, BaseModel):
                 'is_staff',
                 'is_superuser',
                 'is_authenticated',
+                'user_type_str',
+                'last_login',
             ),
             'str': str(self),
             **(self.attrs(*attrs) if attrs else {}),
@@ -98,6 +94,16 @@ class User(AbstractUser, BaseModel):
             usertype = name[8:]
             return usertype == str(self.user_type)
         raise AttributeError(f"{self} object has not attribute '{name}'")
+
+    @cached_property
+    def avatar_url(self):
+        if self.avatar:
+            return self.avatar.url
+        return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
+
+    @cached_property
+    def user_type_str(self):
+        return self.get_user_type_display()
 
 
 class PermissionManager:

@@ -35,7 +35,7 @@ class ListingCard extends React.Component {
         const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
         return (
-            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"
+            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
                  onMouseEnter={() => {hoverOn(listing.address)}}>
                 <a className="overlay" href={listing.detail_link}></a>
                 <div class="card-post__image text-center">
@@ -44,7 +44,7 @@ class ListingCard extends React.Component {
                     {edit_button &&
                         <a class="card-post__category left-badge badge badge-pill badge-info"
                            href={listing.edit_link}>
-                            <i  class="material-icons">edit</i>
+                            <i class="material-icons">edit</i>
                             Edit
                         </a>
                     }

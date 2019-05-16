@@ -57,18 +57,6 @@ div.circle-avatar{
 .card span.badge.badge-pill {
     font-size: 100%;
 }
-.card-listing .overlay {
-    position:absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    z-index: 1;
-}
-.card-listing a {
-    position:absolute;
-    z-index: 2;
-}
 
 .listing-info .wrap-info{
     white-space: nowrap;
@@ -103,4 +91,17 @@ ul.ul-2 > li {
 
 .select2.select2-container {
     width: 100% !important;
+}
+
+.overlay-parent .overlay {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+.overlay-parent a {
+    position:absolute;
+    z-index: 2;
 }
