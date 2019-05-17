@@ -1,11 +1,11 @@
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView, DetailView
 
-from .models import Listing
-from .forms import ListingForm
+from penny.mixins import AgentRequiredMixin
+from . import models as listing_models
+from . import forms as listing_forms
 
 
-class MainListingCreate(CreateView):
+class MainListingCreate(AgentRequiredMixin, CreateView):
     template_name = 'listings/create_main_listing.html'
-    model = Listing
-    form_class = ListingForm
-
+    model = listing_models.Listing
+    form_class = listing_forms.ListingForm

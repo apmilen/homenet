@@ -9,14 +9,23 @@
 {% endblock head %}
 
 {% block inner_content %}
-
-  <form method="post" action="{% url 'signup' %}">
+  {% include 'listings/_wizard_tabs.html' %}
+  <form method="post" action="{% url 'signup' %}" class="full-w">
     {{ form.fields.geopoint.widget.media }}
     {% csrf_token %}
-    {% bootstrap_form form %}
+    <div class="row">
+      {% for field in form %}
+        <div class="col-12 {% if field.name != 'geopoint' %}col-lg-6{% endif %}">
+          {% bootstrap_field field %}
+        </div>
+      {% endfor %}
+    </div>
     {% buttons %}
+      <button type="button" class="btn btn-primary">
+        Back
+      </button>
       <button type="submit" class="btn btn-primary">
-        Submit
+        Continue
       </button>
     {% endbuttons %}
   </form>

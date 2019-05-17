@@ -5,7 +5,7 @@ def add_amenities(apps, schema_editor):
     from listings.constants import AMENITIES
     Amenity = apps.get_model("listings", "Amenity")
     for group in AMENITIES:
-        for amenity in group:
+        for amenity in group[1]:
             Amenity.objects.create(name=amenity[0])
 
 

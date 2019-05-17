@@ -8,7 +8,7 @@ from penny.model_utils import BaseModel
 from penny.models import User
 from penny.utils import image_path, validate_file_size
 from listings.constants import (
-    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES
+    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT
 )
 
 
@@ -32,7 +32,10 @@ class Listing(BaseModel):
         help_text='Private'
     )
     agent_bonus = models.PositiveIntegerField(verbose_name='Agent Bonus Amount')
-    no_fee_listing = models.BooleanField(default=False)
+    no_fee_listing = models.BooleanField(
+        default=False,
+        help_text="Only check if OP is 100%"
+    )
     utilities = models.CharField(max_length=255)
     agent_notes = models.TextField(max_length=250)
     description = models.TextField(max_length=500)
@@ -69,7 +72,11 @@ class Listing(BaseModel):
             'user_type': AGENT_TYPE
         }
     )
-    status = models.CharField(max_length=50, choices=LISTING_STATUS)
+    status = models.CharField(
+        max_length=50,
+        choices=LISTING_STATUS,
+        default=DRAFT
+    )
 
     @cached_property
     def coords(self):
@@ -87,6 +94,9 @@ class Listing(BaseModel):
 
 class Amenity(BaseModel):
     name = models.CharField(max_length=50, choices=AMENITIES)
+
+    def __str__(self):
+        return self.get_name_display()
 
 
 class ListingDetail(BaseModel):
