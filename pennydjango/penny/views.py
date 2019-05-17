@@ -26,18 +26,20 @@ class Users(AdminRequiredMixin, PublicReactView):
         response = {'success': False, 'details': "My job is done"}
 
         if request_type == 'NEW_USER':
+            name = request.POST.get('name')
+            username = request.POST.get('username')
             email = request.POST.get('email')
             user_type = request.POST.get('user_type')
-            response = invite_new_user(email, user_type)
+            response = invite_new_user(name, username, email, user_type)
 
         return JsonResponse(response)
 
 
-def invite_new_user(email, user_type):
+def invite_new_user(name, username, email, user_type):
     if not (email and user_type):
         return {
             'success': False,
-            'details': "Missing data"
+            'details': "Missing required data"
         }
 
     qs = User.objects.filter(email=email)
@@ -48,8 +50,9 @@ def invite_new_user(email, user_type):
         }
 
     new_user = User.objects.create_user(
-        username=email,
-        password=None,
+        first_name=name,
+        username=username or email,
+        password='',
         email=email,
         user_type=user_type
     )

@@ -28,6 +28,13 @@
 
         <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
           {% if request.user.perms.has_agent_access %}
+            <a class="dropdown-item" href="{% url 'schedule' %}">
+              <i class="material-icons">schedule</i>
+              <span>Schedule</span>
+            </a>
+            <div class="dropdown-divider"></div>
+          {% endif %}
+          {% if request.user.perms.has_admin_access %}
             <a class="dropdown-item" href="{% url 'admin:rentals_rentproperty_add' %}">
               <i class="material-icons">add</i>
               <span>Add Listing</span>
@@ -38,13 +45,6 @@
               <span>Edit Listings</span>
             </a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'schedule' %}">
-              <i class="material-icons">schedule</i>
-              <span>Schedule</span>
-            </a>
-            <div class="dropdown-divider"></div>
-          {% endif %}
-          {% if request.user.perms.has_admin_access %}
             <a class="dropdown-item" href="{% url 'users' %}">
               <i class="material-icons">person</i>
               <span>Users</span>
