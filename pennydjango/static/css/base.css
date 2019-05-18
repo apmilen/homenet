@@ -26,9 +26,6 @@ div.circle-avatar{
 .dropdown-toggle.no-caret::after {
     display:none;
 }
-.filters-bar {
-    padding: 5px;
-}
 .rooms-container {
     padding: 3px;
     display: flex;
@@ -97,8 +94,6 @@ ul.ul-2 > li {
 }
 
 .map-panel {
-    overflow: hidden;
-    width: 50%;
     padding-right: 0;
     padding-left: 0;
 }
