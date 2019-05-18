@@ -52,6 +52,10 @@ class RentProperty(BaseModel):
         return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
 
     @cached_property
+    def album(self):
+        return [image.image.url for image in self.images.all()]
+
+    @cached_property
     def amenities_list(self):
         return self.amenities.split(",")
 
@@ -67,7 +71,9 @@ class RentProperty(BaseModel):
     def __json__(self, *attrs):
         return {
             **self.attrs(
+                'id',
                 'default_image',
+                'album',
                 'price',
                 'contact',
                 'address',
