@@ -1,9 +1,10 @@
 import re
 
+from django.conf import settings
 from django.db import models
 from django.utils.functional import cached_property
 
-from penny.constants import NEIGHBORHOODS, AGENT_TYPE
+from penny.constants import NEIGHBORHOODS, AGENT_TYPE, DEFAUL_RENT_IMAGE
 from penny.model_utils import BaseModel
 from penny.models import User
 from penny.utils import image_path, validate_file_size
@@ -37,7 +38,7 @@ class Listing(BaseModel):
         help_text="Only check if OP is 100%"
     )
     utilities = models.CharField(max_length=255)
-    agent_notes = models.TextField(max_length=250)
+    agent_notes = models.TextField(max_length=250, blank=True)
     description = models.TextField(max_length=500)
     bedrooms = models.DecimalField(max_digits=3, decimal_places=1)
     bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
@@ -91,6 +92,18 @@ class Listing(BaseModel):
     def longitude(self):
         return self.coords[1]
 
+    @cached_property
+    def default_image(self):
+        if hasattr(self, 'photos'):
+            photo_field = self.photos.primary_photo
+            try:
+                url = self.photos.primary_photo.url
+            except ValueError:
+                pass
+            else:
+                return url
+        return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
+
 
 class Amenity(BaseModel):
     name = models.CharField(max_length=50, choices=AMENITIES)
@@ -107,10 +120,12 @@ class ListingDetail(BaseModel):
     )
     amenities = models.ManyToManyField(Amenity)
     landlord_contact = models.CharField(
+        blank=True,
         max_length=150,
         verbose_name='Landlord Contact (Private)'
     )
     building_access = models.TextField(
+        blank=True,
         max_length=255,
         verbose_name='Building Access (Private)'
     )
@@ -135,7 +150,7 @@ class ListingDetail(BaseModel):
 
 
 class ListingPhotos(BaseModel):
-    listing = models.ForeignKey(
+    listing = models.OneToOneField(
         Listing,
         on_delete=models.CASCADE,
         related_name='photos'

@@ -75,7 +75,7 @@ ul.ul-2 > li {
     padding-left: 15px;
     border-right: 1px solid;
 }
-.wizard-tab:hover {
+a.wizard-tab:hover {
     color: #5a6169;
     text-decoration: underline !important;
 }
