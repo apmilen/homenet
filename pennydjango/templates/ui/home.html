@@ -19,8 +19,8 @@
                     <tbody>
                     <tr>
                       <td class="wrap-info" data-toggle="tooltip"
-                          title="{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath">
-                        {{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
+                          title="{{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath">
+                        {{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath
                       </td>
                       <td class="wrap-info" colspan="2" data-toggle="tooltip"
                           title="{{ obj.address }}">
@@ -28,7 +28,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}</td>
+                      <td>Pets: {{ obj.get_pets_display }}</td>
                       <td>
                         <i class="material-icons">place</i>
                         Map
