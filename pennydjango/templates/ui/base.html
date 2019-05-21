@@ -1,6 +1,7 @@
 {% load static %}
 {% load utils %}
 {% load cache %}
+{% load bootstrap4 %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -61,6 +62,7 @@
   {% block head %}{% endblock %}
 </head>
 <body class="h-100 {{body_classes}} body-{{page_id}} {% block bodyclass %}{% endblock %}">
+
 {% block outer %}
   {% block sidebar %}
     {% if user and user.is_authenticated %}
@@ -74,9 +76,11 @@
     {% endblock %}
 
     <div class="main-content-container container-fluid {% block main-content-container-classes %}{% endblock %}">
+
+      {% bootstrap_messages %}
       {% block inner %}
         <div class="row">
-          <div class="col-xs-12 col-sm-8 offset-sm-2">
+          <div class="col-12 col-sm-8 offset-sm-2">
             <div class="page-header row no-gutters py-4 mb-3 border-bottom text-center">
               <div class="col-12 text-center mb-0">
                 <h3 class="page-title">{% block inner_title %}{% endblock inner_title %}</h3>

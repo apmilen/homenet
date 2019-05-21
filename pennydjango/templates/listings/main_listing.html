@@ -1,0 +1,62 @@
+{% extends 'listings/wizard/_wizard.html' %}
+{% load utils static %}
+
+{% block head %}
+  <link rel="stylesheet"
+        href="{% http2static 'css/jquery.datetimepicker.min.css' %}"
+        type="text/css" crossorigin>
+  {{ form.fields.listing_type.widget.media.css }}
+{% endblock head %}
+
+{% block tabs %}
+  {% if listing %}
+    <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab active">Essentials</a>
+    <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
+    <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab">Photos</a>
+    <a href="#" class="wizard-tab">Review</a>
+  {% else %}
+    <a href="#" class="wizard-tab active">Essentials</a>
+    <span class="wizard-tab">Detail</span>
+    <span class="wizard-tab">Photos</span>
+    <span class="wizard-tab">Review</span>
+  {% endif %}
+    <hr>
+{% endblock tabs %}
+
+{% block form_special_media %}
+  {{ form.fields.geopoint.widget.media }}
+{% endblock %}
+
+{% block extra_class %}
+  {% if field.name != 'geopoint' %}col-lg-6{% endif %}
+{% endblock extra_class %}
+
+
+{% block form_buttons %}
+  <button type="submit" class="btn btn-primary">
+    Continue
+  </button>
+{% endblock form_buttons %}
+
+
+{% block tail %}
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
+          type="text/javascript" crossorigin></script>
+  <script>
+      $(document).ready(() => {
+
+          $("#id_date_available").datetimepicker({
+              timepicker: false, format: 'Y-m-d',
+          });
+
+      })
+      $(document).on("google_point_map_widget:place_changed",
+          function (e, place) {
+              $('#id_address').val(place['formatted_address'])
+          }
+      );
+
+  </script>
+
+  {{ form.fields.listing_type.widget.media.js }}
+{% endblock tail %}

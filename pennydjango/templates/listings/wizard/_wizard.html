@@ -1,0 +1,52 @@
+{% extends 'ui/base.html' %}
+{% load bootstrap4 utils static %}
+
+{% block head %}
+  {% block form_css %}
+    {{ form.media.css }}
+  {% endblock form_css %}
+{% endblock head %}
+
+{% block inner_content %}
+  {% block tabs %}
+    {% if listings %}
+      {% include 'listings/_wizard_tabs.html' with essential='active' %}
+    {% else %}
+      {% include 'listings/_wizard_tabs_new.html' with essential='active' %}
+    {% endif %}
+  {% endblock tabs %}
+  {% block form %}
+    {% bootstrap_form_errors form %}
+    <form method="post" action="" class="full-w" {% block extra_form_attr %}{% endblock extra_form_attr %}>
+      {% block form_special_media %}
+      {% endblock form_special_media %}
+      {% csrf_token %}
+      {% block main_form %}
+        <div class="row">
+          {% for field in form %}
+            <div class="col-12 {% block extra_class %}col-lg-6{% endblock extra_class %}">
+              {% bootstrap_field field %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endblock main_form %}
+      {% buttons %}
+        {% block form_buttons %}
+          <button type="button" class="btn btn-primary">
+            Back
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Continue
+          </button>
+        {% endblock form_buttons %}
+      {% endbuttons %}
+    </form>
+  {% endblock form %}
+{% endblock inner_content %}
+
+
+{% block tail %}
+  {% block form_js %}
+    {{ form.media.js }}
+  {% endblock form_js %}
+{% endblock tail %}
