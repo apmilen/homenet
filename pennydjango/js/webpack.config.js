@@ -3,8 +3,7 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   entry: {
-    // 'home': './pages/home.js',
-    'listings': './pages/listings.js',
+    'home': './pages/home.js',
     'users': './pages/users.js',
   },
   output: {
