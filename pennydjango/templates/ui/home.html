@@ -8,7 +8,7 @@
         {% for obj in object_list %}
           <div class="col-lg-6 col-md-12 p-1">
 
-            <a href="{% url 'listings:edit' pk=obj.pk %}">
+            <a href="{% url 'listings:listing' pk=obj.pk %}">
               <div class="card card-smallcard-post card-post--1 card-listing">
                 <div class="card-post__image text-center">
                   <img class="box-wd" src="{{ obj.default_image }}">

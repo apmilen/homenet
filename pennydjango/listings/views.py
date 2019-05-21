@@ -1,9 +1,10 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect, Http404
+from django.http import Http404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 
 from penny.mixins import AgentRequiredMixin
+from ui.views.base_views import BaseContextMixin
 from .models import Listing, ListingDetail, ListingPhotos
 from .forms import ListingForm, ListingDetailForm, ListingPhotosForm
 
@@ -75,3 +76,13 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
     def get_success_url(self):
         # return reverse("listings:review", kwargs={'pk': self.listing.id})
         return reverse("home")
+
+
+class ListingDetail(BaseContextMixin, DetailView):
+    model = Listing
+    template_name = 'listings/listing_detail.html'
+
+    def get_queryset(self):
+        return Listing.objects.select_related(
+            'detail', 'photos', 'listing_agent',
+        )

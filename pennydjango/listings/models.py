@@ -95,7 +95,6 @@ class Listing(BaseModel):
     @cached_property
     def default_image(self):
         if hasattr(self, 'photos'):
-            photo_field = self.photos.primary_photo
             try:
                 url = self.photos.primary_photo.url
             except ValueError:
@@ -103,6 +102,20 @@ class Listing(BaseModel):
             else:
                 return url
         return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'
+
+    @cached_property
+    def images(self):
+        if hasattr(self, 'photos'):
+            images = [photo.url for photo in self.photos.listingphoto_set.all()]
+            images.insert(0, self.default_image)
+            return images
+        return self.default_image
+
+    def amenities(self):
+        if hasattr(self, 'detail'):
+            return [amenity.get_name_display()
+                    for amenity in self.detail.amenities.all()]
+        return []
 
 
 class Amenity(BaseModel):
