@@ -72,13 +72,6 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
     model = ListingPhotos
     form_class = ListingPhotosForm
 
-    def form_valid(self, form):
-        ob = form.save(commit=False)
-        print(ob)
-        print(ob.__dict__)
-        print(ob.primary_photo)
-        return super().form_valid(form)
-
     def get_success_url(self):
         # return reverse("listings:review", kwargs={'pk': self.listing.id})
         return reverse("home")
