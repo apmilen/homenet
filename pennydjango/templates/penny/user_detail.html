@@ -10,8 +10,7 @@
       <div class="circle-avatar" style="background-image:url({{ object.avatar_url  }})"></div>
     </div>
     <br/><br/><br/>
-    <h2>{{ object.first_name }}
-    </h2>
+    <h2>{{ object.first_name }} ({{ object.get_user_type_display}})</h2>
 
     <h4>@{{ object.username }}</h4>
     <h6>{{ object.email }}</h6>

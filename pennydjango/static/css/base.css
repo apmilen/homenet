@@ -43,6 +43,8 @@ div.circle-avatar{
 .card-post__category.left-badge {
     right: initial;
     left: .9375rem;
+    position: absolute;
+    z-index: 10;
 }
 
 img.d-block.w-100 {
@@ -65,4 +67,33 @@ ul.ul-2 > li {
 .map-panel iframe {
     width: 112%;
     height: 103%;
+}
+
+
+/* Wizard */
+.wizard-tab {
+    color: #5a6169;
+    padding-right: 15px;
+    padding-left: 15px;
+    border-right: 1px solid;
+}
+a.wizard-tab:hover {
+    color: #5a6169;
+    text-decoration: underline !important;
+}
+.wizard-tab.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Forms */
+form.full-w .select2-container {
+    width: 100% !important;
+}
+
+/* Listings */
+.contact-avatar{
+    display: block;
+    margin: auto;
+    width: 70px;
 }
