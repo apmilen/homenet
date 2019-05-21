@@ -15,7 +15,6 @@
     </button>
   {% endbuttons %}
   <a href="/accounts/password_reset/">Reset password</a>
-  <a href="{% url 'signup' %}" style="float: right;">Create new account</a>
   <input type="hidden" name="next"
          value="{{ next|default:'/' }}">
 </form>
