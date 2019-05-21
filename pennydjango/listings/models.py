@@ -38,8 +38,8 @@ class Listing(BaseModel):
         help_text="Only check if OP is 100%"
     )
     utilities = models.CharField(max_length=255)
-    agent_notes = models.TextField(max_length=250, blank=True)
-    description = models.TextField(max_length=500)
+    agent_notes = models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=1024)
     bedrooms = models.DecimalField(max_digits=3, decimal_places=1)
     bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
     size = models.PositiveSmallIntegerField(help_text='sq.feet')
