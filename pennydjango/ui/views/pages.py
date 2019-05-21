@@ -1,6 +1,6 @@
 from django.views.generic.list import ListView
 
-from rentals.models import RentProperty
+from listings.models import Listing
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
 
@@ -13,7 +13,7 @@ class OldHome(PublicReactView):
 class Home(BaseContextMixin, ListView):
     title = 'Home'
     template_name = 'ui/home.html'
-    model = RentProperty
+    model = Listing
     search_value = ''
 
     def get(self, request, *args, **kwargs):
@@ -23,6 +23,7 @@ class Home(BaseContextMixin, ListView):
     def get_queryset(self):
         value = self.search_value
         self.queryset = super().get_queryset()
+        self.queryset = self.queryset.select_related('detail', 'photos')
         if value:
             self.queryset = self.queryset.filter(address__icontains=value)
         return self.queryset

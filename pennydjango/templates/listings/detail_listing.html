@@ -1,0 +1,22 @@
+{% extends 'listings/wizard/_wizard.html' %}
+{% load utils static %}
+
+
+{% block tabs %}
+  <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
+  <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab active">Detail</a>
+  <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab">Photos</a>
+  <a href="#" class="wizard-tab">Review</a>
+  <hr>
+{% endblock tabs %}
+
+{% block extra_form_attr %} enctype="multipart/form-data" {% endblock extra_form_attr %}
+
+{% block form_buttons %}
+  <a href="{% url 'listings:edit' pk=listing.id %}" type="button" class="btn btn-primary">
+    Back
+  </a>
+  <button type="submit" class="btn btn-primary">
+    Continue
+  </button>
+{% endblock form_buttons %}

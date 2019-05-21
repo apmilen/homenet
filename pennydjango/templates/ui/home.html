@@ -8,7 +8,7 @@
         {% for obj in object_list %}
           <div class="col-lg-6 col-md-12 p-1">
 
-            <a href="{% url 'listing_detail' pk=obj.pk %}">
+            <a href="{% url 'listings:listing' pk=obj.pk %}">
               <div class="card card-smallcard-post card-post--1 card-listing">
                 <div class="card-post__image text-center">
                   <img class="box-wd" src="{{ obj.default_image }}">
@@ -19,8 +19,8 @@
                     <tbody>
                     <tr>
                       <td class="wrap-info" data-toggle="tooltip"
-                          title="{{ obj.bedrooms }} Beds / {{ obj.baths }} Bath">
-                        {{ obj.bedrooms }} Beds / {{ obj.baths }} Bath
+                          title="{{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath">
+                        {{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath
                       </td>
                       <td class="wrap-info" colspan="2" data-toggle="tooltip"
                           title="{{ obj.address }}">
@@ -28,7 +28,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Pets: {{ obj.pets_allowed|yesno:"Yes,No,Maybe" }}</td>
+                      <td>Pets: {{ obj.get_pets_display }}</td>
                       <td>
                         <i class="material-icons">place</i>
                         Map

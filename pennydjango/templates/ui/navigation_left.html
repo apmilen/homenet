@@ -29,15 +29,9 @@
     <ul class="nav flex-column">
       <li class="nav-item">
         <a class="nav-link {% if 'rentproperty/add' in request.path %}active{% endif %}"
-           href="{% url 'admin:rentals_rentproperty_add' %}">
+           href="{% url 'listings:create' %}">
           <i class="material-icons">add</i>
           <span>Add Listing</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{% url 'admin:rentals_rentproperty_changelist' %}">
-          <i class="material-icons">edit</i>
-          <span>Edit Listings</span>
         </a>
       </li>
       <li class="nav-item">

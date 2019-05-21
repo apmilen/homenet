@@ -1,0 +1,105 @@
+{% extends 'ui/base.html' %}
+{% load static %}
+
+{% block inner %}
+  <div class="row main-content-row">
+    <div class="col-md-6 main-scroll">
+      <div id="carousel-listing" class="carousel slide"
+           data-ride="carousel" data-interval="2500">
+        {% if user.is_authenticated and user.perms.has_admin_access %}
+          <a class="card-post__category left-badge badge badge-pill badge-info"
+             href="{% url 'listing:edit' pk=object.id %}">
+            <i  class="material-icons">edit</i>
+            Edit
+          </a>
+        {% endif %}
+        <ol class="carousel-indicators">
+          {% for image in object.images %}
+          <li data-target="#carousel-listing" data-slide-to="{{ forloop.counter0 }}"
+              class="{% if forloop.first %}active{% endif %}"></li>
+          {% empty %}
+          <li data-target="#carousel-listing" data-slide-to="0"
+              class="active"></li>
+        {% endfor %}
+        </ol>
+        <div class="carousel-inner">
+          {% for image in object.images %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img class="d-block w-100" src="{{ image }}"
+                   alt="First slide">
+            </div>
+          {% empty %}
+            <div class="carousel-item active">
+              <img class="d-block w-100" src="{{ object.default_image }}"
+                   alt="First slide">
+            </div>
+        {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carousel-listing"
+           role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carousel-listing"
+           role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="card card-smallcard-post card-post--1 card-listing">
+        <div class="card-body p-0 text-center row m-0">
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border border"
+               data-toggle="tooltip"
+               title="${{ object.price }}/Month">
+            ${{ object.price }}/Month
+          </div>
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
+               data-toggle="tooltip"
+               title="{{ object.bedrooms }} Beds">
+            {{ object.bedrooms }} Beds
+          </div>
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
+               data-toggle="tooltip"
+               title="{{ object.bathrooms }} Bath">
+            {{ object.bathrooms }} Bath
+          </div>
+          <div class="col-4 p-0 pt-2 pb-2  border">
+            Pets: {{ object.get_pets_display }}
+          </div>
+          <div class="col-8 wrap-info p-0 pt-2 pb-2  border"
+               data-toggle="tooltip"
+               title="{{ object.address }}">
+            {{ object.address }}
+          </div>
+          <div class="col-md-8 col-12 p-0 pt-2 pb-2  border">
+            <div class="col-12 text-justify border-bottom pt-2">
+                <p><b>About the place</b></p>
+                <p>{{ object.description }}</p>
+            </div>
+            <div class="col-12 text-justify border-top pt-2">
+              <p><b>Amenities</b></p>
+                <ul class="ul-2">
+                  {% for amenity in object.amenities %}
+                    <li>{{ amenity }}</li>
+                  {% endfor %}
+                </ul>
+            </div>
+          </div>
+          <div class="col-md-4 col-12  p-0 pt-2 pb-2  border text-center">
+            <p><b>Contact</b></p>
+            <a class="contact-avatar" href="#" role="button">
+                <div class="circle-avatar" style="background-image:url({{ object.listing_agent.avatar_url  }})"></div>
+            </a>
+            <span>{{ object.listing_agent.get_full_name }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 p-0">
+      <iframe src='https://maps.google.com/maps?q={{ object.address|urlencode }}&t=&z=13&ie=UTF8&iwloc=&output=embed'
+              frameborder="0" width="100%" height="100%" scrolling="no"
+              marginheight="0" marginwidth="0"
+              style='display: inline-block'></iframe>
+    </div>
+  </div>
+{% endblock %}

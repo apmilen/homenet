@@ -12,7 +12,7 @@ from ui.views.base_views import BaseContextMixin
 class Schedule(AgentRequiredMixin, BaseContextMixin, FormMixin, ListView):
     title = 'Schedule'
     form_class = AvailabilityForm
-    template_name = 'penny/schedule.html'
+    template_name = 'schedule/schedule.html'
 
     def get_queryset(self):
         return Availability.objects.filter(agent=self.request.user)
