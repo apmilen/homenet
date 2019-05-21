@@ -12,6 +12,10 @@
 
 {% block extra_form_attr %} enctype="multipart/form-data" {% endblock extra_form_attr %}
 
+{% block extra_class %}
+  {% if field.name != 'amenities' %}col-lg-6{% endif %}
+{% endblock extra_class %}
+
 {% block form_buttons %}
   <a href="{% url 'listings:edit' pk=listing.id %}" type="button" class="btn btn-primary">
     Back
