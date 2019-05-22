@@ -3,15 +3,15 @@
         width: 100%;
         min-width: initial;
     }
+    div.mw-header {
+        display: inline-block;
+    }
     #geopoint-map-elem {
         width: 100%;
     }
     div.mw-wrap div.mw-adress-input-wrap {
         float: left;
         width: 100%;
-    }
-    div.mw-wrap div.mw-footer {
-        padding: 30px 0;
     }
 }
 

@@ -6,7 +6,7 @@
     <div class="col-md-6 main-scroll">
       <div id="carousel-listing" class="carousel slide"
            data-ride="carousel" data-interval="2500">
-        {% if user.is_authenticated and user.perms.has_admin_access %}
+        {% if user.is_authenticated and user.perms.has_agent_access %}
           <a class="card-post__category left-badge badge badge-pill badge-info"
              href="{% url 'listing:edit' pk=object.id %}">
             <i  class="material-icons">edit</i>
@@ -56,12 +56,12 @@
           <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.bedrooms }} Beds">
-            {{ object.bedrooms }} Beds
+            {{ object.bedrooms.normalize }} Beds
           </div>
           <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.bathrooms }} Bath">
-            {{ object.bathrooms }} Bath
+            {{ object.bathrooms.normalize }} Bath
           </div>
           <div class="col-4 p-0 pt-2 pb-2  border">
             Pets: {{ object.get_pets_display }}

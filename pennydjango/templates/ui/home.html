@@ -20,15 +20,18 @@
                     <tr>
                       <td class="wrap-info" data-toggle="tooltip"
                           title="{{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath">
-                        {{ obj.bedrooms }} Beds / {{ obj.bathrooms }} Bath
+                        {{ obj.bedrooms.normalize }} Beds / {{ obj.bathrooms.normalize }} Bath
                       </td>
                       <td class="wrap-info" colspan="2" data-toggle="tooltip"
                           title="{{ obj.address }}">
-                        {{ obj.address|truncatechars:20 }}
+                        {{ obj.get_neighborhood_display|truncatechars:20 }}
                       </td>
                     </tr>
                     <tr>
-                      <td>Pets: {{ obj.get_pets_display }}</td>
+                      <td>{{ obj.get_pets_display }}</td>
+                      <td>
+                        <i class="material-icons">share</i> Share
+                      </td>
                       <td>
                         <i class="material-icons">place</i>
                         Map

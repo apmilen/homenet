@@ -111,11 +111,18 @@ class Listing(BaseModel):
             return images
         return self.default_image
 
+    @cached_property
     def amenities(self):
         if hasattr(self, 'detail'):
             return [amenity.get_name_display()
                     for amenity in self.detail.amenities.all()]
         return []
+
+    def get_full_address(self):
+        return f'{self.address} - Unit: {self.unit_number}'
+
+    def price_per_bed(self):
+        return self.bedrooms and self.price/self.bedrooms
 
 
 class Amenity(BaseModel):

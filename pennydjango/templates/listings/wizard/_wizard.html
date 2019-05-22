@@ -15,6 +15,7 @@
       {% include 'listings/_wizard_tabs_new.html' with essential='active' %}
     {% endif %}
   {% endblock tabs %}
+  {% block wizard_content %}
   {% block form %}
     {% bootstrap_form_errors form %}
     <form method="post" action="" class="full-w" {% block extra_form_attr %}{% endblock extra_form_attr %}>
@@ -42,6 +43,7 @@
       {% endbuttons %}
     </form>
   {% endblock form %}
+    {% endblock wizard_content %}
 {% endblock inner_content %}
 
 
