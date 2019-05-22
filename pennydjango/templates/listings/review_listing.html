@@ -12,4 +12,10 @@
 
 {% block wizard_content %}
   {% include 'listings/listing_component.html' %}
+  <a href="{% url 'listings:photos' pk=listing.id %}" type="button" class="btn btn-primary">
+    Back
+  </a>
+  <a href="{% url 'home' %}" type="button" class="btn btn-primary">
+    View Listings
+  </a>
 {% endblock wizard_content %}
