@@ -35,7 +35,7 @@ class ListingCard extends React.Component {
         const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
         return (
-            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing"
+            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
                  onMouseEnter={() => {hoverOn(listing.address)}}>
                 <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
                 <div class="card-post__image text-center">
@@ -57,7 +57,7 @@ class ListingCard extends React.Component {
                             <tr>
                                 <td class="wrap-info"
                                     {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
-                                    {listing.bedrooms} Beds / {listing.baths} Bath
+                                    {listing.bedrooms} Beds / {listing.bathrooms} Bath
                                 </td>
                                 <td class="wrap-info" colspan="2"
                                     {...tooltip(listing.address)}>
@@ -88,13 +88,13 @@ class ListingDetail extends React.Component {
                 <div id="carouselExampleIndicators" class="carousel slide"
                      data-ride="carousel" data-interval="2500">
                     <ol class="carousel-indicators">
-                        {listing.album.map((image_url, idx) =>
+                        {listing.images.map((image_url, idx) =>
                             <li data-target="#carouselExampleIndicators" data-slide-to={idx}
                                 class={idx == 0 ? 'active' : ''}></li>
                         )}
                     </ol>
                     <div class="carousel-inner">
-                        {listing.album.map((image_url, idx) =>
+                        {listing.images.map((image_url, idx) =>
                             <div class={`carousel-item ${idx == 0 ? 'active' : ''}`}>
                                 <img class="d-block w-100" src={image_url} alt="First slide" />
                             </div>
@@ -127,10 +127,10 @@ class ListingDetail extends React.Component {
                         <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
                              title={`${ listing.baths } Bath`}>
-                            { listing.baths } Bath
+                            { listing.bathrooms } Bath
                         </div>
                         <div class="col-4 p-0 pt-2 pb-2  border">
-                            Pets: {listing.pets_allowed ? 'Yes' : 'No'}
+                            Pets: { listing.pets }
                         </div>
                         <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
@@ -140,20 +140,23 @@ class ListingDetail extends React.Component {
                         <div class="col-md-8 col-12 p-0 pt-2 pb-2 border">
                             <div class="col-12 text-justify border-bottom pt-2">
                                 <p><b>About the place</b></p>
-                                <p>{ listing.about }</p>
+                                <p>{ listing.description }</p>
                             </div>
                             <div class="col-12 text-justify border-top pt-2">
                                 <p><b>Amenities</b></p>
                                 <ul class="ul-2">
-                                    {listing.amenities.split(",").map(amenity =>
+                                    {listing.amenities.map(amenity =>
                                         <li>{ amenity }</li>
                                     )}
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-md-4 col-12  p-0 pt-2 pb-2 border">
+                        <div class="col-md-4 col-12  p-0 pt-2 pb-2 border ">
                             <p><b>Contact</b></p>
-                            <p>{ listing.contact }</p>
+                            <a class="contact-avatar" href="#" role="button">
+                                <div class="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
+                            </a>
+                            <div>{ listing.sales_agent.first_name }</div>
                         </div>
                     </div>
                 </div>
@@ -306,23 +309,23 @@ class Listings extends React.Component {
 
         filtered_listings = filtered_listings.filter(
             listing => (
-                filters.beds.has(listing.bedrooms)
-                || (filters.beds.has(FILTER_MAX_N_BEDS) && listing.bedrooms >= FILTER_MAX_N_BEDS)
+                filters.beds.has(parseFloat(listing.bedrooms))
+                || (filters.beds.has(FILTER_MAX_N_BEDS) && parseFloat(listing.bedrooms) >= FILTER_MAX_N_BEDS)
             )
         )
 
         filtered_listings = filtered_listings.filter(
             listing => (
-                filters.baths.has(listing.baths)
-                || (filters.baths.has(FILTER_MAX_N_BATHS) && listing.baths >= FILTER_MAX_N_BATHS)
+                filters.baths.has(parseFloat(listing.bathrooms))
+                || (filters.baths.has(FILTER_MAX_N_BATHS) && parseFloat(listing.bathrooms) >= FILTER_MAX_N_BATHS)
             )
         )
 
         if(filters.pets_allowed > 0){
             filtered_listings = filtered_listings.filter(
                 listing => (
-                    (filters.pets_allowed == 1 && listing.pets_allowed)
-                    || (filters.pets_allowed == 2 && !listing.pets_allowed)
+                    (filters.pets_allowed == 1 && listing.pets == 'all')
+                    || (filters.pets_allowed == 2 && listing.pets == 'no_pets')
                 )
             )
         }

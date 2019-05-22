@@ -4,7 +4,7 @@
 <!-- Main Navbar -->
   <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap p-0">
 
-    <a class="navbar-brand border-right p-2" href="{% url 'listings' %}" >
+    <a class="navbar-brand border-right p-2" href="{% url 'home' %}" >
       <div class="d-table m-auto">
         <span class="ml-1">HomeNet <span class="d-none d-md-inline">Real-Estate</span></span>
       </div>
@@ -27,14 +27,9 @@
         </a>
 
         <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
-          <a class="dropdown-item" href="{% url 'admin:rentals_rentproperty_add' %}">
+          <a class="dropdown-item" href="{% url 'listing:create' %}">
             <i class="material-icons">add</i>
             <span>Add Listing</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'admin:rentals_rentproperty_changelist' %}">
-            <i class="material-icons">edit</i>
-            <span>Edit Listings</span>
           </a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="{% url 'schedule' %}">

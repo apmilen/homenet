@@ -54,7 +54,7 @@ div.circle-avatar{
 .card span.badge.badge-pill {
     font-size: 100%;
 }
-.card-listing .overlay {
+.overlay-parent .overlay {
     position:absolute;
     left: 0;
     top: 0;
@@ -62,7 +62,7 @@ div.circle-avatar{
     right: 0;
     z-index: 1;
 }
-.card-listing a {
+.overlay-parent a {
     position:absolute;
     z-index: 2;
 }
@@ -128,5 +128,5 @@ form.full-w .select2-container {
 .contact-avatar{
     display: block;
     margin: auto;
-    width: 70px;
+    width: 70%;
 }

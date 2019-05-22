@@ -1,6 +1,7 @@
 import re
 
 from django.conf import settings
+from django.urls import reverse
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -111,11 +112,43 @@ class Listing(BaseModel):
             return images
         return self.default_image
 
+    @cached_property
     def amenities(self):
         if hasattr(self, 'detail'):
             return [amenity.get_name_display()
                     for amenity in self.detail.amenities.all()]
         return []
+
+    @cached_property
+    def detail_link(self):
+        return reverse('listing:detail', args=[str(self.id)])
+
+    @cached_property
+    def edit_link(self):
+        return reverse('listing:edit', args=[str(self.id)])
+
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'default_image',
+                'images',
+                'price',
+                'address',
+                'latitude',
+                'longitude',
+                'description',
+                'bedrooms',
+                'bathrooms',
+                'pets',
+                'amenities',
+                'detail_link',
+                'edit_link',
+            ),
+            'str': str(self),
+            'sales_agent': self.sales_agent.__json__(),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
 
 
 class Amenity(BaseModel):

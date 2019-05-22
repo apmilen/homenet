@@ -18,8 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from listings.views import Listings
+
 
 urlpatterns = [
+    path('', Listings.as_view(), name='home'),
     path('', include("ui.urls")),
     path(
         'listings/', include(("listings.urls", "listings"), namespace='listing')
