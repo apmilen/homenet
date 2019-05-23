@@ -111,16 +111,16 @@
                   <img class="lazy rounded-circle img-fluid mx-auto"
                        width="60px"
                        height="60px"
-                       src="{{ listing.listing_agent.avatar_url }}">
+                       src="{{ listing.sales_agent.avatar_url }}">
                 </a>
-                <br>{{ listing.listing_agent.get_full_name }}
+                <br>{{ listing.sales_agent.get_full_name }}
                 <br>
                 Contact
               </div>
               <hr>
             </div>
           </div>
-          <div class="col-md-4 listing-second-data-col">
+          <div class="col-lg-4 listing-second-data-col">
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left"><b>Owner Pays</b></div>
               <div class="col-sm-8 text-left">{{ listing.owner_pays }}%</div>
