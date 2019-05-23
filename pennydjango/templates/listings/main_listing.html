@@ -8,6 +8,10 @@
   {{ form.fields.listing_type.widget.media.css }}
 {% endblock head %}
 
+{% block inner_title %}
+  <h4>Main Listing Info</h4>
+{% endblock %}
+
 {% block tabs %}
   {% if listing %}
     <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab active">Essentials</a>

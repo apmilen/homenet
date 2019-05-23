@@ -5,7 +5,7 @@ from django.views.generic import (
 )
 
 from penny.mixins import AgentRequiredMixin
-from ui.views.base_views import BaseContextMixin, PublicReactView
+from ui.views.base_views import BaseContextMixin
 from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
 
@@ -81,8 +81,7 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
     form_class = ListingPhotosForm
 
     def get_success_url(self):
-        # return reverse("listings:review", kwargs={'pk': self.listing.id})
-        return reverse("home")
+        return reverse("listings:review", kwargs={'pk': self.listing.id})
 
 
 class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):

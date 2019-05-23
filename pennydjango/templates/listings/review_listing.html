@@ -1,6 +1,9 @@
 {% extends 'listings/wizard/_wizard.html' %}
 {% load utils static %}
 
+{% block inner_title %}
+  <h4>Summary</h4>
+{% endblock %}
 
 {% block tabs %}
   <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
