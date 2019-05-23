@@ -48,7 +48,7 @@ class ListingForm(forms.ModelForm):
 
 class ListingDetailForm(forms.ModelForm):
     amenities = forms.ModelMultipleChoiceField(
-        widget=Select2MultipleWidget,
+        widget=Select2MultipleWidget(attrs={'data-close-on-select': 'false'}),
         queryset=Amenity.objects.all(),
     )
 

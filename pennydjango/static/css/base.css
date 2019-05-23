@@ -130,3 +130,43 @@ form.full-w .select2-container {
     margin: auto;
     width: 70%;
 }
+
+.new-listing-card{
+    margin-bottom: 10px;
+}
+.new-listing-card .listing-admin-area {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.new-listing-card .listing-area-content {
+    border: 1px solid #e1e5eb;
+}
+div.listing-card-stub {
+    border-left: 0;
+    border-right: 0;
+}
+div.listing-card-stub div.col-6 {
+    border-right: 1px solid #e1e5eb;
+}
+div.listing-card-stub div.col-6:nth-of-type(2) {
+    border-right: 0;
+}
+div.listing-card-stub div.col-6, div.listing-card-stub div.col-12 {
+    font-size: 12px;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e1e5eb;
+}
+div.listing-first-data-col, div.listing-second-data-col {
+    font-size: 12px;
+    border-left: 1px solid #e1e5eb;
+    overflow-y: hidden;
+}
+div.listing-area-data-row {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1e5eb;
+    overflow-y: hidden;
+}
