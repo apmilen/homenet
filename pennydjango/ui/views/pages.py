@@ -1,16 +1,25 @@
 from django.views.generic.list import ListView
 
-from listings.models import Listing
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
-
-class OldHome(PublicReactView):
-    title = 'Home'
-    component = 'pages/home.js'
-    template = 'ui/home.html'
+from listings.models import Listing
+from listings.constants import APPROVED
 
 
-class Home(BaseContextMixin, ListView):
+class Home(PublicReactView):
+    title = "Listings"
+    component = 'pages/listings.js'
+
+    def props(self, request, *args, **kwargs):
+        query_filter = {'status': APPROVED}
+        listings = Listing.objects.filter(**query_filter)
+
+        return {
+            'listings': [listing.__json__() for listing in listings]
+        }
+
+
+class OldHome(BaseContextMixin, ListView):
     title = 'Home'
     template_name = 'ui/home.html'
     model = Listing

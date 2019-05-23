@@ -1,14 +1,13 @@
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, TemplateView
+    ListView, CreateView, UpdateView, DetailView, TemplateView
 )
 
 from penny.mixins import AgentRequiredMixin
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
-from listings.constants import APPROVED
 
 
 class WizardMixin:
@@ -97,17 +96,9 @@ class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
         return self.listing_qs
 
 
-class Listings(PublicReactView):
-    title = "Listings"
-    component = 'pages/listings.js'
-
-    def props(self, request, *args, **kwargs):
-        query_filter = {'status': APPROVED}
-        listings = Listing.objects.filter(**query_filter)
-
-        return {
-            'listings': [listing.__json__() for listing in listings]
-        }
+class Listings(AgentRequiredMixin, ListView):
+    def get_queryset(self):
+        return Listing.objects.order_by('-modified').all()
 
 
 class ListingDetail(BaseContextMixin, DetailView):

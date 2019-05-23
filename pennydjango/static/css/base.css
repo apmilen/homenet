@@ -170,3 +170,8 @@ div.listing-area-data-row {
     border-bottom: 1px solid #e1e5eb;
     overflow-y: hidden;
 }
+hr.listings-hr {
+    height:4px;
+    border-radius:100%;
+    background-color:#c3c7cc;
+}
