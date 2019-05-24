@@ -4,10 +4,13 @@ from django.views.generic import (
     ListView, CreateView, UpdateView, DetailView, TemplateView
 )
 
+from rest_framework import viewsets
+
 from penny.mixins import AgentRequiredMixin
 from ui.views.base_views import BaseContextMixin
-from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
+from listings.models import Listing, ListingDetail, ListingPhotos
+from listings.serializer import ListingSerializer
 
 
 class WizardMixin:
@@ -108,3 +111,22 @@ class ListingDetail(BaseContextMixin, DetailView):
         return Listing.objects.select_related(
             'detail', 'photos', 'listing_agent',
         )
+
+
+# ViewSets define the view behavior.
+class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Listing.objects.all()
+    serializer_class = ListingSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(
+            status='approved',
+            detail__private=False
+        )
+        # We can filter here with self.request.query_params
+        # https://www.django-rest-framework.org/api-guide/filtering/#filtering-against-query-parameters
+        print(self.request.query_params)
+        # remember to use always the page param
+        # http://localhost:8000/listings/public/?page=1&price_min=3000
+        return queryset.order_by('-created')

@@ -119,6 +119,10 @@ class Listing(BaseModel):
                     for amenity in self.detail.amenities.all()]
         return []
 
+    @cached_property
+    def neighborhood_name(self):
+        return self.get_neighborhood_display()
+
     def get_full_address(self):
         return f'{self.address} - Unit: {self.unit_number}'
 
@@ -148,6 +152,7 @@ class Listing(BaseModel):
                 'bathrooms',
                 'pets',
                 'amenities',
+                'neighborhood_name',
                 'detail_link',
                 'edit_link',
             ),

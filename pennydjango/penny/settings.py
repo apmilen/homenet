@@ -109,7 +109,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
-CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
+CORS_ORIGIN_WHITELIST = ('http://localhost', 'http://127.0.0.1')
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -260,6 +260,7 @@ INSTALLED_APPS = [
     'mapwidgets',
     'bootstrap4',
     'django_select2',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -331,6 +332,12 @@ MAP_WIDGETS = {
     "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.PageNumberPagination'
+    ),
+    'PAGE_SIZE': 12
+}
 
 if PY_TYPE == 'pypy':
     # Use psycopg2cffi instead of psycopg2 when run with pypy

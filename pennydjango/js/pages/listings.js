@@ -63,13 +63,16 @@ class ListingCard extends React.Component {
                                 </td>
                                 <td class="wrap-info" colspan="2"
                                     {...tooltip(listing.address)}>
-                                    {listing.address}
+                                    {listing.neighborhood_name}
                                 </td>
                             </tr>
                             <tr>
-                                <td>Pets: {PETS_LABEL[listing.pets]}</td>
+                                <td>{ PETS_LABEL[listing.pets] }</td>
                                 <td>
-                                    <i class="material-icons">place</i>Map
+                                    <i className="material-icons">share</i> Share
+                                </td>
+                                <td>
+                                    <i className="material-icons">place</i>Map
                                 </td>
                             </tr>
                         </tbody>
@@ -347,7 +350,7 @@ class Listings extends React.Component {
     render() {
         const filtered_listings = this.filteredListings()
 
-        return <span>
+        return <>
             <Row style={{minHeight: 43}}>
                 {this.state.show_detail ?
                     <a href='#'
@@ -372,7 +375,7 @@ class Listings extends React.Component {
                             <ListingDetail {...filtered_listings.filter(listing => listing.id == this.state.show_detail)[0]} />
                         </Row>
                     :
-                        <span>
+                        <>
                         <center><h6>{filtered_listings.length} results</h6></center>
                         <Row>
                             {filtered_listings.map(listing =>
@@ -382,14 +385,14 @@ class Listings extends React.Component {
                                         />
                             )}
                         </Row>
-                        </span>
+                        </>
                     }
                 </Col>
                 <Col md='6' className={`map-panel ${this.state.show_detail ? '' : 'd-none'} d-md-inline`}>
                     <MapPanel address={this.state.map_address}/>
                 </Col>
             </Row>
-        </span>
+        </>
     }
 }
 
