@@ -59,7 +59,7 @@ class ListingCard extends React.Component {
                             <tr>
                                 <td class="wrap-info"
                                     {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
-                                    {listing.bedrooms} Beds / {listing.bathrooms} Bath
+                                    {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Bath
                                 </td>
                                 <td class="wrap-info" colspan="2"
                                     {...tooltip(listing.address)}>
@@ -127,12 +127,12 @@ class ListingDetail extends React.Component {
                         <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
                              title={`${ listing.bedrooms } Beds`}>
-                            { listing.bedrooms } Beds
+                            { parseFloat(listing.bedrooms).toString() } Beds
                         </div>
                         <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
                              title={`${ listing.baths } Bath`}>
-                            { listing.bathrooms } Bath
+                            { parseFloat(listing.bathrooms).toString() } Bath
                         </div>
                         <div class="col-4 p-0 pt-2 pb-2  border">
                             Pets: { PETS_LABEL[listing.pets] }
