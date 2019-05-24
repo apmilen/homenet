@@ -280,7 +280,7 @@ class Listings extends React.Component {
                 baths: new Set(FILTER_N_BATHS),
                 pets_allowed: 'any',
             },
-            map_address: props.listings[0].address,
+            map_address: '',
             show_detail: false,
         }
         PETS_LABEL = props.constants.pets_allowed
@@ -324,15 +324,15 @@ class Listings extends React.Component {
 
         filtered_listings = filtered_listings.filter(
             listing => (
-                filters.beds.has(parseFloat(listing.bedrooms))
-                || (filters.beds.has(FILTER_MAX_N_BEDS) && parseFloat(listing.bedrooms) >= FILTER_MAX_N_BEDS)
+                filters.beds.has(parseInt(listing.bedrooms))
+                || (filters.beds.has(FILTER_MAX_N_BEDS) && parseInt(listing.bedrooms) >= FILTER_MAX_N_BEDS)
             )
         )
 
         filtered_listings = filtered_listings.filter(
             listing => (
-                filters.baths.has(parseFloat(listing.bathrooms))
-                || (filters.baths.has(FILTER_MAX_N_BATHS) && parseFloat(listing.bathrooms) >= FILTER_MAX_N_BATHS)
+                filters.baths.has(parseInt(listing.bathrooms))
+                || (filters.baths.has(FILTER_MAX_N_BATHS) && parseInt(listing.bathrooms) >= FILTER_MAX_N_BATHS)
             )
         )
 
