@@ -5,6 +5,8 @@ import {
     Row, Col, FormControl, InputGroup, ButtonToolbar, DropdownButton, Button
 } from 'react-bootstrap'
 
+import { FormRadio } from "shards-react";
+
 import {tooltip} from '@/util/dom'
 
 
@@ -14,7 +16,7 @@ const FILTER_MAX_N_BEDS = FILTER_N_BEDS.slice(-1)[0]
 const FILTER_N_BATHS = [0, 1, 2, 3]
 const FILTER_MAX_N_BATHS = FILTER_N_BATHS.slice(-1)[0]
 
-const FILTER_PETS = ['Any', 'Allowed 😸', 'No Pets 😿']
+let PETS_LABEL = {}
 
 
 class MapPanel extends React.Component {
@@ -65,7 +67,7 @@ class ListingCard extends React.Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td>Pets: {listing.pets_allowed ? 'Yes' : 'No'}</td>
+                                <td>Pets: {PETS_LABEL[listing.pets]}</td>
                                 <td>
                                     <i class="material-icons">place</i>Map
                                 </td>
@@ -130,7 +132,7 @@ class ListingDetail extends React.Component {
                             { listing.bathrooms } Bath
                         </div>
                         <div class="col-4 p-0 pt-2 pb-2  border">
-                            Pets: { listing.pets }
+                            Pets: { PETS_LABEL[listing.pets] }
                         </div>
                         <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
@@ -182,11 +184,9 @@ class FiltersBar extends React.Component {
             filters[room_type].add(num)
         this.props.updateFilters(filters)
     }
-    switchPets(e) {
+    changePets(e) {
         let {filters} = this.props
-        filters.pets_allowed = filters.pets_allowed + 1
-        if(filters.pets_allowed >= FILTER_PETS.length)
-            filters.pets_allowed = 0
+        filters.pets_allowed = e.target.name
         this.props.updateFilters(filters)
     }
     render() {
@@ -244,10 +244,24 @@ class FiltersBar extends React.Component {
                     </div>
                 </DropdownButton>
                 &nbsp;
-                <Button variant='primary'
-                        onClick={::this.switchPets}>
-                    Pets: {FILTER_PETS[filters.pets_allowed]}
-                </Button>
+                <DropdownButton title='Pets'>
+                    <div className='pets-container'>
+                        <FormRadio
+                            name='any'
+                            checked={filters.pets_allowed == 'any'}
+                            onChange={::this.changePets} >
+                        Any
+                        </FormRadio>
+                        {Object.keys(PETS_LABEL).map(allowed_type =>
+                            <FormRadio
+                                name={allowed_type}
+                                checked={filters.pets_allowed == allowed_type}
+                                onChange={::this.changePets} >
+                            {PETS_LABEL[allowed_type]}
+                            </FormRadio>
+                        )}
+                    </div>
+                </DropdownButton>
             </ButtonToolbar>
         )
     }
@@ -264,11 +278,12 @@ class Listings extends React.Component {
                 price_max: '',
                 beds: new Set(FILTER_N_BEDS),
                 baths: new Set(FILTER_N_BATHS),
-                pets_allowed: 0,
+                pets_allowed: 'any',
             },
             map_address: props.listings[0].address,
             show_detail: false,
         }
+        PETS_LABEL = props.constants.pets_allowed
     }
     hoverOn(address) {
         this.setState({map_address: address})
@@ -321,12 +336,9 @@ class Listings extends React.Component {
             )
         )
 
-        if(filters.pets_allowed > 0){
+        if(filters.pets_allowed != 'any'){
             filtered_listings = filtered_listings.filter(
-                listing => (
-                    (filters.pets_allowed == 1 && listing.pets == 'all')
-                    || (filters.pets_allowed == 2 && listing.pets == 'no_pets')
-                )
+                listing => listing.pets == filters.pets_allowed
             )
         }
 
@@ -347,7 +359,8 @@ class Listings extends React.Component {
                 :
                     <Col>
                         <Row className="justify-content-center">
-                            <FiltersBar filters={this.state.filters} updateFilters={::this.updateFilters}/>
+                            <FiltersBar filters={this.state.filters}
+                                        updateFilters={::this.updateFilters} />
                         </Row>
                     </Col>
                 }

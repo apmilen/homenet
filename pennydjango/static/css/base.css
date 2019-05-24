@@ -26,6 +26,8 @@ div.circle-avatar{
 .dropdown-toggle.no-caret::after {
     display:none;
 }
+
+/* Filters bar */
 .rooms-container {
     padding: 3px;
     display: flex;
@@ -42,6 +44,10 @@ div.circle-avatar{
 }
 .room-div.selected {
     background-color: #679df6;
+}
+.pets-container {
+    padding: 0 10px;
+    width: 200px;
 }
 
 /* Cards */

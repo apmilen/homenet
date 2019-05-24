@@ -34,7 +34,8 @@
     "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "shards-react": "^1.0.3"
   },
   "devDependencies": {
     "webpack": "^4.29.5",
