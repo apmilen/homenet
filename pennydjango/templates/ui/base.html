@@ -64,13 +64,8 @@
 <body class="h-100 {{body_classes}} body-{{page_id}} {% block bodyclass %}{% endblock %}">
 
 {% block outer %}
-  {% block sidebar %}
-    {% if user and user.is_authenticated %}
-      {% include 'ui/navigation_left.html' %}
-    {% endif %}
-  {% endblock %}
 
-  <main class="main-content{% if user and user.is_authenticated %} col-lg-10 col-md-9  offset-lg-2 offset-md-3 {% endif %} col-sm-12 p-0">
+  <main>
     {% block topbar %}
       {% include 'ui/navigation_top.html' %}
     {% endblock %}
@@ -104,7 +99,6 @@
       {% endblock inner %}
     </div>
     {% block footer %}
-      {% include 'ui/footer.html' %}
     {% endblock %}
   </main>
 

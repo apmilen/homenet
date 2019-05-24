@@ -1,14 +1,13 @@
-from django.contrib import messages
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, TemplateView
+    ListView, CreateView, UpdateView, DetailView, TemplateView
 )
 
 from penny.mixins import AgentRequiredMixin
 from ui.views.base_views import BaseContextMixin
-from .models import Listing, ListingDetail, ListingPhotos
-from .forms import ListingForm, ListingDetailForm, ListingPhotosForm
+from listings.models import Listing, ListingDetail, ListingPhotos
+from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
 
 
 class WizardMixin:
@@ -82,8 +81,7 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
     form_class = ListingPhotosForm
 
     def get_success_url(self):
-        # return reverse("listings:review", kwargs={'pk': self.listing.id})
-        return reverse("home")
+        return reverse("listings:review", kwargs={'pk': self.listing.id})
 
 
 class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
@@ -95,6 +93,11 @@ class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
             'detail', 'photos', 'listing_agent', 'sales_agent'
         )
         return self.listing_qs
+
+
+class Listings(AgentRequiredMixin, ListView):
+    def get_queryset(self):
+        return Listing.objects.order_by('-modified').all()
 
 
 class ListingDetail(BaseContextMixin, DetailView):

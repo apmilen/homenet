@@ -1,10 +1,9 @@
 from django.urls import path
 
-from rentals.views import ListingDetail
+from rentals.views import Listings, ListingDetail
 
 
 urlpatterns = [
-    path(
-        'detail/<pk>', ListingDetail.as_view(), name='listing_detail'
-    )
+    path('', Listings.as_view(), name='listings'),
+    path('detail/<pk>', ListingDetail.as_view(), name='listing_detail')
 ]
