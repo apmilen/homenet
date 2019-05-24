@@ -63,11 +63,11 @@ class ListingCard extends React.Component {
                                 </td>
                                 <td class="wrap-info" colspan="2"
                                     {...tooltip(listing.address)}>
-                                    {listing.neighborhood}
+                                    {listing.neighborhood_name}
                                 </td>
                             </tr>
                             <tr>
-                                <td>listing.pets</td>
+                                <td>{ PETS_LABEL[listing.pets] }</td>
                                 <td>
                                     <i className="material-icons">share</i> Share
                                 </td>
