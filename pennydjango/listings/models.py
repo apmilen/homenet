@@ -148,6 +148,7 @@ class Listing(BaseModel):
                 'bathrooms',
                 'pets',
                 'amenities',
+                'neighborhood',
                 'detail_link',
                 'edit_link',
             ),
