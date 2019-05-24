@@ -2,10 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {
-    Row, Col, FormControl, InputGroup, ButtonToolbar, DropdownButton, Button
+    FormControl, DropdownButton
 } from 'react-bootstrap'
 
-import { FormRadio } from "shards-react";
+import {
+    Row, Col, FormRadio, Button, ButtonToolbar, InputGroup, InputGroupText
+} from "shards-react";
 
 import {tooltip} from '@/util/dom'
 
@@ -34,7 +36,6 @@ class MapPanel extends React.Component {
 class ListingCard extends React.Component {
     render() {
         const {listing, hoverOn, clickOn} = this.props
-        const edit_button = global.user && (global.user.is_staff || global.user.is_superuser)
 
         return (
             <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
@@ -42,15 +43,9 @@ class ListingCard extends React.Component {
                 <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
                 <div class="card-post__image text-center">
                     <img class="box-wd" src={listing.default_image} />
-
-                    {edit_button &&
-                        <a class="card-post__category left-badge badge badge-pill badge-info"
-                           href={listing.edit_link}>
-                            <i  class="material-icons">edit</i>
-                            Edit
-                        </a>
+                    {listing.no_fee_listing &&
+                        <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
                     }
-                  
                     <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
                 </div>
                 <div class="card-body p-0 text-center">
@@ -192,8 +187,16 @@ class FiltersBar extends React.Component {
         filters.pets_allowed = e.target.name
         this.props.updateFilters(filters)
     }
+    toggleFee() {
+        let {filters} = this.props
+        filters.nofeeonly = !filters.nofeeonly
+        this.props.updateFilters(filters)
+    }
     render() {
         const {filters} = this.props
+        const nofeeonly_attrs = {
+            outline: !filters.nofeeonly
+        }
 
         return (
             <ButtonToolbar style={{padding: 5}}>
@@ -207,14 +210,14 @@ class FiltersBar extends React.Component {
                 &nbsp;
                 <DropdownButton title='Price'>
                     <InputGroup style={{width: 300}}>
-                        <InputGroup.Text>Min:</InputGroup.Text>
+                        <InputGroupText>Min:</InputGroupText>
                         <FormControl id='price_min' xs='3' step='100'
                                      type='number' min='0' max={filters.price_max}
                                      value={filters.price_min}
                                      onChange={::this.filtering}
                                      placeholder='0'/>&nbsp;
 
-                        <InputGroup.Text>Max:</InputGroup.Text>
+                        <InputGroupText>Max:</InputGroupText>
                         <FormControl id='price_max' xs='3' step='100'
                                      type='number' min={filters.price_min}
                                      value={filters.price_max}
@@ -265,6 +268,10 @@ class FiltersBar extends React.Component {
                         )}
                     </div>
                 </DropdownButton>
+                &nbsp;
+                <Button {...nofeeonly_attrs} onClick={::this.toggleFee}>
+                    No Fee Only
+                </Button>
             </ButtonToolbar>
         )
     }
@@ -282,6 +289,7 @@ class Listings extends React.Component {
                 beds: new Set(FILTER_N_BEDS),
                 baths: new Set(FILTER_N_BATHS),
                 pets_allowed: 'any',
+                nofeeonly: false,
             },
             map_address: '',
             show_detail: false,
@@ -312,9 +320,8 @@ class Listings extends React.Component {
 
         filtered_listings = filtered_listings.filter(
             listing => (
-                listing.address.toLowerCase().includes(query)
-                || listing.about.toLowerCase().includes(query)
-                || listing.amenities.toLowerCase().includes(query)
+                listing.neighborhood_name.toLowerCase().includes(query)
+                || listing.description.toLowerCase().includes(query)
             )
         )
 
@@ -344,6 +351,9 @@ class Listings extends React.Component {
                 listing => listing.pets == filters.pets_allowed
             )
         }
+
+        if(filters.nofeeonly)
+            filtered_listings = filtered_listings.filter(listing => listing.no_fee_listing)
 
         return filtered_listings
     }

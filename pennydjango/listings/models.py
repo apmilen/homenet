@@ -107,10 +107,12 @@ class Listing(BaseModel):
     @cached_property
     def images(self):
         if hasattr(self, 'photos'):
-            images = [photo.url for photo in self.photos.listingphoto_set.all()]
+            images = [
+                photo.photo.url for photo in self.photos.listingphoto_set.all()
+            ]
             images.insert(0, self.default_image)
             return images
-        return self.default_image
+        return [self.default_image]
 
     @cached_property
     def amenities(self):
@@ -153,6 +155,7 @@ class Listing(BaseModel):
                 'pets',
                 'amenities',
                 'neighborhood_name',
+                'no_fee_listing',
                 'detail_link',
                 'edit_link',
             ),
