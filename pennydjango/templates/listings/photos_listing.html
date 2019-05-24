@@ -1,12 +1,15 @@
 {% extends 'listings/wizard/_wizard.html' %}
 {% load utils static %}
 
+{% block inner_title %}
+  <h4>Photos</h4>
+{% endblock %}
 
 {% block tabs %}
   <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
   <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
   <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab active">Photos</a>
-  <a href="#" class="wizard-tab">Review</a>
+  <a href="{% url 'listings:review' pk=listing.id %}" class="wizard-tab">Review</a>
   <hr>
 {% endblock tabs %}
 

@@ -83,6 +83,25 @@ class User(AbstractUser, BaseModel):
             **(self.attrs(*attrs) if attrs else {}),
         }
 
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'email',
+                'username',
+                'first_name',
+                'last_name',
+                'date_joined',
+                'avatar_url',
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'is_authenticated',
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
+
     def __getattr__(self, name):
         """
         Used to compute an attribute starting with 'is_user_' followed by a

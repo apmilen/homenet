@@ -8,12 +8,16 @@
   {{ form.fields.listing_type.widget.media.css }}
 {% endblock head %}
 
+{% block inner_title %}
+  <h4>Main Listing Info</h4>
+{% endblock %}
+
 {% block tabs %}
   {% if listing %}
     <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab active">Essentials</a>
     <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
     <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab">Photos</a>
-    <a href="#" class="wizard-tab">Review</a>
+    <a href="{% url 'listings:review' pk=listing.id %}" class="wizard-tab">Review</a>
   {% else %}
     <a href="#" class="wizard-tab active">Essentials</a>
     <span class="wizard-tab">Detail</span>

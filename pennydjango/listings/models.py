@@ -1,6 +1,7 @@
 import re
 
 from django.conf import settings
+from django.urls import reverse
 from django.db import models
 from django.utils.functional import cached_property
 
@@ -38,8 +39,8 @@ class Listing(BaseModel):
         help_text="Only check if OP is 100%"
     )
     utilities = models.CharField(max_length=255)
-    agent_notes = models.TextField(max_length=250, blank=True)
-    description = models.TextField(max_length=500)
+    agent_notes = models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=1024)
     bedrooms = models.DecimalField(max_digits=3, decimal_places=1)
     bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
     size = models.PositiveSmallIntegerField(help_text='sq.feet')
@@ -111,11 +112,49 @@ class Listing(BaseModel):
             return images
         return self.default_image
 
+    @cached_property
     def amenities(self):
         if hasattr(self, 'detail'):
             return [amenity.get_name_display()
                     for amenity in self.detail.amenities.all()]
         return []
+
+    def get_full_address(self):
+        return f'{self.address} - Unit: {self.unit_number}'
+
+    def price_per_bed(self):
+        return self.bedrooms and self.price / self.bedrooms
+
+    @cached_property
+    def detail_link(self):
+        return reverse('listing:detail', args=[str(self.id)])
+
+    @cached_property
+    def edit_link(self):
+        return reverse('listing:edit', args=[str(self.id)])
+
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'default_image',
+                'images',
+                'price',
+                'address',
+                'latitude',
+                'longitude',
+                'description',
+                'bedrooms',
+                'bathrooms',
+                'pets',
+                'amenities',
+                'detail_link',
+                'edit_link',
+            ),
+            'str': str(self),
+            'sales_agent': self.sales_agent.__json__(),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
 
 
 class Amenity(BaseModel):

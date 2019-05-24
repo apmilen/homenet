@@ -1,0 +1,24 @@
+{% extends 'listings/wizard/_wizard.html' %}
+{% load utils static %}
+
+{% block inner_title %}
+  <h4>Summary</h4>
+{% endblock %}
+
+{% block tabs %}
+  <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
+  <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
+  <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab">Photos</a>
+  <a href="{% url 'listings:review' pk=listing.id %}" class="wizard-tab active">Review</a>
+  <hr>
+{% endblock tabs %}
+
+{% block wizard_content %}
+  {% include 'listings/listing_component.html' %}
+  <a href="{% url 'listings:photos' pk=listing.id %}" type="button" class="btn btn-primary">
+    Back
+  </a>
+  <a href="{% url 'home' %}" type="button" class="btn btn-primary">
+    View Listings
+  </a>
+{% endblock wizard_content %}

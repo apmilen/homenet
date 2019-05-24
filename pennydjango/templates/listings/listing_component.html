@@ -1,0 +1,167 @@
+<div class="row">
+  <div class="col-12">
+    <div id="main-listing">
+      <div class="container-fluid new-listing-card">
+        <div class="row listing-admin-area">
+          <div class="col-12">
+            <button type="button" class="btn btn-sm btn-outline-info mr-1">{{ listing.get_full_address }}</button>
+            <button type="button" class="btn btn-sm btn-outline-info mr-1">Manage</button>
+            <button type="button" class="btn btn-sm btn-outline-info mr-1">Add to Listing Collection</button>
+            {% if listing.no_fee_listing %}<span class="badge badge-info">No fee</span>{% endif %}
+            {% if listing.detail.vacant %}<span class="badge badge-info">Vacant</span>{% endif %}
+          </div>
+        </div>
+        <div class="row listing-area-content">
+          <div class="col-lg-4 listing-area-main">
+            <div class="row" style="position: relative;padding-top: 56.25%;">
+              <a href="{% url 'listings:detail' pk=listing.id %}" target="_blank" rel="noreferrer noopener">
+                <img class="lazy img-fluid mx-auto" s
+                     src="{{ listing.default_image }}"
+                     width="960"
+                     height="540"
+                     style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;">
+              </a>
+            </div>
+            <div class="row">
+              <div class="listing-card-stub container-fluid">
+                <div class="row">
+                  <div class="col-6">
+                    <span>${{ listing.price }}</span>
+                  </div>
+                  <div class="col-6">
+                    <span>${{ listing.price_per_bed }}/bed</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <i class="fa fa-bed"></i> {{ listing.bedrooms.normalize }} Bed
+                  </div>
+                  <div class="col-6">
+                    <i class="fa fa-bath"></i> {{ listing.bathrooms.normalize }} Bath
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <i class="material-icons">place</i>
+                    <a href="{% url 'listings:detail' pk=listing.id %}">
+                      {{ listing.get_full_address }}
+                    </a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    {{ listing.get_neighborhood_display }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">Subways</div>
+                </div>
+                <div class="row">
+                  <div class="col-12 border-bottom-0">Streets</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 listing-first-data-col">
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>ID</b></div>
+              <div class="col-sm-8 text-left">{{ listing.short_id }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Date Available</b></div>
+              <div class="col-sm-8 text-left">{{ listing.date_available }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Access</b></div>
+              <div class="col-sm-8 text-left">{{ listing.detail.building_access }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Utilities</b></div>
+              <div class="col-sm-8 text-left">{{ listing.utilities }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Move in Cost</b></div>
+              <div class="col-sm-8 text-left">{{ listing.get_move_in_cost_display }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Square Feet</b></div>
+              <div class="col-sm-8">{{ listing.size }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4"><b>Landlord</b></div>
+              <div class="col-sm-8">{{ listing.landlord_contact }}</div>
+            </div>
+            <div class="row text-center">
+              <div class="col-6">
+                <h6>Listing</h6>
+                <a href="{% url 'userprofile' username=listing.listing_agent.username %}" target="_blank">
+                  <img class="lazy rounded-circle img-fluid mx-auto"
+                       width="60px"
+                       height="60px"
+                       src="{{ listing.listing_agent.avatar_url }}">
+                </a>
+                <br>
+                {{ listing.listing_agent.get_full_name }}
+                <br>
+                Contact
+              </div>
+              <div class="col-6">
+                <h6>Sales</h6>
+                <a href="{% url 'userprofile' username=listing.sales_agent.username %}" target="_blank">
+                  <img class="lazy rounded-circle img-fluid mx-auto"
+                       width="60px"
+                       height="60px"
+                       src="{{ listing.sales_agent.avatar_url }}">
+                </a>
+                <br>{{ listing.sales_agent.get_full_name }}
+                <br>
+                Contact
+              </div>
+              <hr>
+            </div>
+          </div>
+          <div class="col-lg-4 listing-second-data-col">
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Owner Pays</b></div>
+              <div class="col-sm-8 text-left">{{ listing.owner_pays }}%</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Agent Notes</b></div>
+              <div class="col-sm-8 text-left">{{ listing.agent_notes }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Agent Bonus</b></div>
+              <div class="col-sm-8 text-left">{{ listing.agent_bonus }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Pets</b></div>
+              <div class="col-sm-8 text-left">{{ listing.get_pets_display }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Term</b></div>
+              <div class="col-sm-8 text-left">{{ listing.term }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Created</b></div>
+              <div class="col-sm-8 text-left">{{ listing.created }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Updated</b></div>
+              <div class="col-sm-8 text-left">{{ listing.modified }}</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Share</b></div>
+              <div class="col-sm-8 text-left">
+                  <button class="btn btn-info">Copy to Clipboard</button>
+              </div>
+            </div>
+            <div class="row listing-area-data-row border-bottom-0">
+              <div class="col-sm-4 text-left"><b>Status</b></div>
+              <div class="col-sm-8 text-left">{{ listing.get_status_display }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

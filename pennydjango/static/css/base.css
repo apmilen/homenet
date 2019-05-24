@@ -10,9 +10,13 @@
 }
 
 /* Nav bars */
+.main-navbar .navbar {
+    height: 2.75rem;
+}
+
 div.circle-avatar{
-    padding-top:100%;
-    border-radius:50%;
+    padding-top: 100%;
+    border-radius: 50%;
 
     background-position-y: center;
     background-position-x: center;
@@ -21,6 +25,29 @@ div.circle-avatar{
 }
 .dropdown-toggle.no-caret::after {
     display:none;
+}
+
+/* Filters bar */
+.rooms-container {
+    padding: 3px;
+    display: flex;
+    flex-direction: row;
+}
+.room-div {
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    color: #000000bd;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+.room-div.selected {
+    background-color: #679df6;
+}
+.pets-container {
+    padding: 0 10px;
+    width: 200px;
 }
 
 /* Cards */
@@ -32,6 +59,18 @@ div.circle-avatar{
 }
 .card span.badge.badge-pill {
     font-size: 100%;
+}
+.overlay-parent .overlay {
+    position:absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+.overlay-parent a {
+    position:absolute;
+    z-index: 2;
 }
 
 .listing-info .wrap-info{
@@ -60,13 +99,13 @@ ul.ul-2 > li {
     text-transform: capitalize;
 }
 
-
 .map-panel {
-    overflow: hidden;
+    padding-right: 0;
+    padding-left: 0;
 }
-.map-panel iframe {
-    width: 112%;
-    height: 103%;
+
+.select2.select2-container {
+    width: 100% !important;
 }
 
 
@@ -95,5 +134,50 @@ form.full-w .select2-container {
 .contact-avatar{
     display: block;
     margin: auto;
-    width: 70px;
+    width: 70%;
+}
+
+.new-listing-card{
+    margin-bottom: 10px;
+}
+.new-listing-card .listing-admin-area {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.new-listing-card .listing-area-content {
+    border: 1px solid #e1e5eb;
+}
+div.listing-card-stub {
+    border-left: 0;
+    border-right: 0;
+}
+div.listing-card-stub div.col-6 {
+    border-right: 1px solid #e1e5eb;
+}
+div.listing-card-stub div.col-6:nth-of-type(2) {
+    border-right: 0;
+}
+div.listing-card-stub div.col-6, div.listing-card-stub div.col-12 {
+    font-size: 12px;
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e1e5eb;
+}
+div.listing-first-data-col, div.listing-second-data-col {
+    font-size: 12px;
+    border-left: 1px solid #e1e5eb;
+    overflow-y: hidden;
+}
+div.listing-area-data-row {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e1e5eb;
+    overflow-y: hidden;
+}
+hr.listings-hr {
+    height:4px;
+    border-radius:100%;
+    background-color:#c3c7cc;
 }
