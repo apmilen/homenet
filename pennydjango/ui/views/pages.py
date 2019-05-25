@@ -17,7 +17,9 @@ class Home(PublicReactView):
         constants = {
             'pets_allowed': dict(PETS_ALLOWED),
             'amenities': {
-                key: dict(val) for key, val in dict(AMENITIES).items()
+                amenity_tuple[0]: amenity_tuple[1]
+                for _, group in dict(AMENITIES).items()
+                for amenity_tuple in group
             }
         }
 

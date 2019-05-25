@@ -6,7 +6,8 @@ import {
 } from 'react-bootstrap'
 
 import {
-    Row, Col, FormRadio, Button, ButtonToolbar, InputGroup, InputGroupText
+    Row, Col, Button, ButtonToolbar, InputGroup, InputGroupText,
+    FormRadio, FormCheckbox
 } from "shards-react";
 
 import {tooltip} from '@/util/dom'
@@ -19,6 +20,7 @@ const FILTER_N_BATHS = [0, 1, 2, 3]
 const FILTER_MAX_N_BATHS = FILTER_N_BATHS.slice(-1)[0]
 
 let PETS_LABEL = {}
+let AMENITIES_LABEL = {}
 
 
 class MapPanel extends React.Component {
@@ -145,7 +147,7 @@ class ListingDetail extends React.Component {
                             <div class="col-12 text-justify border-top pt-2">
                                 <p><b>Amenities</b></p>
                                 <ul class="ul-2">
-                                    {listing.amenities.map(amenity =>
+                                    {Object.values(listing.amenities_dict).map(amenity =>
                                         <li>{ amenity }</li>
                                     )}
                                 </ul>
@@ -190,6 +192,15 @@ class FiltersBar extends React.Component {
     toggleFee() {
         let {filters} = this.props
         filters.nofeeonly = !filters.nofeeonly
+        this.props.updateFilters(filters)
+    }
+    changeAmenities(e) {
+        let {filters} = this.props
+        const value = e.target.id
+        if (filters.amenities.has(value))
+            filters.amenities.delete(value)
+        else
+            filters.amenities.add(value)
         this.props.updateFilters(filters)
     }
     render() {
@@ -269,6 +280,17 @@ class FiltersBar extends React.Component {
                     </div>
                 </DropdownButton>
                 &nbsp;
+                <DropdownButton title='Amenities'>
+                    <div className='amenities-container'>
+                        {Object.keys(AMENITIES_LABEL).map(amenity =>
+                            <FormCheckbox id={amenity} checked={filters.amenities.has(amenity)}
+                                          onChange={::this.changeAmenities}>
+                                {AMENITIES_LABEL[amenity]}
+                            </FormCheckbox>
+                        )}
+                    </div>
+                </DropdownButton>
+                &nbsp;
                 <Button {...nofeeonly_attrs} onClick={::this.toggleFee}>
                     No Fee Only
                 </Button>
@@ -290,11 +312,13 @@ class Listings extends React.Component {
                 baths: new Set(FILTER_N_BATHS),
                 pets_allowed: 'any',
                 nofeeonly: false,
+                amenities: new Set(),
             },
             map_address: '',
             show_detail: false,
         }
         PETS_LABEL = props.constants.pets_allowed
+        AMENITIES_LABEL = props.constants.amenities
     }
     hoverOn(address) {
         this.setState({map_address: address})
@@ -351,6 +375,13 @@ class Listings extends React.Component {
                 listing => listing.pets == filters.pets_allowed
             )
         }
+
+        if(filters.amenities.size > 0)
+            filtered_listings = filtered_listings.filter(
+                listing => Array.from(filters.amenities).every(
+                    amenity => amenity in listing.amenities_dict
+                )
+            )
 
         if(filters.nofeeonly)
             filtered_listings = filtered_listings.filter(listing => listing.no_fee_listing)

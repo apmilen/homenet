@@ -122,6 +122,13 @@ class Listing(BaseModel):
         return []
 
     @cached_property
+    def amenities_dict(self):
+        if hasattr(self, 'detail'):
+            return {amenity.name: amenity.get_name_display()
+                    for amenity in self.detail.amenities.all()}
+        return {}
+
+    @cached_property
     def neighborhood_name(self):
         return self.get_neighborhood_display()
 
@@ -153,7 +160,7 @@ class Listing(BaseModel):
                 'bedrooms',
                 'bathrooms',
                 'pets',
-                'amenities',
+                'amenities_dict',
                 'neighborhood_name',
                 'no_fee_listing',
                 'detail_link',

@@ -49,6 +49,13 @@ div.circle-avatar{
     padding: 0 10px;
     width: 200px;
 }
+.amenities-container {
+    padding: 0 10px;
+    width: 300px;
+    max-height: 350px;
+    overflow-y: auto;
+    user-select: none;
+}
 
 /* Cards */
 .card.card-listing {
