@@ -3,7 +3,7 @@ from django.views.generic.list import ListView
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
 from listings.models import Listing
-from listings.constants import APPROVED, PETS_ALLOWED, AMENITIES
+from listings.constants import PETS_ALLOWED, AMENITIES
 
 
 class Home(PublicReactView):
@@ -11,9 +11,6 @@ class Home(PublicReactView):
     component = 'pages/listings.js'
 
     def props(self, request, *args, **kwargs):
-        query_filter = {'status': APPROVED}
-        listings = Listing.objects.filter(**query_filter)
-
         constants = {
             'pets_allowed': dict(PETS_ALLOWED),
             'amenities': {
@@ -23,10 +20,7 @@ class Home(PublicReactView):
             }
         }
 
-        return {
-            'listings': [listing.__json__() for listing in listings],
-            'constants': constants
-        }
+        return {'constants': constants}
 
 
 class OldHome(BaseContextMixin, ListView):

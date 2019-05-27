@@ -169,42 +169,65 @@ class ListingDetail extends React.Component {
 
 
 class FiltersBar extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            filters: {
+                searching_text: '',
+                price_min: '',
+                price_max: '',
+                beds: new Set(FILTER_N_BEDS),
+                baths: new Set(FILTER_N_BATHS),
+                pets_allowed: 'any',
+                nofeeonly: false,
+                amenities: new Set(),
+            }
+        }
+    }
     filtering(e) {
-        let {filters} = this.props
+        let {filters} = this.state
         filters[e.target.id] = e.target.value
-        this.props.updateFilters(filters)
+        this.setState(filters, this.filterListings)
     }
     filterRooms(e) {
-        let {filters} = this.props
+        let {filters} = this.state
         const num = parseInt(e.target.getAttribute('data-value'))
         const room_type = e.target.getAttribute('data-name')
         if (filters[room_type].has(num))
             filters[room_type].delete(num)
         else
             filters[room_type].add(num)
-        this.props.updateFilters(filters)
+        this.setState(filters, this.filterListings)
     }
     changePets(e) {
-        let {filters} = this.props
+        let {filters} = this.state
         filters.pets_allowed = e.target.name
-        this.props.updateFilters(filters)
+        this.setState(filters, this.filterListings)
     }
     toggleFee() {
-        let {filters} = this.props
+        let {filters} = this.state
         filters.nofeeonly = !filters.nofeeonly
-        this.props.updateFilters(filters)
+        this.setState(filters, this.filterListings)
     }
     changeAmenities(e) {
-        let {filters} = this.props
+        let {filters} = this.state
         const value = e.target.id
         if (filters.amenities.has(value))
             filters.amenities.delete(value)
         else
             filters.amenities.add(value)
-        this.props.updateFilters(filters)
+        this.setState(filters, this.filterListings)
+    }
+    filterListings() {
+        $.get('/listings/public/', this.state.filters, (resp) =>
+            this.props.updateListings({listings: resp.results})
+        )
+    }
+    componentDidMount() {
+        this.filterListings()
     }
     render() {
-        const {filters} = this.props
+        const {filters} = this.state
         const nofeeonly_attrs = {
             outline: !filters.nofeeonly
         }
@@ -304,16 +327,7 @@ class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                searching_text: '',
-                price_min: '',
-                price_max: '',
-                beds: new Set(FILTER_N_BEDS),
-                baths: new Set(FILTER_N_BATHS),
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: new Set(),
-            },
+            listings: [],
             map_address: '',
             show_detail: false,
         }
@@ -326,16 +340,16 @@ class Listings extends React.Component {
     showDetail(listing_id) {
         this.setState({
             show_detail: listing_id,
-            map_address: this.props.listings.filter(listing => listing.id == listing_id)[0].address
+            map_address: this.state.listings.filter(listing => listing.id == listing_id)[0].address
         })
     }
     hideDetail() {
         this.setState({show_detail: false})
     }
-    updateFilters(filters) {
-        this.setState(filters)
+    updateListings(listings) {
+        this.setState(listings)
     }
-    filteredListings() {
+    /*filteredListings() {
         const {listings} = this.props
         let filtered_listings = listings
 
@@ -387,9 +401,9 @@ class Listings extends React.Component {
             filtered_listings = filtered_listings.filter(listing => listing.no_fee_listing)
 
         return filtered_listings
-    }
+    }*/
     render() {
-        const filtered_listings = this.filteredListings()
+        const {listings} = this.state
 
         return [
             <Row style={{minHeight: 43}}>
@@ -403,8 +417,7 @@ class Listings extends React.Component {
                 :
                     <Col>
                         <Row className="justify-content-center">
-                            <FiltersBar filters={this.state.filters}
-                                        updateFilters={::this.updateFilters} />
+                            <FiltersBar updateListings={::this.updateListings} />
                         </Row>
                     </Col>
                 }
@@ -413,12 +426,12 @@ class Listings extends React.Component {
                 <Col md='6' className="main-scroll">
                     {this.state.show_detail ?
                         <Row>
-                            <ListingDetail {...filtered_listings.filter(listing => listing.id == this.state.show_detail)[0]} />
+                            <ListingDetail {...listings.filter(listing => listing.id == this.state.show_detail)[0]} />
                         </Row>
                     : [
-                        <center><h6>{filtered_listings.length} results</h6></center>,
+                        <center><h6>{listings.length} results</h6></center>,
                         <Row>
-                            {filtered_listings.map(listing =>
+                            {listings.map(listing =>
                                 <ListingCard listing={listing}
                                              hoverOn={::this.hoverOn}
                                              clickOn={::this.showDetail}
