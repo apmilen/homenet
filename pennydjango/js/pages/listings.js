@@ -391,7 +391,7 @@ class Listings extends React.Component {
     render() {
         const filtered_listings = this.filteredListings()
 
-        return <>
+        return [
             <Row style={{minHeight: 43}}>
                 {this.state.show_detail ?
                     <a href='#'
@@ -408,16 +408,15 @@ class Listings extends React.Component {
                         </Row>
                     </Col>
                 }
-            </Row>
+            </Row>,
             <Row>
                 <Col md='6' className="main-scroll">
                     {this.state.show_detail ?
                         <Row>
                             <ListingDetail {...filtered_listings.filter(listing => listing.id == this.state.show_detail)[0]} />
                         </Row>
-                    :
-                        <>
-                        <center><h6>{filtered_listings.length} results</h6></center>
+                    : [
+                        <center><h6>{filtered_listings.length} results</h6></center>,
                         <Row>
                             {filtered_listings.map(listing =>
                                 <ListingCard listing={listing}
@@ -426,14 +425,13 @@ class Listings extends React.Component {
                                         />
                             )}
                         </Row>
-                        </>
-                    }
+                    ]}
                 </Col>
                 <Col md='6' className={`map-panel ${this.state.show_detail ? '' : 'd-none'} d-md-inline`}>
                     <MapPanel address={this.state.map_address}/>
                 </Col>
             </Row>
-        </>
+        ]
     }
 }
 
