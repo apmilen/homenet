@@ -127,6 +127,11 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
         # We can filter here with self.request.query_params
         # https://www.django-rest-framework.org/api-guide/filtering/#filtering-against-query-parameters
         print(self.request.query_params)
+
+        pets_allowed = self.request.query_params.get('pets_allowed')
+        if pets_allowed != 'any':
+            queryset = queryset.filter(pets=pets_allowed)
+
         # remember to use always the page param
         # http://localhost:8000/listings/public/?page=1&price_min=3000
         return queryset.order_by('-created')
