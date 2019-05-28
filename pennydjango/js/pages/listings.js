@@ -60,11 +60,11 @@ class ListingCard extends React.Component {
                                 </td>
                                 <td class="wrap-info" colspan="2"
                                     {...tooltip(listing.address)}>
-                                    {listing.neighborhood_name}
+                                    {listing.neighborhood}
                                 </td>
                             </tr>
                             <tr>
-                                <td>{ PETS_LABEL[listing.pets] }</td>
+                                <td>{listing.pets}</td>
                                 <td>
                                     <i className="material-icons">share</i> Share
                                 </td>
@@ -132,7 +132,7 @@ class ListingDetail extends React.Component {
                             { parseFloat(listing.bathrooms).toString() } Bath
                         </div>
                         <div class="col-4 p-0 pt-2 pb-2  border">
-                            Pets: { PETS_LABEL[listing.pets] }
+                            Pets: { listing.pets }
                         </div>
                         <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
                              data-toggle="tooltip"
@@ -147,7 +147,7 @@ class ListingDetail extends React.Component {
                             <div class="col-12 text-justify border-top pt-2">
                                 <p><b>Amenities</b></p>
                                 <ul class="ul-2">
-                                    {Object.values(listing.amenities_dict).map(amenity =>
+                                    {listing.amenities.map(amenity =>
                                         <li>{ amenity }</li>
                                     )}
                                 </ul>
@@ -340,7 +340,7 @@ class Listings extends React.Component {
     showDetail(listing_id) {
         this.setState({
             show_detail: listing_id,
-            map_address: this.state.listings.filter(listing => listing.id == listing_id)[0].address
+            map_address: this.state.listings.find(listing => listing.id == listing_id).address
         })
     }
     hideDetail() {
@@ -426,7 +426,7 @@ class Listings extends React.Component {
                 <Col md='6' className="main-scroll">
                     {this.state.show_detail ?
                         <Row>
-                            <ListingDetail {...listings.filter(listing => listing.id == this.state.show_detail)[0]} />
+                            <ListingDetail {...listings.find(listing => listing.id == this.state.show_detail)} />
                         </Row>
                     : [
                         <center><h6>{listings.length} results</h6></center>,
@@ -434,8 +434,7 @@ class Listings extends React.Component {
                             {listings.map(listing =>
                                 <ListingCard listing={listing}
                                              hoverOn={::this.hoverOn}
-                                             clickOn={::this.showDetail}
-                                        />
+                                             clickOn={::this.showDetail} />
                             )}
                         </Row>
                     ]}
