@@ -13,12 +13,6 @@ import {
 import {tooltip} from '@/util/dom'
 
 
-const FILTER_N_BEDS = [0, 1, 2, 3, 4]
-const FILTER_MAX_N_BEDS = FILTER_N_BEDS.slice(-1)[0]
-
-const FILTER_N_BATHS = [0, 1, 2, 3]
-const FILTER_MAX_N_BATHS = FILTER_N_BATHS.slice(-1)[0]
-
 let PETS_LABEL = {}
 let AMENITIES_LABEL = {}
 
@@ -172,54 +166,38 @@ class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                searching_text: '',
-                price_min: '',
-                price_max: '',
-                beds: new Set(FILTER_N_BEDS),
-                baths: new Set(FILTER_N_BATHS),
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: new Set(),
-            }
+            searching_text: '',
+            price_min: '',
+            price_max: '',
+            beds: [],
+            baths: [],
+            pets_allowed: 'any',
+            nofeeonly: false,
+            amenities: [],
         }
     }
     filtering(e) {
-        let {filters} = this.state
-        filters[e.target.id] = e.target.value
-        this.setState(filters, this.filterListings)
+        this.setState({ [e.target.id]: e.target.value }, this.filterListings)
     }
-    filterRooms(e) {
-        let {filters} = this.state
-        const num = parseInt(e.target.getAttribute('data-value'))
-        const room_type = e.target.getAttribute('data-name')
-        if (filters[room_type].has(num))
-            filters[room_type].delete(num)
-        else
-            filters[room_type].add(num)
-        this.setState(filters, this.filterListings)
+    updateFilter(e) {
+        const value = e.target.id
+        const item_type = e.target.getAttribute('name')
+        const current_filter = this.state[item_type]
+
+        const new_filter = current_filter.includes(value) ?
+                           current_filter.filter(val => val != value) :
+                           current_filter.concat(value)
+
+        this.setState({[item_type]: new_filter}, this.filterListings)
     }
     changePets(e) {
-        let {filters} = this.state
-        filters.pets_allowed = e.target.name
-        this.setState(filters, this.filterListings)
+        this.setState({ pets_allowed: e.target.name }, this.filterListings)
     }
     toggleFee() {
-        let {filters} = this.state
-        filters.nofeeonly = !filters.nofeeonly
-        this.setState(filters, this.filterListings)
-    }
-    changeAmenities(e) {
-        let {filters} = this.state
-        const value = e.target.id
-        if (filters.amenities.has(value))
-            filters.amenities.delete(value)
-        else
-            filters.amenities.add(value)
-        this.setState(filters, this.filterListings)
+        this.setState({ nofeeonly: !this.state.nofeeonly }, this.filterListings)
     }
     filterListings() {
-        $.get('/listings/public/', this.state.filters, (resp) =>
+        $.get('/listings/public/', this.state, (resp) =>
             this.props.updateListings({listings: resp.results})
         )
     }
@@ -227,17 +205,17 @@ class FiltersBar extends React.Component {
         this.filterListings()
     }
     render() {
-        const {filters} = this.state
-        const nofeeonly_attrs = {
-            outline: !filters.nofeeonly
-        }
+        const {
+            searching_text, price_min, price_max,
+            beds, baths, pets_allowed, nofeeonly, amenities
+        } = this.state
 
         return (
             <ButtonToolbar style={{padding: 5}}>
                 <div style={{width: '20vw', minWidth: 180}}>
                     <FormControl id='searching_text' size="sm"
                                  type='text'
-                                 value={filters.searching_text}
+                                 value={searching_text}
                                  placeholder='Search for something you like :)'
                                  onChange={::this.filtering} />
                 </div>
@@ -246,15 +224,15 @@ class FiltersBar extends React.Component {
                     <InputGroup style={{width: 300}}>
                         <InputGroupText>Min:</InputGroupText>
                         <FormControl id='price_min' xs='3' step='100'
-                                     type='number' min='0' max={filters.price_max}
-                                     value={filters.price_min}
+                                     type='number' min='0' max={price_max}
+                                     value={price_min}
                                      onChange={::this.filtering}
                                      placeholder='0'/>&nbsp;
 
                         <InputGroupText>Max:</InputGroupText>
                         <FormControl id='price_max' xs='3' step='100'
-                                     type='number' min={filters.price_min}
-                                     value={filters.price_max}
+                                     type='number' min={price_min}
+                                     value={price_max}
                                      onChange={::this.filtering}
                                      placeholder='9999'/>
                     </InputGroup>
@@ -262,11 +240,11 @@ class FiltersBar extends React.Component {
                 &nbsp;
                 <DropdownButton title='Bedrooms'>
                     <div className='rooms-container'>
-                        {FILTER_N_BEDS.map(n_beds =>
-                            <div data-value={n_beds} data-name='beds'
-                                 className={`room-div ${filters.beds.has(n_beds) ? 'selected' : ''}`}
-                                 onClick={::this.filterRooms}>
-                                {n_beds}{n_beds == FILTER_N_BEDS.slice(-1)[0] && '+'}
+                        {["0", "1", "2", "3", "4+"].map(n_beds =>
+                            <div id={n_beds} name='beds'
+                                 className={`room-div ${beds.includes(n_beds) ? 'selected' : ''}`}
+                                 onClick={::this.updateFilter}>
+                                {n_beds}
                             </div>
                         )}
                     </div>
@@ -274,11 +252,11 @@ class FiltersBar extends React.Component {
                 &nbsp;
                 <DropdownButton title='Baths'>
                     <div className='rooms-container'>
-                        {FILTER_N_BATHS.map(n_baths =>
-                            <div data-value={n_baths} data-name='baths'
-                                 className={`room-div ${filters.baths.has(n_baths) ? 'selected' : ''}`}
-                                 onClick={::this.filterRooms}>
-                                {n_baths}{n_baths == FILTER_N_BATHS.slice(-1)[0] && '+'}
+                        {["0", "1", "2", "3+"].map(n_baths =>
+                            <div id={n_baths} name='baths'
+                                 className={`room-div ${baths.includes(n_baths) ? 'selected' : ''}`}
+                                 onClick={::this.updateFilter}>
+                                {n_baths}
                             </div>
                         )}
                     </div>
@@ -288,14 +266,14 @@ class FiltersBar extends React.Component {
                     <div className='pets-container'>
                         <FormRadio
                             name='any'
-                            checked={filters.pets_allowed == 'any'}
+                            checked={pets_allowed == 'any'}
                             onChange={::this.changePets} >
                         Any
                         </FormRadio>
                         {Object.keys(PETS_LABEL).map(allowed_type =>
                             <FormRadio
                                 name={allowed_type}
-                                checked={filters.pets_allowed == allowed_type}
+                                checked={pets_allowed == allowed_type}
                                 onChange={::this.changePets} >
                             {PETS_LABEL[allowed_type]}
                             </FormRadio>
@@ -306,15 +284,16 @@ class FiltersBar extends React.Component {
                 <DropdownButton title='Amenities'>
                     <div className='amenities-container'>
                         {Object.keys(AMENITIES_LABEL).map(amenity =>
-                            <FormCheckbox id={amenity} checked={filters.amenities.has(amenity)}
-                                          onChange={::this.changeAmenities}>
+                            <FormCheckbox id={amenity} name="amenities"
+                                          checked={amenities.includes(amenity)}
+                                          onChange={::this.updateFilter}>
                                 {AMENITIES_LABEL[amenity]}
                             </FormCheckbox>
                         )}
                     </div>
                 </DropdownButton>
                 &nbsp;
-                <Button {...nofeeonly_attrs} onClick={::this.toggleFee}>
+                <Button outline={!nofeeonly} onClick={::this.toggleFee}>
                     No Fee Only
                 </Button>
             </ButtonToolbar>
@@ -349,59 +328,6 @@ class Listings extends React.Component {
     updateListings(listings) {
         this.setState(listings)
     }
-    /*filteredListings() {
-        const {listings} = this.props
-        let filtered_listings = listings
-
-        const {filters} = this.state
-        const query = filters.searching_text.toLowerCase()
-
-        filtered_listings = filtered_listings.filter(
-            listing => (
-                listing.neighborhood_name.toLowerCase().includes(query)
-                || listing.description.toLowerCase().includes(query)
-            )
-        )
-
-        filtered_listings = filtered_listings.filter(
-            listing => (
-                listing.price >= (filters.price_min || 0)
-                && listing.price <= (filters.price_max || Infinity)
-            )
-        )
-
-        filtered_listings = filtered_listings.filter(
-            listing => (
-                filters.beds.has(parseInt(listing.bedrooms))
-                || (filters.beds.has(FILTER_MAX_N_BEDS) && parseInt(listing.bedrooms) >= FILTER_MAX_N_BEDS)
-            )
-        )
-
-        filtered_listings = filtered_listings.filter(
-            listing => (
-                filters.baths.has(parseInt(listing.bathrooms))
-                || (filters.baths.has(FILTER_MAX_N_BATHS) && parseInt(listing.bathrooms) >= FILTER_MAX_N_BATHS)
-            )
-        )
-
-        if(filters.pets_allowed != 'any'){
-            filtered_listings = filtered_listings.filter(
-                listing => listing.pets == filters.pets_allowed
-            )
-        }
-
-        if(filters.amenities.size > 0)
-            filtered_listings = filtered_listings.filter(
-                listing => Array.from(filters.amenities).every(
-                    amenity => amenity in listing.amenities_dict
-                )
-            )
-
-        if(filters.nofeeonly)
-            filtered_listings = filtered_listings.filter(listing => listing.no_fee_listing)
-
-        return filtered_listings
-    }*/
     render() {
         const {listings} = this.state
 
