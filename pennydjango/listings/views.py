@@ -124,13 +124,35 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
             status='approved',
             detail__private=False
         )
-        # We can filter here with self.request.query_params
-        # https://www.django-rest-framework.org/api-guide/filtering/#filtering-against-query-parameters
-        print(self.request.query_params)
 
-        pets_allowed = self.request.query_params.get('pets_allowed')
+        params = self.request.query_params
+
+        # searching_text = params.get('searching_text')
+        price_min = params.get('price_min')
+        price_max = params.get('price_max')
+        beds = params.getlist('beds[]')
+        baths = params.getlist('baths[]')
+        pets_allowed = params.get('pets_allowed')
+        # amenities = params.getlist('amenities[]')
+        nofeeonly = params.get('nofeeonly')
+
+        if price_min:
+            queryset = queryset.filter(price__gte=price_min)
+
+        if price_max:
+            queryset = queryset.filter(price__lte=price_max)
+
+        if beds:
+            queryset = queryset.filter(bedrooms__in=beds)
+
+        if baths:
+            queryset = queryset.filter(bathrooms__in=baths)
+
         if pets_allowed != 'any':
             queryset = queryset.filter(pets=pets_allowed)
+
+        if nofeeonly == 'true':
+            queryset = queryset.filter(no_fee_listing=True)
 
         # remember to use always the page param
         # http://localhost:8000/listings/public/?page=1&price_min=3000
