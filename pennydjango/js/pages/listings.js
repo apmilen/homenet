@@ -165,16 +165,7 @@ class ListingDetail extends React.Component {
 class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            searching_text: '',
-            price_min: '',
-            price_max: '',
-            beds: [],
-            baths: [],
-            pets_allowed: 'any',
-            nofeeonly: false,
-            amenities: [],
-        }
+        this.state = props.filters
     }
     filtering(e) {
         this.setState({ [e.target.id]: e.target.value }, this.filterListings)
@@ -197,6 +188,7 @@ class FiltersBar extends React.Component {
         this.setState({ nofeeonly: !this.state.nofeeonly }, this.filterListings)
     }
     filterListings() {
+        this.props.updateFilters({filters: this.state})
         $.get('/listings/public/', this.state, (resp) =>
             this.props.updateListings({listings: resp.results})
         )
@@ -306,6 +298,16 @@ class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            filters: {
+                searching_text: '',
+                price_min: '',
+                price_max: '',
+                beds: [],
+                baths: [],
+                pets_allowed: 'any',
+                nofeeonly: false,
+                amenities: [],
+            },
             listings: [],
             map_address: '',
             show_detail: false,
@@ -328,6 +330,9 @@ class Listings extends React.Component {
     updateListings(listings) {
         this.setState(listings)
     }
+    updateFilters(filters) {
+        this.setState(filters)
+    }
     render() {
         const {listings} = this.state
 
@@ -343,7 +348,9 @@ class Listings extends React.Component {
                 :
                     <Col>
                         <Row className="justify-content-center">
-                            <FiltersBar updateListings={::this.updateListings} />
+                            <FiltersBar filters={this.state.filters}
+                                        updateListings={::this.updateListings}
+                                        updateFilters={::this.updateFilters} />
                         </Row>
                     </Col>
                 }
