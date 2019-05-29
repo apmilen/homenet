@@ -1,3 +1,4 @@
+from django.db.models import Q, Count
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
@@ -127,14 +128,20 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
 
         params = self.request.query_params
 
-        # searching_text = params.get('searching_text')
+        searching_text = params.get('searching_text')
         price_min = params.get('price_min')
         price_max = params.get('price_max')
         beds = params.getlist('beds[]')
         baths = params.getlist('baths[]')
         pets_allowed = params.get('pets_allowed')
-        # amenities = params.getlist('amenities[]')
+        amenities = params.getlist('amenities[]')
         nofeeonly = params.get('nofeeonly')
+
+        if searching_text:
+            queryset = queryset.filter(
+                Q(description__icontains=searching_text) |
+                Q(neighborhood__icontains=searching_text)
+            )
 
         if price_min:
             queryset = queryset.filter(price__gte=price_min)
@@ -150,6 +157,10 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
 
         if pets_allowed != 'any':
             queryset = queryset.filter(pets=pets_allowed)
+
+        if amenities:
+            for amenity in amenities:
+                queryset = queryset.filter(detail__amenities__name=amenity)
 
         if nofeeonly == 'true':
             queryset = queryset.filter(no_fee_listing=True)
