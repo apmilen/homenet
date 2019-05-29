@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import (
     ListView, CreateView, UpdateView, DetailView, TemplateView
@@ -7,9 +7,11 @@ from django.views.generic import (
 from rest_framework import viewsets
 
 from penny.mixins import AgentRequiredMixin
-from ui.views.base_views import BaseContextMixin
-from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
-from listings.models import Listing, ListingDetail, ListingPhotos
+from ui.views.base_views import BaseContextMixin, APIView
+from listings.forms import (
+    ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet
+)
+from listings.models import Listing, ListingDetail, ListingPhotos, ListingPhoto
 from listings.serializer import ListingSerializer
 
 
@@ -85,6 +87,28 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("listings:review", kwargs={'pk': self.listing.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['photos_formset'] = ListingPhotoFormSet(
+            queryset=ListingPhoto.objects.filter(listing_id=self.object.id)
+        )
+        return context
+
+    def form_valid(self, form):
+        photos_formset = ListingPhotoFormSet(
+            self.request.POST, self.request.FILES
+        )
+        if photos_formset.is_valid():
+            primary_photo = form.save()
+            for photo_form in photos_formset:
+                if photo_form.cleaned_data:
+                    photo = photo_form.save(commit=False)
+                    photo.listing = primary_photo
+                    photo.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
 
 
 class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):

@@ -2,7 +2,7 @@ from django import forms
 
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 
-from .models import Listing, ListingDetail, ListingPhotos, Amenity
+from .models import Listing, ListingDetail, ListingPhotos, ListingPhoto, Amenity
 from penny.constants import AGENT_TYPE
 from penny.models import User
 from penny.widgets import GooglePointFieldWidgetJQuery
@@ -75,3 +75,17 @@ class ListingPhotosForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['primary_photo'].required = False
+
+
+class SingleListingPhotoForm(forms.ModelForm):
+
+    class Meta:
+        model = ListingPhoto
+        fields = ('photo', )
+
+
+ListingPhotoFormSet = forms.modelformset_factory(
+    ListingPhoto,
+    form=SingleListingPhotoForm,
+    extra=3
+)

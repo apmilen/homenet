@@ -18,7 +18,10 @@
   {% block wizard_content %}
   {% block form %}
     {% bootstrap_form_errors form %}
-    <form method="post" action="" class="full-w" {% block extra_form_attr %}{% endblock extra_form_attr %}>
+    <form method="post"
+          action="{% block action %}{% endblock action %}"
+          class="full-w {% block extra_form_class %}{% endblock extra_form_class %}"
+            {% block extra_form_attr %}{% endblock extra_form_attr %}>
       {% block form_special_media %}
       {% endblock form_special_media %}
       {% csrf_token %}
@@ -31,6 +34,7 @@
           {% endfor %}
         </div>
       {% endblock main_form %}
+      {% block extra_form %}{% endblock extra_form %}
       {% buttons %}
         {% block form_buttons %}
           <button type="button" class="btn btn-primary">
@@ -42,6 +46,7 @@
         {% endblock form_buttons %}
       {% endbuttons %}
     </form>
+    {% block after_form %}{% endblock after_form %}
   {% endblock form %}
     {% endblock wizard_content %}
 {% endblock inner_content %}
