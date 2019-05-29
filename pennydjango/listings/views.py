@@ -150,10 +150,20 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(price__lte=price_max)
 
         if beds:
-            queryset = queryset.filter(bedrooms__in=beds)
+            query = Q(bedrooms__in=[num for num in beds if '+' not in num])
+            plus_nums = [num for num in beds if '+' in num]
+            if plus_nums:
+                query = query | Q(bedrooms__gte=plus_nums[0][:-1])
+
+            queryset = queryset.filter(query)
 
         if baths:
-            queryset = queryset.filter(bathrooms__in=baths)
+            query = Q(bathrooms__in=[num for num in baths if '+' not in num])
+            plus_nums = [num for num in baths if '+' in num]
+            if plus_nums:
+                query = query | Q(bathrooms__gte=plus_nums[0][:-1])
+
+            queryset = queryset.filter(query)
 
         if pets_allowed != 'any':
             queryset = queryset.filter(pets=pets_allowed)
