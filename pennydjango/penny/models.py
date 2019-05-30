@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django.conf import settings
 from django.utils.functional import cached_property
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -68,6 +69,10 @@ class User(AbstractUser, BaseModel):
             return self.avatar.url
         return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
 
+    @cached_property
+    def profile_link(self):
+        return reverse('userprofile', args=[self.username])
+
     def __json__(self, *attrs):
         return {
             **self.attrs(
@@ -78,6 +83,7 @@ class User(AbstractUser, BaseModel):
                 'last_name',
                 'date_joined',
                 'avatar_url',
+                'profile_link',
                 'is_active',
                 'is_staff',
                 'is_superuser',

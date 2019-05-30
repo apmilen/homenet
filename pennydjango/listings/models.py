@@ -132,9 +132,11 @@ class Listing(BaseModel):
     def neighborhood_name(self):
         return self.get_neighborhood_display()
 
-    def get_full_address(self):
+    @cached_property
+    def full_address(self):
         return f'{self.address} - Unit: {self.unit_number}'
 
+    @cached_property
     def price_per_bed(self):
         return self.bedrooms and self.price / self.bedrooms
 
@@ -154,20 +156,34 @@ class Listing(BaseModel):
                 'images',
                 'price',
                 'address',
-                'latitude',
-                'longitude',
+                'full_address',
                 'description',
                 'bedrooms',
                 'bathrooms',
                 'pets',
-                'amenities_dict',
-                'neighborhood_name',
+                'amenities',
+                'neighborhood',
                 'no_fee_listing',
                 'detail_link',
                 'edit_link',
+                'price_per_bed',
+                'short_id',
+                'date_available',
+                'utilities',
+                'move_in_cost',
+                'size',
+                'owner_pays',
+                'agent_notes',
+                'agent_bonus',
+                'term',
+                'created',
+                'modified',
+                'status'
             ),
             'str': str(self),
+            'detail': self.detail.__json__(),
             'sales_agent': self.sales_agent.__json__(),
+            'listing_agent': self.listing_agent.__json__(),
             **(self.attrs(*attrs) if attrs else {}),
         }
 
@@ -214,6 +230,17 @@ class ListingDetail(BaseModel):
     exclusive = models.BooleanField(default=False)
     private = models.BooleanField(default=False)
     # office = models.ForeignKey('penny.Office', on_delete=models.SET_NULL)
+
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'vacant',
+                'landlord_contact'
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
 
 
 class ListingPhotos(BaseModel):

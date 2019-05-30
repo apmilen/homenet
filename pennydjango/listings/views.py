@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
-    ListView, CreateView, UpdateView, DetailView, TemplateView
+    CreateView, UpdateView, DetailView, TemplateView
 )
 
 from rest_framework import viewsets
@@ -12,6 +12,7 @@ from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
 from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.serializer import ListingSerializer
+from listings.constants import PETS_ALLOWED, AMENITIES, LISTING_STATUS
 
 
 class WizardMixin:
@@ -100,10 +101,27 @@ class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
 
 
 class Listings(AgentRequiredMixin, PublicReactView):
+    title = 'Listings Management'
     component = 'pages/listings.js'
 
-    def get_queryset(self):
-        return Listing.objects.order_by('-modified').all()
+    def props(self, request, *args, **kwargs):
+        constants = {
+            'pets_allowed': dict(PETS_ALLOWED),
+            'amenities': {
+                amenity_tuple[0]: amenity_tuple[1]
+                for _, group in dict(AMENITIES).items()
+                for amenity_tuple in group
+            },
+            'listing_status': dict(LISTING_STATUS),
+        }
+
+        return {
+            'constants': constants,
+            'listings': [
+                lt.__json__()
+                for lt in Listing.objects.order_by('-modified').all()
+            ]
+        }
 
 
 class ListingDetail(BaseContextMixin, DetailView):
