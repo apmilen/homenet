@@ -115,13 +115,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'listing_status': dict(LISTING_STATUS),
         }
 
-        return {
-            'constants': constants,
-            'listings': [
-                lt.__json__()
-                for lt in Listing.objects.order_by('-modified').all()
-            ]
-        }
+        return {'constants': constants}
 
 
 class ListingDetail(BaseContextMixin, DetailView):

@@ -1,6 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
+import {FiltersBar} from '@/pages/filters'
+
 
 class ListingComponent extends React.Component {
     render() {
@@ -181,8 +183,26 @@ class ListingComponent extends React.Component {
 
 
 class Listings extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            filters: {
+                searching_text: '',
+                price_min: '',
+                price_max: '',
+                beds: [],
+                baths: [],
+                pets_allowed: 'any',
+                nofeeonly: false,
+                amenities: [],
+                draft_listings: false,
+            },
+            'listings': [],
+        }
+    }
     render() {
-        const {listings, constants} = this.props
+        const {constants} = this.props
+        const {listings, filters} = this.state
 
         return (
             <div class="row">
@@ -192,6 +212,8 @@ class Listings extends React.Component {
                             <h3 class="page-title">Manage Listings</h3>
                         </div>
                     </div>
+                    <FiltersBar filters={filters} constants={constants}
+                                updateParentState={new_state => this.setState(new_state)} />
                     <div class="card card-small mb-4">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item p-3">
