@@ -4,12 +4,13 @@ from rest_framework import routers
 from listings.views import (
     MainListingCreate, MainListingUpdate, DetailListingUpdate,
     PhotosListingUpdate, ListingDetail, ReviewListing, Listings,
-    PublicListingViewSet
+    PublicListingViewSet, PrivateListingViewSet
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'public', PublicListingViewSet)
+router.register(r'private', PrivateListingViewSet)
 
 
 urlpatterns = [

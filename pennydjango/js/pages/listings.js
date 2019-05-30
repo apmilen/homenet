@@ -212,8 +212,11 @@ class Listings extends React.Component {
                             <h3 class="page-title">Manage Listings</h3>
                         </div>
                     </div>
-                    <FiltersBar filters={filters} constants={constants}
-                                updateParentState={new_state => this.setState(new_state)} />
+                    <div class="row justify-content-center">
+                        <FiltersBar filters={filters} constants={constants} endpoint={this.props.endpoint}
+                                    updateParentState={new_state => this.setState(new_state)} />
+                    </div>
+                    <br/>
                     <div class="card card-small mb-4">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item p-3">
@@ -229,7 +232,7 @@ class Listings extends React.Component {
                                     </div>
                                 </div>
                             </li>
-                      </ul>
+                        </ul>
                     </div>
                 </div>
             </div>

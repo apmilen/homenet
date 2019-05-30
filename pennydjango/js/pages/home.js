@@ -201,6 +201,7 @@ class PublicListings extends React.Component {
                         <Row className="justify-content-center">
                             <FiltersBar filters={this.state.filters}
                                         constants={this.props.constants}
+                                        endpoint={this.props.endpoint}
                                         updateParentState={new_state => this.setState(new_state)} />
                         </Row>
                     </Col>

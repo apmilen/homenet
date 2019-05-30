@@ -11,8 +11,11 @@ from penny.mixins import AgentRequiredMixin
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
 from listings.models import Listing, ListingDetail, ListingPhotos
-from listings.serializer import ListingSerializer
+from listings.serializer import (
+    PublicListingSerializer, PrivateListingSerializer
+)
 from listings.constants import PETS_ALLOWED, AMENITIES, LISTING_STATUS
+from listings.utils import filter_listings
 
 
 class WizardMixin:
@@ -115,7 +118,10 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'listing_status': dict(LISTING_STATUS),
         }
 
-        return {'constants': constants}
+        return {
+            'constants': constants,
+            'endpoint': '/listings/private/'
+        }
 
 
 class ListingDetail(BaseContextMixin, DetailView):
@@ -131,7 +137,7 @@ class ListingDetail(BaseContextMixin, DetailView):
 # ViewSets define the view behavior.
 class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Listing.objects.all()
-    serializer_class = ListingSerializer
+    serializer_class = PublicListingSerializer
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -140,55 +146,19 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
             detail__private=False
         )
 
-        params = self.request.query_params
-
-        searching_text = params.get('searching_text')
-        price_min = params.get('price_min')
-        price_max = params.get('price_max')
-        beds = params.getlist('beds[]')
-        baths = params.getlist('baths[]')
-        pets_allowed = params.get('pets_allowed')
-        amenities = params.getlist('amenities[]')
-        nofeeonly = params.get('nofeeonly')
-
-        if searching_text:
-            queryset = queryset.filter(
-                Q(description__icontains=searching_text) |
-                Q(neighborhood__icontains=searching_text)
-            )
-
-        if price_min:
-            queryset = queryset.filter(price__gte=price_min)
-
-        if price_max:
-            queryset = queryset.filter(price__lte=price_max)
-
-        if beds:
-            query = Q(bedrooms__in=[num for num in beds if '+' not in num])
-            plus_nums = [num for num in beds if '+' in num]
-            if plus_nums:
-                query = query | Q(bedrooms__gte=plus_nums[0][:-1])
-
-            queryset = queryset.filter(query)
-
-        if baths:
-            query = Q(bathrooms__in=[num for num in baths if '+' not in num])
-            plus_nums = [num for num in baths if '+' in num]
-            if plus_nums:
-                query = query | Q(bathrooms__gte=plus_nums[0][:-1])
-
-            queryset = queryset.filter(query)
-
-        if pets_allowed != 'any':
-            queryset = queryset.filter(pets=pets_allowed)
-
-        if amenities:
-            for amenity in amenities:
-                queryset = queryset.filter(detail__amenities__name=amenity)
-
-        if nofeeonly == 'true':
-            queryset = queryset.filter(no_fee_listing=True)
+        queryset = filter_listings(queryset, self.request.query_params)
 
         # remember to use always the page param
         # http://localhost:8000/listings/public/?page=1&price_min=3000
+        return queryset.order_by('-created')
+
+
+# ViewSets define the view behavior.
+class PrivateListingViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Listing.objects.all()
+    serializer_class = PrivateListingSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = filter_listings(queryset, self.request.query_params)
         return queryset.order_by('-created')

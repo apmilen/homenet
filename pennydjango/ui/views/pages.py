@@ -20,7 +20,10 @@ class Home(PublicReactView):
             }
         }
 
-        return {'constants': constants}
+        return {
+            'constants': constants,
+            'endpoint': '/listings/public/',
+        }
 
 
 class OldHome(BaseContextMixin, ListView):

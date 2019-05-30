@@ -36,7 +36,7 @@ export class FiltersBar extends React.Component {
     }
     filterListings() {
         this.props.updateParentState({filters: this.state})
-        $.get('/listings/public/', this.state, (resp) =>
+        $.get(this.props.endpoint, this.state, (resp) =>
             this.props.updateParentState({listings: resp.results})
         )
     }
