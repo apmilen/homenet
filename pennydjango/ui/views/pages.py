@@ -7,8 +7,8 @@ from listings.constants import PETS_ALLOWED, AMENITIES
 
 
 class Home(PublicReactView):
-    title = "Listings"
-    component = 'pages/listings.js'
+    title = "Real Estate"
+    component = 'pages/home.js'
 
     def props(self, request, *args, **kwargs):
         constants = {

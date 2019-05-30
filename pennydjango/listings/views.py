@@ -1,4 +1,4 @@
-from django.db.models import Q, Count
+from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
@@ -8,7 +8,7 @@ from django.views.generic import (
 from rest_framework import viewsets
 
 from penny.mixins import AgentRequiredMixin
-from ui.views.base_views import BaseContextMixin
+from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
 from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.serializer import ListingSerializer
@@ -99,7 +99,9 @@ class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
         return self.listing_qs
 
 
-class Listings(AgentRequiredMixin, ListView):
+class Listings(AgentRequiredMixin, PublicReactView):
+    component = 'pages/listings.js'
+
     def get_queryset(self):
         return Listing.objects.order_by('-modified').all()
 
