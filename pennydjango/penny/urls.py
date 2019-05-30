@@ -20,13 +20,14 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('', include("ui.urls")),
     path(
         'listings/', include(("listings.urls", "listings"), namespace='listing')
     ),
     path('schedule/', include("schedule.urls")),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('admin/', admin.site.urls),
+    path('leases/', include(("leases.urls", "leases"), namespace='leases')),
 ]
 
 

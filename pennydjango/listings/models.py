@@ -108,9 +108,9 @@ class Listing(BaseModel):
     def images(self):
         if hasattr(self, 'photos'):
             images = [
-                photo.photo.url
-                for photo in self.photos.listingphoto_set.all()
-                if photo.photo
+                listing_image.photo.url
+                for listing_image in self.photos.listingphoto_set.all()
+                if listing_image.photo
             ]
             images.insert(0, self.default_image)
             return images
