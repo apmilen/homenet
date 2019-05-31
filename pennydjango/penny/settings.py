@@ -260,7 +260,8 @@ INSTALLED_APPS = [
     'mapwidgets',
     'bootstrap4',
     'django_select2',
-    'rest_framework'
+    'rest_framework',
+    'leases'
 ]
 
 MIDDLEWARE = [

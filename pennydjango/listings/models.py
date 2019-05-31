@@ -108,7 +108,9 @@ class Listing(BaseModel):
     def images(self):
         if hasattr(self, 'photos'):
             images = [
-                photo.photo.url for photo in self.photos.listingphoto_set.all()
+                listing_image.photo.url
+                for listing_image in self.photos.listingphoto_set.all()
+                if listing_image.photo
             ]
             images.insert(0, self.default_image)
             return images
@@ -245,7 +247,8 @@ class ListingPhotos(BaseModel):
     primary_photo = models.ImageField(
         upload_to=image_path,
         validators=[validate_file_size],
-        null=True
+        null=True,
+        blank=True
     )
 
 
@@ -253,5 +256,6 @@ class ListingPhoto(BaseModel):
     listing = models.ForeignKey(ListingPhotos, on_delete=models.CASCADE)
     photo = models.ImageField(
         upload_to=image_path,
-        validators=[validate_file_size]
+        validators=[validate_file_size],
+        blank=True
     )

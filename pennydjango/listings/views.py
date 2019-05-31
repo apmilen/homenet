@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView
@@ -8,8 +8,11 @@ from rest_framework import viewsets
 
 from penny.mixins import AgentRequiredMixin
 from ui.views.base_views import BaseContextMixin, PublicReactView
-from listings.forms import ListingForm, ListingDetailForm, ListingPhotosForm
-from listings.models import Listing, ListingDetail, ListingPhotos
+from listings.forms import (
+    ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet
+)
+from listings.mixins import WizardMixin
+from listings.models import Listing, ListingDetail, ListingPhotos, ListingPhoto
 from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
@@ -17,44 +20,6 @@ from listings.constants import (
     PETS_ALLOWED, AMENITIES, LISTING_TYPES, LISTING_STATUS
 )
 from listings.utils import filter_listings
-
-
-class WizardMixin:
-    pk_url_kwarg = 'pk'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.listing = None
-        self.listing_qs = None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['listing'] = self.get_listing()
-        return context
-
-    def get_object(self, queryset=None):
-        self.listing = self.get_listing()
-        queryset = self.get_queryset()
-        obj, _ = queryset.get_or_create(listing=self.listing)
-        return obj
-
-    def get_listing_qs(self):
-        self.listing_qs = Listing.objects.all()
-        return self.listing_qs
-
-    def get_listing(self):
-        if self.listing:
-            return self.listing
-
-        queryset = self.get_listing_qs()
-        try:
-            pk = self.kwargs.get(self.pk_url_kwarg)
-            # Get the single item from the filtered queryset
-            obj = queryset.get(pk=pk)
-        except queryset.model.DoesNotExist:
-            raise Http404(f"No {queryset.model._meta.verbose_name}s "
-                          f"found matching the query")
-        return obj
 
 
 class MainListingCreate(AgentRequiredMixin, CreateView):
@@ -91,6 +56,28 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
 
     def get_success_url(self):
         return reverse("listings:review", kwargs={'pk': self.listing.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['photos_formset'] = ListingPhotoFormSet(
+            queryset=ListingPhoto.objects.filter(listing_id=self.object.id)
+        )
+        return context
+
+    def form_valid(self, form):
+        photos_formset = ListingPhotoFormSet(
+            self.request.POST, self.request.FILES
+        )
+        if photos_formset.is_valid():
+            primary_photo = form.save()
+            for photo_form in photos_formset:
+                if photo_form.cleaned_data:
+                    photo = photo_form.save(commit=False)
+                    photo.listing = primary_photo
+                    photo.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
 
 
 class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
