@@ -105,15 +105,44 @@ const draft_listingsFilter = (draft_listings, func) =>
     </Button>
 
 const addressFilter = (address, func) =>
-    <div></div>
+    <div style={{width: '14vw', minWidth: 100}}>
+        <FormControl id='address' size="sm"
+                     type='text'
+                     value={address}
+                     placeholder='Address'
+                     onChange={func} />
+    </div>
 
 const unitFilter = (unit, func) =>
+    <div style={{width: '6vw', minWidth: 50}}>
+        <FormControl id='unit' size="sm"
+                     type='text'
+                     value={unit}
+                     placeholder='Unit'
+                     onChange={func} />
+    </div>
+
+const owner_paysFilter = (owner_pays, func) =>
+    <Button outline={!owner_pays} onClick={func} name="owner_pays">
+        Owner Pays
+    </Button>
+
+const exclusiveFilter = (exclusive, func) =>
+    <Button outline={!exclusive} onClick={func} name="exclusive">
+        Exclusive
+    </Button>
+
+const vacantFilter = (vacant, func) =>
+    <Button outline={!vacant} onClick={func} name="vacant">
+        Vacant
+    </Button>
+
+
+
+const sales_agentsFilter = (sales_agent, func) =>
     <div></div>
 
-const sales_agentFilter = (sales_agent, func) =>
-    <div></div>
-
-const listing_agentFilter = (listing_agent, func) =>
+const listing_agentsFilter = (listing_agent, func) =>
     <div></div>
 
 const hoodsFilter = (hoods, func) =>
@@ -132,15 +161,6 @@ const sizeFilter = (size, func) =>
     <div></div>
 
 const statusFilter = (status, func) =>
-    <div></div>
-
-const owner_paysFilter = (owner_pays, func) =>
-    <div></div>
-
-const exclusiveFilter = (exclusive, func) =>
-    <div></div>
-
-const vacantFilter = (vacant, func) =>
     <div></div>
 
 const date_availableFilter = (date_available, func) =>
@@ -182,20 +202,20 @@ export class FiltersBar extends React.Component {
             this.props.updateParentState({listings: resp.results})
         )
     }
-    voidFunc() {
-        console.log("not implemented")
+    voidFunc(e) {
+        console.log("not implemented", e.target)
     }
     componentDidMount() {
         this.filterListings()
     }
     render() {
         const {
-            searching_text, price_min, price_max, beds, baths, pets_allowed,
-            nofeeonly, amenities, draft_listings,
+            searching_text, address, unit, price_min, price_max, beds, baths,
+            pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
+            draft_listings,
 
-            address, unit, sales_agent, listing_agent, hoods, price_per_bed,
-            listing_type, listing_id, size, status, owner_pays, exclusive,
-            vacant, date_available
+            sales_agents, listing_agents, hoods, price_per_bed,
+            listing_type, listing_id, size, status, date_available
         } = this.state
 
         return (
@@ -203,6 +223,12 @@ export class FiltersBar extends React.Component {
 
                 {searching_text != undefined &&
                     [searchingText(searching_text, ::this.filtering), '\u00A0']}
+
+                {address != undefined &&
+                    [addressFilter(address, ::this.filtering), '\u00A0']}
+
+                {unit != undefined &&
+                    [unitFilter(unit, ::this.filtering), '\u00A0']}
 
                 {(price_min != undefined && price_max != undefined) &&
                     [priceFilter(price_min, price_max, ::this.filtering), '\u00A0']}
@@ -222,20 +248,24 @@ export class FiltersBar extends React.Component {
                 {nofeeonly != undefined &&
                     [nofeeonlyFilter(nofeeonly, ::this.toggleFilter), '\u00A0']}
 
+                {owner_pays != undefined &&
+                    [owner_paysFilter(owner_pays, ::this.toggleFilter), '\u00A0']}
+
+                {exclusive != undefined &&
+                    [exclusiveFilter(exclusive, ::this.toggleFilter), '\u00A0']}
+
+                {vacant != undefined &&
+                    [vacantFilter(vacant, ::this.toggleFilter), '\u00A0']}
+
                 {draft_listings != undefined &&
                     [draft_listingsFilter(draft_listings, ::this.toggleFilter), '\u00A0']}
 
-                {address != undefined &&
-                    [addressFilter(address, ::this.voidFunc), '\u00A0']}
+{/* BELOW NOT IMPLEMENTED YET */}
+                {sales_agents != undefined &&
+                    [sales_agentsFilter(sales_agents, ::this.voidFunc), '\u00A0']}
 
-                {unit != undefined &&
-                    [unitFilter(unit, ::this.voidFunc), '\u00A0']}
-
-                {sales_agent != undefined &&
-                    [sales_agentFilter(sales_agent, ::this.voidFunc), '\u00A0']}
-
-                {listing_agent != undefined &&
-                    [listing_agentFilter(listing_agent, ::this.voidFunc), '\u00A0']}
+                {listing_agents != undefined &&
+                    [listing_agentsFilter(listing_agents, ::this.voidFunc), '\u00A0']}
 
                 {hoods != undefined &&
                     [hoodsFilter(hoods, ::this.voidFunc), '\u00A0']}
@@ -254,15 +284,6 @@ export class FiltersBar extends React.Component {
 
                 {status != undefined &&
                     [statusFilter(status, ::this.voidFunc), '\u00A0']}
-
-                {owner_pays != undefined &&
-                    [owner_paysFilter(owner_pays, ::this.voidFunc), '\u00A0']}
-
-                {exclusive != undefined &&
-                    [exclusiveFilter(exclusive, ::this.voidFunc), '\u00A0']}
-
-                {vacant != undefined &&
-                    [vacantFilter(vacant, ::this.voidFunc), '\u00A0']}
 
                 {date_available != undefined &&
                     [date_availableFilter(date_available, ::this.voidFunc), '\u00A0']}
