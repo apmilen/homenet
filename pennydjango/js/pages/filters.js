@@ -276,12 +276,11 @@ export class FiltersBar extends React.Component {
     }
     render() {
         const {
-            searching_text, address, unit, price, beds, baths,
-            pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
-            draft_listings,
+            searching_text, address, unit, price, price_per_bed, beds, baths,
+            listing_type, listing_id, size, pets_allowed, amenities, nofeeonly,
+            owner_pays, exclusive, vacant, draft_listings, date_available,
 
-            sales_agents, listing_agents, hoods, price_per_bed,
-            listing_type, listing_id, size, date_available
+            sales_agents, listing_agents, hoods
         } = this.state
 
         return (

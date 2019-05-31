@@ -4,13 +4,23 @@ from django.db.models import Q
 def filter_listings(queryset, params):
 
     searching_text = params.get('searching_text')
+    # address = params.get('address')
+    # unit = params.get('unit')
     price = params.getlist('price[]')
+    # price_per_bed = params.getlist('price_per_bed[]')
     beds = params.getlist('beds[]')
     baths = params.getlist('baths[]')
+    # listing_type = params.get('listing_type')
+    # listing_id = params.get('listing_id')
+    # size = params.getlist('size[]')
     pets_allowed = params.get('pets_allowed')
     amenities = params.getlist('amenities[]')
     nofeeonly = params.get('nofeeonly')
+    # owner_pays = params.get('owner_pays')
+    # exclusive = params.get('exclusive')
+    # vacant = params.get('vacant')
     draft_listings = params.get('draft_listings')
+    # date_available = params.get('date_available')
 
     if searching_text:
         queryset = queryset.filter(
