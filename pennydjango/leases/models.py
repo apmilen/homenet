@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from penny.models import BaseModel, User
 from listings.models import Listing
@@ -31,3 +32,6 @@ class Lease(BaseModel):
         choices=LEASE_STATUS,
         default=DEFAULT_LEASE_STATUS
     )
+
+    def detail_link(self):
+        return reverse('leases:detail', args=[self.id])

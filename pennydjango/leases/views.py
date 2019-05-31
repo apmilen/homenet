@@ -1,13 +1,12 @@
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import DetailView, CreateView, ListView
+from django.views.generic import CreateView
 
 from rest_framework import viewsets
 
 from penny.model_utils import get_all_or_by_user
 from penny.mixins import ClientOrAgentRequiredMixin, AgentRequiredMixin
 from listings.mixins import ListingContextMixin
-from listings.models import Listing
 from leases.models import Lease
 from leases.form import LeaseCreateForm
 from leases.serializer import LeaseSerializer

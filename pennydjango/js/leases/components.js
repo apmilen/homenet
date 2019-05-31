@@ -24,10 +24,10 @@ export const Lease = ({lease}) => {
                         <div className="col-lg-4 listing-area-main">
                             <div className="row"
                                  style={{position: 'relative', paddingTop: '56.25%'}}>
-                                <a href="#"
+                                <a href={`${lease.detail_link}`}
                                    target="_blank" rel="noreferrer noopener">
                                     <img className="lazy img-fluid mx-auto"
-                                         src={`${lease.listing.image}`}
+                                         src={`${listing.default_image}`}
                                          width="960"
                                          height="540"
                                          style={{position: 'absolute', top: '0', left: '0', width: '100%', height: '100%'}}/>
