@@ -44,8 +44,24 @@ class LeaseCreate(AgentRequiredMixin, ListingContextMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
-    model = Lease
+class LeaseDetail(ClientOrAgentRequiredMixin, PublicReactView):
+    title = 'Lease Detail'
+    component = 'pages/lease.js'
+    pk_url_kwarg = 'pk'
+
+    def props(self, request, *args, **kwargs):
+        queryset = Lease.objects.all()
+        try:
+            pk = self.kwargs.get(self.pk_url_kwarg)
+            # Get the single item from the filtered queryset
+            obj = queryset.get(pk=pk)
+        except queryset.model.DoesNotExist:
+            raise Http404(f"No {queryset.model._meta.verbose_name}s "
+                          f"found matching the query")
+
+        return {
+            'lease': LeaseSerializer(obj).data,
+        }
 
 
 # ViewSets define the view behavior.

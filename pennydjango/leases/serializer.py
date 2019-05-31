@@ -12,6 +12,7 @@ class LeaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lease
         fields = (
-            'short_id', 'listing', 'offer', 'length_of_lease', 'move_in_date', 'op',
-            'total_broker_fee', 'status', 'created_by'
+            'id', 'short_id', 'listing', 'offer', 'length_of_lease',
+            'move_in_date', 'op', 'total_broker_fee', 'status', 'created_by',
+            'created', 'modified'
         )

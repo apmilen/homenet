@@ -5,7 +5,8 @@ module.exports = {
   entry: {
     // 'home': './pages/home.js',
     'listings': './pages/listings.js',
-    'leases': './pages/leases.js'
+    'leases': './pages/leases.js',
+    'lease': './pages/lease.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/pages'),
