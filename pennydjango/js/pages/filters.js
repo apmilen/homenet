@@ -178,9 +178,6 @@ const price_per_bedFilter = (price_per_bed, func) =>
 const sizeFilter = (size, func) =>
     <div></div>
 
-const statusFilter = (status, func) =>
-    <div></div>
-
 const date_availableFilter = (date_available, func) =>
     <div></div>
 
@@ -235,7 +232,7 @@ export class FiltersBar extends React.Component {
             draft_listings,
 
             sales_agents, listing_agents, hoods, price_per_bed,
-            listing_type, listing_id, size, status, date_available
+            listing_type, listing_id, size, date_available
         } = this.state
 
         return (
@@ -301,9 +298,6 @@ export class FiltersBar extends React.Component {
 
                 {size != undefined &&
                     [sizeFilter(size, ::this.voidFunc), '\u00A0']}
-
-                {status != undefined &&
-                    [statusFilter(status, ::this.voidFunc), '\u00A0']}
 
                 {date_available != undefined &&
                     [date_availableFilter(date_available, ::this.voidFunc), '\u00A0']}

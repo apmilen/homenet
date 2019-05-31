@@ -204,7 +204,6 @@ class Listings extends React.Component {
                 listing_type: 'any',
                 listing_id: '',
                 size: [],
-                status: [],
                 owner_pays: false,
                 exclusive: false,
                 vacant: false,
