@@ -67,3 +67,10 @@ class SingletonModel(BaseModel):
     def load(cls):
         obj, _ = cls.objects.get_or_create()
         return obj
+
+
+def get_all_or_by_user(model, user, field_lookup):
+    base_qs = model._default_manager.all()
+    if user.perms.has_admin_access():
+        return base_qs
+    return base_qs.filter(**{field_lookup: user})

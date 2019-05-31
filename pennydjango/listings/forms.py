@@ -55,9 +55,9 @@ class ListingDetailForm(forms.ModelForm):
     class Meta:
         model = ListingDetail
         fields = (
-            'amenities', 'vacant', 'landlord_contact', 'building_access', 'hpd',
-            'accepts_site_apply', 'listing_agreement', 'floorplans',
-            'exclusive', 'private',  # 'office'
+            'amenities', 'landlord_contact', 'building_access',
+            'listing_agreement', 'floorplans', 'vacant', 'hpd', 'exclusive',
+            'private', 'accepts_site_apply',  # 'office'
         )
 
     def __init__(self, *args, **kwargs):
