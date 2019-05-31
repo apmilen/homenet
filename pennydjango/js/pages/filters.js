@@ -2,7 +2,8 @@ import React from 'react'
 
 import {FormControl, DropdownButton} from 'react-bootstrap'
 import {
-    Button, ButtonToolbar, InputGroup, InputGroupText, FormRadio, FormCheckbox
+    Button, ButtonToolbar, InputGroup, InputGroupText, FormRadio, FormCheckbox,
+    DatePicker
 } from "shards-react";
 
 
@@ -162,6 +163,13 @@ const listing_typeFilter = (listing_type, listing_type_dict, func) =>
         </div>
     </DropdownButton>
 
+const date_availableFilter = (date_available, func) =>
+    <DatePicker selected={date_available}
+                onChange={func}
+                placeholderText="Date available"
+                minDate={new Date()}
+                dateFormat="MMMM d, yyyy" />
+
 
 const sales_agentsFilter = (sales_agent, func) =>
     <div></div>
@@ -176,9 +184,6 @@ const price_per_bedFilter = (price_per_bed, func) =>
     <div></div>
 
 const sizeFilter = (size, func) =>
-    <div></div>
-
-const date_availableFilter = (date_available, func) =>
     <div></div>
 
 
@@ -212,6 +217,9 @@ export class FiltersBar extends React.Component {
     filterToggle(e) {
         const f_name = e.target.getAttribute('name')
         this.setState({ [f_name]: !this.state[f_name] }, this.fetchListings)
+    }
+    changeDate(date) {
+        this.setState({ date_available: date || '' }, this.fetchListings)
     }
     fetchListings() {
         this.props.updateParentState({filters: this.state})
@@ -283,6 +291,9 @@ export class FiltersBar extends React.Component {
                 {draft_listings != undefined &&
                     [draft_listingsFilter(draft_listings, ::this.filterToggle), '\u00A0']}
 
+                {date_available != undefined &&
+                    [date_availableFilter(date_available, ::this.changeDate), '\u00A0']}
+
 {/* BELOW NOT IMPLEMENTED YET */}
                 {sales_agents != undefined &&
                     [sales_agentsFilter(sales_agents, ::this.voidFunc), '\u00A0']}
@@ -298,9 +309,6 @@ export class FiltersBar extends React.Component {
 
                 {size != undefined &&
                     [sizeFilter(size, ::this.voidFunc), '\u00A0']}
-
-                {date_available != undefined &&
-                    [date_availableFilter(date_available, ::this.voidFunc), '\u00A0']}
 
             </ButtonToolbar>
         )
