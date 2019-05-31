@@ -214,42 +214,32 @@ class Listings extends React.Component {
         }
     }
     render() {
-        const {constants} = this.props
+        const {constants, endpoint} = this.props
         const {listings, filters} = this.state
 
-        return (
+        return [
+            <div class="row justify-content-center">
+                <div class="p-3">
+                    <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
+                                updateParentState={new_state => this.setState(new_state)} />
+                </div>
+            </div>,
             <div class="row">
                 <div class="col-12 col-md-10 offset-md-1">
-                    <div class="page-header row no-gutters py-4 mb-3 border-bottom text-center">
-                        <div class="col-12 text-center mb-0">
-                            <h3 class="page-title">Manage Listings</h3>
-                        </div>
-                    </div>
-                    <div class="row justify-content-center">
-                        <FiltersBar filters={filters} constants={constants} endpoint={this.props.endpoint}
-                                    updateParentState={new_state => this.setState(new_state)} />
-                    </div>
-                    <br/>
                     <div class="card card-small mb-4">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item p-3">
-                                <div class="row">
-                                    <div class="col">
-                                        {listings.map(listing => [
-                                            <ListingComponent listing={listing} constants={constants}/>,
-                                            <hr class="listings-hr" />
-                                        ])}
-                                        {listings.length == 0 &&
-                                            <center><h4>No listings found! :s</h4></center>
-                                        }
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
+                        <div class="col">
+                            {listings.map(listing => [
+                                <ListingComponent listing={listing} constants={constants}/>,
+                                <hr class="listings-hr" />
+                            ])}
+                            {listings.length == 0 &&
+                                <center><h4>No listings found! :s</h4></center>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
-        )
+        ]
     }
 }
 
