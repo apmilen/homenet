@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django.http import Http404
 from django.urls import reverse
 from django.views.generic import (
@@ -14,7 +13,9 @@ from listings.models import Listing, ListingDetail, ListingPhotos
 from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
-from listings.constants import PETS_ALLOWED, AMENITIES, LISTING_STATUS
+from listings.constants import (
+    PETS_ALLOWED, AMENITIES, LISTING_TYPES, LISTING_STATUS
+)
 from listings.utils import filter_listings
 
 
@@ -115,6 +116,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
                 for _, group in dict(AMENITIES).items()
                 for amenity_tuple in group
             },
+            'listing_types': dict(LISTING_TYPES),
             'listing_status': dict(LISTING_STATUS),
         }
 

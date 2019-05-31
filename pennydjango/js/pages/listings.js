@@ -201,7 +201,7 @@ class Listings extends React.Component {
                 listing_agents: [],
                 hoods: [],
                 price_per_bed: [],
-                listing_type: '',
+                listing_type: 'any',
                 listing_id: '',
                 size: [],
                 status: [],

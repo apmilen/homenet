@@ -64,17 +64,15 @@ const bathsFilter = (baths, func) =>
 const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
     <DropdownButton title='Pets'>
         <div className='pets-container'>
-            <FormRadio
-                name='any'
-                checked={pets_allowed == 'any'}
-                onChange={func} >
+            <FormRadio name='pets_allowed' value='any'
+                       checked={pets_allowed == 'any'}
+                       onChange={func} >
             Any
             </FormRadio>
             {Object.keys(pets_allowed_dict).map(allowed_type =>
-                <FormRadio
-                    name={allowed_type}
-                    checked={pets_allowed == allowed_type}
-                    onChange={func} >
+                <FormRadio name='pets_allowed' value={allowed_type}
+                           checked={pets_allowed == allowed_type}
+                           onChange={func} >
                 {pets_allowed_dict[allowed_type]}
                 </FormRadio>
             )}
@@ -137,6 +135,32 @@ const vacantFilter = (vacant, func) =>
         Vacant
     </Button>
 
+const listing_idFilter = (listing_id, func) =>
+    <div style={{width: '14vw', minWidth: 100}}>
+        <FormControl id='listing_id' size="sm"
+                     type='text'
+                     value={listing_id}
+                     placeholder='Listing ID'
+                     onChange={func} />
+    </div>
+
+const listing_typeFilter = (listing_type, listing_type_dict, func) =>
+    <DropdownButton title='Listing Type'>
+        <div className='pets-container'>
+            <FormRadio name='listing_type' value='any'
+                       checked={listing_type == 'any'}
+                       onChange={func} >
+            Any
+            </FormRadio>
+            {Object.keys(listing_type_dict).map(lt_type =>
+                <FormRadio name='listing_type' value={lt_type}
+                           checked={listing_type == lt_type}
+                           onChange={func} >
+                {listing_type_dict[lt_type]}
+                </FormRadio>
+            )}
+        </div>
+    </DropdownButton>
 
 
 const sales_agentsFilter = (sales_agent, func) =>
@@ -149,12 +173,6 @@ const hoodsFilter = (hoods, func) =>
     <div></div>
 
 const price_per_bedFilter = (price_per_bed, func) =>
-    <div></div>
-
-const listing_typeFilter = (listing_type, func) =>
-    <div></div>
-
-const listing_idFilter = (listing_id, func) =>
     <div></div>
 
 const sizeFilter = (size, func) =>
@@ -178,7 +196,7 @@ export class FiltersBar extends React.Component {
     filtering(e) {
         this.setState({ [e.target.id]: e.target.value }, this.filterListings)
     }
-    updateFilter(e) {
+    filterMultipleSelection(e) {
         const value = e.target.id
         const item_type = e.target.getAttribute('name')
         const current_filter = this.state[item_type]
@@ -189,10 +207,12 @@ export class FiltersBar extends React.Component {
 
         this.setState({[item_type]: new_filter}, this.filterListings)
     }
-    changePets(e) {
-        this.setState({ pets_allowed: e.target.name }, this.filterListings)
+    filterOneSelection (e) {
+        const f_name = e.target.getAttribute('name')
+        const f_value = e.target.getAttribute('value')
+        this.setState({ [f_name]: f_value }, this.filterListings)
     }
-    toggleFilter(e) {
+    filterToggle(e) {
         const f_name = e.target.getAttribute('name')
         this.setState({ [f_name]: !this.state[f_name] }, this.filterListings)
     }
@@ -234,31 +254,37 @@ export class FiltersBar extends React.Component {
                     [priceFilter(price_min, price_max, ::this.filtering), '\u00A0']}
 
                 {beds != undefined &&
-                    [bedsFilter(beds, ::this.updateFilter), '\u00A0']}
+                    [bedsFilter(beds, ::this.filterMultipleSelection), '\u00A0']}
 
                 {baths != undefined &&
-                    [bathsFilter(baths, ::this.updateFilter), '\u00A0']}
+                    [bathsFilter(baths, ::this.filterMultipleSelection), '\u00A0']}
+
+                {listing_type != undefined &&
+                    [listing_typeFilter(listing_type, this.props.constants.listing_types, ::this.filterOneSelection), '\u00A0']}
+
+                {listing_id != undefined &&
+                    [listing_idFilter(listing_id, ::this.filtering), '\u00A0']}
 
                 {pets_allowed != undefined &&
-                    [pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.changePets), '\u00A0']}
+                    [pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.filterOneSelection), '\u00A0']}
 
                 {amenities != undefined &&
-                    [amenitiesFilter(amenities, this.props.constants.amenities, ::this.updateFilter), '\u00A0']}
+                    [amenitiesFilter(amenities, this.props.constants.amenities, ::this.filterMultipleSelection), '\u00A0']}
 
                 {nofeeonly != undefined &&
-                    [nofeeonlyFilter(nofeeonly, ::this.toggleFilter), '\u00A0']}
+                    [nofeeonlyFilter(nofeeonly, ::this.filterToggle), '\u00A0']}
 
                 {owner_pays != undefined &&
-                    [owner_paysFilter(owner_pays, ::this.toggleFilter), '\u00A0']}
+                    [owner_paysFilter(owner_pays, ::this.filterToggle), '\u00A0']}
 
                 {exclusive != undefined &&
-                    [exclusiveFilter(exclusive, ::this.toggleFilter), '\u00A0']}
+                    [exclusiveFilter(exclusive, ::this.filterToggle), '\u00A0']}
 
                 {vacant != undefined &&
-                    [vacantFilter(vacant, ::this.toggleFilter), '\u00A0']}
+                    [vacantFilter(vacant, ::this.filterToggle), '\u00A0']}
 
                 {draft_listings != undefined &&
-                    [draft_listingsFilter(draft_listings, ::this.toggleFilter), '\u00A0']}
+                    [draft_listingsFilter(draft_listings, ::this.filterToggle), '\u00A0']}
 
 {/* BELOW NOT IMPLEMENTED YET */}
                 {sales_agents != undefined &&
@@ -272,12 +298,6 @@ export class FiltersBar extends React.Component {
 
                 {price_per_bed != undefined &&
                     [price_per_bedFilter(price_per_bed, ::this.voidFunc), '\u00A0']}
-
-                {listing_type != undefined &&
-                    [listing_typeFilter(listing_type, ::this.voidFunc), '\u00A0']}
-
-                {listing_id != undefined &&
-                    [listing_idFilter(listing_id, ::this.voidFunc), '\u00A0']}
 
                 {size != undefined &&
                     [sizeFilter(size, ::this.voidFunc), '\u00A0']}
