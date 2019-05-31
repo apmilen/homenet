@@ -11,6 +11,7 @@ def filter_listings(queryset, params):
     pets_allowed = params.get('pets_allowed')
     amenities = params.getlist('amenities[]')
     nofeeonly = params.get('nofeeonly')
+    draft_listings = params.get('draft_listings')
 
     if searching_text:
         queryset = queryset.filter(
@@ -49,5 +50,8 @@ def filter_listings(queryset, params):
 
     if nofeeonly == 'true':
         queryset = queryset.filter(no_fee_listing=True)
+
+    if draft_listings == 'true':
+        queryset = queryset.filter(status='draft')
 
     return queryset

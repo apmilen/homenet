@@ -6,6 +6,150 @@ import {
 } from "shards-react";
 
 
+
+const searchingText = (searching_text, func) =>
+    <div style={{width: '20vw', minWidth: 180}}>
+        <FormControl id='searching_text' size="sm"
+                     type='text'
+                     value={searching_text}
+                     placeholder='Search for something you like :)'
+                     onChange={func} />
+    </div>
+
+const priceFilter = (price_min, price_max, func) =>
+    <DropdownButton title='Price'>
+        <InputGroup style={{width: 300}}>
+            <InputGroupText>Min:</InputGroupText>
+            <FormControl id='price_min' xs='3' step='100'
+                         type='number' min='0' max={price_max}
+                         value={price_min}
+                         onChange={func}
+                         placeholder='0'/>&nbsp;
+
+            <InputGroupText>Max:</InputGroupText>
+            <FormControl id='price_max' xs='3' step='100'
+                         type='number' min={price_min}
+                         value={price_max}
+                         onChange={func}
+                         placeholder='9999'/>
+        </InputGroup>
+    </DropdownButton>
+
+const bedsFilter = (beds, func) =>
+    <DropdownButton title='Bedrooms'>
+        <div className='rooms-container'>
+            {["0", "1", "2", "3", "4+"].map(n_beds =>
+                <div id={n_beds} name='beds'
+                     className={`room-div ${beds.includes(n_beds) ? 'selected' : ''}`}
+                     onClick={func}>
+                    {n_beds}
+                </div>
+            )}
+        </div>
+    </DropdownButton>
+
+const bathsFilter = (baths, func) =>
+    <DropdownButton title='Baths'>
+        <div className='rooms-container'>
+            {["0", "1", "2", "3+"].map(n_baths =>
+                <div id={n_baths} name='baths'
+                     className={`room-div ${baths.includes(n_baths) ? 'selected' : ''}`}
+                     onClick={func}>
+                    {n_baths}
+                </div>
+            )}
+        </div>
+    </DropdownButton>
+
+const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
+    <DropdownButton title='Pets'>
+        <div className='pets-container'>
+            <FormRadio
+                name='any'
+                checked={pets_allowed == 'any'}
+                onChange={func} >
+            Any
+            </FormRadio>
+            {Object.keys(pets_allowed_dict).map(allowed_type =>
+                <FormRadio
+                    name={allowed_type}
+                    checked={pets_allowed == allowed_type}
+                    onChange={func} >
+                {pets_allowed_dict[allowed_type]}
+                </FormRadio>
+            )}
+        </div>
+    </DropdownButton>
+
+const amenitiesFilter = (amenities, amenities_dict, func) =>
+    <DropdownButton title='Amenities'>
+        <div className='amenities-container'>
+            {Object.keys(amenities_dict).map(amenity =>
+                <FormCheckbox id={amenity} name="amenities"
+                              checked={amenities.includes(amenity)}
+                              onChange={func}>
+                    {amenities_dict[amenity]}
+                </FormCheckbox>
+            )}
+        </div>
+    </DropdownButton>
+
+const nofeeonlyFilter = (nofeeonly, func) =>
+    <Button outline={!nofeeonly} onClick={func} name="nofeeonly">
+        No Fee Only
+    </Button>
+
+const draft_listingsFilter = (draft_listings, func) =>
+    <Button outline={!draft_listings} onClick={func} name="draft_listings">
+        Draft Listings
+    </Button>
+
+const addressFilter = (address, func) =>
+    <div></div>
+
+const unitFilter = (unit, func) =>
+    <div></div>
+
+const sales_agentFilter = (sales_agent, func) =>
+    <div></div>
+
+const listing_agentFilter = (listing_agent, func) =>
+    <div></div>
+
+const hoodsFilter = (hoods, func) =>
+    <div></div>
+
+const price_per_bedFilter = (price_per_bed, func) =>
+    <div></div>
+
+const listing_typeFilter = (listing_type, func) =>
+    <div></div>
+
+const listing_idFilter = (listing_id, func) =>
+    <div></div>
+
+const sizeFilter = (size, func) =>
+    <div></div>
+
+const statusFilter = (status, func) =>
+    <div></div>
+
+const owner_paysFilter = (owner_pays, func) =>
+    <div></div>
+
+const exclusiveFilter = (exclusive, func) =>
+    <div></div>
+
+const vacantFilter = (vacant, func) =>
+    <div></div>
+
+const date_availableFilter = (date_available, func) =>
+    <div></div>
+
+
+
+
+
 export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
@@ -28,11 +172,9 @@ export class FiltersBar extends React.Component {
     changePets(e) {
         this.setState({ pets_allowed: e.target.name }, this.filterListings)
     }
-    toggleFee() {
-        this.setState({ nofeeonly: !this.state.nofeeonly }, this.filterListings)
-    }
-    toggleDrafts() {
-        this.setState({ draft_listings: !this.state.draft_listings }, this.filterListings)
+    toggleFilter(e) {
+        const f_name = e.target.getAttribute('name')
+        this.setState({ [f_name]: !this.state[f_name] }, this.filterListings)
     }
     filterListings() {
         this.props.updateParentState({filters: this.state})
@@ -40,107 +182,91 @@ export class FiltersBar extends React.Component {
             this.props.updateParentState({listings: resp.results})
         )
     }
+    voidFunc() {
+        console.log("not implemented")
+    }
     componentDidMount() {
         this.filterListings()
     }
     render() {
         const {
-            searching_text, price_min, price_max,
-            beds, baths, pets_allowed, nofeeonly, amenities, draft_listings
+            searching_text, price_min, price_max, beds, baths, pets_allowed,
+            nofeeonly, amenities, draft_listings,
+
+            address, unit, sales_agent, listing_agent, hoods, price_per_bed,
+            listing_type, listing_id, size, status, owner_pays, exclusive,
+            vacant, date_available
         } = this.state
 
         return (
             <ButtonToolbar style={{padding: 5}}>
-                <div style={{width: '20vw', minWidth: 180}}>
-                    <FormControl id='searching_text' size="sm"
-                                 type='text'
-                                 value={searching_text}
-                                 placeholder='Search for something you like :)'
-                                 onChange={::this.filtering} />
-                </div>
-                &nbsp;
-                <DropdownButton title='Price'>
-                    <InputGroup style={{width: 300}}>
-                        <InputGroupText>Min:</InputGroupText>
-                        <FormControl id='price_min' xs='3' step='100'
-                                     type='number' min='0' max={price_max}
-                                     value={price_min}
-                                     onChange={::this.filtering}
-                                     placeholder='0'/>&nbsp;
 
-                        <InputGroupText>Max:</InputGroupText>
-                        <FormControl id='price_max' xs='3' step='100'
-                                     type='number' min={price_min}
-                                     value={price_max}
-                                     onChange={::this.filtering}
-                                     placeholder='9999'/>
-                    </InputGroup>
-                </DropdownButton>
-                &nbsp;
-                <DropdownButton title='Bedrooms'>
-                    <div className='rooms-container'>
-                        {["0", "1", "2", "3", "4+"].map(n_beds =>
-                            <div id={n_beds} name='beds'
-                                 className={`room-div ${beds.includes(n_beds) ? 'selected' : ''}`}
-                                 onClick={::this.updateFilter}>
-                                {n_beds}
-                            </div>
-                        )}
-                    </div>
-                </DropdownButton>
-                &nbsp;
-                <DropdownButton title='Baths'>
-                    <div className='rooms-container'>
-                        {["0", "1", "2", "3+"].map(n_baths =>
-                            <div id={n_baths} name='baths'
-                                 className={`room-div ${baths.includes(n_baths) ? 'selected' : ''}`}
-                                 onClick={::this.updateFilter}>
-                                {n_baths}
-                            </div>
-                        )}
-                    </div>
-                </DropdownButton>
-                &nbsp;
-                <DropdownButton title='Pets'>
-                    <div className='pets-container'>
-                        <FormRadio
-                            name='any'
-                            checked={pets_allowed == 'any'}
-                            onChange={::this.changePets} >
-                        Any
-                        </FormRadio>
-                        {Object.keys(this.props.constants.pets_allowed).map(allowed_type =>
-                            <FormRadio
-                                name={allowed_type}
-                                checked={pets_allowed == allowed_type}
-                                onChange={::this.changePets} >
-                            {this.props.constants.pets_allowed[allowed_type]}
-                            </FormRadio>
-                        )}
-                    </div>
-                </DropdownButton>
-                &nbsp;
-                <DropdownButton title='Amenities'>
-                    <div className='amenities-container'>
-                        {Object.keys(this.props.constants.amenities).map(amenity =>
-                            <FormCheckbox id={amenity} name="amenities"
-                                          checked={amenities.includes(amenity)}
-                                          onChange={::this.updateFilter}>
-                                {this.props.constants.amenities[amenity]}
-                            </FormCheckbox>
-                        )}
-                    </div>
-                </DropdownButton>
-                &nbsp;
-                <Button outline={!nofeeonly} onClick={::this.toggleFee}>
-                    No Fee Only
-                </Button>
-                &nbsp;
+                {searching_text != undefined &&
+                    [searchingText(searching_text, ::this.filtering), '\u00A0']}
+
+                {(price_min != undefined && price_max != undefined) &&
+                    [priceFilter(price_min, price_max, ::this.filtering), '\u00A0']}
+
+                {beds != undefined &&
+                    [bedsFilter(beds, ::this.updateFilter), '\u00A0']}
+
+                {baths != undefined &&
+                    [bathsFilter(baths, ::this.updateFilter), '\u00A0']}
+
+                {pets_allowed != undefined &&
+                    [pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.changePets), '\u00A0']}
+
+                {amenities != undefined &&
+                    [amenitiesFilter(amenities, this.props.constants.amenities, ::this.updateFilter), '\u00A0']}
+
+                {nofeeonly != undefined &&
+                    [nofeeonlyFilter(nofeeonly, ::this.toggleFilter), '\u00A0']}
+
                 {draft_listings != undefined &&
-                    <Button outline={!draft_listings} onClick={::this.toggleDrafts}>
-                        Draft Listings
-                    </Button>
-                }
+                    [draft_listingsFilter(draft_listings, ::this.toggleFilter), '\u00A0']}
+
+                {address != undefined &&
+                    [addressFilter(address, ::this.voidFunc), '\u00A0']}
+
+                {unit != undefined &&
+                    [unitFilter(unit, ::this.voidFunc), '\u00A0']}
+
+                {sales_agent != undefined &&
+                    [sales_agentFilter(sales_agent, ::this.voidFunc), '\u00A0']}
+
+                {listing_agent != undefined &&
+                    [listing_agentFilter(listing_agent, ::this.voidFunc), '\u00A0']}
+
+                {hoods != undefined &&
+                    [hoodsFilter(hoods, ::this.voidFunc), '\u00A0']}
+
+                {price_per_bed != undefined &&
+                    [price_per_bedFilter(price_per_bed, ::this.voidFunc), '\u00A0']}
+
+                {listing_type != undefined &&
+                    [listing_typeFilter(listing_type, ::this.voidFunc), '\u00A0']}
+
+                {listing_id != undefined &&
+                    [listing_idFilter(listing_id, ::this.voidFunc), '\u00A0']}
+
+                {size != undefined &&
+                    [sizeFilter(size, ::this.voidFunc), '\u00A0']}
+
+                {status != undefined &&
+                    [statusFilter(status, ::this.voidFunc), '\u00A0']}
+
+                {owner_pays != undefined &&
+                    [owner_paysFilter(owner_pays, ::this.voidFunc), '\u00A0']}
+
+                {exclusive != undefined &&
+                    [exclusiveFilter(exclusive, ::this.voidFunc), '\u00A0']}
+
+                {vacant != undefined &&
+                    [vacantFilter(vacant, ::this.voidFunc), '\u00A0']}
+
+                {date_available != undefined &&
+                    [date_availableFilter(date_available, ::this.voidFunc), '\u00A0']}
+
             </ButtonToolbar>
         )
     }

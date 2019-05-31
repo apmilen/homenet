@@ -187,7 +187,6 @@ class Listings extends React.Component {
         super(props)
         this.state = {
             filters: {
-                searching_text: '',
                 price_min: '',
                 price_max: '',
                 beds: [],
@@ -226,8 +225,8 @@ class Listings extends React.Component {
                                             <ListingComponent listing={listing} constants={constants}/>,
                                             <hr class="listings-hr" />
                                         ])}
-                                        {!listings &&
-                                            <h4>No listings yet.</h4>
+                                        {listings.length == 0 &&
+                                            <center><h4>No listings found! :s</h4></center>
                                         }
                                     </div>
                                 </div>
