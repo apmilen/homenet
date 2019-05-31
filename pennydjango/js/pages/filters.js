@@ -19,7 +19,7 @@ const searchingText = (searching_text, func) =>
 
 const priceFilter = (price_min, price_max, func) =>
     <DropdownButton title='Price'>
-        <InputGroup style={{width: 300}}>
+        <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
                          type='number' min='0' max={price_max}
@@ -170,6 +170,48 @@ const date_availableFilter = (date_available, func) =>
                 minDate={new Date()}
                 dateFormat="MMMM d, yyyy" />
 
+const price_per_bedFilter = (price_per_bed, func) =>
+    <DropdownButton title='Price per Bed'>
+        <InputGroup style={{width: 300, margin: '0 5px'}}>
+            <InputGroupText>Min:</InputGroupText>
+            <FormControl id='price_per_bed_min' xs='3' step='100'
+                         name='price_per_bed'
+                         type='number' min='0' max={price_per_bed[1]}
+                         value={price_per_bed[0]}
+                         onChange={func}
+                         placeholder='0'/>&nbsp;
+
+            <InputGroupText>Max:</InputGroupText>
+            <FormControl id='price_per_bed_max' xs='3' step='100'
+                         name='price_per_bed'
+                         type='number' min={price_per_bed[0]}
+                         value={price_per_bed[1]}
+                         onChange={func}
+                         placeholder='9999'/>
+        </InputGroup>
+    </DropdownButton>
+
+const sizeFilter = (size, func) =>
+    <DropdownButton title='Square Feet'>
+        <InputGroup style={{width: 300, margin: '0 5px'}}>
+            <InputGroupText>Min:</InputGroupText>
+            <FormControl id='size_min' xs='3' step='100'
+                         name='size'
+                         type='number' min='0' max={size[1]}
+                         value={size[0]}
+                         onChange={func}
+                         placeholder='min sq.ft'/>&nbsp;
+
+            <InputGroupText>Max:</InputGroupText>
+            <FormControl id='size_max' xs='3' step='100'
+                         name='size'
+                         type='number' min={size[0]}
+                         value={size[1]}
+                         onChange={func}
+                         placeholder='max sq.ft'/>
+        </InputGroup>
+    </DropdownButton>
+
 
 const sales_agentsFilter = (sales_agent, func) =>
     <div></div>
@@ -179,14 +221,6 @@ const listing_agentsFilter = (listing_agent, func) =>
 
 const hoodsFilter = (hoods, func) =>
     <div></div>
-
-const price_per_bedFilter = (price_per_bed, func) =>
-    <div></div>
-
-const sizeFilter = (size, func) =>
-    <div></div>
-
-
 
 
 
@@ -217,6 +251,11 @@ export class FiltersBar extends React.Component {
     filterToggle(e) {
         const f_name = e.target.getAttribute('name')
         this.setState({ [f_name]: !this.state[f_name] }, this.fetchListings)
+    }
+    filterRange(e) {
+        const f_name = e.target.getAttribute('name')
+        const range = [$('#'+f_name+'_min').val(), $('#'+f_name+'_max').val()]
+        this.setState({ [f_name]: range }, this.fetchListings)
     }
     changeDate(date) {
         this.setState({ date_available: date || '' }, this.fetchListings)
@@ -258,6 +297,9 @@ export class FiltersBar extends React.Component {
                 {(price_min != undefined && price_max != undefined) &&
                     [priceFilter(price_min, price_max, ::this.filtering), '\u00A0']}
 
+                {price_per_bed != undefined &&
+                    [price_per_bedFilter(price_per_bed, ::this.filterRange), '\u00A0']}
+
                 {beds != undefined &&
                     [bedsFilter(beds, ::this.filterMultipleSelection), '\u00A0']}
 
@@ -269,6 +311,9 @@ export class FiltersBar extends React.Component {
 
                 {listing_id != undefined &&
                     [listing_idFilter(listing_id, ::this.filtering), '\u00A0']}
+
+                {size != undefined &&
+                    [sizeFilter(size, ::this.filterRange), '\u00A0']}
 
                 {pets_allowed != undefined &&
                     [pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.filterOneSelection), '\u00A0']}
@@ -303,12 +348,6 @@ export class FiltersBar extends React.Component {
 
                 {hoods != undefined &&
                     [hoodsFilter(hoods, ::this.voidFunc), '\u00A0']}
-
-                {price_per_bed != undefined &&
-                    [price_per_bedFilter(price_per_bed, ::this.voidFunc), '\u00A0']}
-
-                {size != undefined &&
-                    [sizeFilter(size, ::this.voidFunc), '\u00A0']}
 
             </ButtonToolbar>
         )
