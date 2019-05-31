@@ -56,7 +56,7 @@ def filter_listings(queryset, params):
 
         queryset = queryset.filter(query)
 
-    if listing_type != 'any':
+    if listing_type and listing_type != 'any':
         queryset = queryset.filter(listing_type=listing_type)
 
     if listing_id:
@@ -68,7 +68,7 @@ def filter_listings(queryset, params):
         if size[1]:
             queryset = queryset.filter(size__lte=size[1])
 
-    if pets_allowed != 'any':
+    if pets_allowed and pets_allowed != 'any':
         queryset = queryset.filter(pets=pets_allowed)
 
     if amenities:

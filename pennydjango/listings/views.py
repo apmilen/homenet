@@ -138,29 +138,25 @@ class ListingDetail(BaseContextMixin, DetailView):
 
 # ViewSets define the view behavior.
 class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Listing.objects.all()
+    queryset = Listing.objects.filter(
+        status='approved',
+        detail__private=False
+    )
     serializer_class = PublicListingSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(
-            status='approved',
-            detail__private=False
-        )
-
-        queryset = filter_listings(queryset, self.request.query_params)
+        queryset = filter_listings(self.queryset, self.request.query_params)
 
         # remember to use always the page param
         # http://localhost:8000/listings/public/?page=1&price_min=3000
-        return queryset.order_by('-created')
+        return queryset.order_by('-modified')
 
 
 # ViewSets define the view behavior.
-class PrivateListingViewSet(viewsets.ReadOnlyModelViewSet):
+class PrivateListingViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
     queryset = Listing.objects.all()
     serializer_class = PrivateListingSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = filter_listings(queryset, self.request.query_params)
-        return queryset.order_by('-created')
+        queryset = filter_listings(self.queryset, self.request.query_params)
+        return queryset.order_by('-modified')
