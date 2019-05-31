@@ -191,7 +191,7 @@ export class FiltersBar extends React.Component {
         this.state = props.filters
     }
     filtering(e) {
-        this.setState({ [e.target.id]: e.target.value }, this.filterListings)
+        this.setState({ [e.target.id]: e.target.value }, this.fetchListings)
     }
     filterMultipleSelection(e) {
         const value = e.target.id
@@ -202,18 +202,18 @@ export class FiltersBar extends React.Component {
                            current_filter.filter(val => val != value) :
                            current_filter.concat(value)
 
-        this.setState({[item_type]: new_filter}, this.filterListings)
+        this.setState({[item_type]: new_filter}, this.fetchListings)
     }
     filterOneSelection (e) {
         const f_name = e.target.getAttribute('name')
         const f_value = e.target.getAttribute('value')
-        this.setState({ [f_name]: f_value }, this.filterListings)
+        this.setState({ [f_name]: f_value }, this.fetchListings)
     }
     filterToggle(e) {
         const f_name = e.target.getAttribute('name')
-        this.setState({ [f_name]: !this.state[f_name] }, this.filterListings)
+        this.setState({ [f_name]: !this.state[f_name] }, this.fetchListings)
     }
-    filterListings() {
+    fetchListings() {
         this.props.updateParentState({filters: this.state})
         $.get(this.props.endpoint, this.state, (resp) =>
             this.props.updateParentState({listings: resp.results})
@@ -223,7 +223,7 @@ export class FiltersBar extends React.Component {
         console.log("not implemented", e.target)
     }
     componentDidMount() {
-        this.filterListings()
+        this.fetchListings()
     }
     render() {
         const {
