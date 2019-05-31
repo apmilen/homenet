@@ -4,7 +4,8 @@ module.exports = {
   mode: 'production',
   entry: {
     // 'home': './pages/home.js',
-    'listings': './pages/listings.js'
+    'listings': './pages/listings.js',
+    'leases': './pages/leases.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/pages'),

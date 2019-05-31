@@ -69,8 +69,8 @@ class SingletonModel(BaseModel):
         return obj
 
 
-def get_all_or_by_user(model, user, field_lookup):
-    base_qs = model._default_manager.all()
+def get_all_or_by_user(model, user, field_lookup, queryset=None):
+    base_qs = queryset or model._default_manager.all()
     if user.perms.has_admin_access():
         return base_qs
     return base_qs.filter(**{field_lookup: user})
