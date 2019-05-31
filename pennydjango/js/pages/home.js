@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import {Row, Col} from "shards-react";
 
 import {tooltip} from '@/util/dom'
-import {FiltersBar} from '@/pages/filters'
+import {FiltersBar} from '@/listings/components'
 
 
 
