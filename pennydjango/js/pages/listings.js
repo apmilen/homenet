@@ -187,8 +187,7 @@ class Listings extends React.Component {
         super(props)
         this.state = {
             filters: {
-                price_min: '',
-                price_max: '',
+                price: [],
                 beds: [],
                 baths: [],
                 pets_allowed: 'any',

@@ -17,20 +17,22 @@ const searchingText = (searching_text, func) =>
                      onChange={func} />
     </div>
 
-const priceFilter = (price_min, price_max, func) =>
+const priceFilter = (price, func) =>
     <DropdownButton title='Price'>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
-                         type='number' min='0' max={price_max}
-                         value={price_min}
+                         name='price'
+                         type='number' min='0' max={price[1]}
+                         value={price[0]}
                          onChange={func}
                          placeholder='0'/>&nbsp;
 
             <InputGroupText>Max:</InputGroupText>
             <FormControl id='price_max' xs='3' step='100'
-                         type='number' min={price_min}
-                         value={price_max}
+                         name='price'
+                         type='number' min={price[0] || 0}
+                         value={price[1]}
                          onChange={func}
                          placeholder='9999'/>
         </InputGroup>
@@ -274,7 +276,7 @@ export class FiltersBar extends React.Component {
     }
     render() {
         const {
-            searching_text, address, unit, price_min, price_max, beds, baths,
+            searching_text, address, unit, price, beds, baths,
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
             draft_listings,
 
@@ -294,8 +296,8 @@ export class FiltersBar extends React.Component {
                 {unit != undefined &&
                     [unitFilter(unit, ::this.filtering), '\u00A0']}
 
-                {(price_min != undefined && price_max != undefined) &&
-                    [priceFilter(price_min, price_max, ::this.filtering), '\u00A0']}
+                {price != undefined &&
+                    [priceFilter(price, ::this.filterRange), '\u00A0']}
 
                 {price_per_bed != undefined &&
                     [price_per_bedFilter(price_per_bed, ::this.filterRange), '\u00A0']}

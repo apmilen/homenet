@@ -159,8 +159,7 @@ class PublicListings extends React.Component {
         this.state = {
             filters: {
                 searching_text: '',
-                price_min: '',
-                price_max: '',
+                price: [],
                 beds: [],
                 baths: [],
                 pets_allowed: 'any',

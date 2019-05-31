@@ -4,8 +4,7 @@ from django.db.models import Q
 def filter_listings(queryset, params):
 
     searching_text = params.get('searching_text')
-    price_min = params.get('price_min')
-    price_max = params.get('price_max')
+    price = params.getlist('price[]')
     beds = params.getlist('beds[]')
     baths = params.getlist('baths[]')
     pets_allowed = params.get('pets_allowed')
@@ -19,11 +18,11 @@ def filter_listings(queryset, params):
             Q(neighborhood__icontains=searching_text)
         )
 
-    if price_min:
-        queryset = queryset.filter(price__gte=price_min)
-
-    if price_max:
-        queryset = queryset.filter(price__lte=price_max)
+    if price:
+        if price[0]:
+            queryset = queryset.filter(price__gte=price[0])
+        if price[1]:
+            queryset = queryset.filter(price__lte=price[1])
 
     if beds:
         query = Q(bedrooms__in=[num for num in beds if '+' not in num])
