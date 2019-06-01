@@ -226,8 +226,14 @@ export class FiltersBar extends React.Component {
         this.setState({ date_available: date || '' }, this.fetchListings)
     }
     fetchListings() {
+        let params = {...this.state}
+        if (params.date_available)
+            params.date_available = params.date_available.getFullYear() + ' ' +
+                                    (params.date_available.getMonth() + 1) + ' ' +
+                                    params.date_available.getDate()
+
         this.props.updateParentState({filters: this.state})
-        $.get(this.props.endpoint, this.state, (resp) =>
+        $.get(this.props.endpoint, params, (resp) =>
             this.props.updateParentState({listings: resp.results})
         )
     }

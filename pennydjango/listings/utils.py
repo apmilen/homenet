@@ -20,7 +20,7 @@ def filter_listings(queryset, params):
     exclusive = params.get('exclusive')
     vacant = params.get('vacant')
     draft_listings = params.get('draft_listings')
-    # date_available = params.get('date_available')
+    date_available = params.get('date_available')
 
     if searching_text:
         queryset = queryset.filter(
@@ -89,5 +89,14 @@ def filter_listings(queryset, params):
 
     if draft_listings == 'true':
         queryset = queryset.filter(status='draft')
+
+    if date_available:
+        # format: '2019 6 1'
+        splitted_date = date_available.split(" ")
+        queryset = queryset.filter(
+            date_available__year=splitted_date[0],
+            date_available__month=splitted_date[1],
+            date_available__day=splitted_date[2],
+        )
 
     return queryset
