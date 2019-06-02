@@ -7,6 +7,7 @@ from django.views.generic import (
 from rest_framework import viewsets
 
 from penny.mixins import AgentRequiredMixin
+from penny.constants import NEIGHBORHOODS
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import (
     ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet
@@ -17,7 +18,7 @@ from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
 from listings.constants import (
-    PETS_ALLOWED, AMENITIES, LISTING_TYPES, LISTING_STATUS
+    PETS_ALLOWED, AMENITIES, LISTING_TYPES
 )
 from listings.utils import filter_listings
 
@@ -104,7 +105,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
                 for amenity_tuple in group
             },
             'listing_types': dict(LISTING_TYPES),
-            'listing_status': dict(LISTING_STATUS),
+            'neighborhoods': dict(NEIGHBORHOODS)
         }
 
         return {

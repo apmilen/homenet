@@ -6,6 +6,7 @@ def filter_listings(queryset, params):
     searching_text = params.get('searching_text')
     address = params.get('address')
     unit = params.get('unit')
+    hoods = params.getlist('hoods[]')
     price = params.getlist('price[]')
     price_per_bed = params.getlist('price_per_bed[]')
     beds = params.getlist('beds[]')
@@ -33,6 +34,9 @@ def filter_listings(queryset, params):
 
     if unit:
         queryset = queryset.filter(unit__icontains=unit)
+
+    if hoods:
+        queryset = queryset.filter(neighborhood__in=hoods)
 
     if price:
         if price[0]:

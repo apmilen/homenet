@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {FormControl, DropdownButton} from 'react-bootstrap'
+import {FormControl, DropdownButton, Tabs, Tab} from 'react-bootstrap'
 import {
     Button, ButtonToolbar, InputGroup, InputGroupText, FormRadio, FormCheckbox,
     DatePicker
@@ -92,6 +92,27 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
                     {amenities_dict[amenity]}
                 </FormCheckbox>
             )}
+        </div>
+    </DropdownButton>
+
+export const hoodsFilter = (hoods, hoods_dict, func) =>
+    <DropdownButton title='Hoods'>
+        <div className='borough-container'>
+            <Tabs defaultActiveKey={0}>
+                {Object.keys(hoods_dict).map((borough, idx) =>
+                    <Tab eventKey={idx} title={borough}>
+                        <div className='hoods-container'>
+                            {hoods_dict[borough].map(hood =>
+                                <FormCheckbox id={hood[0]} name="hoods"
+                                              checked={hoods.includes(hood[0])}
+                                              onChange={func}>
+                                    {hood[1]}
+                                </FormCheckbox>
+                            )}
+                        </div>
+                    </Tab>
+                )}
+            </Tabs>
         </div>
     </DropdownButton>
 
@@ -219,7 +240,4 @@ export const sales_agentsFilter = (sales_agent, func) =>
     <div></div>
 
 export const listing_agentsFilter = (listing_agent, func) =>
-    <div></div>
-
-export const hoodsFilter = (hoods, func) =>
     <div></div>

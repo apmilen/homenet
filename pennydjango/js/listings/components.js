@@ -264,6 +264,9 @@ export class FiltersBar extends React.Component {
                 {unit != undefined &&
                     [unitFilter(unit, ::this.filtering), '\u00A0']}
 
+                {hoods != undefined &&
+                    [hoodsFilter(hoods, this.props.constants.neighborhoods, ::this.filterMultipleSelection), '\u00A0']}
+
                 {price != undefined &&
                     [priceFilter(price, ::this.filterRange), '\u00A0']}
 
@@ -315,9 +318,6 @@ export class FiltersBar extends React.Component {
 
                 {listing_agents != undefined &&
                     [listing_agentsFilter(listing_agents, ::this.voidFunc), '\u00A0']}
-
-                {hoods != undefined &&
-                    [hoodsFilter(hoods, ::this.voidFunc), '\u00A0']}
 
             </ButtonToolbar>
         )
