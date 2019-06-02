@@ -86,9 +86,9 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     <DropdownButton title='Amenities'>
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
-                <FormCheckbox id={amenity} name="amenities"
+                <FormCheckbox id={amenity}
                               checked={amenities.includes(amenity)}
-                              onChange={func}>
+                              onChange={e => func(e, "amenities")}>
                     {amenities_dict[amenity]}
                 </FormCheckbox>
             )}
@@ -103,9 +103,9 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
                     <Tab eventKey={idx} title={borough}>
                         <div className='hoods-container'>
                             {hoods_dict[borough].map(hood =>
-                                <FormCheckbox id={hood[0]} name="hoods"
+                                <FormCheckbox id={hood[0]}
                                               checked={hoods.includes(hood[0])}
-                                              onChange={func}>
+                                              onChange={e => func(e, "hoods")}>
                                     {hood[1]}
                                 </FormCheckbox>
                             )}

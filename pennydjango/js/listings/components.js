@@ -197,9 +197,9 @@ export class FiltersBar extends React.Component {
     filtering(e) {
         this.setState({ [e.target.id]: e.target.value }, this.fetchListings)
     }
-    filterMultipleSelection(e) {
+    filterMultipleSelection(e, filter_name) {
         const value = e.target.id
-        const item_type = e.target.getAttribute('name')
+        const item_type = filter_name || e.target.getAttribute('name')
         const current_filter = this.state[item_type]
 
         const new_filter = current_filter.includes(value) ?
