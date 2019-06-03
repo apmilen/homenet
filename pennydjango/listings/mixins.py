@@ -11,7 +11,10 @@ class ListingContextMixin:
         self.listing_qs = None
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        try:
+            context = super().get_context_data(**kwargs)
+        except AttributeError:
+            context = {}
         context['listing'] = self.get_listing()
         return context
 

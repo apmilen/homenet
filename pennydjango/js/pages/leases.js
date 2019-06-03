@@ -12,7 +12,6 @@ export class LeasesList extends React.PureComponent {
     }
     componentDidMount() {
         $.get(this.props.endpoint, response => {
-            console.log(response)
             this.setState({leases: response.results})
         })
     }

@@ -1,24 +1,21 @@
-{% extends 'listings/wizard/_wizard.html' %}
+{% extends 'ui/react_base_card.html' %}
 {% load utils static %}
 
-{% block inner_title %}
-  <h4>Summary</h4>
-{% endblock %}
 
-{% block tabs %}
+
+{% block before_inner_content %}
   <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
   <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
   <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab">Photos</a>
   <a href="{% url 'listings:review' pk=listing.id %}" class="wizard-tab active">Review</a>
   <hr>
-{% endblock tabs %}
+{% endblock before_inner_content %}
 
-{% block wizard_content %}
-  {% include 'listings/listing_component.html' %}
+{% block after_inner_content %}
   <a href="{% url 'listings:photos' pk=listing.id %}" type="button" class="btn btn-primary">
     Back
   </a>
-  <a href="{% url 'home' %}" type="button" class="btn btn-primary">
-    View Listings
+  <a href="{% url 'listings:listings' %}" type="button" class="btn btn-primary">
+    Finish and View Listings
   </a>
-{% endblock wizard_content %}
+{% endblock after_inner_content %}

@@ -86,12 +86,12 @@
                 <li class="list-group-item p-3">
                   <div class="row">
                     <div class="col">
+                      {% block before_inner_content %}
+                      {% endblock before_inner_content %}
                       {% block inner_content %}
-
                       {% endblock inner_content %}
-                      {% block inner_content2 %}
-
-                      {% endblock inner_content2 %}
+                      {% block after_inner_content %}
+                      {% endblock after_inner_content %}
                     </div>
                   </div>
                 </li>

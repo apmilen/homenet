@@ -52,7 +52,6 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
         }
 
 
-# Django
 class LeaseCreate(AgentRequiredMixin,
                   ListingContextMixin,
                   PublicReactView,
