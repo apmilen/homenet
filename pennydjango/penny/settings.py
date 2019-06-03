@@ -340,6 +340,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 12
 }
 
+SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.min.js'
+SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css'
+
+
 if PY_TYPE == 'pypy':
     # Use psycopg2cffi instead of psycopg2 when run with pypy
     from psycopg2cffi import compat
