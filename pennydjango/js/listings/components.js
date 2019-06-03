@@ -29,7 +29,7 @@ export class ListingComponent extends React.Component {
                         <div className="container-fluid new-listing-card">
                             <div className="row listing-admin-area">
                                 <div className="col-12">
-                                    <a href={listing_link}
+                                    <a href={listing_link} target="_blank"
                                        className="btn btn-sm btn-outline-info mr-1">{full_address}</a>
                                     <div className="dropdown" style={{display: 'inline-block'}}>
                                         <button
