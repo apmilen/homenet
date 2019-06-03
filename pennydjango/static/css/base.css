@@ -28,6 +28,9 @@ div.circle-avatar{
 }
 
 /* Filters bar */
+.filter-container {
+    margin: 3px;
+}
 .rooms-container {
     padding: 3px;
     display: flex;

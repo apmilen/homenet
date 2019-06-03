@@ -39,7 +39,7 @@ class Listings extends React.Component {
 
         return [
             <div class="row justify-content-center">
-                <div class="p-3">
+                <div class="m-2 my-md-1 mx-md-5">
                     <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 </div>
