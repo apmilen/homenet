@@ -2,16 +2,7 @@
 from rest_framework import serializers
 
 from listings.models import Listing, ListingDetail
-from penny.models import User
-
-
-class AgentSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = (
-            'avatar_url', 'first_name', 'last_name', 'profile_link'
-        )
+from penny.serializers import AgentSerializer
 
 
 class DetailSerializer(serializers.ModelSerializer):
@@ -40,6 +31,8 @@ class PublicListingSerializer(serializers.ModelSerializer):
 class PrivateListingSerializer(serializers.ModelSerializer):
     neighborhood = serializers.CharField(source='get_neighborhood_display')
     pets = serializers.CharField(source='get_pets_display')
+    move_in_cost = serializers.CharField(source='get_move_in_cost_display')
+    status = serializers.CharField(source='get_status_display')
     detail = DetailSerializer()
     sales_agent = AgentSerializer()
     listing_agent = AgentSerializer()
@@ -53,5 +46,5 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'full_address', 'images', 'listing_agent', 'modified',
             'move_in_cost', 'neighborhood', 'no_fee_listing', 'owner_pays',
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id',
-            'size', 'status', 'term', 'utilities',
+            'size', 'status', 'term', 'utilities', 'listing_link', 'offer_link'
         )

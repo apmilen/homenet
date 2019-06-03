@@ -19,16 +19,8 @@ export class LeasesList extends React.PureComponent {
 
     render() {
         let leases = this.state.leases
-        return <div className="row">
-            <div className="col-12 col-md-10 offset-md-1">
-                <div className="card card-small mb-4">
-                    <div className="col">
-                        {leases.map(lease =>
-                            <Lease key={lease.short_id} lease={lease}/>)}
-                    </div>
-                </div>
-            </div>
-        </div>
+        return leases.map(lease =>
+                <Lease key={lease.short_id} lease={lease}/>)
     }
 }
 

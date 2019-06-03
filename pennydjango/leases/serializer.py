@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from penny.serializers import AgentSerializer
 from listings.serializer import PrivateListingSerializer
 from leases.models import Lease
 
@@ -8,6 +9,7 @@ from leases.models import Lease
 class LeaseSerializer(serializers.ModelSerializer):
     listing = PrivateListingSerializer()
     status = serializers.CharField(source='get_status_display')
+    created_by = AgentSerializer()
 
     class Meta:
         model = Lease

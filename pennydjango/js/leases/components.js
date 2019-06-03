@@ -15,9 +15,10 @@ export const Lease = ({lease}) => {
                             <button type="button"
                                     className="btn btn-sm btn-outline-info mr-1">Manage
                             </button>
-                            <button type="button"
-                                    className="btn btn-sm btn-outline-info mr-1">Listing
-                            </button>
+                            <a href={listing.listing_link}
+                               target="_blank"
+                               className="btn btn-sm btn-outline-info mr-1">Listing
+                            </a>
                         </div>
                     </div>
                     <div className="row listing-area-content">
@@ -180,7 +181,7 @@ export const Lease = ({lease}) => {
                                     <b>Created By</b>
                                 </div>
                                 <div className="col-sm-8 text-left">
-                                    {lease.created_by}
+                                    {lease.created_by.get_full_name}
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">

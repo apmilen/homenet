@@ -1,15 +1,15 @@
-{% extends 'ui/base.html' %}
+{% extends 'ui/react_base_card.html' %}
 {% load bootstrap4 utils static %}
 
 {% block head %}
+  {{ block.super }}
   <link rel="stylesheet"
         href="{% http2static 'css/jquery.datetimepicker.min.css' %}"
         type="text/css" crossorigin>
 {% endblock head %}
 
 
-{% block inner_content %}
-  {% include 'listings/listing_component.html' %}
+{% block inner_content2 %}
   <hr/>
   <h2>Create an Offer</h2>
   <br>
@@ -57,9 +57,10 @@
           </button>
       {% endbuttons %}
   </form>
-{% endblock inner_content %}
+{% endblock inner_content2 %}
 
 {% block tail %}
+  {{ block.super }}
   <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
           type="text/javascript" crossorigin></script>
   <script>
