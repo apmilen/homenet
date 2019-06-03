@@ -66,6 +66,13 @@ div.circle-avatar{
     overflow-y: auto;
     user-select: none;
 }
+.agents-container {
+    padding: 0 10px;
+    width: 200px;
+    max-height: 350px;
+    overflow-y: auto;
+    user-select: none;
+}
 
 /* Cards */
 .card.card-listing {

@@ -149,10 +149,30 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <div></div>
+    <DropdownButton title="Sales Agents">
+        <div className='agents-container'>
+            {agents.map(agent =>
+                <FormCheckbox id={agent[0]}
+                              checked={sales_agents.includes(agent[0])}
+                              onChange={e => func(e, "sales_agents")}>
+                    {agent[1]}
+                </FormCheckbox>
+            )}
+        </div>
+    </DropdownButton>
 
 export const listing_agentsFilter = (listing_agents, agents, func) =>
-    <div></div>
+    <DropdownButton title="Listing Agents">
+        <div className='agents-container'>
+            {agents.map(agent =>
+                <FormCheckbox id={agent[0]}
+                              checked={listing_agents.includes(agent[0])}
+                              onChange={e => func(e, "listing_agents")}>
+                    {agent[1]}
+                </FormCheckbox>
+            )}
+        </div>
+    </DropdownButton>
 
 export const hoodsFilter = (hoods, hoods_dict, func) =>
     <DropdownButton title='Hoods'>

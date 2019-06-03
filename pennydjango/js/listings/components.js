@@ -245,11 +245,10 @@ export class FiltersBar extends React.Component {
     }
     render() {
         const {
-            searching_text, address, unit, price, price_per_bed, beds, baths,
-            listing_type, listing_id, size, pets_allowed, amenities, nofeeonly,
-            owner_pays, exclusive, vacant, draft_listings, date_available,
-
-            sales_agents, listing_agents, hoods
+            searching_text, address, unit, sales_agents, listing_agents, hoods,
+            price, price_per_bed, beds, baths, listing_type, listing_id, size,
+            pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
+            draft_listings, date_available,
         } = this.state
 
         return (
@@ -263,6 +262,12 @@ export class FiltersBar extends React.Component {
 
                 {unit != undefined &&
                     [unitFilter(unit, ::this.filtering), '\u00A0']}
+
+                {sales_agents != undefined &&
+                    [sales_agentsFilter(sales_agents, this.props.constants.agents, ::this.filterMultipleSelection), '\u00A0']}
+
+                {listing_agents != undefined &&
+                    [listing_agentsFilter(listing_agents, this.props.constants.agents, ::this.filterMultipleSelection), '\u00A0']}
 
                 {hoods != undefined &&
                     [hoodsFilter(hoods, this.props.constants.neighborhoods, ::this.filterMultipleSelection), '\u00A0']}
@@ -311,13 +316,6 @@ export class FiltersBar extends React.Component {
 
                 {date_available != undefined &&
                     [date_availableFilter(date_available, ::this.changeDate), '\u00A0']}
-
-{/* BELOW NOT IMPLEMENTED YET */}
-                {sales_agents != undefined &&
-                    [sales_agentsFilter(sales_agents, ::this.voidFunc), '\u00A0']}
-
-                {listing_agents != undefined &&
-                    [listing_agentsFilter(listing_agents, ::this.voidFunc), '\u00A0']}
 
             </ButtonToolbar>
         )
