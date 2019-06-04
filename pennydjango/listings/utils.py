@@ -6,8 +6,11 @@ def filter_listings(queryset, params):
     searching_text = params.get('searching_text')
     address = params.get('address')
     unit = params.get('unit')
+    sales_agents = params.getlist('sales_agents[]')
+    listing_agents = params.getlist('listing_agents[]')
+    hoods = params.getlist('hoods[]')
     price = params.getlist('price[]')
-    # price_per_bed = params.getlist('price_per_bed[]')
+    price_per_bed = params.getlist('price_per_bed[]')
     beds = params.getlist('beds[]')
     baths = params.getlist('baths[]')
     listing_type = params.get('listing_type')
@@ -20,7 +23,7 @@ def filter_listings(queryset, params):
     exclusive = params.get('exclusive')
     vacant = params.get('vacant')
     draft_listings = params.get('draft_listings')
-    # date_available = params.get('date_available')
+    date_available = params.get('date_available')
 
     if searching_text:
         queryset = queryset.filter(
@@ -33,6 +36,15 @@ def filter_listings(queryset, params):
 
     if unit:
         queryset = queryset.filter(unit__icontains=unit)
+
+    if sales_agents:
+        queryset = queryset.filter(sales_agent__username__in=sales_agents)
+
+    if listing_agents:
+        queryset = queryset.filter(listing_agent__username__in=listing_agents)
+
+    if hoods:
+        queryset = queryset.filter(neighborhood__in=hoods)
 
     if price:
         if price[0]:
@@ -89,5 +101,31 @@ def filter_listings(queryset, params):
 
     if draft_listings == 'true':
         queryset = queryset.filter(status='draft')
+
+    if date_available:
+        # format: '2019 6 1'
+        splitted_date = date_available.split(" ")
+        queryset = queryset.filter(
+            date_available__year=splitted_date[0],
+            date_available__month=splitted_date[1],
+            date_available__day=splitted_date[2],
+        )
+
+    if price_per_bed:
+        prices_per_bed = {str(lt.id): lt.price_per_bed for lt in queryset}
+        filtered_ids = [lt_id for lt_id, _ in prices_per_bed.items()]
+
+        if price_per_bed[0]:
+            filtered_ids = [
+                lt_id for lt_id in filtered_ids
+                if int(price_per_bed[0]) <= prices_per_bed[lt_id]
+            ]
+        if price_per_bed[1]:
+            filtered_ids = [
+                lt_id for lt_id in filtered_ids
+                if prices_per_bed[lt_id] <= int(price_per_bed[1])
+            ]
+
+        queryset = queryset.filter(id__in=filtered_ids)
 
     return queryset

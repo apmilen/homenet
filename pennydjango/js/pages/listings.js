@@ -38,8 +38,8 @@ class Listings extends React.Component {
         const {listings, filters} = this.state
 
         return [
-            <div className= "row justify-content-center">
-                <div className= "p-3">
+            <div className="row justify-content-center">
+                <div className="m-2 my-md-1 mx-md-5">
                     <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 </div>
@@ -53,7 +53,7 @@ class Listings extends React.Component {
                                 <hr key={`${listing.short_id}-hr`} className= "listings-hr" />
                             ])}
                             {listings.length == 0 &&
-                                <center><h4>No listings found! :s</h4></center>
+                                <center><h4>No listings found</h4></center>
                             }
                         </div>
                     </div>
