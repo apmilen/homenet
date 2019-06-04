@@ -53,7 +53,7 @@ class Listings extends React.Component {
                                 <hr key={`${listing.short_id}-hr`} className= "listings-hr" />
                             ])}
                             {listings.length == 0 &&
-                                <center><h4>No listings found! :s</h4></center>
+                                <center><h4>No listings found</h4></center>
                             }
                         </div>
                     </div>

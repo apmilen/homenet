@@ -69,7 +69,7 @@ div.circle-avatar{
 }
 .hoods-container {
     padding: 10px;
-    width: 600px;
+    width: 480px;
     max-height: 350px;
     overflow-y: auto;
     user-select: none;

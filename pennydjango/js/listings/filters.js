@@ -266,4 +266,5 @@ export const date_availableFilter = (date_available, func) =>
                 onChange={func}
                 placeholderText="Date available"
                 minDate={new Date()}
-                dateFormat="MMMM d, yyyy" />
+                dateFormat="MMMM d, yyyy"
+                style={{width: '40vw'}} />
