@@ -33,6 +33,16 @@ div.circle-avatar{
 }
 
 /* Filters bar */
+.home-filters .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
+    left: 0 !important;
+}
+.filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
+    position: absolute;
+    top: initial !important;
+    left: -130% !important;
+    will-change: unset !important;
+    transform: none !important;
+}
 .filter-container {
     margin: 3px;
 }
@@ -212,13 +222,4 @@ hr.listings-hr {
     height:4px;
     border-radius:100%;
     background-color:#c3c7cc;
-}
-
-/* Filters */
-.filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-    position: absolute;
-    top: initial !important;
-    left: -130% !important;
-    will-change: unset !important;
-    transform: none !important;
 }

@@ -198,7 +198,7 @@ class PublicListings extends React.Component {
                     </a>
                 :
                     <Col>
-                        <Row className="justify-content-center">
+                        <Row className="justify-content-center" className='home-filters'>
                             <FiltersBar filters={this.state.filters}
                                         constants={this.props.constants}
                                         endpoint={this.props.endpoint}
