@@ -155,7 +155,7 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
                               checked={sales_agents.includes(agent[0])}
                               onChange={e => func(e, "sales_agents")}>
-                    {agent[1]}
+                    {agent[1] || `@${agent[0]}`}
                 </FormCheckbox>
             )}
         </div>
@@ -168,7 +168,7 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-listing-agent`}
                               checked={listing_agents.includes(agent[0])}
                               onChange={e => func(e, "listing_agents")}>
-                    {agent[1]}
+                    {agent[1] || `@${agent[0]}`}
                 </FormCheckbox>
             )}
         </div>
