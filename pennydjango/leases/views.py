@@ -101,7 +101,7 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
         self.queryset = super().get_queryset()
         user = self.request.user
         self.queryset = get_all_or_by_user(
-            None,
+            Lease,
             user,
             'created_by',
             self.queryset

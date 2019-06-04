@@ -181,7 +181,7 @@ export const Lease = ({lease}) => {
                                     <b>Created By</b>
                                 </div>
                                 <div className="col-sm-8 text-left">
-                                    {lease.created_by.get_full_name}
+                                    {lease.created_by.first_name} {lease.created_by.last_name}
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">
