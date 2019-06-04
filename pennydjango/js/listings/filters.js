@@ -113,7 +113,7 @@ export const bedsFilter = (beds, func) =>
     <DropdownButton title='Bedrooms'>
         <div className='rooms-container'>
             {["0", "1", "2", "3", "4+"].map(n_beds =>
-                <div id={n_beds} name='beds'
+                <div id={n_beds} name='beds' key={`${n_beds}-beds`}
                      className={`room-div ${beds.includes(n_beds) ? 'selected' : ''}`}
                      onClick={func}>
                     {n_beds}
@@ -126,7 +126,7 @@ export const bathsFilter = (baths, func) =>
     <DropdownButton title='Baths'>
         <div className='rooms-container'>
             {["0", "1", "2", "3+"].map(n_baths =>
-                <div id={n_baths} name='baths'
+                <div id={n_baths} name='baths' key={`${n_baths}-baths`}
                      className={`room-div ${baths.includes(n_baths) ? 'selected' : ''}`}
                      onClick={func}>
                     {n_baths}
@@ -139,7 +139,7 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     <DropdownButton title='Amenities'>
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
-                <FormCheckbox id={amenity}
+                <FormCheckbox id={amenity} key={`${amenity}-amen`}
                               checked={amenities.includes(amenity)}
                               onChange={e => func(e, "amenities")}>
                     {amenities_dict[amenity]}
@@ -152,7 +152,7 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
     <DropdownButton title="Sales Agents">
         <div className='agents-container'>
             {agents.map(agent =>
-                <FormCheckbox id={agent[0]}
+                <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
                               checked={sales_agents.includes(agent[0])}
                               onChange={e => func(e, "sales_agents")}>
                     {agent[1]}
@@ -165,7 +165,7 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
     <DropdownButton title="Listing Agents">
         <div className='agents-container'>
             {agents.map(agent =>
-                <FormCheckbox id={agent[0]}
+                <FormCheckbox id={agent[0]} key={`${agent[0]}-listing-agent`}
                               checked={listing_agents.includes(agent[0])}
                               onChange={e => func(e, "listing_agents")}>
                     {agent[1]}
@@ -179,10 +179,10 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
-                    <Tab eventKey={idx} title={borough}>
+                    <Tab eventKey={idx} title={borough} key={`${borough}-borough`}>
                         <div className='hoods-container'>
                             {hoods_dict[borough].map(hood =>
-                                <FormCheckbox id={hood[0]}
+                                <FormCheckbox id={hood[0]} key={`${hood[0]}-hood`}
                                               checked={hoods.includes(hood[0])}
                                               onChange={e => func(e, "hoods")}>
                                     {hood[1]}
@@ -205,7 +205,8 @@ export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
             Any
             </FormRadio>
             {Object.keys(pets_allowed_dict).map(allowed_type =>
-                <FormRadio name='pets_allowed' value={allowed_type}
+                <FormRadio key={`${allowed_type}-pets`}
+                           name='pets_allowed' value={allowed_type}
                            checked={pets_allowed == allowed_type}
                            onChange={func} >
                 {pets_allowed_dict[allowed_type]}
@@ -223,7 +224,8 @@ export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
             Any
             </FormRadio>
             {Object.keys(listing_type_dict).map(lt_type =>
-                <FormRadio name='listing_type' value={lt_type}
+                <FormRadio key={`${lt_type}-listing`}
+                           name='listing_type' value={lt_type}
                            checked={listing_type == lt_type}
                            onChange={func} >
                 {listing_type_dict[lt_type]}

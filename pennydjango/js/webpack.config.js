@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     'home': './pages/home.js',
     'listings': './pages/listings.js',
+    'listing': './pages/listing.js',
     'leases': './pages/leases.js',
     'lease': './pages/lease.js'
   },

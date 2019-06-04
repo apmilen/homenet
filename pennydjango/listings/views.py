@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView
@@ -8,6 +8,7 @@ from rest_framework import viewsets
 
 from penny.models import User
 from penny.mixins import AgentRequiredMixin
+from penny.utils import ExtendedEncoder
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import (
@@ -82,8 +83,22 @@ class PhotosListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
             return self.form_invalid(form)
 
 
-class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
-    template_name = 'listings/review_listing.html'
+class ListingDetail(BaseContextMixin, DetailView):
+    model = Listing
+    template_name = 'listings/listing_detail.html'
+
+    def get_queryset(self):
+        return Listing.objects.select_related(
+            'detail', 'photos', 'listing_agent',
+        )
+
+
+class ReviewListing(WizardMixin, PublicReactView, TemplateView):
+    template = 'listings/review_listing.html'
+    component = 'pages/listing.js'
+
+    def get_template_names(self):
+        return [self.template]
 
     def get_listing_qs(self):
         self.listing_qs = super().get_listing_qs()
@@ -91,6 +106,22 @@ class ReviewListing(BaseContextMixin, WizardMixin, TemplateView):
             'detail', 'photos', 'listing_agent', 'sales_agent'
         )
         return self.listing_qs
+
+    def get(self, request, *args, **kwargs):
+        props = self.get_props(request, *args, **kwargs)
+        if request.GET.get('props_json'):
+            return JsonResponse(props, encoder=ExtendedEncoder)
+
+        context = self.get_context(request, *args, **kwargs)
+        context['props'] = props
+        context.update(**self.get_context_data())
+
+        return self.render_to_response(context)
+
+    def props(self, request, *args, **kwargs):
+        return {
+            'listing': PrivateListingSerializer(self.get_listing()).data,
+        }
 
 
 class Listings(AgentRequiredMixin, PublicReactView):
@@ -117,16 +148,6 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'constants': constants,
             'endpoint': '/listings/private/'
         }
-
-
-class ListingDetail(BaseContextMixin, DetailView):
-    model = Listing
-    template_name = 'listings/listing_detail.html'
-
-    def get_queryset(self):
-        return Listing.objects.select_related(
-            'detail', 'photos', 'listing_agent',
-        )
 
 
 # ViewSets define the view behavior.

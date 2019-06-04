@@ -18,10 +18,10 @@
           <li data-target="#carousel-listing" data-slide-to="{{ forloop.counter0 }}"
               class="{% if forloop.first %}active{% endif %}"></li>
           {% empty %}
-          <li data-target="#carousel-listing" data-slide-to="0"
-              class="active"></li>
-        {% endfor %}
-        </ol>
+            <li data-target="#carousel-listing" data-slide-to="0"
+                class="active"></li>
+          {% endfor %}
+          </ol>
         <div class="carousel-inner">
           {% for image in object.images %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
@@ -35,6 +35,7 @@
             </div>
         {% endfor %}
         </div>
+      {% if object.images|length > 1 %}
         <a class="carousel-control-prev" href="#carousel-listing"
            role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -45,6 +46,7 @@
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="sr-only">Next</span>
         </a>
+      {% endif %}
       </div>
       <div class="card card-smallcard-post card-post--1 card-listing">
         <div class="card-body p-0 text-center row m-0">

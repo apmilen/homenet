@@ -136,12 +136,20 @@ class Listing(BaseModel):
         return self.bedrooms and self.price / self.bedrooms
 
     @cached_property
+    def edit_link(self):
+        return reverse('listing:edit', args=[str(self.id)])
+
+    @cached_property
     def detail_link(self):
         return reverse('listing:detail', args=[str(self.id)])
 
     @cached_property
-    def edit_link(self):
-        return reverse('listing:edit', args=[str(self.id)])
+    def listing_link(self):
+        return reverse('listing:listing', args=[str(self.id)])
+
+    @cached_property
+    def offer_link(self):
+        return reverse('leases:create', args=[str(self.id)])
 
     def __json__(self, *attrs):
         return {

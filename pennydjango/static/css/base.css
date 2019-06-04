@@ -4,6 +4,11 @@
 .ln-25 {line-height: 25px;}
 .mx-w-250{max-width: 250px;}
 .box-wd {width: 100%;height: 190px;}
+.badge-new{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 .main-scroll{
     height: calc(100vh - 7.5rem);
     overflow-y: auto;

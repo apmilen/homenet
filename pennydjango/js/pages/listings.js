@@ -38,19 +38,19 @@ class Listings extends React.Component {
         const {listings, filters} = this.state
 
         return [
-            <div class="row justify-content-center">
-                <div class="m-2 my-md-1 mx-md-5">
+            <div className="row justify-content-center">
+                <div className="m-2 my-md-1 mx-md-5">
                     <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 </div>
             </div>,
-            <div class="row">
-                <div class="col-12 col-md-10 offset-md-1">
-                    <div class="card card-small mb-4">
-                        <div class="col">
+            <div className= "row">
+                <div className= "col-12 col-md-10 offset-md-1">
+                    <div className= "card card-small mb-4">
+                        <div className= "col">
                             {listings.map(listing => [
-                                <ListingComponent listing={listing} constants={constants}/>,
-                                <hr class="listings-hr" />
+                                <ListingComponent key={listing.short_id} listing={listing} constants={constants}/>,
+                                <hr key={`${listing.short_id}-hr`} className= "listings-hr" />
                             ])}
                             {listings.length == 0 &&
                                 <center><h4>No listings found! :s</h4></center>
