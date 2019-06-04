@@ -2,6 +2,7 @@ import React from 'react'
 
 export const Lease = ({lease}) => {
     const listing = lease.listing
+    const creator = lease.created_by
     return <div className="row">
         <div className="col-12">
             <div id="main-listing">
@@ -10,7 +11,7 @@ export const Lease = ({lease}) => {
                         <div className="col-12">
                             <button type="button"
                                     className="btn btn-sm btn-outline-info mr-1">
-                                {lease.listing.address}
+                                {listing.address}
                             </button>
                             <button type="button"
                                     className="btn btn-sm btn-outline-info mr-1">Manage
@@ -181,7 +182,7 @@ export const Lease = ({lease}) => {
                                     <b>Created By</b>
                                 </div>
                                 <div className="col-sm-8 text-left">
-                                    {lease.created_by.first_name} {lease.created_by.last_name}
+                                    {creator && creator.first_name} {creator && creator.last_name}
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">
