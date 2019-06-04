@@ -46,7 +46,7 @@ export const listing_idFilter = (listing_id, func) =>
 
 // Range input filters
 export const priceFilter = (price, func) =>
-    <DropdownButton title='Price'>
+    <DropdownButton title='Price' alignRight>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
@@ -136,7 +136,7 @@ export const bathsFilter = (baths, func) =>
     </DropdownButton>
 
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
-    <DropdownButton title='Amenities'>
+    <DropdownButton title='Amenities' className="dropdown-menu-mobile">
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
@@ -149,7 +149,7 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <DropdownButton title="Sales Agents">
+    <DropdownButton title="Sales Agents" alignRight>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
@@ -175,7 +175,7 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
     </DropdownButton>
 
 export const hoodsFilter = (hoods, hoods_dict, func) =>
-    <DropdownButton title='Hoods'>
+    <DropdownButton title='Hoods' className="dropdown-menu-mobile">
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
@@ -197,7 +197,7 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
 
 // One selection filters
 export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
-    <DropdownButton title='Pets'>
+    <DropdownButton title='Pets' className="dropdown-menu-mobile">
         <div className='pets-container'>
             <FormRadio name='pets_allowed' value='any'
                        checked={pets_allowed == 'any'}

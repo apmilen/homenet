@@ -59,7 +59,7 @@ div.circle-avatar{
 }
 .amenities-container {
     padding: 0 10px;
-    width: 300px;
+    width: 250px;
     max-height: 350px;
     overflow-y: auto;
     user-select: none;
@@ -69,7 +69,7 @@ div.circle-avatar{
 }
 .hoods-container {
     padding: 10px;
-    width: 480px;
+    width: 250px;
     max-height: 350px;
     overflow-y: auto;
     user-select: none;
@@ -212,4 +212,13 @@ hr.listings-hr {
     height:4px;
     border-radius:100%;
     background-color:#c3c7cc;
+}
+
+/* Filters */
+.filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
+    position: absolute;
+    top: initial !important;
+    left: -130% !important;
+    will-change: unset !important;
+    transform: none !important;
 }

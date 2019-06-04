@@ -24,4 +24,9 @@
         height: auto;
         overflow-y: initial;
     }
+
+    /* Filters */
+    .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
+        left: -160% !important;
+    }
 }
