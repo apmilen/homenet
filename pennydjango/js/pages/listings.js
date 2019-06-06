@@ -61,7 +61,7 @@ class Listings extends React.Component {
                             {listings.map(listing => [
                                 <ListingComponent key={listing.short_id} listing={listing} constants={constants}/>,
                                 listing.short_id != last_listing.short_id &&
-                                    <hr key={`${listing.short_id}-hr`} className= "listings-hr" />
+                                    <hr key={`${listing.short_id}-hr`} className="divider-hr" />
                             ])}
                             {listings.length == 0 ?
                                 <center><h4>No listings found</h4></center>
