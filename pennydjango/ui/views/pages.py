@@ -5,6 +5,8 @@ from ui.views.base_views import PublicReactView, BaseContextMixin
 from listings.models import Listing
 from listings.constants import PETS_ALLOWED, AMENITIES
 
+from penny.constants import NEIGHBORHOODS
+
 
 class Home(PublicReactView):
     title = "Real Estate"
@@ -17,7 +19,8 @@ class Home(PublicReactView):
                 amenity_tuple[0]: amenity_tuple[1]
                 for _, group in dict(AMENITIES).items()
                 for amenity_tuple in group
-            }
+            },
+            'neighborhoods': dict(NEIGHBORHOODS),
         }
 
         return {
