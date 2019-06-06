@@ -9,6 +9,7 @@ import {
     exclusiveFilter, vacantFilter, draft_listingsFilter, date_availableFilter,
     sales_agentsFilter, listing_agentsFilter, hoodsFilter
 } from "@/listings/filters"
+import {ALL_FILTERS} from '@/constants'
 
 
 export class ListingComponent extends React.Component {
@@ -325,32 +326,9 @@ export class FiltersBar extends React.Component {
     }
 
     clearFilters(e) {
-        const empty_filters = {
-            address: "",
-            amenities: [],
-            baths: [],
-            beds: [],
-            date_available: "",
-            draft_listings: false,
-            exclusive: false,
-            hoods: [],
-            listing_agents: [],
-            listing_id: "",
-            listing_type: "any",
-            nofeeonly: false,
-            owner_pays: false,
-            pets_allowed: "any",
-            price: [],
-            price_per_bed: [],
-            sales_agents: [],
-            searching_text: "",
-            size: [],
-            unit: "",
-            vacant: false,
-        }
         let cleaned_filters = {}
         Object.keys(this.state).map(
-            f_name => cleaned_filters[f_name] = empty_filters[f_name]
+            f_name => cleaned_filters[f_name] = ALL_FILTERS[f_name]
         )
         this.setState(cleaned_filters, this.fetchListings)
     }

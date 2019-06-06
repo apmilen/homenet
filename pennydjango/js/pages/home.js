@@ -185,7 +185,7 @@ class PublicListings extends React.Component {
         this.setState({show_detail: false})
     }
     render() {
-        const {listings} = this.state
+        const {listings, filters} = this.state
 
         return [
             <Row style={{minHeight: 43}}>
@@ -199,7 +199,7 @@ class PublicListings extends React.Component {
                 :
                     <Col>
                         <Row className="justify-content-center home-filters">
-                            <FiltersBar filters={this.state.filters}
+                            <FiltersBar filters={filters}
                                         constants={this.props.constants}
                                         endpoint={this.props.endpoint}
                                         updateParentState={new_state => this.setState(new_state)} />
