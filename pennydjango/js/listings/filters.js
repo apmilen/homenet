@@ -45,8 +45,17 @@ export const listing_idFilter = (listing_id, func) =>
     </div>
 
 // Range input filters
+const rangeTitle = (title, range, pre='', pos='') =>
+`${title}${
+    range[0] ? 
+    (range[1] ? `: ${pre}${range[0]}${pos} -` : ` from ${pre}${range[0]}${pos}`) : ''
+}${
+    range[1] ?
+    (range[0] ? ` ${pre}${range[1]}${pos}` : ` up to ${pre}${range[1]}${pos}`) : ''
+}`
+
 export const priceFilter = (price, func) =>
-    <DropdownButton title='Price' alignRight>
+    <DropdownButton title={rangeTitle("Price", price, '$')} alignRight>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
@@ -67,7 +76,7 @@ export const priceFilter = (price, func) =>
     </DropdownButton>
 
 export const price_per_bedFilter = (price_per_bed, func) =>
-    <DropdownButton title='Price per Bed'>
+    <DropdownButton title={rangeTitle("Price per Bed", price_per_bed, '$')}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_per_bed_min' xs='3' step='100'
@@ -80,7 +89,7 @@ export const price_per_bedFilter = (price_per_bed, func) =>
             <InputGroupText>Max:</InputGroupText>
             <FormControl id='price_per_bed_max' xs='3' step='100'
                          name='price_per_bed'
-                         type='number' min={price_per_bed[0]}
+                         type='number' min={price_per_bed[0] || 0}
                          value={price_per_bed[1]}
                          onChange={func}
                          placeholder='9999'/>
@@ -88,7 +97,7 @@ export const price_per_bedFilter = (price_per_bed, func) =>
     </DropdownButton>
 
 export const sizeFilter = (size, func) =>
-    <DropdownButton title='Square Feet'>
+    <DropdownButton title={rangeTitle("Size", size, '', 'sq.ft')}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='size_min' xs='3' step='100'
@@ -109,8 +118,11 @@ export const sizeFilter = (size, func) =>
     </DropdownButton>
 
 // Multiple selection filters
+const multipleSelectionTitle = (title, list) =>
+    `${title}${list.length ? `: ${list.length} selected` : ''}`
+
 export const bedsFilter = (beds, func) =>
-    <DropdownButton title='Bedrooms'>
+    <DropdownButton title={`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`}>
         <div className='rooms-container'>
             {["0", "1", "2", "3", "4+"].map(n_beds =>
                 <div id={n_beds} name='beds' key={`${n_beds}-beds`}
@@ -123,7 +135,7 @@ export const bedsFilter = (beds, func) =>
     </DropdownButton>
 
 export const bathsFilter = (baths, func) =>
-    <DropdownButton title='Baths'>
+    <DropdownButton title={`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`}>
         <div className='rooms-container'>
             {["0", "1", "2", "3+"].map(n_baths =>
                 <div id={n_baths} name='baths' key={`${n_baths}-baths`}
@@ -136,7 +148,8 @@ export const bathsFilter = (baths, func) =>
     </DropdownButton>
 
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
-    <DropdownButton title='Amenities' className="dropdown-menu-mobile">
+    <DropdownButton className="dropdown-menu-mobile"
+                    title={multipleSelectionTitle("Amenities", amenities)}>
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
@@ -149,7 +162,8 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <DropdownButton title="Sales Agents" alignRight>
+    <DropdownButton alignRight
+                    title={multipleSelectionTitle("Sales Agents", sales_agents)}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
@@ -162,7 +176,7 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
     </DropdownButton>
 
 export const listing_agentsFilter = (listing_agents, agents, func) =>
-    <DropdownButton title="Listing Agents">
+    <DropdownButton title={multipleSelectionTitle("Listing Agents", listing_agents)}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-listing-agent`}
@@ -175,7 +189,7 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
     </DropdownButton>
 
 export const hoodsFilter = (hoods, hoods_dict, func) =>
-    <DropdownButton title='Hoods' className="dropdown-menu-mobile">
+    <DropdownButton title={multipleSelectionTitle("Hoods", hoods)} className="dropdown-menu-mobile">
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
@@ -197,7 +211,8 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
 
 // One selection filters
 export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
-    <DropdownButton title='Pets' className="dropdown-menu-mobile">
+    <DropdownButton className="dropdown-menu-mobile"
+                    title={`Pets: ${pets_allowed == 'any' ? "Any" : pets_allowed_dict[pets_allowed]}`}>
         <div className='pets-container'>
             <FormRadio name='pets_allowed' value='any'
                        checked={pets_allowed == 'any'}
@@ -216,7 +231,7 @@ export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
     </DropdownButton>
 
 export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
-    <DropdownButton title='Listing Type'>
+    <DropdownButton title={`Listing Type: ${listing_type == 'any' ? "Any" : listing_type_dict[listing_type]}`}>
         <div className='pets-container'>
             <FormRadio name='listing_type' value='any'
                        checked={listing_type == 'any'}
