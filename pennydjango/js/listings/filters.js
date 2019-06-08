@@ -7,41 +7,64 @@ import {
 } from "shards-react";
 
 
+
 // Text input filters
+const formControlStyle = {
+    position: 'absolute',
+    width: 'inherit',
+    minWidth: 'inherit'
+}
+
+const textInputCloseButton = (func, elem_id) =>
+    <button class="close" style={{height: '100%', padding: '0 6px'}}>
+        <span name={elem_id} onClick={(e) => {
+            $(`#${elem_id}`).focus()
+            func(e)
+        }}>&times;</span>
+    </button>
+
 export const searchingText = (searching_text, func) =>
-    <div style={{width: '20vw', minWidth: 180}}>
-        <FormControl id='searching_text' size="sm"
-                     type='text'
+    <div style={{width: '20vw', minWidth: 180, height: '100%'}}>
+        <FormControl name='searching_text' size="sm"
+                     type='text' id='searching_text'
                      value={searching_text}
                      placeholder='Search for something you like :)'
+                     style={formControlStyle}
                      onChange={func} />
+        {searching_text && textInputCloseButton(func, 'searching_text')}
     </div>
 
 export const addressFilter = (address, func) =>
-    <div style={{width: '14vw', minWidth: 100}}>
-        <FormControl id='address' size="sm"
-                     type='text'
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='address' size="sm"
+                     type='text' id='address'
                      value={address}
                      placeholder='Address'
+                     style={formControlStyle}
                      onChange={func} />
+        {address && textInputCloseButton(func, 'address')}
     </div>
 
 export const unitFilter = (unit, func) =>
-    <div style={{width: '6vw', minWidth: 50}}>
-        <FormControl id='unit' size="sm"
-                     type='text'
+    <div style={{width: '6vw', minWidth: 50, height: '100%'}}>
+        <FormControl name='unit' size="sm"
+                     type='text' id='unit'
                      value={unit}
                      placeholder='Unit'
+                     style={formControlStyle}
                      onChange={func} />
+        {unit && textInputCloseButton(func, 'unit')}
     </div>
 
 export const listing_idFilter = (listing_id, func) =>
-    <div style={{width: '14vw', minWidth: 100}}>
-        <FormControl id='listing_id' size="sm"
-                     type='text'
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='listing_id' size="sm"
+                     type='text' id='listing_id'
                      value={listing_id}
                      placeholder='Listing ID'
+                     style={formControlStyle}
                      onChange={func} />
+        {listing_id && textInputCloseButton(func, 'listing_id')}
     </div>
 
 // Range input filters

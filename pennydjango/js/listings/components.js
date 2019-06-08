@@ -276,7 +276,9 @@ export class FiltersBar extends React.Component {
     }
 
     filtering(e) {
-        this.setState({[e.target.id]: e.target.value}, this.fetchListings)
+        const f_name = e.target.getAttribute('name')
+        const f_value = e.target.value || ""
+        this.setState({[f_name]: f_value}, this.fetchListings)
     }
 
     filterMultipleSelection(e, filter_name) {
