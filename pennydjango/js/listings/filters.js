@@ -77,8 +77,20 @@ const rangeTitle = (title, range, pre='', pos='') =>
     (range[0] ? ` ${pre}${range[1]}${pos}` : ` up to ${pre}${range[1]}${pos}`) : ''
 }`
 
+const validRange = (range) => range.length == 2 && (range[0] || range[1])
+
+const rangeClearFilter = (func, elem_id) =>
+    <span name={elem_id} className='times' onClick={(e) => {
+        e.stopPropagation()
+        $(`#${elem_id}_min`).val("")
+        $(`#${elem_id}_max`).val("")
+        func(e)
+    }}>&times;</span>
+
 export const priceFilter = (price, func) =>
-    <DropdownButton title={rangeTitle("Price", price, '$')} alignRight>
+    <DropdownButton title={[rangeTitle("Price", price, '$'),
+                            validRange(price) && rangeClearFilter(func, "price")]}
+                    className={validRange(price) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
@@ -99,7 +111,9 @@ export const priceFilter = (price, func) =>
     </DropdownButton>
 
 export const price_per_bedFilter = (price_per_bed, func) =>
-    <DropdownButton title={rangeTitle("Price per Bed", price_per_bed, '$')}>
+    <DropdownButton title={[rangeTitle("Price per Bed", price_per_bed, '$'),
+                            validRange(price_per_bed) && rangeClearFilter(func, "price_per_bed")]}
+                    className={validRange(price_per_bed) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_per_bed_min' xs='3' step='100'
@@ -120,7 +134,9 @@ export const price_per_bedFilter = (price_per_bed, func) =>
     </DropdownButton>
 
 export const sizeFilter = (size, func) =>
-    <DropdownButton title={rangeTitle("Size", size, '', 'sq.ft')}>
+    <DropdownButton title={[rangeTitle("Size", size, '', 'sq.ft'),
+                            validRange(size) && rangeClearFilter(func, "size")]}
+                    className={validRange(size) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='size_min' xs='3' step='100'

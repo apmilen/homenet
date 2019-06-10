@@ -91,6 +91,18 @@ div.circle-avatar{
     overflow-y: auto;
     user-select: none;
 }
+.no-caret .dropdown-toggle::after {
+    display: none;
+}
+span.times {
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+    margin-right: -6px;
+    margin-left: 6px;
+    padding: 0 3px;
+    font-weight: 700;
+}
 
 /* Cards */
 .card.card-listing {

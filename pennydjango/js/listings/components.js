@@ -306,7 +306,7 @@ export class FiltersBar extends React.Component {
 
     filterRange(e) {
         const f_name = e.target.getAttribute('name')
-        const range = [$('#' + f_name + '_min').val(), $('#' + f_name + '_max').val()]
+        const range = [$(`#${f_name}_min`).val(), $(`#${f_name}_max`).val()]
         this.setState({[f_name]: range}, this.fetchListings)
     }
 
