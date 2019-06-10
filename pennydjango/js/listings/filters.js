@@ -15,7 +15,7 @@ const formControlStyle = {
     minWidth: 'inherit'
 }
 
-const textInputCloseButton = (func, elem_id) =>
+const textInputClearFilter = (func, elem_id) =>
     <button class="close" style={{height: '100%', padding: '0 6px'}}>
         <span name={elem_id} onClick={(e) => {
             $(`#${elem_id}`).focus()
@@ -31,7 +31,7 @@ export const searchingText = (searching_text, func) =>
                      placeholder='Search for something you like :)'
                      style={formControlStyle}
                      onChange={func} />
-        {searching_text && textInputCloseButton(func, 'searching_text')}
+        {searching_text && textInputClearFilter(func, 'searching_text')}
     </div>
 
 export const addressFilter = (address, func) =>
@@ -42,7 +42,7 @@ export const addressFilter = (address, func) =>
                      placeholder='Address'
                      style={formControlStyle}
                      onChange={func} />
-        {address && textInputCloseButton(func, 'address')}
+        {address && textInputClearFilter(func, 'address')}
     </div>
 
 export const unitFilter = (unit, func) =>
@@ -53,7 +53,7 @@ export const unitFilter = (unit, func) =>
                      placeholder='Unit'
                      style={formControlStyle}
                      onChange={func} />
-        {unit && textInputCloseButton(func, 'unit')}
+        {unit && textInputClearFilter(func, 'unit')}
     </div>
 
 export const listing_idFilter = (listing_id, func) =>
@@ -64,7 +64,7 @@ export const listing_idFilter = (listing_id, func) =>
                      placeholder='Listing ID'
                      style={formControlStyle}
                      onChange={func} />
-        {listing_id && textInputCloseButton(func, 'listing_id')}
+        {listing_id && textInputClearFilter(func, 'listing_id')}
     </div>
 
 // Range input filters
