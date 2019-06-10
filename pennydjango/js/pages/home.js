@@ -166,6 +166,8 @@ class PublicListings extends React.Component {
                 pets_allowed: 'any',
                 nofeeonly: false,
                 amenities: [],
+                hoods: [],
+                vacant: false,
             },
             listings: [],
             map_address: '',
@@ -197,14 +199,11 @@ class PublicListings extends React.Component {
                         Back to results
                     </a>
                 :
-                    <Col>
-                        <Row className="justify-content-center home-filters">
-                            <FiltersBar filters={filters}
-                                        constants={this.props.constants}
-                                        endpoint={this.props.endpoint}
-                                        updateParentState={new_state => this.setState(new_state)} />
-                        </Row>
-                    </Col>
+                    <FiltersBar filters={filters}
+                                advancedFilters={["hoods", "vacant"]}
+                                constants={this.props.constants}
+                                endpoint={this.props.endpoint}
+                                updateParentState={new_state => this.setState(new_state)} />
                 }
             </Row>,
             <Row>

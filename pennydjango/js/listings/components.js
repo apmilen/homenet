@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {ButtonToolbar, Button} from "shards-react";
+import {ButtonToolbar, Button, Collapse, Col, Row} from "shards-react";
 
 import {
     searchingText, addressFilter, unitFilter, priceFilter, price_per_bedFilter,
@@ -273,6 +273,7 @@ export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
         this.state = props.filters
+        this.collapse = false
     }
 
     filtering(e) {
@@ -339,88 +340,120 @@ export class FiltersBar extends React.Component {
         this.fetchListings()
     }
 
-    render() {
+    renderFilters(filters) {
         const {
             searching_text, address, unit, sales_agents, listing_agents, hoods,
             price, price_per_bed, beds, baths, listing_type, listing_id, size,
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
             draft_listings, date_available,
-        } = this.state
+        } = filters
+        console.log(filters)
 
-        return (
-            <ButtonToolbar>
+        return [
+            searching_text != undefined &&
+            <div className='filter-container'>{searchingText(searching_text, ::this.filtering)}</div>,
 
-                {searching_text != undefined &&
-                <div className='filter-container'>{searchingText(searching_text, ::this.filtering)}</div>}
+            address != undefined &&
+            <div className='filter-container'>{addressFilter(address, ::this.filtering)}</div>,
 
-                {address != undefined &&
-                <div className='filter-container'>{addressFilter(address, ::this.filtering)}</div>}
+            unit != undefined &&
+            <div className='filter-container'>{unitFilter(unit, ::this.filtering)}</div>,
 
-                {unit != undefined &&
-                <div className='filter-container'>{unitFilter(unit, ::this.filtering)}</div>}
+            sales_agents != undefined &&
+            <div className='filter-container'>{sales_agentsFilter(sales_agents, this.props.constants.agents, ::this.filterMultipleSelection)}</div>,
 
-                {sales_agents != undefined &&
-                <div className='filter-container'>{sales_agentsFilter(sales_agents, this.props.constants.agents, ::this.filterMultipleSelection)}</div>}
+            listing_agents != undefined &&
+            <div className='filter-container'>{listing_agentsFilter(listing_agents, this.props.constants.agents, ::this.filterMultipleSelection)}</div>,
 
-                {listing_agents != undefined &&
-                <div className='filter-container'>{listing_agentsFilter(listing_agents, this.props.constants.agents, ::this.filterMultipleSelection)}</div>}
+            hoods != undefined &&
+            <div className='filter-container'>{hoodsFilter(hoods, this.props.constants.neighborhoods, ::this.filterMultipleSelection)}</div>,
 
-                {hoods != undefined &&
-                <div className='filter-container'>{hoodsFilter(hoods, this.props.constants.neighborhoods, ::this.filterMultipleSelection)}</div>}
+            price != undefined &&
+            <div className='filter-container'>{priceFilter(price, ::this.filterRange)}</div>,
 
-                {price != undefined &&
-                <div className='filter-container'>{priceFilter(price, ::this.filterRange)}</div>}
+            price_per_bed != undefined &&
+            <div className='filter-container'>{price_per_bedFilter(price_per_bed, ::this.filterRange)}</div>,
 
-                {price_per_bed != undefined &&
-                <div className='filter-container'>{price_per_bedFilter(price_per_bed, ::this.filterRange)}</div>}
+            beds != undefined &&
+            <div className='filter-container'>{bedsFilter(beds, ::this.filterMultipleSelection)}</div>,
 
-                {beds != undefined &&
-                <div className='filter-container'>{bedsFilter(beds, ::this.filterMultipleSelection)}</div>}
+            baths != undefined &&
+            <div className='filter-container'>{bathsFilter(baths, ::this.filterMultipleSelection)}</div>,
 
-                {baths != undefined &&
-                <div className='filter-container'>{bathsFilter(baths, ::this.filterMultipleSelection)}</div>}
+            listing_type != undefined &&
+            <div className='filter-container'>{listing_typeFilter(listing_type, this.props.constants.listing_types, ::this.filterOneSelection)}</div>,
 
-                {listing_type != undefined &&
-                <div className='filter-container'>{listing_typeFilter(listing_type, this.props.constants.listing_types, ::this.filterOneSelection)}</div>}
+            listing_id != undefined &&
+            <div className='filter-container'>{listing_idFilter(listing_id, ::this.filtering)}</div>,
 
-                {listing_id != undefined &&
-                <div className='filter-container'>{listing_idFilter(listing_id, ::this.filtering)}</div>}
+            size != undefined &&
+            <div className='filter-container'>{sizeFilter(size, ::this.filterRange)}</div>,
 
-                {size != undefined &&
-                <div className='filter-container'>{sizeFilter(size, ::this.filterRange)}</div>}
+            pets_allowed != undefined &&
+            <div className='filter-container'>{pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.filterOneSelection)}</div>,
 
-                {pets_allowed != undefined &&
-                <div className='filter-container'>{pets_allowedFilter(pets_allowed, this.props.constants.pets_allowed, ::this.filterOneSelection)}</div>}
+            amenities != undefined &&
+            <div className='filter-container'>{amenitiesFilter(amenities, this.props.constants.amenities, ::this.filterMultipleSelection)}</div>,
 
-                {amenities != undefined &&
-                <div className='filter-container'>{amenitiesFilter(amenities, this.props.constants.amenities, ::this.filterMultipleSelection)}</div>}
+            nofeeonly != undefined &&
+            <div className='filter-container'>{nofeeonlyFilter(nofeeonly, ::this.filterToggle)}</div>,
 
-                {nofeeonly != undefined &&
-                <div className='filter-container'>{nofeeonlyFilter(nofeeonly, ::this.filterToggle)}</div>}
+            owner_pays != undefined &&
+            <div className='filter-container'>{owner_paysFilter(owner_pays, ::this.filterToggle)}</div>,
 
-                {owner_pays != undefined &&
-                <div className='filter-container'>{owner_paysFilter(owner_pays, ::this.filterToggle)}</div>}
+            exclusive != undefined &&
+            <div className='filter-container'>{exclusiveFilter(exclusive, ::this.filterToggle)}</div>,
 
-                {exclusive != undefined &&
-                <div className='filter-container'>{exclusiveFilter(exclusive, ::this.filterToggle)}</div>}
+            vacant != undefined &&
+            <div className='filter-container'>{vacantFilter(vacant, ::this.filterToggle)}</div>,
 
-                {vacant != undefined &&
-                <div className='filter-container'>{vacantFilter(vacant, ::this.filterToggle)}</div>}
+            draft_listings != undefined &&
+            <div className='filter-container'>{draft_listingsFilter(draft_listings, ::this.filterToggle)}</div>,
 
-                {draft_listings != undefined &&
-                <div className='filter-container'>{draft_listingsFilter(draft_listings, ::this.filterToggle)}</div>}
+            date_available != undefined &&
+            <div className='filter-container'>{date_availableFilter(date_available, ::this.changeDate)}</div>,
+        ]
+    }
 
-                {date_available != undefined &&
-                <div className='filter-container'>{date_availableFilter(date_available, ::this.changeDate)}</div>}
+    render() {
+        const advanced_filters = this.props.advancedFilters
+        let basic_filters = {}, extra_filters = {}
+        Object.keys(this.state).map(filter_name => {
+            if (advanced_filters.includes(filter_name))
+                extra_filters[filter_name] = this.state[filter_name]
+            else
+                basic_filters[filter_name] = this.state[filter_name]
+        })
 
-                <div className='filter-container'>
-                    <Button outline theme="light" onClick={::this.clearFilters}>
-                        Clear filters
-                    </Button>
-                </div>
-
-            </ButtonToolbar>
-        )
+        return <Col>
+            <Row className="justify-content-center">
+                <ButtonToolbar>
+                    {this.renderFilters(basic_filters)}
+                    <div className='filter-container'>
+                        <Button outline theme="light" onClick={::this.clearFilters}>
+                            Clear filters
+                        </Button>
+                    </div>
+                    {advanced_filters &&
+                        <div className='filter-container'>
+                            <Button outline theme="light" onClick={() => {
+                                this.collapse = !this.collapse
+                                this.forceUpdate()
+                            }}>
+                                {`+ ${this.collapse ? 'less' : 'more'} filters`}
+                            </Button>
+                        </div>
+                    }
+                </ButtonToolbar>
+            </Row>
+            <Row className="justify-content-center">
+                <Collapse open={this.collapse}>
+                    <ButtonToolbar>
+                        {this.renderFilters(extra_filters)}
+                    </ButtonToolbar>
+                </Collapse>
+            </Row>
+        </Col>
     }
 }
 
