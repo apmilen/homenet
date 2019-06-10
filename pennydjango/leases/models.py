@@ -27,6 +27,7 @@ class Lease(BaseModel):
         null=True,
         blank=True
     )
+    op_received_at = models.DateField(null=True)
     status = models.CharField(
         max_length=50,
         choices=LEASE_STATUS,
@@ -35,3 +36,18 @@ class Lease(BaseModel):
 
     def detail_link(self):
         return reverse('leases:detail', args=[self.id])
+
+
+class LeaseMember(BaseModel):
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    offer = models.ForeignKey(Lease, on_delete=models.CASCADE)
+    name = models.CharField(max_length=155)
+    email = models.CharField(max_length=255)
+    applicant_type = models.CharField(max_length=155)
+    app_fee = models.DecimalField(max_digits=15, decimal_places=2, default=100)
+
+
+class MoveInCost(BaseModel):
+    offer = models.ForeignKey(Lease, on_delete=models.CASCADE)
+    value = models.DecimalField(max_digits=15, decimal_places=2)
+    charge = models.CharField(max_length=255)
