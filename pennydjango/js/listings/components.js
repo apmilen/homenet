@@ -324,7 +324,11 @@ export class FiltersBar extends React.Component {
 
         this.props.updateParentState({filters: this.state})
         $.get(this.props.endpoint, params, (resp) =>
-            this.props.updateParentState({listings: resp.results})
+            this.props.updateParentState({
+                listings: resp.results,
+                total_listings: resp.count,
+                more_listings_link: resp.next
+            })
         )
     }
 

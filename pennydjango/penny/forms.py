@@ -6,10 +6,11 @@ from penny.models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
+    first_name = forms.CharField(label='Your Name')
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = UserCreationForm.Meta.fields + ('email',)
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name')
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

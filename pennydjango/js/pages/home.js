@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Row, Col} from "shards-react";
+import {Row, Col, Button} from "shards-react";
 
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/listings/components'
@@ -170,6 +170,8 @@ class PublicListings extends React.Component {
                 vacant: false,
             },
             listings: [],
+            total_listings: 0,
+            more_listings_link: null,
             map_address: '',
             show_detail: false,
         }
@@ -186,12 +188,25 @@ class PublicListings extends React.Component {
     hideDetail() {
         this.setState({show_detail: false})
     }
+    moreListings() {
+        $.get(this.state.more_listings_link, (resp) =>
+            this.setState({
+                listings: this.state.listings.concat(resp.results),
+                total_listings: resp.count,
+                more_listings_link: resp.next
+            })
+        )
+    }
     render() {
-        const {listings, filters} = this.state
+        const {constants, endpoint} = this.props
+        const {
+            listings, total_listings, more_listings_link,
+            show_detail, filters, map_address
+        } = this.state
 
         return [
             <Row style={{minHeight: 43}}>
-                {this.state.show_detail ?
+                {show_detail ?
                     <a href='#'
                        style={{margin: 'auto 0 auto 35px'}}
                        onClick={::this.hideDetail}>
@@ -201,30 +216,43 @@ class PublicListings extends React.Component {
                 :
                     <FiltersBar filters={filters}
                                 advancedFilters={["hoods", "vacant"]}
-                                constants={this.props.constants}
-                                endpoint={this.props.endpoint}
+                                constants={constants}
+                                endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 }
             </Row>,
             <Row>
                 <Col md='6' className="main-scroll">
-                    {this.state.show_detail ?
+                    {show_detail ?
                         <Row>
-                            <ListingDetail {...listings.find(listing => listing.id == this.state.show_detail)} />
+                            <ListingDetail {...listings.find(listing => listing.id == show_detail)} />
                         </Row>
                     : [
-                        <center><h6>{listings.length} results</h6></center>,
+                        <center><h6>{total_listings} results</h6></center>,
                         <Row>
                             {listings.map(listing =>
                                 <ListingCard listing={listing}
                                              hoverOn={::this.hoverOn}
                                              clickOn={::this.showDetail} />
                             )}
+                        </Row>,
+                        <Row className="justify-content-center">
+                            {more_listings_link ?
+                                <Button outline onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
+                                    Load more...
+                                </Button>
+                            :
+                                <div style={{width: '100%', height: 12, borderBottom: '1px solid gray', textAlign: 'center'}}>
+                                    <span style={{fontSize: '1em', backgroundColor: '#F3F5F6', padding: '0 10px'}}>
+                                        End of results
+                                    </span>
+                                </div>
+                            }
                         </Row>
                     ]}
                 </Col>
-                <Col md='6' className={`map-panel ${this.state.show_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapPanel address={this.state.map_address}/>
+                <Col md='6' className={`map-panel ${show_detail ? '' : 'd-none'} d-md-inline`}>
+                    <MapPanel address={map_address}/>
                 </Col>
             </Row>
         ]
