@@ -168,6 +168,13 @@ class PublicListings extends React.Component {
                 amenities: [],
                 hoods: [],
                 vacant: false,
+                price_per_bed: [],
+                size: [],
+                address: '',
+                listing_type: 'any',
+                owner_pays: false,
+                exclusive: false,
+                date_available: '',
             },
             listings: [],
             total_listings: 0,
@@ -203,6 +210,10 @@ class PublicListings extends React.Component {
             listings, total_listings, more_listings_link,
             show_detail, filters, map_address
         } = this.state
+        const advanced_filters = [
+            "hoods", "vacant", "pets_allowed", "price_per_bed", "listing_type",
+            "address", "size", "owner_pays", "exclusive", "date_available"
+        ]
 
         return [
             <Row style={{minHeight: 43}}>
@@ -215,7 +226,7 @@ class PublicListings extends React.Component {
                     </a>
                 :
                     <FiltersBar filters={filters}
-                                advancedFilters={["hoods", "vacant"]}
+                                advancedFilters={advanced_filters}
                                 constants={constants}
                                 endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />

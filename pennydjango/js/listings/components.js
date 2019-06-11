@@ -458,13 +458,15 @@ export class FiltersBar extends React.Component {
                     }
                 </ButtonToolbar>
             </Row>
-            <Row className="justify-content-center">
-                <Collapse open={show_collapse}>
-                    <ButtonToolbar>
-                        {this.renderFilters(extra_filters)}
-                    </ButtonToolbar>
-                </Collapse>
-            </Row>
+            {advanced_filters &&
+                <Row className="justify-content-center">
+                    <Collapse open={show_collapse}>
+                        <ButtonToolbar>
+                            {this.renderFilters(extra_filters)}
+                        </ButtonToolbar>
+                    </Collapse>
+                </Row>
+            }
         </Col>
     }
 }
