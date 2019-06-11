@@ -272,57 +272,65 @@ export class ListingComponent extends React.Component {
 export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
-        this.state = props.filters
-        this.collapse = false
+        this.state = {
+            filters: props.filters,
+            show_collapse: false,
+        }
+    }
+
+    updateFilter(filter) {
+        this.setState({
+            filters: {...this.state.filters, ...filter}
+        }, this.fetchListings)
     }
 
     filtering(e) {
         const f_name = e.target.getAttribute('name')
         const f_value = e.target.value || ""
-        this.setState({[f_name]: f_value}, this.fetchListings)
+        this.updateFilter({[f_name]: f_value})
     }
 
     filterMultipleSelection(e, filter_name) {
         const value = e.target.id
         const item_type = filter_name || e.target.getAttribute('name')
-        const current_filter = this.state[item_type]
+        const current_filter = this.state.filters[item_type]
 
         const new_filter = current_filter.includes(value) ?
             current_filter.filter(val => val != value) :
             current_filter.concat(value)
 
-        this.setState({[item_type]: new_filter}, this.fetchListings)
+        this.updateFilter({[item_type]: new_filter})
     }
 
     filterOneSelection(e) {
         const f_name = e.target.getAttribute('name')
         const f_value = e.target.getAttribute('value')
-        this.setState({[f_name]: f_value}, this.fetchListings)
+        this.updateFilter({[f_name]: f_value})
     }
 
     filterToggle(e) {
         const f_name = e.target.getAttribute('name')
-        this.setState({[f_name]: !this.state[f_name]}, this.fetchListings)
+        this.updateFilter({[f_name]: !this.state.filters[f_name]})
     }
 
     filterRange(e) {
         const f_name = e.target.getAttribute('name')
         const range = [$(`#${f_name}_min`).val(), $(`#${f_name}_max`).val()]
-        this.setState({[f_name]: range}, this.fetchListings)
+        this.updateFilter({[f_name]: range})
     }
 
     changeDate(date) {
-        this.setState({date_available: date || ''}, this.fetchListings)
+        this.updateFilter({date_available: date || ''})
     }
 
     fetchListings() {
-        let params = {...this.state}
+        let params = {...this.state.filters}
         if (params.date_available)
             params.date_available = params.date_available.getFullYear() + ' ' +
                                     (params.date_available.getMonth() + 1) + ' ' +
                                     params.date_available.getDate()
 
-        this.props.updateParentState({filters: this.state})
+        this.props.updateParentState({filters: this.state.filters})
         $.get(this.props.endpoint, params, (resp) =>
             this.props.updateParentState({
                 listings: resp.results,
@@ -334,10 +342,10 @@ export class FiltersBar extends React.Component {
 
     clearFilters(e) {
         let cleaned_filters = {}
-        Object.keys(this.state).map(
+        Object.keys(this.state.filters).map(
             f_name => cleaned_filters[f_name] = ALL_FILTERS[f_name]
         )
-        this.setState(cleaned_filters, this.fetchListings)
+        this.updateFilter(cleaned_filters)
     }
 
     componentDidMount() {
@@ -351,7 +359,6 @@ export class FiltersBar extends React.Component {
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
             draft_listings, date_available,
         } = filters
-        console.log(filters)
 
         return [
             searching_text != undefined &&
@@ -420,13 +427,15 @@ export class FiltersBar extends React.Component {
     }
 
     render() {
+        const {filters, show_collapse} = this.state
         const advanced_filters = this.props.advancedFilters
         let basic_filters = {}, extra_filters = {}
-        Object.keys(this.state).map(filter_name => {
-            if (advanced_filters.includes(filter_name))
-                extra_filters[filter_name] = this.state[filter_name]
+
+        Object.keys(filters).map(filter_name => {
+            if ((advanced_filters || []).includes(filter_name))
+                extra_filters[filter_name] = filters[filter_name]
             else
-                basic_filters[filter_name] = this.state[filter_name]
+                basic_filters[filter_name] = filters[filter_name]
         })
 
         return <Col>
@@ -440,18 +449,17 @@ export class FiltersBar extends React.Component {
                     </div>
                     {advanced_filters &&
                         <div className='filter-container'>
-                            <Button outline theme="light" onClick={() => {
-                                this.collapse = !this.collapse
-                                this.forceUpdate()
-                            }}>
-                                {`+ ${this.collapse ? 'less' : 'more'} filters`}
+                            <Button outline theme="light" onClick={() => 
+                                this.setState({show_collapse: !show_collapse})
+                            }>
+                                {`+ ${show_collapse ? 'less' : 'more'} filters`}
                             </Button>
                         </div>
                     }
                 </ButtonToolbar>
             </Row>
             <Row className="justify-content-center">
-                <Collapse open={this.collapse}>
+                <Collapse open={show_collapse}>
                     <ButtonToolbar>
                         {this.renderFilters(extra_filters)}
                     </ButtonToolbar>
