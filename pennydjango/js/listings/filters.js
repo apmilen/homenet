@@ -160,8 +160,16 @@ export const sizeFilter = (size, func) =>
 const multipleSelectionTitle = (title, list) =>
     `${title}${list.length ? `: ${list.length} selected` : ''}`
 
+const multipleSelectionClearFilter = (func, elem_id) =>
+    <span name={elem_id} className='times' onClick={(e) => {
+        e.stopPropagation()
+        func(e, elem_id, true)
+    }}>&times;</span>
+
 export const bedsFilter = (beds, func) =>
-    <DropdownButton title={`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`}>
+    <DropdownButton title={[`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`,
+                            beds.length > 0 && multipleSelectionClearFilter(func, "beds")]}
+                    className={beds.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
             {["0", "1", "2", "3", "4+"].map(n_beds =>
                 <div id={n_beds} name='beds' key={`${n_beds}-beds`}
@@ -174,7 +182,9 @@ export const bedsFilter = (beds, func) =>
     </DropdownButton>
 
 export const bathsFilter = (baths, func) =>
-    <DropdownButton title={`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`}>
+    <DropdownButton title={[`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`,
+                            baths.length > 0 && multipleSelectionClearFilter(func, "baths")]}
+                    className={baths.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
             {["0", "1", "2", "3+"].map(n_baths =>
                 <div id={n_baths} name='baths' key={`${n_baths}-baths`}
@@ -187,8 +197,9 @@ export const bathsFilter = (baths, func) =>
     </DropdownButton>
 
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
-    <DropdownButton className="dropdown-menu-mobile"
-                    title={multipleSelectionTitle("Amenities", amenities)}>
+    <DropdownButton title={[multipleSelectionTitle("Amenities", amenities),
+                            amenities.length > 0 && multipleSelectionClearFilter(func, "amenities")]}
+                    className={`dropdown-menu-mobile ${amenities.length > 0 ? 'no-caret' : ''}`}>
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
@@ -201,8 +212,9 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <DropdownButton alignRight
-                    title={multipleSelectionTitle("Sales Agents", sales_agents)}>
+    <DropdownButton title={[multipleSelectionTitle("Sales Agents", sales_agents),
+                            sales_agents.length > 0 && multipleSelectionClearFilter(func, "sales_agents")]}
+                    className={sales_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
@@ -215,7 +227,9 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
     </DropdownButton>
 
 export const listing_agentsFilter = (listing_agents, agents, func) =>
-    <DropdownButton title={multipleSelectionTitle("Listing Agents", listing_agents)}>
+    <DropdownButton title={[multipleSelectionTitle("Listing Agents", listing_agents),
+                            listing_agents.length > 0 && multipleSelectionClearFilter(func, "listing_agents")]}
+                    className={listing_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-listing-agent`}
@@ -228,7 +242,9 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
     </DropdownButton>
 
 export const hoodsFilter = (hoods, hoods_dict, func) =>
-    <DropdownButton title={multipleSelectionTitle("Hoods", hoods)} className="dropdown-menu-mobile">
+    <DropdownButton title={[multipleSelectionTitle("Hoods", hoods),
+                            hoods.length > 0 && multipleSelectionClearFilter(func, "hoods")]}
+                    className={`dropdown-menu-mobile ${hoods.length > 0 ? 'no-caret' : ''}`}>
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
