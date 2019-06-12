@@ -163,7 +163,7 @@ const multipleSelectionTitle = (title, list) =>
 const multipleSelectionClearFilter = (func, elem_id) =>
     <span name={elem_id} className='times' onClick={(e) => {
         e.stopPropagation()
-        func(e, elem_id, true)
+        func(e, elem_id, [])
     }}>&times;</span>
 
 export const bedsFilter = (beds, func) =>
@@ -241,6 +241,15 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
         </div>
     </DropdownButton>
 
+const hoodsList = (borough_hoods, hoods) => {
+    const has_all_hoods = borough_hoods.every(hood => hoods.includes(hood[0]))
+    const has_no_hoods = borough_hoods.every(hood => !hoods.includes(hood[0]))
+    if (has_all_hoods || has_no_hoods)
+        return borough_hoods.map(hood => hood[0])
+    else
+        return borough_hoods.filter(hood => !hoods.includes(hood[0])).map(hood => hood[0])
+}
+
 export const hoodsFilter = (hoods, hoods_dict, func) =>
     <DropdownButton title={[multipleSelectionTitle("Hoods", hoods),
                             hoods.length > 0 && multipleSelectionClearFilter(func, "hoods")]}
@@ -250,6 +259,13 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
                 {Object.keys(hoods_dict).map((borough, idx) =>
                     <Tab eventKey={idx} title={borough} key={`${borough}-borough`}>
                         <div className='hoods-container'>
+
+                            <FormCheckbox id={`all-${borough}`} key={`all-${borough}`}
+                                          checked={hoods_dict[borough].every(hood => hoods.includes(hood[0]))}
+                                          onChange={e => func(e, "hoods", hoodsList(hoods_dict[borough], hoods))}>
+                                {`${hoods_dict[borough].every(hood => hoods.includes(hood[0])) ? 'Unselect' : 'Select'} all`}
+                            </FormCheckbox>
+                            <br/>
                             {hoods_dict[borough].map(hood =>
                                 <FormCheckbox id={hood[0]} key={`${hood[0]}-hood`}
                                               checked={hoods.includes(hood[0])}
@@ -257,6 +273,7 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
                                     {hood[1]}
                                 </FormCheckbox>
                             )}
+
                         </div>
                     </Tab>
                 )}

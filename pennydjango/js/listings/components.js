@@ -290,20 +290,26 @@ export class FiltersBar extends React.Component {
         this.updateFilter({[f_name]: f_value})
     }
 
-    filterMultipleSelection(e, filter_name, clear) {
-        const value = e.target.id
+    filterMultipleSelection(e, filter_name, values_list) {
         const item_type = filter_name || e.target.getAttribute('name')
+        const current_filter = this.state.filters[item_type]
+        let new_filter = current_filter
 
-        if (clear) {
-            this.updateFilter({[item_type]: []})
-        } else {
-            const current_filter = this.state.filters[item_type]
-            const new_filter = current_filter.includes(value) ?
+        if (values_list === undefined) {
+            const value = e.target.id
+            new_filter = current_filter.includes(value) ?
                 current_filter.filter(val => val != value) :
                 current_filter.concat(value)
-
-            this.updateFilter({[item_type]: new_filter})
+        } else if (values_list.length == 0) {
+            new_filter = []
+        } else {
+            new_filter = [
+                ...current_filter.filter(val => values_list.indexOf(val) == -1),
+                ...values_list.filter(val => current_filter.indexOf(val) == -1)
+            ]
         }
+
+        this.updateFilter({[item_type]: new_filter})
     }
 
     filterOneSelection(e) {
