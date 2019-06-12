@@ -100,12 +100,12 @@ class ReviewListing(WizardMixin, PublicReactView, TemplateView):
     def get_template_names(self):
         return [self.template]
 
-    def get_listing_qs(self):
-        self.listing_qs = super().get_listing_qs()
-        self.listing_qs = self.listing_qs.select_related(
+    def get_main_object_qs(self):
+        self.main_object_qs = super().get_main_object_qs()
+        self.main_object_qs = self.main_object_qs.select_related(
             'detail', 'photos', 'listing_agent', 'sales_agent'
         )
-        return self.listing_qs
+        return self.main_object_qs
 
     def get(self, request, *args, **kwargs):
         props = self.get_props(request, *args, **kwargs)
@@ -120,7 +120,7 @@ class ReviewListing(WizardMixin, PublicReactView, TemplateView):
 
     def props(self, request, *args, **kwargs):
         return {
-            'listing': PrivateListingSerializer(self.get_listing()).data,
+            'listing': PrivateListingSerializer(self.get_main_object()).data,
         }
 
 
