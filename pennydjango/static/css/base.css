@@ -10,7 +10,7 @@
     top: 0;
 }
 .main-scroll{
-    height: calc(100vh - 7.5rem);
+    height: calc(100vh - 5.5rem);
     overflow-y: auto;
 }
 

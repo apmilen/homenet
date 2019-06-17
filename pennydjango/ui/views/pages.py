@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.views.generic.list import ListView
 
 from ui.views.base_views import PublicReactView, BaseContextMixin
@@ -21,6 +22,7 @@ class Home(PublicReactView):
         }
 
         return {
+            'map_key': settings.MAP_KEY,
             'constants': constants,
             'endpoint': '/listings/public/',
         }

@@ -6,18 +6,7 @@ import {Row, Col, Button} from "shards-react";
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/listings/components'
 
-
-
-class MapPanel extends React.Component {
-    render() {
-        return (
-            <iframe src={`https://maps.google.com/maps?q=${this.props.address}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                frameborder="0" width="100%" height="100%" scrolling="no"
-                marginheight="0" marginwidth="0"
-                style={{display: 'inline-block'}}></iframe>
-        )
-    }
-}
+import {MapComponent} from '@/components/maps'
 
 
 class ListingCard extends React.Component {
@@ -26,7 +15,7 @@ class ListingCard extends React.Component {
 
         return (
             <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
-                 onMouseEnter={() => {hoverOn(listing.address)}}>
+                 onMouseEnter={() => {hoverOn(listing.id)}}>
                 <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
                 <div class="card-post__image text-center">
                     <img class="box-wd" src={listing.default_image} />
@@ -170,17 +159,17 @@ class PublicListings extends React.Component {
             listings: [],
             total_listings: 0,
             more_listings_link: null,
-            map_address: '',
+            listing_hovered: '',
             show_detail: false,
         }
     }
-    hoverOn(address) {
-        this.setState({map_address: address})
+    hoverOn(listing_id) {
+        this.setState({listing_hovered: this.state.listings.find(listing => listing.id == listing_id)})
     }
     showDetail(listing_id) {
         this.setState({
             show_detail: listing_id,
-            map_address: this.state.listings.find(listing => listing.id == listing_id).address
+            listing_hovered: this.state.listings.find(listing => listing.id == listing_id)
         })
     }
     hideDetail() {
@@ -196,10 +185,10 @@ class PublicListings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint} = this.props
+        const {constants, endpoint, map_key} = this.props
         const {
             listings, total_listings, more_listings_link,
-            show_detail, filters, map_address
+            show_detail, filters, listing_hovered
         } = this.state
 
         return [
@@ -251,7 +240,7 @@ class PublicListings extends React.Component {
                     ]}
                 </Col>
                 <Col md='6' className={`map-panel ${show_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapPanel address={map_address}/>
+                    <MapComponent map_key={map_key} listings={listings} listing_hovered={listing_hovered}/>
                 </Col>
             </Row>
         ]
