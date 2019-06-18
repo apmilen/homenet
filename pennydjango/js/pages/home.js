@@ -185,7 +185,7 @@ class PublicListings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint, map_key} = this.props
+        const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link,
             show_detail, filters, listing_hovered
@@ -240,7 +240,7 @@ class PublicListings extends React.Component {
                     ]}
                 </Col>
                 <Col md='6' className={`map-panel ${show_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapComponent map_key={map_key} listings={listings} listing_hovered={listing_hovered}/>
+                    <MapComponent listings={listings} listing_hovered={listing_hovered}/>
                 </Col>
             </Row>
         ]
