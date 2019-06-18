@@ -14,7 +14,7 @@ class ListingCard extends React.Component {
         const {listing, hoverOn, clickOn} = this.props
 
         return (
-            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+            <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
                  onMouseEnter={() => {hoverOn(listing.id)}}>
                 <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
                 <div class="card-post__image text-center">
@@ -38,11 +38,11 @@ class ListingCard extends React.Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td>{listing.pets}</td>
-                                <td>
+                                <td class="wrap-info">{listing.pets}</td>
+                                <td class="wrap-info">
                                     <i className="material-icons">share</i> Share
                                 </td>
-                                <td>
+                                <td class="wrap-info">
                                     <i className="material-icons">place</i>Map
                                 </td>
                             </tr>

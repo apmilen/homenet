@@ -120,6 +120,7 @@ div.circle-avatar{
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 100px;
+    padding: .35rem;
 }
 .card-post__category.left-badge {
     right: initial;
