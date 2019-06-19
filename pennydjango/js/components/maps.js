@@ -60,12 +60,9 @@ export class MapComponent extends PureComponent {
         }
     }
 
-    markerClick(listing, feature) {
-        this.setState({
-            center: feature.geometry.coordinates,
-            zoom: [15],
-            listing
-        })
+    markerHover(map, listing, cursor) {
+        map.getCanvas().style.cursor = cursor
+        this.setState({listing})
     }
 
     render() {
@@ -87,9 +84,8 @@ export class MapComponent extends PureComponent {
                     {listings.map(listing => (
                         <Feature
                             key={`feature-${listing.id}`}
-                            onMouseEnter={({map}) => map.getCanvas().style.cursor = 'pointer'}
-                            onMouseLeave={({map}) => map.getCanvas().style.cursor = ''}
-                            onClick={({feature}) => this.markerClick(listing, feature)}
+                            onMouseEnter={({map}) => this.markerHover(map, listing, 'pointer')}
+                            onMouseLeave={({map}) => this.markerHover(map, undefined, '')}
                             coordinates={coordinates(listing)}
                         />
                     ))}
