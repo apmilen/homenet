@@ -3,7 +3,7 @@ import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl'
 
 
 
-const coordinates = (listing) =>
+export const coordinates = (listing) =>
     [parseFloat(listing.longitude), parseFloat(listing.latitude)]
 
 
@@ -53,7 +53,6 @@ export class MapComponent extends PureComponent {
         super(props)
         this.state = {
             fitBounds: undefined,
-            center: [-73.942423, 40.654089],
             zoom: [11],
             listing: undefined,
             listings: {}
@@ -66,8 +65,8 @@ export class MapComponent extends PureComponent {
     }
 
     render() {
-        const {listings, clickOn} = this.props
-        const {fitBounds, center, zoom, listing} = this.state
+        const {listings, center, clickOn} = this.props
+        const {fitBounds, zoom, listing} = this.state
 
         return (
             <Mapbox

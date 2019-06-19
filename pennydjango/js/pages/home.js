@@ -6,7 +6,7 @@ import {Row, Col, Button} from "shards-react";
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/listings/components'
 
-import {MapComponent} from '@/components/maps'
+import {MapComponent, coordinates} from '@/components/maps'
 
 
 class ListingCard extends React.Component {
@@ -159,18 +159,16 @@ class PublicListings extends React.Component {
             listings: [],
             total_listings: 0,
             more_listings_link: null,
-            listing_hovered: undefined,
             listing_detail: undefined,
+            map_center: [-73.942423, 40.654089],
         }
     }
     hoverOn(listing) {
-        this.setState({listing_hovered: listing})
+        if (listing)
+            this.setState({map_center: coordinates(listing)})
     }
     showDetail(listing) {
-        this.setState({
-            listing_detail: listing,
-            listing_hovered: listing
-        })
+        this.setState({listing_detail: listing})
     }
     hideDetail() {
         this.setState({listing_detail: undefined})
@@ -188,7 +186,7 @@ class PublicListings extends React.Component {
         const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link,
-            listing_detail, filters, listing_hovered
+            listing_detail, filters, map_center
         } = this.state
 
         return [
@@ -242,7 +240,7 @@ class PublicListings extends React.Component {
                 <Col md='6' className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
                     <MapComponent
                         listings={listings}
-                        listing_hovered={listing_hovered}
+                        center={map_center}
                         clickOn={::this.showDetail}
                     />
                 </Col>
