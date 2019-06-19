@@ -1,21 +1,25 @@
-from django.db.models import Sum
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.urls import reverse
+from django.contrib.auth import login
+from django.db import transaction, DatabaseError
+from django.http import HttpResponseRedirect, JsonResponse
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView
 
 from rest_framework import viewsets
 
-from penny.model_utils import get_all_or_by_user
+from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
+from leases.models import Lease, LeaseMember, MoveInCost
+from leases.serializer import LeaseSerializer
+from listings.mixins import ListingContextMixin
+from listings.serializer import PrivateListingSerializer
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
+from penny.constants import CLIENT_TYPE
+from penny.forms import CustomUserCreationForm
+from penny.model_utils import get_all_or_by_user
+from penny.models import User
 from penny.utils import ExtendedEncoder
-from listings.mixins import ListingContextMixin
-from listings.serializer import PrivateListingSerializer
-from leases.models import Lease, LeaseMember, MoveInCost
-from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
-from leases.serializer import LeaseSerializer
 from ui.views.base_views import PublicReactView
 
 
@@ -152,6 +156,38 @@ class MoveInCostCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         return JsonResponse(data={'status': 500, 'errors': form.errors})
+
+
+class LeaseClientCreate(MainObjectContextMixin, CreateView):
+    model = User
+    form_class = CustomUserCreationForm
+    main_model = LeaseMember
+    template_name = 'leases/create_client.html'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        lease_member = self.get_main_object()
+        initial.update({
+            'email': lease_member.email,
+            'first_name': lease_member.name
+        })
+        return initial
+
+    def form_valid(self, form):
+        try:
+            with transaction.atomic():
+                new_user = form.save(commit=False)
+                new_user.user_type = CLIENT_TYPE
+                new_user.save()
+                lease_member = self.get_main_object()
+                lease_member.user = new_user
+                lease_member.save()
+        except DatabaseError:
+            # Add Contrib error
+            return self.form_invalid(form)
+        login(self.request, new_user)
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 # Rest Framework

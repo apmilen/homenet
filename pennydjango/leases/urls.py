@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from leases.views import (
     LeaseCreate, LeasesList, LeaseViewSet, LeaseDetail, LeaseMemberCreate,
-    MoveInCostCreate
+    MoveInCostCreate, LeaseClientCreate
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -15,6 +15,9 @@ urlpatterns = [
     path('<uuid:pk>/create-member',
          LeaseMemberCreate.as_view(),
          name='create-member'),
+    path('<uuid:pk>/create-client',
+         LeaseClientCreate.as_view(),
+         name='create-client'),
     path('<uuid:pk>/create-moveincost',
          MoveInCostCreate.as_view(),
          name='create-moveincost'),
