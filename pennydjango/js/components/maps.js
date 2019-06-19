@@ -66,7 +66,7 @@ export class MapComponent extends PureComponent {
     }
 
     render() {
-        const {listings} = this.props
+        const {listings, clickOn} = this.props
         const {fitBounds, center, zoom, listing} = this.state
 
         return (
@@ -76,7 +76,6 @@ export class MapComponent extends PureComponent {
                 maxBounds={maxBounds}
                 center={center}
                 zoom={zoom}
-                onDrag={() => this.setState({listing: undefined})}
                 containerStyle={mapStyle}
                 flyToOptions={flyToOptions}
               >
@@ -86,6 +85,7 @@ export class MapComponent extends PureComponent {
                             key={`feature-${listing.id}`}
                             onMouseEnter={({map}) => this.markerHover(map, listing, 'pointer')}
                             onMouseLeave={({map}) => this.markerHover(map, undefined, '')}
+                            onClick={() => clickOn(listing)}
                             coordinates={coordinates(listing)}
                         />
                     ))}

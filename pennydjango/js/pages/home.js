@@ -15,8 +15,8 @@ class ListingCard extends React.Component {
 
         return (
             <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
-                 onMouseEnter={() => {hoverOn(listing.id)}} onMouseLeave={() => {hoverOn(undefined)}}>
-                <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
+                 onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
+                <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
                 <div class="card-post__image text-center">
                     <img class="box-wd" src={listing.default_image} />
                     {listing.no_fee_listing &&
@@ -160,20 +160,20 @@ class PublicListings extends React.Component {
             total_listings: 0,
             more_listings_link: null,
             listing_hovered: undefined,
-            show_detail: false,
+            listing_detail: undefined,
         }
     }
-    hoverOn(listing_id) {
-        this.setState({listing_hovered: this.state.listings.find(listing => listing.id == listing_id)})
+    hoverOn(listing) {
+        this.setState({listing_hovered: listing})
     }
-    showDetail(listing_id) {
+    showDetail(listing) {
         this.setState({
-            show_detail: listing_id,
-            listing_hovered: this.state.listings.find(listing => listing.id == listing_id)
+            listing_detail: listing,
+            listing_hovered: listing
         })
     }
     hideDetail() {
-        this.setState({show_detail: false})
+        this.setState({listing_detail: undefined})
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
@@ -188,12 +188,12 @@ class PublicListings extends React.Component {
         const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link,
-            show_detail, filters, listing_hovered
+            listing_detail, filters, listing_hovered
         } = this.state
 
         return [
             <Row style={{minHeight: 43}}>
-                {show_detail ?
+                {listing_detail ?
                     <a href='#'
                        style={{margin: 'auto 0 auto 35px'}}
                        onClick={::this.hideDetail}>
@@ -211,9 +211,9 @@ class PublicListings extends React.Component {
             </Row>,
             <Row>
                 <Col md='6' className="main-scroll">
-                    {show_detail ?
+                    {listing_detail ?
                         <Row>
-                            <ListingDetail {...listings.find(listing => listing.id == show_detail)} />
+                            <ListingDetail {...listing_detail} />
                         </Row>
                     : [
                         <center><h6>{total_listings} results</h6></center>,
@@ -239,8 +239,12 @@ class PublicListings extends React.Component {
                         </Row>
                     ]}
                 </Col>
-                <Col md='6' className={`map-panel ${show_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapComponent listings={listings} listing_hovered={listing_hovered}/>
+                <Col md='6' className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
+                    <MapComponent
+                        listings={listings}
+                        listing_hovered={listing_hovered}
+                        clickOn={::this.showDetail}
+                    />
                 </Col>
             </Row>
         ]
