@@ -342,8 +342,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 12
 }
 
-SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.min.js'
-SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css'
+SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
+SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'
 
 
 if PY_TYPE == 'pypy':
