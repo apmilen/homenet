@@ -161,6 +161,7 @@ class PublicListings extends React.Component {
             more_listings_link: null,
             listing_detail: undefined,
             map_center: [-73.942423, 40.654089],
+            map_zoom: [12],
         }
     }
     hoverOn(listing) {
@@ -168,10 +169,17 @@ class PublicListings extends React.Component {
             this.setState({map_center: coordinates(listing)})
     }
     showDetail(listing) {
-        this.setState({listing_detail: listing})
+        this.setState({
+            listing_detail: listing,
+            map_center: coordinates(listing),
+            map_zoom: [16]
+        })
     }
     hideDetail() {
-        this.setState({listing_detail: undefined})
+        this.setState({
+            listing_detail: undefined,
+            map_zoom: [12]
+        })
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
@@ -186,7 +194,7 @@ class PublicListings extends React.Component {
         const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link,
-            listing_detail, filters, map_center
+            listing_detail, filters, map_center, map_zoom
         } = this.state
 
         return [
@@ -241,6 +249,7 @@ class PublicListings extends React.Component {
                     <MapComponent
                         listings={listings}
                         center={map_center}
+                        zoom={map_zoom}
                         clickOn={::this.showDetail}
                     />
                 </Col>

@@ -31,13 +31,13 @@ const images = ['listing_marker', image]
 
 
 const Mapbox = ReactMapboxGl({
-    minZoom: 10,
+    minZoom: 11,
     maxZoom: 17,
     accessToken: global.props.map_key
 })
 
 const flyToOptions = {
-    speed: 0.8
+    speed: 1.2
 }
 
 const mapStyle = {
@@ -53,7 +53,6 @@ export class MapComponent extends PureComponent {
         super(props)
         this.state = {
             fitBounds: undefined,
-            zoom: [11],
             listing: undefined,
             listings: {}
         }
@@ -65,8 +64,8 @@ export class MapComponent extends PureComponent {
     }
 
     render() {
-        const {listings, center, clickOn} = this.props
-        const {fitBounds, zoom, listing} = this.state
+        const {listings, center, zoom, clickOn} = this.props
+        const {fitBounds, listing} = this.state
 
         return (
             <Mapbox
