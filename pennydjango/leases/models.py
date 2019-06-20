@@ -13,7 +13,7 @@ class LeaseCostsManager(models.Manager):
         total_obj = self.filter(offer_id=lease_id)\
                         .only('value')\
                         .aggregate(total=models.Sum('value'))
-        return total_obj['total']
+        return total_obj['total'] or 0
 
 
 class Lease(BaseModel):

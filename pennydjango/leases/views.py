@@ -1,6 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth import login
 from django.db import transaction, DatabaseError
 from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView
@@ -139,6 +141,11 @@ class MoveInCostCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
     main_model = Lease
     form_class = MoveInCostForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'pk': self.main_object.id})
+        return kwargs
+
     def form_valid(self, form):
         cost = form.save(commit=False)
         lease = self.get_main_object()
@@ -164,6 +171,26 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
     main_model = LeaseMember
     template_name = 'leases/create_client.html'
 
+    def get_success_url(self):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Account created successfully"
+        )
+        return reverse('home')
+
+    def get(self, request, *args, **kwargs):
+        self.main_object = self.get_main_object()
+        if self.main_object.user:
+            messages.add_message(
+                self.request,
+                messages.INFO,
+                "You have already accepted the invitation. Log in to your "
+                "account to access your current lease"
+            )
+            return redirect(reverse('home'))
+        return super().get(request, *args, **kwargs)
+
     def get_initial(self):
         initial = super().get_initial()
         lease_member = self.get_main_object()
@@ -179,11 +206,14 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
                 new_user = form.save(commit=False)
                 new_user.user_type = CLIENT_TYPE
                 new_user.save()
-                lease_member = self.get_main_object()
-                lease_member.user = new_user
-                lease_member.save()
+                self.main_object.user = new_user
+                self.main_object.save()
         except DatabaseError:
-            # Add Contrib error
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "An error has occurred while creating the user"
+            )
             return self.form_invalid(form)
         login(self.request, new_user)
 
