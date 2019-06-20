@@ -160,17 +160,24 @@ class PublicListings extends React.Component {
             total_listings: 0,
             more_listings_link: null,
             listing_detail: undefined,
+            listing_marked: undefined,
             map_center: [-73.942423, 40.654089],
             map_zoom: [12],
         }
     }
     hoverOn(listing) {
         if (listing)
-            this.setState({map_center: coordinates(listing)})
+            this.setState({
+                map_center: coordinates(listing),
+                listing_marked: listing
+            })
+        else
+            this.setState({listing_marked: undefined})
     }
     showDetail(listing) {
         this.setState({
             listing_detail: listing,
+            listing_marked: listing,
             map_center: coordinates(listing),
             map_zoom: [16]
         })
@@ -178,6 +185,7 @@ class PublicListings extends React.Component {
     hideDetail() {
         this.setState({
             listing_detail: undefined,
+            listing_marked: undefined,
             map_zoom: [12]
         })
     }
@@ -194,7 +202,7 @@ class PublicListings extends React.Component {
         const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link,
-            listing_detail, filters, map_center, map_zoom
+            listing_detail, filters, map_center, map_zoom, listing_marked
         } = this.state
 
         return [
@@ -248,6 +256,7 @@ class PublicListings extends React.Component {
                 <Col md='6' className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
                     <MapComponent
                         listings={listings}
+                        listing_highlighted={listing_marked || []}
                         center={map_center}
                         zoom={map_zoom}
                         clickOn={::this.showDetail}
