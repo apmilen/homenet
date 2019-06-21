@@ -171,6 +171,15 @@ class PublicListings extends React.Component {
                 pets_allowed: 'any',
                 nofeeonly: false,
                 amenities: [],
+                hoods: [],
+                vacant: false,
+                price_per_bed: [],
+                size: [],
+                address: '',
+                listing_type: 'any',
+                owner_pays: false,
+                exclusive: false,
+                date_available: '',
             },
             listings: [],
             total_listings: 0,
@@ -224,6 +233,10 @@ class PublicListings extends React.Component {
             listings, total_listings, more_listings_link, listing_detail,
             filters, map_center, map_zoom, listing_marked, show_map
         } = this.state
+        const advanced_filters = [
+            "hoods", "vacant", "pets_allowed", "price_per_bed", "listing_type",
+            "address", "size", "owner_pays", "exclusive", "date_available"
+        ]
 
         return [
             <Row style={{minHeight: 43}}>
@@ -235,12 +248,11 @@ class PublicListings extends React.Component {
                         Back to results
                     </a>
                 :
-                    <Col>
-                        <Row className="justify-content-center home-filters">
-                            <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
-                                        updateParentState={new_state => this.setState(new_state)} />
-                        </Row>
-                    </Col>
+                    <FiltersBar filters={filters}
+                                advancedFilters={advanced_filters}
+                                constants={constants}
+                                endpoint={endpoint}
+                                updateParentState={new_state => this.setState(new_state)} />
                 }
                 <Dropdown style={{marginLeft: 'auto'}}>
                     <Dropdown.Toggle as={SettingsGear} />
