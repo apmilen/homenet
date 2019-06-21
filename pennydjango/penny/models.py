@@ -58,6 +58,8 @@ class User(AbstractUser, BaseModel):
     )
 
     user_type = models.CharField(max_length=255, choices=USER_TYPE)
+    phone = models.CharField(max_length=20, blank=True)
+    bio = models.TextField(max_length=1000, blank=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

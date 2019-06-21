@@ -1,0 +1,14 @@
+{% extends 'penny/datatables.html' %}
+
+{% block inner_content %}
+<div class="row">
+  <div class="col-3">
+    {% include 'penny/user_settings/_navigation_left.html' %}
+  </div>
+  <div class="col-9">
+    {% block user_settings_content %}
+    
+    {% endblock user_settings_content %}
+  </div>
+</div>
+{% endblock inner_content %}

@@ -36,3 +36,10 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('avatar', 'first_name', 'last_name')
+
+
+class GeneralSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'phone', 'bio')

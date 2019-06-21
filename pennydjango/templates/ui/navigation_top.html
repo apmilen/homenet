@@ -52,6 +52,11 @@
           </a>
             {% endif %}
           <div class="dropdown-divider"></div>
+          <a class="dropdown-item text-primary" href="{% url 'penny:user_settings' %}">
+            <i class="material-icons text-primary">settings</i>
+            <span>Settings</span>
+          </a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item text-danger" href="{% url 'logout' %}">
             <i class="material-icons text-danger">exit_to_app</i>
             <span>Logout</span>

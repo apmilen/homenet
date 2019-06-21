@@ -1,0 +1,31 @@
+
+<aside class="inner-sidebar">
+  <div class="nav-wrapper">
+    <ul class="nav flex-column">
+      <li class="nav-item title"><span class="nav-link">Update Profile</span></li>
+      <li class="nav-item">
+        <a class="nav-link {% if 'user/settings' in request.path %}active{% endif %}"
+           href="{% url 'penny:user_settings' %}">
+          <span>General Settings</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <span>Privacy</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if 'user/password' in request.path %}active{% endif %}"
+           href="{% url 'penny:user_password' %}">
+          <span>Update Password</span>
+        </a>
+      </li>
+      {#      <li class="nav-item">#}
+      {#        <a class="nav-link " href="/">#}
+      {#          <i class="material-icons">add</i>#}
+      {#          <span>Template</span>#}
+      {#        </a>#}
+      {#      </li>#}
+    </ul>
+  </div>
+</aside>
