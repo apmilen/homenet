@@ -10,4 +10,12 @@ class UsersList(AdminRequiredMixin, DatatablesListView, TemplateView):
     table_name = 'Users'
     template_name = 'penny/datatables.html'
     fields = ('username', 'first_name', 'last_name', 'email')
-    show_options = False
+    column_names_and_defs = ('Username', 'First Name', 'Last Name', 'Email')
+    options_list = [
+        {
+            'option_label': 'Detail',
+            'option_url': 'userprofile',
+            'url_params': ['username'],
+            'icon': 'user'
+        }
+    ]

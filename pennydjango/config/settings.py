@@ -261,7 +261,8 @@ INSTALLED_APPS = [
     'bootstrap4',
     'django_select2',
     'rest_framework',
-    'leases'
+    'leases',
+    'datatables_listview'
 ]
 
 MIDDLEWARE = [

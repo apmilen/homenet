@@ -62,7 +62,7 @@ $(document).ready(function () {
     // Columns definition
     var columns = column_defs;
 
-    if(opciones){
+    if(options){
         columns.push({"title": "Options", "targets": columns.length, "orderable": false, "searchable":false});
     }
 

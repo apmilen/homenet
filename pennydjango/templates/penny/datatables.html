@@ -1,11 +1,10 @@
 {% extends 'ui/base.html' %}
-{% load static %}
 {% block preloads %}
-  <link rel="preload" as="style" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" crossorigin>
+  {% include 'datatables_listview/preloads.html' %}
 {% endblock preloads %}
 
 {% block head %}
-  <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css" crossorigin>
+  {% include 'datatables_listview/css.html' %}
 {% endblock head %}
 
 {% block title %}{{ table_name }} Table{% endblock title %}
@@ -16,12 +15,5 @@
 {% endblock %}
 
 {% block tail %}
-   {{ column_defs|json_script:'column-def' }}
-  <script type="text/javascript">
-  let column_defs = JSON.parse(document.getElementById('column-def').textContent);
-  let options = {{ show_options|yesno:"true,false" }}
-  </script>
-  <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-  <script src="{% static 'datatables_listview/js/datatables_pipeline.js' %}"></script>
-  <script src="{% static 'datatables_listview/js/generate_datatable.js' %}"></script>
+  {% include 'datatables_listview/js.html' %}
 {% endblock %}
