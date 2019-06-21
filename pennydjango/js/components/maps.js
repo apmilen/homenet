@@ -37,7 +37,7 @@ gold_marker.src = 'data:image/svg+xml;charset=utf-8;base64,' + btoa(svg_str(gold
 const images = [['listing_marker', blue_marker], ['listing_highlighted', gold_marker]]
 
 const Mapbox = ReactMapboxGl({
-    minZoom: 11,
+    minZoom: 12,
     maxZoom: 17,
     accessToken: global.props.map_key
 })
@@ -59,7 +59,6 @@ export class MapComponent extends PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            fitBounds: undefined,
             popup_listing: undefined,
         }
     }
@@ -71,7 +70,7 @@ export class MapComponent extends PureComponent {
 
     render() {
         const {listings, center, zoom, listing_highlighted, clickOn} = this.props
-        const {fitBounds, popup_listing} = this.state
+        const {popup_listing} = this.state
 
         const blue_listings = listings.filter(listing => listing.id != listing_highlighted.id)
         const gold_listings = listings.filter(listing => listing.id == listing_highlighted.id)
@@ -79,7 +78,6 @@ export class MapComponent extends PureComponent {
         return (
             <Mapbox
                 style="mapbox://styles/mapbox/light-v9"
-                fitBounds={fitBounds}
                 maxBounds={maxBounds}
                 center={center}
                 zoom={zoom}
