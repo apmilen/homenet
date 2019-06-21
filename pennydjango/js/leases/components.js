@@ -142,7 +142,7 @@ export const Lease = ({lease}) => {
                                     <b>Description</b>
                                 </div>
                                 <div className="col-sm-8 text-left">
-                                    TODO
+
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">

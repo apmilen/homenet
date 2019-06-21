@@ -13,7 +13,7 @@ import getpass
 from time import time
 
 
-from penny.system import (
+from config.system import (
     check_system_invariants,
     check_django_invariants,
     chown_django_folders,
@@ -61,7 +61,7 @@ MEDIA_URL = '/media/'
 MAX_FILE_SIZE = 10485760  # 10MB
 SITE_ID = 1
 
-WSGI_APPLICATION = 'penny.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
 IPYTHON_ARGUMENTS = ['--no-confirm-exit', '--no-banner']
@@ -243,7 +243,7 @@ BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
 ENDPOINT = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}/gql'
 
 AUTH_USER_MODEL = 'penny.User'
-ROOT_URLCONF = 'penny.urls'
+ROOT_URLCONF = 'config.urls'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -262,7 +262,8 @@ INSTALLED_APPS = [
     'django_select2',
     'rest_framework',
     'leases',
-    'job_applications'
+    'job_applications',
+    'datatables_listview'
 ]
 
 MIDDLEWARE = [
@@ -341,8 +342,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 12
 }
 
-SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/js/select2.min.js'
-SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.6/css/select2.min.css'
+SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
+SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'
 
 
 if PY_TYPE == 'pypy':

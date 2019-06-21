@@ -35,7 +35,7 @@ def filter_listings(queryset, params):
         queryset = queryset.filter(address__icontains=address)
 
     if unit:
-        queryset = queryset.filter(unit__icontains=unit)
+        queryset = queryset.filter(unit_number__icontains=unit)
 
     if sales_agents:
         queryset = queryset.filter(sales_agent__username__in=sales_agents)

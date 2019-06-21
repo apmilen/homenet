@@ -75,12 +75,14 @@
       {% bootstrap_messages %}
       {% block inner %}
         <div class="row">
-          <div class="col-12 col-sm-8 offset-sm-2">
+          <div class="col-12 col-lg-9 offset-lg-1">
             <div class="page-header row no-gutters py-4 mb-3 border-bottom text-center">
               <div class="col-12 text-center mb-0">
                 <h3 class="page-title">{% block inner_title %}{% endblock inner_title %}</h3>
               </div>
             </div>
+          {% block before_card %}
+          {% endblock before_card %}
             <div class="card card-small mb-4">
               <ul class="list-group list-group-flush">
                 <li class="list-group-item p-3">
@@ -97,6 +99,8 @@
                 </li>
               </ul>
             </div>
+          {% block after_card %}
+          {% endblock after_card %}
           </div>
         </div>
       {% endblock inner %}

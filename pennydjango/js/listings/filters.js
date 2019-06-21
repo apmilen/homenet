@@ -7,46 +7,90 @@ import {
 } from "shards-react";
 
 
+
 // Text input filters
+const formControlStyle = {
+    position: 'absolute',
+    width: 'inherit',
+    minWidth: 'inherit'
+}
+
+const textInputClearFilter = (func, elem_id) =>
+    <button class="close" style={{height: '100%', padding: '0 6px'}}>
+        <span name={elem_id} onClick={(e) => {
+            $(`#${elem_id}`).focus()
+            func(e)
+        }}>&times;</span>
+    </button>
+
 export const searchingText = (searching_text, func) =>
-    <div style={{width: '20vw', minWidth: 180}}>
-        <FormControl id='searching_text' size="sm"
-                     type='text'
+    <div style={{width: '20vw', minWidth: 180, height: '100%'}}>
+        <FormControl name='searching_text' size="sm"
+                     type='text' id='searching_text'
                      value={searching_text}
                      placeholder='Search for something you like :)'
+                     style={formControlStyle}
                      onChange={func} />
+        {searching_text && textInputClearFilter(func, 'searching_text')}
     </div>
 
 export const addressFilter = (address, func) =>
-    <div style={{width: '14vw', minWidth: 100}}>
-        <FormControl id='address' size="sm"
-                     type='text'
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='address' size="sm"
+                     type='text' id='address'
                      value={address}
                      placeholder='Address'
+                     style={formControlStyle}
                      onChange={func} />
+        {address && textInputClearFilter(func, 'address')}
     </div>
 
 export const unitFilter = (unit, func) =>
-    <div style={{width: '6vw', minWidth: 50}}>
-        <FormControl id='unit' size="sm"
-                     type='text'
+    <div style={{width: '6vw', minWidth: 50, height: '100%'}}>
+        <FormControl name='unit' size="sm"
+                     type='text' id='unit'
                      value={unit}
                      placeholder='Unit'
+                     style={formControlStyle}
                      onChange={func} />
+        {unit && textInputClearFilter(func, 'unit')}
     </div>
 
 export const listing_idFilter = (listing_id, func) =>
-    <div style={{width: '14vw', minWidth: 100}}>
-        <FormControl id='listing_id' size="sm"
-                     type='text'
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='listing_id' size="sm"
+                     type='text' id='listing_id'
                      value={listing_id}
                      placeholder='Listing ID'
+                     style={formControlStyle}
                      onChange={func} />
+        {listing_id && textInputClearFilter(func, 'listing_id')}
     </div>
 
 // Range input filters
+const rangeTitle = (title, range, pre='', pos='') =>
+`${title}${
+    range[0] ? 
+    (range[1] ? `: ${pre}${range[0]}${pos} -` : ` from ${pre}${range[0]}${pos}`) : ''
+}${
+    range[1] ?
+    (range[0] ? ` ${pre}${range[1]}${pos}` : ` up to ${pre}${range[1]}${pos}`) : ''
+}`
+
+const validRange = (range) => range.length == 2 && (range[0] || range[1])
+
+const rangeClearFilter = (func, elem_id) =>
+    <span name={elem_id} className='times' onClick={(e) => {
+        e.stopPropagation()
+        $(`#${elem_id}_min`).val("")
+        $(`#${elem_id}_max`).val("")
+        func(e)
+    }}>&times;</span>
+
 export const priceFilter = (price, func) =>
-    <DropdownButton title='Price' alignRight>
+    <DropdownButton title={[rangeTitle("Price", price, '$'),
+                            validRange(price) && rangeClearFilter(func, "price")]}
+                    className={validRange(price) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_min' xs='3' step='100'
@@ -67,7 +111,9 @@ export const priceFilter = (price, func) =>
     </DropdownButton>
 
 export const price_per_bedFilter = (price_per_bed, func) =>
-    <DropdownButton title='Price per Bed'>
+    <DropdownButton title={[rangeTitle("Price per Bed", price_per_bed, '$'),
+                            validRange(price_per_bed) && rangeClearFilter(func, "price_per_bed")]}
+                    className={validRange(price_per_bed) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='price_per_bed_min' xs='3' step='100'
@@ -80,7 +126,7 @@ export const price_per_bedFilter = (price_per_bed, func) =>
             <InputGroupText>Max:</InputGroupText>
             <FormControl id='price_per_bed_max' xs='3' step='100'
                          name='price_per_bed'
-                         type='number' min={price_per_bed[0]}
+                         type='number' min={price_per_bed[0] || 0}
                          value={price_per_bed[1]}
                          onChange={func}
                          placeholder='9999'/>
@@ -88,7 +134,9 @@ export const price_per_bedFilter = (price_per_bed, func) =>
     </DropdownButton>
 
 export const sizeFilter = (size, func) =>
-    <DropdownButton title='Square Feet'>
+    <DropdownButton title={[rangeTitle("Size", size, '', 'sq.ft'),
+                            validRange(size) && rangeClearFilter(func, "size")]}
+                    className={validRange(size) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
             <InputGroupText>Min:</InputGroupText>
             <FormControl id='size_min' xs='3' step='100'
@@ -109,8 +157,19 @@ export const sizeFilter = (size, func) =>
     </DropdownButton>
 
 // Multiple selection filters
+const multipleSelectionTitle = (title, list) =>
+    `${title}${list.length ? `: ${list.length} selected` : ''}`
+
+const multipleSelectionClearFilter = (func, elem_id) =>
+    <span name={elem_id} className='times' onClick={(e) => {
+        e.stopPropagation()
+        func(e, elem_id, [])
+    }}>&times;</span>
+
 export const bedsFilter = (beds, func) =>
-    <DropdownButton title='Bedrooms'>
+    <DropdownButton title={[`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`,
+                            beds.length > 0 && multipleSelectionClearFilter(func, "beds")]}
+                    className={beds.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
             {["0", "1", "2", "3", "4+"].map(n_beds =>
                 <div id={n_beds} name='beds' key={`${n_beds}-beds`}
@@ -123,7 +182,9 @@ export const bedsFilter = (beds, func) =>
     </DropdownButton>
 
 export const bathsFilter = (baths, func) =>
-    <DropdownButton title='Baths'>
+    <DropdownButton title={[`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`,
+                            baths.length > 0 && multipleSelectionClearFilter(func, "baths")]}
+                    className={baths.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
             {["0", "1", "2", "3+"].map(n_baths =>
                 <div id={n_baths} name='baths' key={`${n_baths}-baths`}
@@ -136,7 +197,9 @@ export const bathsFilter = (baths, func) =>
     </DropdownButton>
 
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
-    <DropdownButton title='Amenities' className="dropdown-menu-mobile">
+    <DropdownButton title={[multipleSelectionTitle("Amenities", amenities),
+                            amenities.length > 0 && multipleSelectionClearFilter(func, "amenities")]}
+                    className={`dropdown-menu-mobile ${amenities.length > 0 ? 'no-caret' : ''}`}>
         <div className='amenities-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
@@ -149,7 +212,9 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <DropdownButton title="Sales Agents" alignRight>
+    <DropdownButton title={[multipleSelectionTitle("Sales Agents", sales_agents),
+                            sales_agents.length > 0 && multipleSelectionClearFilter(func, "sales_agents")]}
+                    className={sales_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-sales-agent`}
@@ -162,7 +227,9 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
     </DropdownButton>
 
 export const listing_agentsFilter = (listing_agents, agents, func) =>
-    <DropdownButton title="Listing Agents">
+    <DropdownButton title={[multipleSelectionTitle("Listing Agents", listing_agents),
+                            listing_agents.length > 0 && multipleSelectionClearFilter(func, "listing_agents")]}
+                    className={listing_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
             {agents.map(agent =>
                 <FormCheckbox id={agent[0]} key={`${agent[0]}-listing-agent`}
@@ -174,13 +241,31 @@ export const listing_agentsFilter = (listing_agents, agents, func) =>
         </div>
     </DropdownButton>
 
+const hoodsList = (borough_hoods, hoods) => {
+    const has_all_hoods = borough_hoods.every(hood => hoods.includes(hood[0]))
+    const has_no_hoods = borough_hoods.every(hood => !hoods.includes(hood[0]))
+    if (has_all_hoods || has_no_hoods)
+        return borough_hoods.map(hood => hood[0])
+    else
+        return borough_hoods.filter(hood => !hoods.includes(hood[0])).map(hood => hood[0])
+}
+
 export const hoodsFilter = (hoods, hoods_dict, func) =>
-    <DropdownButton title='Hoods' className="dropdown-menu-mobile">
+    <DropdownButton title={[multipleSelectionTitle("Hoods", hoods),
+                            hoods.length > 0 && multipleSelectionClearFilter(func, "hoods")]}
+                    className={`dropdown-menu-mobile ${hoods.length > 0 ? 'no-caret' : ''}`}>
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
                     <Tab eventKey={idx} title={borough} key={`${borough}-borough`}>
                         <div className='hoods-container'>
+
+                            <FormCheckbox id={`all-${borough}`} key={`all-${borough}`}
+                                          checked={hoods_dict[borough].every(hood => hoods.includes(hood[0]))}
+                                          onChange={e => func(e, "hoods", hoodsList(hoods_dict[borough], hoods))}>
+                                {`${hoods_dict[borough].every(hood => hoods.includes(hood[0])) ? 'Unselect' : 'Select'} all`}
+                            </FormCheckbox>
+                            <br/>
                             {hoods_dict[borough].map(hood =>
                                 <FormCheckbox id={hood[0]} key={`${hood[0]}-hood`}
                                               checked={hoods.includes(hood[0])}
@@ -188,6 +273,7 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
                                     {hood[1]}
                                 </FormCheckbox>
                             )}
+
                         </div>
                     </Tab>
                 )}
@@ -197,7 +283,8 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
 
 // One selection filters
 export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
-    <DropdownButton title='Pets' className="dropdown-menu-mobile">
+    <DropdownButton className="dropdown-menu-mobile"
+                    title={`Pets: ${pets_allowed == 'any' ? "Any" : pets_allowed_dict[pets_allowed]}`}>
         <div className='pets-container'>
             <FormRadio name='pets_allowed' value='any'
                        checked={pets_allowed == 'any'}
@@ -216,7 +303,7 @@ export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
     </DropdownButton>
 
 export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
-    <DropdownButton title='Listing Type'>
+    <DropdownButton title={`Listing Type: ${listing_type == 'any' ? "Any" : listing_type_dict[listing_type]}`}>
         <div className='pets-container'>
             <FormRadio name='listing_type' value='any'
                        checked={listing_type == 'any'}

@@ -19,6 +19,62 @@
     height: 2.75rem;
 }
 
+.inner-sidebar {
+    position: relative;
+    height: 100%;
+    box-shadow: none;
+}
+.inner-sidebar .nav .nav-item, .main-sidebar .nav .nav-link {
+    white-space: nowrap;
+    min-width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    will-change: background-color,box-shadow,color;
+    transition: box-shadow .2s ease,color .2s ease,background-color .2s ease;
+    font-size: .85rem;
+}
+.inner-sidebar .nav .nav-item .nav-link {
+    border-bottom: 1px solid #e1e5eb;
+    font-weight: 400;
+    color: #3d5170;
+    padding: .9375rem 1.5625rem;
+}
+
+.inner-sidebar .nav .nav-item .nav-link i {
+    min-width: 1.25rem;
+    font-size: 90%;
+    text-align: center;
+    vertical-align: middle;
+    will-change: color;
+    color: #cacedb;
+    transition: color .2s ease;
+    margin-right: .375rem
+}
+.inner-sidebar .nav .nav-item.title .nav-link {
+    font-size: 1.4rem;
+    padding-bottom: 30px;
+}
+
+
+.inner-sidebar .nav .nav-item .nav-link i.material-icons {
+    font-size: 1.125rem;
+    top: -1px
+}
+
+.inner-sidebar .nav .nav-item .nav-link.active,
+.inner-sidebar .nav .nav-item:not(.title) .nav-link:hover,
+.inner-sidebar .nav .nav-item.active,.inner-sidebar .nav .nav-item:not(.title):hover {
+    box-shadow: inset .1875rem 0 0 #007bff;
+    background-color: #fbfbfb;
+    color: #007bff
+}
+
+.inner-sidebar .nav .nav-item .nav-link.active i,.inner-sidebar .nav .nav-item .nav-link:hover i,.inner-sidebar .nav .nav-item.active i,.inner-sidebar .nav .nav-item:hover i {
+    color: #007bff
+}
+
 div.circle-avatar{
     padding-top: 100%;
     border-radius: 50%;
@@ -90,6 +146,18 @@ div.circle-avatar{
     max-height: 350px;
     overflow-y: auto;
     user-select: none;
+}
+.no-caret .dropdown-toggle::after {
+    display: none;
+}
+span.times {
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+    margin-right: -6px;
+    margin-left: 6px;
+    padding: 0 3px;
+    font-weight: 700;
 }
 
 /* Cards */
