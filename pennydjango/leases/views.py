@@ -1,18 +1,21 @@
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, DatabaseError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, TemplateView
 
 from rest_framework import viewsets
 
+from datatables_listview.core.views import DatatablesListView
 from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.serializer import LeaseSerializer
 from listings.mixins import ListingContextMixin
+from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
@@ -218,6 +221,29 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
         login(self.request, new_user)
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
+    model = Listing
+    template_name = 'penny/user_settings/_datatables_base.html'
+    fields = ('address', 'term', 'price')
+    column_names_and_defs = ('Address', 'Term', 'Rent')
+    table_name = 'Lease History'
+    options_list = [
+        {
+            'option_label': 'Enter',
+            'option_url': 'penny:user_settings',
+            'url_params': [],
+            'icon': 'user'
+        }
+    ]
+
+    def get_queryset(self):
+        user = self.request.user
+        lookup = ["offer__listing__id", "offer__move_in_date"]
+        lease_members = LeaseMember.objects.only(*lookup).filter(user=user)
+        id_list = lease_members.values_list("offer__listing__id", flat=True)
+        return self.model.objects.filter(id__in=id_list)
 
 
 # Rest Framework
