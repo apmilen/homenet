@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic import CreateView
 
@@ -10,13 +10,9 @@ class JobApplication(CreateView):
     model = JobApplication
     form_class = JobApplicationForm
     template_name = 'job_applications/job_apply.html'
+    success_url = reverse_lazy('home') 
 
-    def post(self, request):
-        form = JobApplicationForm(request.POST, request.FILES)
-        if request.POST:
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Your job application was submmited')
-                return HttpResponseRedirect('/')
+    def form_valid(self, form):
+        messages.success(self.request, 'Your job application was submmited')
+        return super().form_valid(form)
         
-        return render(request, 'job_applications/job_apply.html', {'form': form})
