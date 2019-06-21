@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {Row, Col, Button} from "shards-react";
+import {Dropdown} from "react-bootstrap";
 
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/listings/components'
@@ -143,6 +144,21 @@ class ListingDetail extends React.Component {
 }
 
 
+const Switch = ({label, checked, onClick}) =>
+    <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
+        <label class="switch" style={{margin: 'auto'}}>
+            <input type="checkbox" checked={checked} />
+            <span class="slider round" onClick={e => onClick(e)}></span>
+        </label>
+        <div style={{margin: 'auto', paddingLeft: 8}} onClick={e => onClick(e)}>{label}</div>
+    </div>
+
+const SettingsGear = ({onClick}) =>
+    <div className="settings-gear" onClick={(e) => onClick(e)}>
+        <i className="material-icons">settings</i>
+    </div>
+
+
 class PublicListings extends React.Component {
     constructor(props) {
         super(props)
@@ -163,6 +179,7 @@ class PublicListings extends React.Component {
             listing_marked: undefined,
             map_center: [-73.942423, 40.654089],
             map_zoom: [12],
+            show_map: true,
         }
     }
     hoverOn(listing) {
@@ -189,6 +206,9 @@ class PublicListings extends React.Component {
             map_zoom: [12]
         })
     }
+    toggleMap() {
+        this.setState({show_map: !this.state.show_map})
+    }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
             this.setState({
@@ -201,8 +221,8 @@ class PublicListings extends React.Component {
     render() {
         const {constants, endpoint} = this.props
         const {
-            listings, total_listings, more_listings_link,
-            listing_detail, filters, map_center, map_zoom, listing_marked
+            listings, total_listings, more_listings_link, listing_detail,
+            filters, map_center, map_zoom, listing_marked, show_map
         } = this.state
 
         return [
@@ -222,9 +242,17 @@ class PublicListings extends React.Component {
                         </Row>
                     </Col>
                 }
+                <Dropdown style={{marginLeft: 'auto'}}>
+                    <Dropdown.Toggle as={SettingsGear} />
+                    <Dropdown.Menu alignRight>
+                        <Dropdown.Item>
+                            <Switch label="Toggle map" checked={show_map} onClick={::this.toggleMap}/>
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
             </Row>,
             <Row>
-                <Col md='6' className="main-scroll">
+                <Col className="main-scroll">
                     {listing_detail ?
                         <Row>
                             <ListingDetail {...listing_detail} />
@@ -253,15 +281,17 @@ class PublicListings extends React.Component {
                         </Row>
                     ]}
                 </Col>
-                <Col md='6' className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapComponent
-                        listings={listings}
-                        listing_highlighted={listing_marked || []}
-                        center={map_center}
-                        zoom={map_zoom}
-                        clickOn={::this.showDetail}
-                    />
-                </Col>
+                {show_map &&
+                    <Col className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
+                        <MapComponent
+                            listings={listings}
+                            listing_highlighted={listing_marked || []}
+                            center={map_center}
+                            zoom={map_zoom}
+                            clickOn={::this.showDetail}
+                        />
+                    </Col>
+                }
             </Row>
         ]
     }
