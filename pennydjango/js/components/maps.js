@@ -1,5 +1,7 @@
 import React, {PureComponent} from 'react'
-import ReactMapboxGl, { Layer, Feature, Popup } from 'react-mapbox-gl'
+import ReactMapboxGl, {
+    Layer, Feature, Popup, RotationControl, ZoomControl
+} from 'react-mapbox-gl'
 
 
 
@@ -84,6 +86,8 @@ export class MapComponent extends PureComponent {
                 containerStyle={mapStyle}
                 flyToOptions={flyToOptions}
               >
+                <RotationControl />
+                <ZoomControl />
                 <Layer type="symbol" id="blue_markers" layout={layoutBlueLayer} images={images}>
                     {blue_listings.map(listing => (
                         <Feature
