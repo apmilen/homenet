@@ -18,7 +18,7 @@
 
             <div class="row">
               <div class="col">
-                <form method="post" action="{% url 'signup' %}">
+                <form method="post" action="{% block action %}{% url 'signup' %}{% endblock action %}">
                   {% csrf_token %}
                   {% bootstrap_form form %}
                   {% buttons %}

@@ -1,0 +1,2 @@
+{% extends 'registration/signup.html' %}
+{% block action %}{% url 'leases:create-client' pk=main_object.id %}{% endblock action %}
