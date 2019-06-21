@@ -223,3 +223,12 @@ hr.divider-hr {
     border-radius:100%;
     background-color:#c3c7cc;
 }
+
+.jobs-link {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.jobs-link, .jobs-link:hover {
+    color: rgba(0,0,0,.5);
+}
