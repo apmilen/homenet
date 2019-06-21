@@ -1,46 +1,17 @@
-from django.http import Http404
+from penny.mixins import MainObjectContextMixin
 from listings.models import Listing
 
 
-class ListingContextMixin:
+class ListingContextMixin(MainObjectContextMixin):
     pk_url_kwarg = 'pk'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.listing = None
-        self.listing_qs = None
-
-    def get_context_data(self, **kwargs):
-        try:
-            context = super().get_context_data(**kwargs)
-        except AttributeError:
-            context = {}
-        context['listing'] = self.get_listing()
-        return context
-
-    def get_listing_qs(self):
-        self.listing_qs = Listing.objects.all()
-        return self.listing_qs
-
-    def get_listing(self):
-        if self.listing:
-            return self.listing
-
-        queryset = self.get_listing_qs()
-        try:
-            pk = self.kwargs.get(self.pk_url_kwarg)
-            # Get the single item from the filtered queryset
-            obj = queryset.get(pk=pk)
-        except queryset.model.DoesNotExist:
-            raise Http404(f"No {queryset.model._meta.verbose_name}s "
-                          f"found matching the query")
-        return obj
+    main_model = Listing
+    context_name = 'listing'
 
 
 class WizardMixin(ListingContextMixin):
 
     def get_object(self, queryset=None):
-        self.listing = self.get_listing()
+        self.listing = self.get_main_object()
         queryset = self.get_queryset()
         obj, _ = queryset.get_or_create(listing=self.listing)
         return obj

@@ -1,0 +1,22 @@
+{% extends 'ui/base.html' %}
+{% load bootstrap4 %}
+
+{% block inner_content %}
+<div class="row">
+  <div class="col-3">
+    {% include 'penny/user_settings/_navigation_left.html' %}
+  </div>
+  <div class="col-9">
+    {% block user_settings_content %}
+      <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button type="submit" class="btn btn-primary">
+          Update
+        </button>
+      </form>
+
+    {% endblock user_settings_content %}
+  </div>
+</div>
+{% endblock inner_content %}

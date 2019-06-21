@@ -1,0 +1,95 @@
+<div class="lease-member-content">
+  <table class="table">
+    <tbody>
+    <tr>
+      <td>
+        <img class="rounded-circle img-fluid mx-auto" width="75" height="75"
+               src="{{ lease_member.avatar }}"
+               alt="Missing"></td>
+      <td>
+        <div class="mb-2"><strong>{{ lease_member.get_full_name }}</strong> · Tenant</div>
+        {% if lease_member.legal_name %}
+          <div>Legal Name: {{ lease_member.legal_name }}</div>
+        {% endif %}
+        <div>{{ lease_member.email }}</div>
+        <div>Total Paid: TODO</div>
+        {% if lease_member.user %}
+          <div>Signed Agreement · 06/06/19</div>
+          <div>Rental Application: Completed <a
+                  href="#">(Review)</a>
+          </div>
+          <div id="creditReportStatus90234" class="credit-report-status">
+            <div>Credit Report Status: TODO&nbsp;<a href="#">(Create PDF)</a>&nbsp;
+            </div>
+          </div>
+        {% endif %}
+      </td>
+    {% if lease_member.user %}
+      <td class="dropdown">
+        <button class="btn btn-outline-info float-right mr-0 dropdown-toggle"
+                type="button" id="dropdownButtonClient" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">Actions
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownButtonClient"
+             x-placement="bottom-start"
+             style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(2px, 65px, 0px);">
+          <button data-toggle="modal" data-target="#leadModal-90234"
+                  class="dropdown-item">Transfer
+          </button>
+          <button data-toggle="modal" data-target="#leaseClientModal-90234"
+                  class="dropdown-item">Update
+          </button>
+          <div class="record-deposit" id="recordDeposit90234"
+               data="{&quot;id&quot;:90234,&quot;lease_id&quot;:&quot;F2CY5PkPsvZTMSEum792fUvP&quot;,&quot;client_id&quot;:90234,&quot;client_name&quot;:&quot;Diamond Young&quot;}">
+            <div>
+              <div><a class="dropdown-item">Record Deposit</a></div>
+            </div>
+          </div>
+          <div class="agreement-modal-preview" id="agreementPreview90234"
+               data="{&quot;id&quot;:90234,&quot;client&quot;:{&quot;full_legal_name&quot;:&quot;Diamond Young&quot;,&quot;deposit_agreement_agreed_at&quot;:&quot;2019-06-06T19:22:00.400-04:00&quot;,&quot;ip_address&quot;:&quot;38.109.150.4&quot;,&quot;user_agent&quot;:&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36&quot;}}">
+            <div>
+              <div><a class="dropdown-item">Deposit Agreement</a></div>
+            </div>
+          </div>
+        </div>
+      </td>
+    {% else %}
+      <td class="dropdown">
+      <!-- REMOVE THIS MODAL FOR EMAIL CONFIRMATION -->
+      <div class="modal fade" id="resendmodal"
+     tabindex="-1" role="dialog" aria-labelledby="resendlabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="resendlabel">Resend link</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <a href="{% url 'leases:create-client' pk=lease_member.id %}" target="_blank">{% url 'leases:create-client' pk=lease_member.id %}</a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+        <button class="btn btn-rounded btn-outline-info float-right mr-0 dropdown-toggle"
+                type="button" id="dropdownButtonClient" data-toggle="dropdown">
+          Actions
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownButtonClient">
+          <button class="dropdown-item" data-toggle="modal" data-target="#resendmodal">
+            Resend
+          </button>
+          <button class="dropdown-item">
+            Cancel
+          </button>
+        </div>
+      </td>
+    {% endif %}
+    </tr>
+
+
+    </tbody>
+  </table>
+</div>

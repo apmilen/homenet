@@ -6,11 +6,14 @@ from penny.models import User
 
 
 class CustomUserCreationForm(UserCreationForm):
-    first_name = forms.CharField(label='Your Name')
+    first_name = forms.CharField()
+    last_name = forms.CharField()
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = UserCreationForm.Meta.fields + ('email', 'first_name')
+        fields = UserCreationForm.Meta.fields + (
+            'email', 'first_name', 'last_name'
+        )
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -27,8 +30,16 @@ class CustomUserCreationForm(UserCreationForm):
 
 class UserProfileForm(forms.ModelForm):
     avatar = forms.ImageField(required=False, widget=forms.FileInput)
-    first_name = forms.CharField(label='Name', required=False)
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
 
     class Meta:
         model = User
-        fields = ('avatar', 'first_name')
+        fields = ('avatar', 'first_name', 'last_name')
+
+
+class GeneralSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'phone', 'bio')

@@ -1,0 +1,114 @@
+{% extends 'ui/react_base_card.html' %}
+{% load bootstrap4 %}
+
+{% block after_card %}
+
+  <div class="row">
+    <div class="col-12 col-sm-6 ">
+      <div class="card card-small mb-4">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item p-3">
+            <div class="row">
+              <div class="col-9">
+                Lease Members
+              </div>
+              <div class="col-3">
+                <button type="button" class="btn btn-outline-info"
+                        data-toggle="modal"
+                        data-target="#inviteLeaseMemberModal">
+                  Invite
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                {% include 'leases/invite_modal.html' %}
+                {% for lease_member in lease_members %}
+                  {% include 'leases/lease_member.html' %}
+                {% empty %}
+                  <hr/>
+                  <p class="text-center">Invite a renter or guarantor to get
+                    started</p>
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 ">
+      <div class="card card-small mb-4">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item p-3">
+            <div class="row">
+              <div class="col-9 pb-2">
+                Move in costs
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="payment-content container">
+                  <table class="table">
+                    <tbody id="move-body-table">
+                    {% for move in move_in_costs %}
+                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge %}
+                    {% endfor %}
+                    <tr>
+                      <td><b class="font-weight-bold">Total Cost Due</b></td>
+                      <td>$<b class="font-weight-bold" id="total-cost-due">{{ total }}</b></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-6">
+                      {% bootstrap_field move_in_costs_form.charge %}
+                    </div>
+                    <div class="col-6">
+                      {% bootstrap_field move_in_costs_form.value %}
+                    </div>
+                    <div class="col-12">
+                      <button type="button" id="add-costs"
+                              class="float-right btn-outline-info btn">
+                        Create
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock after_card %}
+
+{% block tail %}
+  {{ block.super }}
+  <script type="text/javascript">
+      $(document).ready(() => {
+          $("#add-costs").click((e) => {
+              $(this).attr('disable', 'disable')
+              let charge = $('#id_charge').val()
+              let value = $('#id_value').val()
+              $.post("{% url 'leases:create-moveincost' pk=lease.id %}",
+                  {
+                      value: value,
+                      charge: charge,
+                      csfr_token: "{{ csfr_token }}"
+                  },
+                  (response) => {
+                      if (response.status == 200) {
+                          $("#move-body-table").prepend(response.value)
+                          $("#total-cost-due").html(response.total)
+                      } else if(response.status == 500) {
+                          console.log(response.errors)
+                      }
+
+                      $(this).removeAttr('disable')
+                  })
+          })
+      })
+  </script>
+{% endblock tail %}
