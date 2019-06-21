@@ -15,4 +15,3 @@ class JobApplication(CreateView):
     def form_valid(self, form):
         messages.success(self.request, 'Your job application was submmited')
         return super().form_valid(form)
-        

@@ -11,3 +11,4 @@ class JobApplicationForm(forms.ModelForm):
         fields = (
             'name', 'last_name', 'email', 'phone_number', 'current_company', 'position', 'resume',
         )
+        
