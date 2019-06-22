@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {FiltersBar, ListingComponent} from '@/listings/components'
+import {ListingComponent} from '@/listings/components'
+import {FiltersBar} from '@/components/filtersbar'
 
 
 class Listings extends React.Component {
