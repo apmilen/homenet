@@ -10,7 +10,7 @@
     top: 0;
 }
 .main-scroll{
-    height: calc(100vh - 5.5rem);
+    height: calc(100vh - 5.8rem);
     overflow-y: auto;
 }
 
@@ -301,6 +301,13 @@ hr.divider-hr {
     cursor: pointer;
     user-select: none;
 }
+.settings-gear:hover {
+    opacity: 1;
+}
+.settings-dropdown {
+    margin-left: auto;
+    height: 40px;
+}
 
 /*   Switch   */
 .switch {
@@ -353,4 +360,9 @@ input:checked + .slider:before {
 }
 .slider.round:before {
   border-radius: 50%;
+}
+
+/*    Mapbox    */
+.mapbox-component {
+    height: 100%;
 }

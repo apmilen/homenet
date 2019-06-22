@@ -38,20 +38,19 @@ gold_marker.src = 'data:image/svg+xml;charset=utf-8;base64,' + btoa(svg_str(gold
 
 const images = [['listing_marker', blue_marker], ['listing_highlighted', gold_marker]]
 
+const layoutBlueLayer = { 'icon-image': 'listing_marker' }
+const layoutGoldLayer = { 'icon-image': 'listing_highlighted' }
+
+
+
 const Mapbox = ReactMapboxGl({
     minZoom: 11,
     maxZoom: 17,
     accessToken: global.props.map_key
 })
 
-const mapStyle = {
-    height: '100%'
-}
-
 const maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
 
-const layoutBlueLayer = { 'icon-image': 'listing_marker' }
-const layoutGoldLayer = { 'icon-image': 'listing_highlighted' }
 
 export class MapComponent extends PureComponent {
     constructor(props) {
@@ -79,7 +78,7 @@ export class MapComponent extends PureComponent {
                 maxBounds={maxBounds}
                 center={center}
                 zoom={zoom}
-                containerStyle={mapStyle}
+                className="mapbox-component"
                 movingMethod="easeTo"
               >
                 <RotationControl />

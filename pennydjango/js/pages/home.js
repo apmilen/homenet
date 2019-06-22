@@ -254,7 +254,7 @@ class PublicListings extends React.Component {
                                 endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 }
-                <Dropdown style={{marginLeft: 'auto'}}>
+                <Dropdown className="d-none d-md-inline settings-dropdown">
                     <Dropdown.Toggle as={SettingsGear} />
                     <Dropdown.Menu alignRight>
                         <Dropdown.Item>
@@ -264,7 +264,7 @@ class PublicListings extends React.Component {
                 </Dropdown>
             </Row>,
             <Row>
-                <Col className="main-scroll">
+                <Col className="main-scroll left-main-column">
                     {listing_detail ?
                         <Row>
                             <ListingDetail {...listing_detail} />
