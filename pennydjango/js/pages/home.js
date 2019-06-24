@@ -195,6 +195,15 @@ class PublicListings extends React.Component {
     hideDetail() {
         this.setState({show_detail: false})
     }
+    fetchListings(params) {
+        $.get(this.props.endpoint, params, (resp) =>
+            this.setState({
+                listings: resp.results,
+                total_listings: resp.count,
+                more_listings_link: resp.next
+            })
+        )
+    }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
             this.setState({
@@ -205,7 +214,7 @@ class PublicListings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint} = this.props
+        const {constants} = this.props
         const {
             listings, total_listings, more_listings_link,
             show_detail, filters, map_address
@@ -228,8 +237,9 @@ class PublicListings extends React.Component {
                     <FiltersBar filters={filters}
                                 advancedFilters={advanced_filters}
                                 constants={constants}
-                                endpoint={endpoint}
-                                updateParentState={new_state => this.setState(new_state)} />
+                                updateFilters={filters => this.setState({filters})}
+                                updateParams={::this.fetchListings}
+                            />
                 }
             </Row>,
             <Row>

@@ -24,7 +24,7 @@ export class FiltersBar extends React.Component {
     updateFilter(filter) {
         this.setState({
             filters: {...this.state.filters, ...filter}
-        }, this.fetchListings)
+        }, this.updateParent)
     }
 
     filtering(e) {
@@ -76,21 +76,16 @@ export class FiltersBar extends React.Component {
         this.updateFilter({date_available: date || ''})
     }
 
-    fetchListings() {
+    updateParent() {
         let params = {...this.state.filters}
         if (params.date_available)
             params.date_available = params.date_available.getFullYear() + ' ' +
                                     (params.date_available.getMonth() + 1) + ' ' +
                                     params.date_available.getDate()
 
-        this.props.updateParentState({filters: this.state.filters})
-        $.get(this.props.endpoint, params, (resp) =>
-            this.props.updateParentState({
-                listings: resp.results,
-                total_listings: resp.count,
-                more_listings_link: resp.next
-            })
-        )
+        const {updateFilters, updateParams} = this.props
+        updateFilters && updateFilters(this.state.filters)
+        updateParams && updateParams(params)
     }
 
     clearFilters(e) {
@@ -102,7 +97,7 @@ export class FiltersBar extends React.Component {
     }
 
     componentDidMount() {
-        this.fetchListings()
+        this.updateParent()
     }
 
     renderFilters(filters) {

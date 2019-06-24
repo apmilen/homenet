@@ -35,6 +35,14 @@ class Listings extends React.Component {
             more_listings_link: null,
         }
     }
+    fetchListings(params) {
+        $.get(this.props.endpoint, params, (resp) =>
+            this.setState({
+                listings: resp.results,
+                more_listings_link: resp.next
+            })
+        )        
+    }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
             this.setState({
@@ -44,15 +52,17 @@ class Listings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint} = this.props
+        const {constants} = this.props
         const {listings, filters, more_listings_link} = this.state
         const last_listing = listings.length > 0 && listings.slice(-1)[0]
 
         return [
             <div className="row justify-content-center">
                 <div className="m-2 my-md-1 mx-md-5">
-                    <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
-                                updateParentState={new_state => this.setState(new_state)} />
+                    <FiltersBar filters={filters}
+                                constants={constants}
+                                updateParams={::this.fetchListings}
+                            />
                 </div>
             </div>,
             <div className= "row">
