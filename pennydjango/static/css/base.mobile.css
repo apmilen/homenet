@@ -20,13 +20,27 @@
     img.d-block.w-100 {
         height: 200px;
     }
-    .main-scroll{
-        height: auto;
-        overflow-y: initial;
+
+    .left-main-column {
+        min-width: 320px;
+        min-height: 320px;
     }
 
     /* Filters */
     .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
         left: -160% !important;
+    }
+
+    /* Mapbox */
+    .mapbox-component {
+        min-width: 320px;
+        min-height: 320px;
+    }
+}
+
+@media (max-width:639px) {
+    .main-scroll{
+        height: auto;
+        overflow-y: initial;
     }
 }
