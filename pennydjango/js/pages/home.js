@@ -158,24 +158,7 @@ class PublicListings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                searching_text: '',
-                price: [],
-                beds: [],
-                baths: [],
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: [],
-                hoods: [],
-                vacant: false,
-                price_per_bed: [],
-                size: [],
-                address: '',
-                listing_type: 'any',
-                owner_pays: false,
-                exclusive: false,
-                date_available: '',
-            },
+            filters: {},
             listings: [],
             total_listings: 0,
             more_listings_link: null,
@@ -217,8 +200,12 @@ class PublicListings extends React.Component {
         const {constants} = this.props
         const {
             listings, total_listings, more_listings_link,
-            show_detail, filters, map_address
+            show_detail, map_address, filters
         } = this.state
+
+        const basic_filters = [
+            "searching_text", "price", "beds", "baths", "nofeeonly", "amenities"
+        ]
         const advanced_filters = [
             "hoods", "vacant", "pets_allowed", "price_per_bed", "listing_type",
             "address", "size", "owner_pays", "exclusive", "date_available"
@@ -234,8 +221,9 @@ class PublicListings extends React.Component {
                         Back to results
                     </a>
                 :
-                    <FiltersBar filters={filters}
+                    <FiltersBar filters={basic_filters}
                                 advancedFilters={advanced_filters}
+                                filtersState={filters}
                                 constants={constants}
                                 updateFilters={filters => this.setState({filters})}
                                 updateParams={::this.fetchListings}

@@ -9,28 +9,6 @@ class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                address: '',
-                unit: '',
-                sales_agents: [],
-                listing_agents: [],
-                hoods: [],
-                price: [],
-                price_per_bed: [],
-                beds: [],
-                baths: [],
-                listing_type: 'any',
-                listing_id: '',
-                size: [],
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: [],
-                owner_pays: false,
-                exclusive: false,
-                vacant: false,
-                draft_listings: false,
-                date_available: '',
-            },
             listings: [],
             more_listings_link: null,
         }
@@ -53,8 +31,15 @@ class Listings extends React.Component {
     }
     render() {
         const {constants} = this.props
-        const {listings, filters, more_listings_link} = this.state
+        const {listings, more_listings_link} = this.state
         const last_listing = listings.length > 0 && listings.slice(-1)[0]
+
+        const filters = [
+            "address", "unit", "sales_agents", "listing_agents", "hoods",
+            "price", "price_per_bed", "beds", "baths", "listing_type",
+            "listing_id", "size", "pets_allowed", "nofeeonly", "amenities",
+            "owner_pays", "exclusive", "vacant", "draft_listings", "date_available"
+        ]
 
         return [
             <div className="row justify-content-center">
