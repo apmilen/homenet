@@ -2,22 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {Row, Col, Button} from "shards-react";
+import {Dropdown} from "react-bootstrap";
 
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/components/filtersbar'
 
-
-
-class MapPanel extends React.Component {
-    render() {
-        return (
-            <iframe src={`https://maps.google.com/maps?q=${this.props.address}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                frameborder="0" width="100%" height="100%" scrolling="no"
-                marginheight="0" marginwidth="0"
-                style={{display: 'inline-block'}}></iframe>
-        )
-    }
-}
+import {MapComponent, coordinates} from '@/components/maps'
 
 
 class ListingCard extends React.Component {
@@ -25,9 +15,9 @@ class ListingCard extends React.Component {
         const {listing, hoverOn, clickOn} = this.props
 
         return (
-            <div class="col-lg-6 col-md-12 p-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
-                 onMouseEnter={() => {hoverOn(listing.address)}}>
-                <a className="overlay" href='#' onClick={() => {clickOn(listing.id)}}></a>
+            <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+                 onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
+                <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
                 <div class="card-post__image text-center">
                     <img class="box-wd" src={listing.default_image} />
                     {listing.no_fee_listing &&
@@ -49,11 +39,11 @@ class ListingCard extends React.Component {
                                 </td>
                             </tr>
                             <tr>
-                                <td>{listing.pets}</td>
-                                <td>
+                                <td class="wrap-info">{listing.pets}</td>
+                                <td class="wrap-info">
                                     <i className="material-icons">share</i> Share
                                 </td>
-                                <td>
+                                <td class="wrap-info">
                                     <i className="material-icons">place</i>Map
                                 </td>
                             </tr>
@@ -154,6 +144,21 @@ class ListingDetail extends React.Component {
 }
 
 
+const Switch = ({label, checked, onClick}) =>
+    <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
+        <label class="switch" style={{margin: 'auto'}}>
+            <input type="checkbox" checked={checked} />
+            <span class="slider round" onClick={e => onClick(e)}></span>
+        </label>
+        <div style={{margin: 'auto', paddingLeft: 8}} onClick={e => onClick(e)}>{label}</div>
+    </div>
+
+const SettingsGear = ({onClick}) =>
+    <div className="settings-gear" onClick={(e) => onClick(e)}>
+        <i className="material-icons">settings</i>
+    </div>
+
+
 class PublicListings extends React.Component {
     constructor(props) {
         super(props)
@@ -162,21 +167,39 @@ class PublicListings extends React.Component {
             listings: [],
             total_listings: 0,
             more_listings_link: null,
-            map_address: '',
-            show_detail: false,
+            listing_detail: undefined,
+            listing_marked: undefined,
+            map_center: [-73.942423, 40.654089],
+            map_zoom: [12],
+            show_map: true,
         }
     }
-    hoverOn(address) {
-        this.setState({map_address: address})
+    hoverOn(listing) {
+        if (listing)
+            this.setState({
+                map_center: coordinates(listing),
+                listing_marked: listing
+            })
+        else
+            this.setState({listing_marked: undefined})
     }
-    showDetail(listing_id) {
+    showDetail(listing) {
         this.setState({
-            show_detail: listing_id,
-            map_address: this.state.listings.find(listing => listing.id == listing_id).address
+            listing_detail: listing,
+            listing_marked: listing,
+            map_center: coordinates(listing),
+            map_zoom: [16]
         })
     }
     hideDetail() {
-        this.setState({show_detail: false})
+        this.setState({
+            listing_detail: undefined,
+            listing_marked: undefined,
+            map_zoom: [12]
+        })
+    }
+    toggleMap() {
+        this.setState({show_map: !this.state.show_map})
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) =>
@@ -199,8 +222,8 @@ class PublicListings extends React.Component {
     render() {
         const {constants} = this.props
         const {
-            listings, total_listings, more_listings_link,
-            show_detail, map_address, filters
+            listings, total_listings, more_listings_link, listing_detail,
+            filters, map_center, map_zoom, listing_marked, show_map
         } = this.state
 
         const basic_filters = [
@@ -213,7 +236,7 @@ class PublicListings extends React.Component {
 
         return [
             <Row style={{minHeight: 43}}>
-                {show_detail ?
+                {listing_detail ?
                     <a href='#'
                        style={{margin: 'auto 0 auto 35px'}}
                        onClick={::this.hideDetail}>
@@ -229,12 +252,20 @@ class PublicListings extends React.Component {
                                 updateParams={::this.fetchListings}
                             />
                 }
+                <Dropdown className="d-none d-md-inline settings-dropdown">
+                    <Dropdown.Toggle as={SettingsGear} />
+                    <Dropdown.Menu alignRight>
+                        <Dropdown.Item>
+                            <Switch label="Toggle map" checked={show_map} onClick={::this.toggleMap}/>
+                        </Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
             </Row>,
             <Row>
-                <Col md='6' className="main-scroll">
-                    {show_detail ?
+                <Col className="main-scroll left-main-column">
+                    {listing_detail ?
                         <Row>
-                            <ListingDetail {...listings.find(listing => listing.id == show_detail)} />
+                            <ListingDetail {...listing_detail} />
                         </Row>
                     : [
                         <center><h6>{total_listings} results</h6></center>,
@@ -260,9 +291,17 @@ class PublicListings extends React.Component {
                         </Row>
                     ]}
                 </Col>
-                <Col md='6' className={`map-panel ${show_detail ? '' : 'd-none'} d-md-inline`}>
-                    <MapPanel address={map_address}/>
-                </Col>
+                {show_map &&
+                    <Col className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
+                        <MapComponent
+                            listings={listings}
+                            listing_highlighted={listing_marked || []}
+                            center={map_center}
+                            zoom={map_zoom}
+                            clickOn={::this.showDetail}
+                        />
+                    </Col>
+                }
             </Row>
         ]
     }
