@@ -2,16 +2,25 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {Lease} from '@/leases/components'
+import {FiltersBar} from '@/components/filtersbar'
 
 export class LeasesList extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
             leases: [],
-            more_leases_link: props.endpoint
+            more_leases_link: '',
         }
     }
-    fetchLeases() {
+    fetchLeases(params) {
+        $.get(this.props.endpoint, params, response => {
+            this.setState({
+                leases: response.results,
+                more_leases_link: response.next
+            })
+        })
+    }
+    moreLeases() {
         $.get(this.state.more_leases_link, response => {
             this.setState({
                 leases: this.state.leases.concat(response.results),
@@ -19,15 +28,17 @@ export class LeasesList extends React.PureComponent {
             })
         })
     }
-    componentDidMount() {
-        this.fetchLeases()
-    }
 
     render() {
+        const {constants} = this.props
         const {leases, more_leases_link} = this.state
         const last_lease = leases.length > 0 && leases.slice(-1)[0]
 
         return [
+            <FiltersBar filters={["address", "unit", "price"]}
+                        constants={constants}
+                        updateParams={::this.fetchLeases}
+                    />,
             leases.map(lease => [
                 <Lease key={lease.short_id} lease={lease}/>,
                 lease.short_id != last_lease.short_id &&
@@ -38,7 +49,7 @@ export class LeasesList extends React.PureComponent {
             :
                 <div className="row justify-content-center">
                     {more_leases_link ?
-                        <button onClick={::this.fetchLeases} className="btn btn-outline-primary" style={{padding: 5, margin: 10}}>
+                        <button onClick={::this.moreLeases} className="btn btn-outline-primary" style={{padding: 5, margin: 10}}>
                             Load more...
                         </button>
                     :
