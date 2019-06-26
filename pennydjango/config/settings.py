@@ -143,6 +143,7 @@ ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
 MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 
 GOOGLE_MAP_API_KEY = _PLACEHOLDER_FOR_UNSET
+MAP_KEY = _PLACEHOLDER_FOR_UNSET
 
 
 ################################################################################
@@ -210,6 +211,7 @@ SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
     'GOOGLE_MAP_API_KEY',
+    'MAP_KEY',
     #'MAILGUN_API_KEY',
     #'ZULIP_API_KEY',
     #'SENTRY_DSN_KEY',
