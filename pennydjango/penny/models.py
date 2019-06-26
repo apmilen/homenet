@@ -54,7 +54,7 @@ class User(AbstractUser, BaseModel):
 
     job_application = models.OneToOneField(
         JobApplication,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         null=True
     ) 
 
