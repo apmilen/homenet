@@ -4,7 +4,7 @@ import random
 from django.core.exceptions import ValidationError
 
 
-def validate_file_extension(file):
+def validate_pdf_file(file):
     try:
         file_extension = os.path.splitext(file.name)[1]
     except TypeError:

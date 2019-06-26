@@ -4,6 +4,7 @@ from django.conf import settings
 from django.utils.functional import cached_property
 from django.contrib.auth.models import AbstractUser, UserManager
 
+from job_applications.models import JobApplication
 from penny.model_utils import BaseModel
 from penny.constants import (
     DEFAUL_AVATAR, USER_TYPE, ADMIN_TYPE, AGENT_TYPE, CLIENT_TYPE
@@ -50,6 +51,12 @@ class User(AbstractUser, BaseModel):
     # is_superuser
     # last_login
     # date_joined
+
+    job_application = models.OneToOneField(
+        JobApplication,
+        on_delete=models.CASCADE,
+        null=True
+    ) 
 
     avatar = models.ImageField(
         upload_to=avatar_path,

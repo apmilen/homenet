@@ -1,6 +1,6 @@
 from django.db import models
 
-from job_applications.utils import resume_path, validate_file_extension
+from job_applications.utils import resume_path, validate_pdf_file
 from job_applications.constants import JOB_POSITION
 
 
@@ -13,5 +13,5 @@ class JobApplication(models.Model):
     position = models.CharField(max_length=255, choices=JOB_POSITION)
     resume = models.FileField(
         upload_to=resume_path, 
-        validators=[validate_file_extension]
+        validators=[validate_pdf_file]
     )
