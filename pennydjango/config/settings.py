@@ -264,6 +264,7 @@ INSTALLED_APPS = [
     'django_select2',
     'rest_framework',
     'leases',
+    'job_applications',
     'datatables_listview'
 ]
 
