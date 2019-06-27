@@ -11,7 +11,7 @@ def send_invitation_email(lease_member: LeaseMember):
     lease = lease_member.offer
     member_id = lease_member.id
     listing_desc = lease.listing.full_address
-    relative_url = reverse("leases:create-member", args=[member_id])
+    relative_url = reverse("leases:create-client", args=[member_id])
     url = f'{settings.BASE_URL}{relative_url}'
 
     subject = render_to_string(
