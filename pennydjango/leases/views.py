@@ -16,6 +16,7 @@ from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters
+from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
 from listings.models import Listing
@@ -78,6 +79,7 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
 
     def props(self, request, *args, **kwargs):
         constants = {
+            'lease_status': list(LEASE_STATUS),
             'neighborhoods': dict(NEIGHBORHOODS),
             'agents': [
                 (agent.username, agent.get_full_name(), agent.avatar_url)

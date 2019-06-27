@@ -9,6 +9,7 @@ export const ALL_FILTERS = {
     exclusive: false,
     hoods: [],
     lease_id: "",
+    lease_status: [],
     listing_agents: [],
     listing_id: "",
     listing_type: "any",

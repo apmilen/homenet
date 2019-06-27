@@ -36,7 +36,7 @@ export class LeasesList extends React.PureComponent {
 
         const filters = [
             "address", "unit", "sales_agents", "listing_agents", "hoods",
-            "price", "beds", "lease_id"
+            "price", "beds", "lease_id", "lease_status"
         ]
 
         return [

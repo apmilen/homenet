@@ -292,6 +292,21 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
         </div>
     </DropdownButton>
 
+export const lease_statusFilter = (lease_status, status_dict, func) =>
+    <DropdownButton title={[multipleSelectionTitle("Status", lease_status),
+                            lease_status.length > 0 && multipleSelectionClearFilter(func, "lease_status")]}
+                    className={lease_status.length > 0 ? 'no-caret' : ''}>
+        <div className='agents-container'>
+            {status_dict.map(status =>
+                <FormCheckbox id={status[0]} key={`${status[0]}-lease-status`}
+                              checked={lease_status.includes(status[0])}
+                              onChange={e => func(e, "lease_status")}>
+                    {status[1]}
+                </FormCheckbox>
+            )}
+        </div>
+    </DropdownButton>
+
 // One selection filters
 export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
     <DropdownButton className="dropdown-menu-mobile"
