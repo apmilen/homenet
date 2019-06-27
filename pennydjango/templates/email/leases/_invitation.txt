@@ -1,0 +1,1 @@
+{{ user }} invited you to join {{ listing }}

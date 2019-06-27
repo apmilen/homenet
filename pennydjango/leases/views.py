@@ -3,29 +3,48 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, DatabaseError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, TemplateView, \
+    RedirectView
 
 from rest_framework import viewsets
 
 from datatables_listview.core.views import DatatablesListView
+from leases.emails import send_invitation_email
 from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.serializer import LeaseSerializer
 from listings.mixins import ListingContextMixin
 from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
+from penny.constants import CLIENT_TYPE
+from penny.forms import CustomUserCreationForm
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
-from penny.constants import CLIENT_TYPE
-from penny.forms import CustomUserCreationForm
 from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder
 from ui.views.base_views import PublicReactView
+
+
+# Rest Framework
+class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Lease.objects.all()
+    serializer_class = LeaseSerializer
+
+    def get_queryset(self):
+        self.queryset = super().get_queryset()
+        user = self.request.user
+        self.queryset = get_all_or_by_user(
+            Lease,
+            user,
+            'created_by',
+            self.queryset
+        )
+        return self.queryset.order_by('-modified')
 
 
 # React
@@ -132,9 +151,20 @@ class LeaseMemberCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
         return reverse('leases:detail', args=[self.main_object.id])
 
     def form_valid(self, form):
-        member = form.save(commit=False)
-        member.offer = self.get_main_object()
-        member.save()
+        try:
+            with transaction.atomic():
+                member = form.save(commit=False)
+                member.offer = self.get_main_object()
+                member.save()
+                send_invitation_email(member)
+        except DatabaseError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "An error has occurred"
+            )
+            return self.form_invalid(form)
+
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -246,18 +276,32 @@ class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
         return self.model.objects.filter(id__in=id_list)
 
 
-# Rest Framework
-class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = Lease.objects.all()
-    serializer_class = LeaseSerializer
+class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
 
-    def get_queryset(self):
-        self.queryset = super().get_queryset()
-        user = self.request.user
-        self.queryset = get_all_or_by_user(
-            Lease,
-            user,
-            'created_by',
-            self.queryset
+    def get_redirect_url(self, *args, **kwargs):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Invitations sent"
         )
-        return self.queryset.order_by('-modified')
+        pk = kwargs.get('lease_id')
+        return reverse("leases:detail", args=[pk])
+
+    def get(self, request, *args, **kwargs):
+        lease_member = get_object_or_404(LeaseMember, id=kwargs.get('pk'))
+        send_invitation_email(lease_member)
+        kwargs.update({"lease_id": lease_member.offer_id})
+        return super().get(request, *args, **kwargs)
+
+
+class ClientLease(ClientOrAgentRequiredMixin, DetailView):
+    model = Lease
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lease_members = self.object.leasemember_set.select_related('user')
+        context['lease_members'] = lease_members
+        context['invite_member_form'] = BasicLeaseMemberForm()
+        context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
+        return context
+
