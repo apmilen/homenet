@@ -20,7 +20,7 @@ from listings.serializer import PrivateListingSerializer
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
-from penny.constants import CLIENT_TYPE
+from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
 from penny.model_utils import get_all_or_by_user
 from penny.models import User
@@ -73,6 +73,11 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
 
     def props(self, request, *args, **kwargs):
         constants = {
+            'neighborhoods': dict(NEIGHBORHOODS),
+            'agents': [
+                (agent.username, agent.get_full_name(), agent.avatar_url)
+                for agent in User.objects.filter(user_type=AGENT_TYPE)
+            ],
         }
 
         return {

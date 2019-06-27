@@ -34,8 +34,13 @@ export class LeasesList extends React.PureComponent {
         const {leases, more_leases_link} = this.state
         const last_lease = leases.length > 0 && leases.slice(-1)[0]
 
+        const filters = [
+            "address", "unit", "sales_agents", "listing_agents", "hoods",
+            "price", "beds"
+        ]
+
         return [
-            <FiltersBar filters={["address", "unit", "price"]}
+            <FiltersBar filters={filters}
                         constants={constants}
                         updateParams={::this.fetchLeases}
                     />,
