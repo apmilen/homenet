@@ -11,12 +11,16 @@ from django.views.generic import CreateView, DetailView, TemplateView
 from rest_framework import viewsets
 
 from datatables_listview.core.views import DatatablesListView
+
 from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.serializer import LeaseSerializer
+from leases.utils import qs_from_filters
+
 from listings.mixins import ListingContextMixin
 from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
+
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
@@ -25,6 +29,7 @@ from penny.forms import CustomUserCreationForm
 from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder
+
 from ui.views.base_views import PublicReactView
 
 
@@ -257,12 +262,12 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = LeaseSerializer
 
     def get_queryset(self):
-        self.queryset = super().get_queryset()
         user = self.request.user
-        self.queryset = get_all_or_by_user(
+        queryset = get_all_or_by_user(
             Lease,
             user,
             'created_by',
             self.queryset
         )
-        return self.queryset.order_by('-modified')
+        queryset = qs_from_filters(queryset, self.request.query_params)
+        return queryset.order_by('-modified')

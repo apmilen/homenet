@@ -1,7 +1,7 @@
 from django.db.models import Q
 
 
-def filter_listings(queryset, params):
+def qs_from_filters(queryset, params):
 
     searching_text = params.get('searching_text')
     address = params.get('address')
