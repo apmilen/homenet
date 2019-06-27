@@ -7,7 +7,7 @@ import {
     bedsFilter, bathsFilter, listing_typeFilter, listing_idFilter, sizeFilter,
     pets_allowedFilter, amenitiesFilter, nofeeonlyFilter, owner_paysFilter,
     exclusiveFilter, vacantFilter, draft_listingsFilter, date_availableFilter,
-    sales_agentsFilter, listing_agentsFilter, hoodsFilter
+    sales_agentsFilter, listing_agentsFilter, hoodsFilter, lease_idFilter
 } from "./filters"
 import {ALL_FILTERS} from '@/constants'
 
@@ -110,7 +110,7 @@ export class FiltersBar extends React.Component {
             searching_text, address, unit, sales_agents, listing_agents, hoods,
             price, price_per_bed, beds, baths, listing_type, listing_id, size,
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
-            draft_listings, date_available,
+            draft_listings, date_available, lease_id
         } = filters
 
         return [
@@ -149,6 +149,9 @@ export class FiltersBar extends React.Component {
 
             listing_id != undefined &&
             <div className='filter-container'>{listing_idFilter(listing_id, ::this.filtering)}</div>,
+
+            lease_id != undefined &&
+            <div className='filter-container'>{lease_idFilter(lease_id, ::this.filtering)}</div>,
 
             size != undefined &&
             <div className='filter-container'>{sizeFilter(size, ::this.filterRange)}</div>,

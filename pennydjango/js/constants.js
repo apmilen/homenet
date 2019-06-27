@@ -8,6 +8,7 @@ export const ALL_FILTERS = {
     draft_listings: false,
     exclusive: false,
     hoods: [],
+    lease_id: "",
     listing_agents: [],
     listing_id: "",
     listing_type: "any",

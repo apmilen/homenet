@@ -67,6 +67,17 @@ export const listing_idFilter = (listing_id, func) =>
         {listing_id && textInputClearFilter(func, 'listing_id')}
     </div>
 
+export const lease_idFilter = (lease_id, func) =>
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='lease_id' size="sm"
+                     type='text' id='lease_id'
+                     value={lease_id}
+                     placeholder='Lease ID'
+                     style={formControlStyle}
+                     onChange={func} />
+        {lease_id && textInputClearFilter(func, 'lease_id')}
+    </div>
+
 // Range input filters
 const rangeTitle = (title, range, pre='', pos='') =>
 `${title}${

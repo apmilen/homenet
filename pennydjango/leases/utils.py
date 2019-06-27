@@ -10,6 +10,7 @@ def qs_from_filters(queryset, params):
     hoods = params.getlist('hoods[]')
     price = params.getlist('price[]')
     beds = params.getlist('beds[]')
+    lease_id = params.get('lease_id')
 
     if address:
         queryset = queryset.filter(listing__address__icontains=address)
@@ -43,5 +44,8 @@ def qs_from_filters(queryset, params):
             query = query | Q(listing__bedrooms__gte=plus_nums[0][:-1])
 
         queryset = queryset.filter(query)
+
+    if lease_id:
+        queryset = queryset.filter(id__startswith=lease_id)
 
     return queryset
