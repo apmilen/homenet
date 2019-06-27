@@ -1,0 +1,241 @@
+<div class="row">
+  <div class="col-12">
+    <div id="main-listing">
+      <div class="container-fluid new-listing-card">
+        <div class="row listing-admin-area">
+          <div class="col-12">
+            <button type="button"
+                    class="btn btn-sm btn-outline-info mr-1">
+              {{ listing.full_address }}
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-outline-info mr-1">Manage
+            </button>
+            <a href="{{ listing.listing_link }}"
+               target="_blank"
+               class="btn btn-sm btn-outline-info mr-1">Listing
+            </a>
+          </div>
+        </div>
+        <div class="row listing-area-content">
+          <div class="col-lg-4 listing-area-main">
+            <div class="row"
+                 style="position: relative; padding-top: 56.25%">
+              <a href="{{ lease.detail_link }}"
+                 target="_blank" rel="noreferrer noopener">
+                <img class="lazy img-fluid mx-auto"
+                     alt="listing"
+                     src="{{ listing.default_image }}"
+                     width="960"
+                     height="540"
+                     style="position: absolute; top: 0; left:0; width: 100%; height: 100%;"/>
+              </a>
+            </div>
+            <div class="row">
+              <div class="listing-card-stub container-fluid">
+                <table class="table">
+                  <tbody>
+                  <tr>
+                    <td style="width: 90px;">
+                      <img class="rounded-circle img-fluid mx-auto" width="75"
+                           height="75"
+                           src="{{ listing.listing_agent.avatar_url }}"
+                           alt="Missing"></td>
+                    <td>
+                      <div class="mb-2">
+                        <strong>{{ listing.listing_agent.get_full_name }}</strong> ·
+                        Listing Agent
+                      </div>
+                      <div>Contact: {{ listing.listing_agent.phone }}</div>
+                      <div>{{ listing.listing_agent.email }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 90px;">
+                      <img class="rounded-circle img-fluid mx-auto" width="75"
+                           height="75"
+                           src="{{ listing.sales_agent.avatar_url }}"
+                           alt="Missing"></td>
+                    <td>
+                      <div class="mb-2">
+                        <strong>{{ listing.sales_agent.get_full_name }}</strong> ·
+                        Sales Agent
+                      </div>
+                      <div>Contact: {{ listing.sales_agent.phone }}</div>
+                      <div>{{ listing.sales_agent.email }}</div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 listing-first-data-col">
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Status</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.get_status_display }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>ID</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.short_id }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Neighborhood</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ listing.get_neighborhood_display }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Site apply</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                TODO
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Rent</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ listing.price }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Offer</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.offer|default:"N/A" }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Term</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.length_of_lease }} Months
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Broker Fee</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.total_broker_fee|default:"N/A" }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Owner Pays</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.op }}%
+              </div>
+            </div>
+            <div class="row listing-area-data-row border-bottom-0">
+              <div class="col-sm-4 text-left">
+                <b>Office</b>
+              </div>
+              <div class="col-sm-8 text-left">
+
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 listing-second-data-col">
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Move In</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.move_in_date }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Credit Checks</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                TODO
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Description</b>
+              </div>
+              <div class="col-sm-8 text-left">
+
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Transactions</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                TODO
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Current Balance</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                TODO
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>OP Received at</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                TODO
+              </div>
+            </div>
+            {% for member in lease_members %}
+              <div class="row listing-area-data-row">
+                <div class="col-sm-4 text-left">
+                  <b>Client Name</b>
+                </div>
+                <div class="col-sm-8 text-left">
+                  {{ member.get_full_name }}
+                </div>
+              </div>
+            {% endfor %}
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Created By</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.created_by.get_full_name }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left">
+                <b>Created at</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.created }}
+              </div>
+            </div>
+            <div class="row listing-area-data-row border-bottom-0">
+              <div class="col-sm-4 text-left">
+                <b>Updated at</b>
+              </div>
+              <div class="col-sm-8 text-left">
+                {{ lease.modified }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

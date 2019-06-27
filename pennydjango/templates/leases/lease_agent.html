@@ -1,5 +1,9 @@
-{% extends 'ui/react_base_card.html' %}
+{% extends 'ui/base.html' %}
 {% load bootstrap4 %}
+
+{% block inner_content %}
+  {% include 'leases/lease_card.html' %}
+{% endblock inner_content %}
 
 {% block after_card %}
 

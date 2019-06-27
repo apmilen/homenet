@@ -48,41 +48,23 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
 
 
 # React
-class LeaseDetail(ClientOrAgentRequiredMixin, PublicReactView, DetailView):
+class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
     model = Lease
     title = 'Lease Detail'
-    component = 'pages/lease.js'
     pk_url_kwarg = 'pk'
     template_name = 'leases/lease_agent.html'
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        props = self.get_props(request, *args, **kwargs)
-        if request.GET.get('props_json'):
-            return JsonResponse(props, encoder=ExtendedEncoder)
-
-        context = self.get_context(request, *args, **kwargs)
-        context['props'] = props
-        context.update(**self.get_context_data())
-        return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lease_members = self.object.leasemember_set.select_related('user')
         move_in_costs = self.object.moveincost_set.order_by('-created')
+        context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
         return context
-
-    def props(self, request, *args, **kwargs):
-        obj = self.get_object()
-
-        return {
-            'lease': LeaseSerializer(obj).data,
-        }
 
 
 class LeasesList(AgentRequiredMixin, PublicReactView):
