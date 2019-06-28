@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import {Row, Col, Button} from "shards-react";
 import {Dropdown} from "react-bootstrap";
+import moment from "moment";
 
 import {tooltip} from '@/util/dom'
 import {FiltersBar} from '@/listings/components'
@@ -13,7 +14,9 @@ import {MapComponent, coordinates} from '@/components/maps'
 class ListingCard extends React.Component {
     render() {
         const {listing, hoverOn, clickOn} = this.props
-
+        const listing_existance = moment().diff(listing.created, 'days')
+        const new_listing = listing_existance < 1 ? 'New Listing' : ''
+            
         return (
             <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
                  onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
@@ -23,6 +26,7 @@ class ListingCard extends React.Component {
                     {listing.no_fee_listing &&
                         <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
                     }
+                    <span class="card-post__category new-listing-badge badge badge-pill badge-success">{new_listing}</span>
                     <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
                 </div>
                 <div class="card-body p-0 text-center">

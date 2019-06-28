@@ -11,7 +11,7 @@ from penny.model_utils import BaseModel
 from penny.models import User
 from penny.utils import image_path, validate_file_size
 from listings.constants import (
-    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT
+    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT, PARKING_OPTIONS
 )
 
 
@@ -60,7 +60,14 @@ class Listing(BaseModel):
         validators=[MaxValueValidator(100)],
         null=True
     )
-    
+    bikability_score = models.PositiveSmallIntegerField(
+        validators=[MaxValueValidator(100)],
+        null=True
+    )
+    parking = models.CharField(
+        max_length=255, 
+        choices=PARKING_OPTIONS 
+    )    
     listing_agent = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -190,7 +197,9 @@ class Listing(BaseModel):
                 'modified',
                 'status',
                 'nearby_transit',
-                'walkability_score'
+                'walkability_score',
+                'bikability_score'
+                'parking'
             ),
             'str': str(self),
             'detail': self.detail.__json__(),

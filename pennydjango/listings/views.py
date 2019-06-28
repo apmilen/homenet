@@ -20,7 +20,7 @@ from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
 from listings.constants import (
-    PETS_ALLOWED, AMENITIES, LISTING_TYPES
+    PETS_ALLOWED, AMENITIES, LISTING_TYPES, PARKING_OPTIONS
 )
 from listings.utils import filter_listings
 
@@ -141,7 +141,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'agents': [
                 (agent.username, agent.get_full_name(), agent.avatar_url)
                 for agent in User.objects.filter(user_type=AGENT_TYPE)
-            ],
+            ]
         }
 
         return {

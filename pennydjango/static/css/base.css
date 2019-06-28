@@ -382,3 +382,8 @@ input:checked + .slider:before {
 .nearby-transit div {
     padding: 10px 5px 10px;
 }
+.new-listing-badge.badge.badge-pill.badge-success {
+    right: 5.9375rem;
+    position: absolute;
+    z-index: 10;
+}

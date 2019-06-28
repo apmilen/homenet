@@ -1,4 +1,6 @@
 # Serializers define the API representation.
+from datetime import datetime
+
 from rest_framework import serializers
 
 from listings.models import Listing, ListingDetail
@@ -17,14 +19,16 @@ class DetailSerializer(serializers.ModelSerializer):
 class PublicListingSerializer(serializers.ModelSerializer):
     neighborhood = serializers.CharField(source='get_neighborhood_display')
     pets = serializers.CharField(source='get_pets_display')
+    parking = serializers.CharField(source='get_parking_display')
     sales_agent = AgentSerializer()
-
+    
     class Meta:
         model = Listing
         fields = (
             'address', 'amenities', 'bathrooms', 'bedrooms', 'default_image',
             'description', 'id', 'images', 'latitude', 'longitude',
-            'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent'
+            'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent', 'created',
+            'parking'
         )
 
 
@@ -33,6 +37,7 @@ class PrivateListingSerializer(serializers.ModelSerializer):
     pets = serializers.CharField(source='get_pets_display')
     move_in_cost = serializers.CharField(source='get_move_in_cost_display')
     status = serializers.CharField(source='get_status_display')
+    parking = serializers.CharField(source='get_parking_display')
     detail = DetailSerializer()
     sales_agent = AgentSerializer()
     listing_agent = AgentSerializer()
@@ -47,5 +52,5 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'move_in_cost', 'neighborhood', 'no_fee_listing', 'owner_pays',
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id',
             'size', 'status', 'term', 'utilities', 'listing_link', 'offer_link',
-            'nearby_transit', 'walkability_score'
+            'nearby_transit', 'walkability_score', 'bikability_score', 'parking'
         )
