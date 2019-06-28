@@ -10,147 +10,165 @@ import {FiltersBar} from '@/listings/components'
 import {MapComponent, coordinates} from '@/components/maps'
 
 
-class ListingCard extends React.Component {
-    render() {
-        const {listing, hoverOn, clickOn} = this.props
+const ListingGrid = ({listing, hoverOn, clickOn}) => (
+    <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+         onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
+        <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
+        <div class="card-post__image text-center">
+            <img class="box-wd" src={listing.default_image} />
+            {listing.no_fee_listing &&
+                <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+            }
+            <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+        </div>
+        <div class="card-body p-0 text-center">
+            <table class="table mb-0 listing-info">
+                <tbody>
+                    <tr>
+                        <td class="wrap-info"
+                            {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
+                            {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Baths
+                        </td>
+                        <td class="wrap-info" colspan="2"
+                            {...tooltip(listing.address)}>
+                            {listing.neighborhood}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="wrap-info">{listing.pets}</td>
+                        <td class="wrap-info">
+                            <i className="material-icons">share</i> Share
+                        </td>
+                        <td class="wrap-info">
+                            <i className="material-icons">place</i>Map
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+)
 
-        return (
-            <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
-                 onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
-                <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
-                <div class="card-post__image text-center">
-                    <img class="box-wd" src={listing.default_image} />
-                    {listing.no_fee_listing &&
-                        <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
-                    }
-                    <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+
+const ListingList = ({listing, hoverOn, clickOn}) => (
+    <div class="card col-11 col-md-12 col-lg-11 col-xl-10 px-0 mx-auto my-1 overlay-parent"
+         onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
+        <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
+        <div class="d-flex align-items-center">
+
+            <div class="">
+                <img height="60" width="100"
+                     style={{borderRadius: '.625rem 0 0 .625rem'}}
+                     src={listing.default_image} />
+            </div>
+
+            <div class="col text-center">
+                {parseFloat(listing.bedrooms).toString()} Beds<br/>
+                {parseFloat(listing.bathrooms).toString()} Baths
+            </div>
+            <div class="col d-none d-sm-inline" {...tooltip(listing.address)}>{listing.neighborhood}</div>
+            <div class="col d-none d-md-inline">{listing.pets}</div>
+            <div class="col ml-auto text-right">
+                <div class="badge badge-pill badge-dark">${listing.price}</div><br/>
+                {listing.no_fee_listing &&
+                    <div class="badge badge-pill badge-info">no fee</div>
+                }
+            </div>
+
+        </div>
+    </div>
+)
+
+
+const ListingDetail = ({listing}) => (
+    <span>
+        <div id="carouselExampleIndicators" class="carousel slide"
+             data-ride="carousel" data-interval="2500">
+            <ol class="carousel-indicators">
+                {listing.images.map((image_url, idx) =>
+                    <li data-target="#carouselExampleIndicators" data-slide-to={idx}
+                        class={idx == 0 ? 'active' : ''}></li>
+                )}
+            </ol>
+            <div class="carousel-inner">
+                {listing.images.map((image_url, idx) =>
+                    <div class={`carousel-item ${idx == 0 ? 'active' : ''}`}>
+                        <img class="d-block w-100" src={image_url} alt="First slide" />
+                    </div>
+                )}
+            </div>
+            {listing.images.length > 1 ? [
+                <a class="carousel-control-prev" href="#carouselExampleIndicators"
+                   role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>,
+                <a class="carousel-control-next" href="#carouselExampleIndicators"
+                   role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>] : null}
+        </div>
+
+        <div class="card card-smallcard-post card-post--1 card-listing">
+            <div class="card-body p-0 text-center row m-0">
+                <div class="col-4 wrap-info p-0 pt-2 pb-2 border border"
+                     data-toggle="tooltip"
+                     title={`$${ listing.price }/Month`}>
+                    ${ listing.price }/Month
                 </div>
-                <div class="card-body p-0 text-center">
-                    <table class="table mb-0 listing-info">
-                        <tbody>
-                            <tr>
-                                <td class="wrap-info"
-                                    {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
-                                    {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Bath
-                                </td>
-                                <td class="wrap-info" colspan="2"
-                                    {...tooltip(listing.address)}>
-                                    {listing.neighborhood}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="wrap-info">{listing.pets}</td>
-                                <td class="wrap-info">
-                                    <i className="material-icons">share</i> Share
-                                </td>
-                                <td class="wrap-info">
-                                    <i className="material-icons">place</i>Map
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
+                     data-toggle="tooltip"
+                     title={`${ listing.bedrooms } Beds`}>
+                    { parseFloat(listing.bedrooms).toString() } Beds
+                </div>
+                <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
+                     data-toggle="tooltip"
+                     title={`${ listing.baths } Bath`}>
+                    { parseFloat(listing.bathrooms).toString() } Bath
+                </div>
+                <div class="col-4 p-0 pt-2 pb-2  border">
+                    Pets: { listing.pets }
+                </div>
+                <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
+                     data-toggle="tooltip"
+                     title={ listing.address }>
+                    { listing.address }
+                </div>
+                <div class="col-md-8 col-12 p-0 pt-2 pb-2 border">
+                    <div class="col-12 text-justify border-bottom pt-2">
+                        <p><b>About the place</b></p>
+                        <p>{ listing.description }</p>
+                    </div>
+                    <div class="col-12 text-justify border-top pt-2">
+                        <p><b>Amenities</b></p>
+                        <ul class="ul-2">
+                            {listing.amenities.map(amenity =>
+                                <li>{ amenity }</li>
+                            )}
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 col-12  p-0 pt-2 pb-2 border ">
+                    <p><b>Contact</b></p>
+                    <a class="contact-avatar" href="#" role="button">
+                        <div class="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
+                    </a>
+                    <div>{ listing.sales_agent.first_name }</div>
                 </div>
             </div>
-        )
-    }
-}
-
-
-class ListingDetail extends React.Component {
-    render(){
-        const listing = this.props
-
-        return (
-            <span>
-                <div id="carouselExampleIndicators" class="carousel slide"
-                     data-ride="carousel" data-interval="2500">
-                    <ol class="carousel-indicators">
-                        {listing.images.map((image_url, idx) =>
-                            <li data-target="#carouselExampleIndicators" data-slide-to={idx}
-                                class={idx == 0 ? 'active' : ''}></li>
-                        )}
-                    </ol>
-                    <div class="carousel-inner">
-                        {listing.images.map((image_url, idx) =>
-                            <div class={`carousel-item ${idx == 0 ? 'active' : ''}`}>
-                                <img class="d-block w-100" src={image_url} alt="First slide" />
-                            </div>
-                        )}
-                    </div>
-                    {listing.images.length > 1 ? [
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators"
-                           role="button" data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>,
-                        <a class="carousel-control-next" href="#carouselExampleIndicators"
-                           role="button" data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>] : null}
-                </div>
-
-                <div class="card card-smallcard-post card-post--1 card-listing">
-                    <div class="card-body p-0 text-center row m-0">
-                        <div class="col-4 wrap-info p-0 pt-2 pb-2 border border"
-                             data-toggle="tooltip"
-                             title={`$${ listing.price }/Month`}>
-                            ${ listing.price }/Month
-                        </div>
-                        <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
-                             data-toggle="tooltip"
-                             title={`${ listing.bedrooms } Beds`}>
-                            { parseFloat(listing.bedrooms).toString() } Beds
-                        </div>
-                        <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
-                             data-toggle="tooltip"
-                             title={`${ listing.baths } Bath`}>
-                            { parseFloat(listing.bathrooms).toString() } Bath
-                        </div>
-                        <div class="col-4 p-0 pt-2 pb-2  border">
-                            Pets: { listing.pets }
-                        </div>
-                        <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
-                             data-toggle="tooltip"
-                             title={ listing.address }>
-                            { listing.address }
-                        </div>
-                        <div class="col-md-8 col-12 p-0 pt-2 pb-2 border">
-                            <div class="col-12 text-justify border-bottom pt-2">
-                                <p><b>About the place</b></p>
-                                <p>{ listing.description }</p>
-                            </div>
-                            <div class="col-12 text-justify border-top pt-2">
-                                <p><b>Amenities</b></p>
-                                <ul class="ul-2">
-                                    {listing.amenities.map(amenity =>
-                                        <li>{ amenity }</li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-4 col-12  p-0 pt-2 pb-2 border ">
-                            <p><b>Contact</b></p>
-                            <a class="contact-avatar" href="#" role="button">
-                                <div class="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
-                            </a>
-                            <div>{ listing.sales_agent.first_name }</div>
-                        </div>
-                    </div>
-                </div>
-            </span>
-        )
-    }
-}
+        </div>
+    </span>
+)
 
 
 const Switch = ({label, checked, onClick}) =>
     <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
-        <label class="switch" style={{margin: 'auto'}}>
+        <label class="switch" style={{margin: 'auto 0'}}>
             <input type="checkbox" checked={checked} />
             <span class="slider round" onClick={e => onClick(e)}></span>
-        </label>
-        <div style={{margin: 'auto', paddingLeft: 8}} onClick={e => onClick(e)}>{label}</div>
+        </label>&nbsp;
+        <div style={{margin: 'auto 0'}} onClick={e => onClick(e)}>{label}</div>
     </div>
 
 const SettingsGear = ({onClick}) =>
@@ -189,6 +207,7 @@ class PublicListings extends React.Component {
             map_center: [-73.942423, 40.654089],
             map_zoom: [12],
             show_map: true,
+            as_grid: true,
         }
     }
     hoverOn(listing) {
@@ -215,8 +234,8 @@ class PublicListings extends React.Component {
             map_zoom: [12]
         })
     }
-    toggleMap() {
-        this.setState({show_map: !this.state.show_map})
+    toggleOption(option) {
+        this.setState({[option]: !this.state[option]})
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
@@ -231,7 +250,7 @@ class PublicListings extends React.Component {
         const {constants, endpoint} = this.props
         const {
             listings, total_listings, more_listings_link, listing_detail,
-            filters, map_center, map_zoom, listing_marked, show_map
+            filters, map_center, map_zoom, listing_marked, show_map, as_grid
         } = this.state
         const advanced_filters = [
             "hoods", "vacant", "pets_allowed", "price_per_bed", "listing_type",
@@ -254,11 +273,14 @@ class PublicListings extends React.Component {
                                 endpoint={endpoint}
                                 updateParentState={new_state => this.setState(new_state)} />
                 }
-                <Dropdown className="d-none d-md-inline settings-dropdown">
+                <Dropdown className="settings-dropdown">
                     <Dropdown.Toggle as={SettingsGear} />
                     <Dropdown.Menu alignRight>
+                        <Dropdown.Item className="d-none d-md-block">
+                            <Switch label="Toggle map" checked={show_map} onClick={() => this.toggleOption('show_map')}/>
+                        </Dropdown.Item>
                         <Dropdown.Item>
-                            <Switch label="Toggle map" checked={show_map} onClick={::this.toggleMap}/>
+                            <Switch label="Grid / List" checked={as_grid} onClick={() => this.toggleOption('as_grid')}/>
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
@@ -267,15 +289,20 @@ class PublicListings extends React.Component {
                 <Col className="main-scroll left-main-column">
                     {listing_detail ?
                         <Row>
-                            <ListingDetail {...listing_detail} />
+                            <ListingDetail listing={listing_detail} />
                         </Row>
                     : [
                         <center><h6>{total_listings} results</h6></center>,
                         <Row>
                             {listings.map(listing =>
-                                <ListingCard listing={listing}
-                                             hoverOn={::this.hoverOn}
-                                             clickOn={::this.showDetail} />
+                                as_grid ?
+                                    <ListingGrid listing={listing}
+                                                 hoverOn={::this.hoverOn}
+                                                 clickOn={::this.showDetail} />
+                                :
+                                    <ListingList listing={listing}
+                                                 hoverOn={::this.hoverOn}
+                                                 clickOn={::this.showDetail} />
                             )}
                         </Row>,
                         <Row className="justify-content-center">
