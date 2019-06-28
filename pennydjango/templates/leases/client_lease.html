@@ -1,10 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'ui/base.html' %}
+{% load bootstrap4 %}
+
+{% block title %}Lease Detail{% endblock title %}
+{% block inner_title %}
+Lease Detail
+{% endblock inner_title %}
+
+{% block inner_content %}
+  hello
+{% endblock inner_content %}
+
+{% block after_card %}
+
+  <div class="row">
+    <div class="col-12 col-sm-6 ">
+      <div class="card card-small mb-4">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item p-3">
+            <div class="row">
+              <div class="col-9">
+                Lease Members
+              </div>
+              <div class="col-3">
+                <button type="button" class="btn btn-outline-info"
+                        data-toggle="modal"
+                        data-target="#inviteLeaseMemberModal">
+                  Invite
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                {% include 'leases/invite_modal.html' %}
+                {% for lease_member in lease_members %}
+                  {% include 'leases/lease_member.html' %}
+                {% empty %}
+                  <hr/>
+                  <p class="text-center">Invite a renter or guarantor to get
+                    started</p>
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 ">
+      <div class="card card-small mb-4">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item p-3">
+            <div class="row">
+              <div class="col-9 pb-2">
+                Move in costs
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <div class="payment-content container">
+                  <table class="table">
+                    <tbody id="move-body-table">
+                    {% for move in move_in_costs %}
+                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge %}
+                    {% endfor %}
+                    <tr>
+                      <td><b class="font-weight-bold">Total Cost Due</b></td>
+                      <td>$<b class="font-weight-bold" id="total-cost-due">{{ total }}</b></td>
+                    </tr>
+                    </tbody>
+                  </table>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-12">
+                      <button type="button" id="add-costs"
+                              class="float-right btn-outline-info btn">
+                        Pay
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock after_card %}

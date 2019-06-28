@@ -1,6 +1,11 @@
 {% extends 'ui/base.html' %}
 {% load bootstrap4 %}
 
+{% block title %}Lease Detail{% endblock title %}
+{% block inner_title %}
+Lease Detail
+{% endblock inner_title %}
+
 {% block inner_content %}
   {% include 'leases/lease_card.html' %}
 {% endblock inner_content %}

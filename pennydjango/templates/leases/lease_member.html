@@ -24,7 +24,22 @@
           </div>
         {% endif %}
       </td>
-    {% if lease_member.user %}
+    {% if not lease_member.user %}
+      <td class="dropdown">
+        <button class="btn btn-rounded btn-outline-info float-right mr-0 dropdown-toggle"
+                type="button" id="dropdownButtonClient" data-toggle="dropdown">
+          Actions
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownButtonClient">
+          <a class="dropdown-item" href="{% url 'leases:send-invitation' pk=lease_member.id %}">
+            Resend
+          </a>
+          <button class="dropdown-item">
+            Cancel
+          </button>
+        </div>
+      </td>
+    {% elif request.user.perms.has_agent_access %}
       <td class="dropdown">
         <button class="btn btn-outline-info float-right mr-0 dropdown-toggle"
                 type="button" id="dropdownButtonClient" data-toggle="dropdown"
@@ -51,21 +66,6 @@
               <div><a class="dropdown-item">Deposit Agreement</a></div>
             </div>
           </div>
-        </div>
-      </td>
-    {% else %}
-      <td class="dropdown">
-        <button class="btn btn-rounded btn-outline-info float-right mr-0 dropdown-toggle"
-                type="button" id="dropdownButtonClient" data-toggle="dropdown">
-          Actions
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownButtonClient">
-          <a class="dropdown-item" href="{% url 'leases:send-invitation' pk=lease_member.id %}">
-            Resend
-          </a>
-          <button class="dropdown-item">
-            Cancel
-          </button>
         </div>
       </td>
     {% endif %}

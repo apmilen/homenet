@@ -50,8 +50,6 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
 # React
 class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
     model = Lease
-    title = 'Lease Detail'
-    pk_url_kwarg = 'pk'
     template_name = 'leases/lease_agent.html'
 
     def get_context_data(self, **kwargs):
@@ -235,27 +233,45 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
-    model = Listing
-    template_name = 'penny/user_settings/_datatables_base.html'
-    fields = ('address', 'term', 'price')
-    column_names_and_defs = ('Address', 'Term', 'Rent')
-    table_name = 'Lease History'
-    options_list = [
-        {
-            'option_label': 'Enter',
-            'option_url': 'penny:user_settings',
-            'url_params': [],
-            'icon': 'user'
-        }
-    ]
+# class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
+#     model = Listing
+#     template_name = 'penny/user_settings/_datatables_base.html'
+#     fields = ('address', 'term', 'price')
+#     column_names_and_defs = ('Address', 'Term', 'Rent')
+#     table_name = 'Lease History'
+#     options_list = [
+#         {
+#             'option_label': 'Enter',
+#             'option_url': 'penny:user_settings',
+#             'url_params': [],
+#             'icon': 'user'
+#         }
+#     ]
+#
+#     def get_queryset(self):
+#         user = self.request.user
+#         lookup = ["offer__listing__id", "offer__move_in_date"]
+#         lease_members = LeaseMember.objects.only(*lookup).filter(user=user)
+#         id_list = lease_members.values_list("offer__listing__id", flat=True)
+#         return self.model.objects.filter(id__in=id_list)
 
-    def get_queryset(self):
+
+class ClientLeasesList(LoginRequiredMixin, TemplateView):
+    model = Listing
+    template_name = 'penny/_aux_lease_dt.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         user = self.request.user
-        lookup = ["offer__listing__id", "offer__move_in_date"]
+        lookup = ["offer_id",
+                  "offer__listing__address",
+                  "offer__listing__term",
+                  "offer__listing__price",
+                  "offer__move_in_date"]
         lease_members = LeaseMember.objects.only(*lookup).filter(user=user)
-        id_list = lease_members.values_list("offer__listing__id", flat=True)
-        return self.model.objects.filter(id__in=id_list)
+        context.update({"rows": lease_members})
+        context['normal'] = True
+        return context
 
 
 class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
@@ -278,11 +294,15 @@ class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
 
 class ClientLease(ClientOrAgentRequiredMixin, DetailView):
     model = Lease
+    template_name = 'leases/client_lease.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lease_members = self.object.leasemember_set.select_related('user')
+        move_in_costs = self.object.moveincost_set.order_by('-created')
+        context['listing'] = self.object.listing
         context['lease_members'] = lease_members
+        context['move_in_costs'] = move_in_costs
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
         return context
