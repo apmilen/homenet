@@ -375,3 +375,10 @@ input:checked + .slider:before {
 .mapbox-component {
     height: 100%;
 }
+
+.nearby-transit  {
+    font-size: 12px;
+}
+.nearby-transit div {
+    padding: 10px 5px 10px;
+}

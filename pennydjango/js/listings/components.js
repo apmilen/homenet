@@ -20,7 +20,7 @@ export class ListingComponent extends React.Component {
             date_available, utilities, move_in_cost, size, landlord_contact,
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
-            offer_link
+            offer_link, nearby_transit, walkability_score
         } = this.props.listing
 
         return (
@@ -65,6 +65,7 @@ export class ListingComponent extends React.Component {
                                     {detail.vacant && <span
                                         className="badge badge-info">Vacant</span>}
                                 </div>
+                                
                             </div>
                             <div className="row listing-area-content">
                                 <div className="col-lg-4 listing-area-main">
@@ -125,8 +126,12 @@ export class ListingComponent extends React.Component {
                                             </div>
                                             <div className="row">
                                                 <div
-                                                    className="col-12 border-bottom-0">Streets
+                                                    className="col-12 ">Streets
                                                 </div>
+                                            </div>
+                                            <div className="row border-bottom-0 nearby-transit">
+                                                <div className="col-sm-4 text-left"><b>Nearby Transit</b></div>
+                                                <div className="col-sm-8 text-left">{nearby_transit}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -149,6 +154,11 @@ export class ListingComponent extends React.Component {
                                             <b>Access</b></div>
                                         <div
                                             className="col-sm-8 text-left">{detail.building_access}</div>
+                                    </div>
+                                    <div className="row listing-area-data-row">
+                                        <div className="col-sm-4 text-left">
+                                            <b>Walkability Score</b></div>
+                                        <div className="col-sm-8 text-left">{walkability_score}%</div>
                                     </div>
                                     <div className="row listing-area-data-row">
                                         <div className="col-sm-4 text-left">
