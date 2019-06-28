@@ -75,7 +75,6 @@ class LeaseDetail(ClientOrAgentRequiredMixin, PublicReactView, DetailView):
 class LeasesList(AgentRequiredMixin, PublicReactView):
     title = 'Leases Management'
     component = 'pages/leases.js'
-    template = 'ui/react_base_card.html'
 
     def props(self, request, *args, **kwargs):
         constants = {
