@@ -27,50 +27,56 @@
         </a>
 
         <div class="dropdown-menu dropdown-menu-small dropdown-menu-right">
+
           {% if request.user.perms.has_agent_access %}
-          <a class="dropdown-item" href="{% url 'listing:create' %}">
-            <i class="material-icons">add</i>
-            <span>Add Listing</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'listing:listings' %}">
-            <i class="material-icons">dvr</i>
-            <span>Listings</span>
-          </a>
-          <div class="dropdown-divider"></div>
-            {% endif %}
-        {% if request.user.perms.has_agent_access %}
-          <a class="dropdown-item" href="{% url 'leases:list' %}">
-            <i class="material-icons">assignment</i>
-            <span>Leases</span>
-          </a>
-          <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'listing:create' %}">
+              <i class="material-icons">add</i>
+              <span>Add Listing</span>
+            </a><div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'listing:listings' %}">
+              <i class="material-icons">dvr</i>
+              <span>Listings</span>
+            </a><div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'leases:list' %}">
+              <i class="material-icons">assignment</i>
+              <span>Leases</span>
+            </a><div class="dropdown-divider"></div>
+
           {% endif %}
+
           <a class="dropdown-item" href="{% url 'leases:client' %}">
             <i class="material-icons">assignment</i>
             <span>Leases History</span>
-          </a>
-
-
+          </a><div class="dropdown-divider"></div>
+          
           {% if request.user.perms.has_agent_access %}
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="{% url 'schedule' %}">
-            <i class="material-icons">schedule</i>
-            <span>Schedule</span>
-          </a>
-            {% endif %}
-          <div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'schedule' %}">
+              <i class="material-icons">schedule</i>
+              <span>Schedule</span>
+            </a><div class="dropdown-divider"></div>
+
+            <a class="dropdown-item" href="{% url 'penny:users' %}">
+              <i class="material-icons">perm_identity</i>
+              <span>Users</span>
+            </a><div class="dropdown-divider"></div>
+
+          {% endif %}
+          
           <a class="dropdown-item text-primary" href="{% url 'penny:user_settings' %}">
             <i class="material-icons text-primary">settings</i>
             <span>Settings</span>
-          </a>
-          <div class="dropdown-divider"></div>
+          </a><div class="dropdown-divider"></div>
+
           <a class="dropdown-item text-danger" href="{% url 'logout' %}">
             <i class="material-icons text-danger">exit_to_app</i>
             <span>Logout</span>
           </a>
-        </div>
 
+        </div>
       </li>
     {% else %}
       <li class="nav-item">
