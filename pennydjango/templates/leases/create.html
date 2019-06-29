@@ -1,0 +1,84 @@
+{% extends 'ui/react_base_card.html' %}
+{% load bootstrap4 utils static %}
+
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet"
+        href="{% http2static 'css/jquery.datetimepicker.min.css' %}"
+        type="text/css" crossorigin>
+{% endblock head %}
+
+
+{% block after_inner_content %}
+  <hr/>
+  <h2>Create an Offer</h2>
+  <br>
+  <br>
+  <br>
+  <h5>Rent: ${{ listing.price }}</h5>
+  <form method="post" action="" class="full-w">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_rent_asked">Are they ok with the asking rent?</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="rent_asked" class="form-control" id="id_rent_asked1" value="Yes" checked>
+        <label class="form-check-label" for="id_rent_asked1">
+          yes
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="rent_asked" class="form-control" id="id_rent_asked2" value="No">
+        <label class="form-check-label" for="id_rent_asked2">
+          no
+        </label>
+      </div>
+    </div>
+  {% bootstrap_field form.offer form_group_class='form-group toggle-show display-none' %}
+  <div class="row">
+    <div class="col-12 col-md-6">
+      {% bootstrap_field form.length_of_lease %}
+    </div>
+    <div class="col-12 col-md-6">
+      {% bootstrap_field form.move_in_date %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-6">
+      {% bootstrap_field form.op %}
+    </div>
+    <div class="col-12 col-md-6">
+      {% bootstrap_field form.total_broker_fee %}
+    </div>
+  </div>
+
+    {% buttons %}
+          <button type="submit" class="btn btn-primary">
+            Continue
+          </button>
+      {% endbuttons %}
+  </form>
+{% endblock after_inner_content %}
+
+{% block tail %}
+  {{ block.super }}
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
+          type="text/javascript" crossorigin></script>
+  <script>
+      $(document).ready(() => {
+
+          $("#id_move_in_date").datetimepicker({
+              timepicker: false, format: 'Y-m-d',
+          });
+
+          $('input[name=rent_asked]').click(e => {
+              let toggle = $('.toggle-show')
+              if(e.target.value == 'Yes') {
+                  toggle.addClass('display-none')
+              } else {
+                  toggle.removeClass('display-none')
+              }
+          })
+
+      })
+  </script>
+{% endblock tail %}

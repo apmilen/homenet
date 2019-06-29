@@ -107,10 +107,14 @@ class Listing(BaseModel):
     @cached_property
     def images(self):
         if hasattr(self, 'photos'):
-            images = [photo.url for photo in self.photos.listingphoto_set.all()]
+            images = [
+                listing_image.photo.url
+                for listing_image in self.photos.listingphoto_set.all()
+                if listing_image.photo
+            ]
             images.insert(0, self.default_image)
             return images
-        return self.default_image
+        return [self.default_image]
 
     @cached_property
     def amenities(self):
@@ -119,19 +123,33 @@ class Listing(BaseModel):
                     for amenity in self.detail.amenities.all()]
         return []
 
-    def get_full_address(self):
+    @cached_property
+    def neighborhood_name(self):
+        return self.get_neighborhood_display()
+
+    @cached_property
+    def full_address(self):
         return f'{self.address} - Unit: {self.unit_number}'
 
+    @cached_property
     def price_per_bed(self):
         return self.bedrooms and self.price / self.bedrooms
+
+    @cached_property
+    def edit_link(self):
+        return reverse('listing:edit', args=[str(self.id)])
 
     @cached_property
     def detail_link(self):
         return reverse('listing:detail', args=[str(self.id)])
 
     @cached_property
-    def edit_link(self):
-        return reverse('listing:edit', args=[str(self.id)])
+    def listing_link(self):
+        return reverse('listing:listing', args=[str(self.id)])
+
+    @cached_property
+    def offer_link(self):
+        return reverse('leases:create', args=[str(self.id)])
 
     def __json__(self, *attrs):
         return {
@@ -141,18 +159,34 @@ class Listing(BaseModel):
                 'images',
                 'price',
                 'address',
-                'latitude',
-                'longitude',
+                'full_address',
                 'description',
                 'bedrooms',
                 'bathrooms',
                 'pets',
                 'amenities',
+                'neighborhood',
+                'no_fee_listing',
                 'detail_link',
                 'edit_link',
+                'price_per_bed',
+                'short_id',
+                'date_available',
+                'utilities',
+                'move_in_cost',
+                'size',
+                'owner_pays',
+                'agent_notes',
+                'agent_bonus',
+                'term',
+                'created',
+                'modified',
+                'status'
             ),
             'str': str(self),
+            'detail': self.detail.__json__(),
             'sales_agent': self.sales_agent.__json__(),
+            'listing_agent': self.listing_agent.__json__(),
             **(self.attrs(*attrs) if attrs else {}),
         }
 
@@ -200,6 +234,17 @@ class ListingDetail(BaseModel):
     private = models.BooleanField(default=False)
     # office = models.ForeignKey('penny.Office', on_delete=models.SET_NULL)
 
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'vacant',
+                'landlord_contact'
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
+
 
 class ListingPhotos(BaseModel):
     listing = models.OneToOneField(
@@ -210,7 +255,8 @@ class ListingPhotos(BaseModel):
     primary_photo = models.ImageField(
         upload_to=image_path,
         validators=[validate_file_size],
-        null=True
+        null=True,
+        blank=True
     )
 
 
@@ -218,5 +264,6 @@ class ListingPhoto(BaseModel):
     listing = models.ForeignKey(ListingPhotos, on_delete=models.CASCADE)
     photo = models.ImageField(
         upload_to=image_path,
-        validators=[validate_file_size]
+        validators=[validate_file_size],
+        blank=True
     )

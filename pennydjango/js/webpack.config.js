@@ -3,9 +3,12 @@ const path = require('path');
 module.exports = {
   mode: 'production',
   entry: {
-    // 'home': './pages/home.js',
+    'home': './pages/home.js',
     'listings': './pages/listings.js',
-    'users': './pages/users.js',
+    'listing': './pages/listing.js',
+    'leases': './pages/leases.js',
+    'lease': './pages/lease.js',
+    'users': './pages/users.js'
   },
   output: {
     path: path.resolve(__dirname, '../static/js/pages'),
@@ -19,6 +22,10 @@ module.exports = {
         use: {
           loader: "babel-loader"
         }
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       }
     ]
   },

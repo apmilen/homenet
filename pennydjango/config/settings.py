@@ -13,7 +13,7 @@ import getpass
 from time import time
 
 
-from penny.system import (
+from config.system import (
     check_system_invariants,
     check_django_invariants,
     chown_django_folders,
@@ -61,7 +61,7 @@ MEDIA_URL = '/media/'
 MAX_FILE_SIZE = 10485760  # 10MB
 SITE_ID = 1
 
-WSGI_APPLICATION = 'penny.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 SHELL_PLUS = 'ipython'
 SHELL_PLUS_PRINT_SQL = False
 IPYTHON_ARGUMENTS = ['--no-confirm-exit', '--no-banner']
@@ -109,7 +109,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
-CORS_ORIGIN_WHITELIST = ('localhost', '127.0.0.1')
+CORS_ORIGIN_WHITELIST = ('http://localhost', 'http://127.0.0.1')
 CORS_ORIGIN_ALLOW_ALL = True
 
 
@@ -143,6 +143,7 @@ ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
 MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 
 GOOGLE_MAP_API_KEY = _PLACEHOLDER_FOR_UNSET
+MAP_KEY = _PLACEHOLDER_FOR_UNSET
 
 
 ################################################################################
@@ -210,6 +211,7 @@ SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
     'GOOGLE_MAP_API_KEY',
+    'MAP_KEY',
     #'MAILGUN_API_KEY',
     #'ZULIP_API_KEY',
     #'SENTRY_DSN_KEY',
@@ -243,7 +245,7 @@ BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
 ENDPOINT = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}/gql'
 
 AUTH_USER_MODEL = 'penny.User'
-ROOT_URLCONF = 'penny.urls'
+ROOT_URLCONF = 'config.urls'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -260,6 +262,10 @@ INSTALLED_APPS = [
     'mapwidgets',
     'bootstrap4',
     'django_select2',
+    'rest_framework',
+    'leases',
+    'job_applications',
+    'datatables_listview'
 ]
 
 MIDDLEWARE = [
@@ -330,6 +336,16 @@ MAP_WIDGETS = {
     ),
     "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': (
+        'rest_framework.pagination.PageNumberPagination'
+    ),
+    'PAGE_SIZE': 12
+}
+
+SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
+SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'
 
 
 if PY_TYPE == 'pypy':

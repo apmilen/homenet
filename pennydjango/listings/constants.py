@@ -26,7 +26,7 @@ MOVE_IN_COST = (
 
 # Pets allowed types
 PETS_ALLOWED = (
-    ('all',  'All Pets Allowed'),
+    ('all', 'All Pets Allowed'),
     ('upon_approval', 'Pets Upon Approval'),
     ('dogs', 'Dogs Allowed'),
     ('small_dogs', 'Small Dogs Allowed'),

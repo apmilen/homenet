@@ -1,0 +1,19 @@
+{% extends 'ui/base.html' %}
+{% block preloads %}
+  {% include 'datatables_listview/preloads.html' %}
+{% endblock preloads %}
+
+{% block head %}
+  {% include 'datatables_listview/css.html' %}
+{% endblock head %}
+
+{% block title %}{{ table_name }} Table{% endblock title %}
+{% block inner_title %}{{ table_name }} Table{% endblock inner_title %}
+
+{% block inner_content %}
+  <table class="table" id="datatable-view"></table>
+{% endblock %}
+
+{% block tail %}
+  {% include 'datatables_listview/js.html' %}
+{% endblock %}

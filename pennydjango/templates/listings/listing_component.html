@@ -4,7 +4,7 @@
       <div class="container-fluid new-listing-card">
         <div class="row listing-admin-area">
           <div class="col-12">
-            <button type="button" class="btn btn-sm btn-outline-info mr-1">{{ listing.get_full_address }}</button>
+            <button type="button" class="btn btn-sm btn-outline-info mr-1">{{ listing.full_address }}</button>
             <button type="button" class="btn btn-sm btn-outline-info mr-1">Manage</button>
             <button type="button" class="btn btn-sm btn-outline-info mr-1">Add to Listing Collection</button>
             {% if listing.no_fee_listing %}<span class="badge badge-info">No fee</span>{% endif %}
@@ -44,7 +44,7 @@
                   <div class="col-12">
                     <i class="material-icons">place</i>
                     <a href="{% url 'listings:detail' pk=listing.id %}">
-                      {{ listing.get_full_address }}
+                      {{ listing.full_address }}
                     </a>
                   </div>
                 </div>

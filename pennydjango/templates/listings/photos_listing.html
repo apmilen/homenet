@@ -1,6 +1,10 @@
 {% extends 'listings/wizard/_wizard.html' %}
-{% load utils static %}
+{% load utils static bootstrap4 %}
 
+{% block head %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% http2static 'css/dropzone.css'%}" type="text/css" crossorigin>
+{% endblock head %}
 {% block inner_title %}
   <h4>Photos</h4>
 {% endblock %}
@@ -15,6 +19,14 @@
 
 {% block extra_form_attr %} enctype="multipart/form-data" {% endblock extra_form_attr %}
 
+{% block extra_form %}
+  {{ photos_formset.management_form }}
+  {% for form in photos_formset %}
+    {% for field in form %}
+      {% bootstrap_field field %}
+    {% endfor %}
+  {% endfor %}
+{% endblock extra_form %}
 {% block form_buttons %}
   <a href="{% url 'listings:detail' pk=listing.id %}" type="button" class="btn btn-primary">
     Back
@@ -23,3 +35,6 @@
     Continue
   </button>
 {% endblock form_buttons %}
+
+{% block after_form %}
+{% endblock after_form %}

@@ -1,9 +1,16 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
 
 from listings.views import (
     MainListingCreate, MainListingUpdate, DetailListingUpdate,
-    PhotosListingUpdate, ListingDetail, ReviewListing, Listings
+    PhotosListingUpdate, ListingDetail, ReviewListing, Listings,
+    PublicListingViewSet, PrivateListingViewSet
 )
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'public', PublicListingViewSet)
+router.register(r'private', PrivateListingViewSet)
 
 
 urlpatterns = [
@@ -14,4 +21,5 @@ urlpatterns = [
     path('edit/<uuid:pk>/photos', PhotosListingUpdate.as_view(), name='photos'),
     path('edit/<uuid:pk>/review', ReviewListing.as_view(), name='review'),
     path('<uuid:pk>/detail', ListingDetail.as_view(), name='listing'),
+    path('', include(router.urls))
 ]

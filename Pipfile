@@ -30,6 +30,8 @@ pillow = "*"
 django-bootstrap4 = "*"
 ipython = "*"
 django-select2 = "*"
+djangorestframework = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.7"

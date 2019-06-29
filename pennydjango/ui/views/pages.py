@@ -1,29 +1,34 @@
+from django.conf import settings
 from django.views.generic.list import ListView
 
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
 from listings.models import Listing
-from listings.constants import APPROVED, PETS_ALLOWED, AMENITIES
+from listings.constants import PETS_ALLOWED, AMENITIES, LISTING_TYPES
+
+from penny.constants import NEIGHBORHOODS
 
 
 class Home(PublicReactView):
-    title = "Listings"
-    component = 'pages/listings.js'
+    title = "Real Estate"
+    component = 'pages/home.js'
 
     def props(self, request, *args, **kwargs):
-        query_filter = {'status': APPROVED}
-        listings = Listing.objects.filter(**query_filter)
-
         constants = {
             'pets_allowed': dict(PETS_ALLOWED),
             'amenities': {
-                key: dict(val) for key, val in dict(AMENITIES).items()
-            }
+                amenity_tuple[0]: amenity_tuple[1]
+                for _, group in dict(AMENITIES).items()
+                for amenity_tuple in group
+            },
+            'neighborhoods': dict(NEIGHBORHOODS),
+            'listing_types': dict(LISTING_TYPES),
         }
 
         return {
-            'listings': [listing.__json__() for listing in listings],
-            'constants': constants
+            'map_key': settings.MAP_KEY,
+            'constants': constants,
+            'endpoint': '/listings/public/',
         }
 
 

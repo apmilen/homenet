@@ -1,8 +1,10 @@
 from django.db import models
+from django.urls import reverse
 from django.conf import settings
 from django.utils.functional import cached_property
 from django.contrib.auth.models import AbstractUser, UserManager
 
+from job_applications.models import JobApplication
 from penny.model_utils import BaseModel
 from penny.constants import (
     DEFAUL_AVATAR, USER_TYPE, ADMIN_TYPE, AGENT_TYPE, CLIENT_TYPE
@@ -50,6 +52,12 @@ class User(AbstractUser, BaseModel):
     # last_login
     # date_joined
 
+    job_application = models.OneToOneField(
+        JobApplication,
+        on_delete=models.SET_NULL,
+        null=True
+    ) 
+
     avatar = models.ImageField(
         upload_to=avatar_path,
         validators=[validate_file_size],
@@ -57,6 +65,8 @@ class User(AbstractUser, BaseModel):
     )
 
     user_type = models.CharField(max_length=255, choices=USER_TYPE)
+    phone = models.CharField(max_length=20, blank=True)
+    bio = models.TextField(max_length=1000, blank=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -83,6 +93,10 @@ class User(AbstractUser, BaseModel):
             **(self.attrs(*attrs) if attrs else {}),
         }
 
+    @cached_property
+    def profile_link(self):
+        return reverse('userprofile', args=[self.username])
+
     def __json__(self, *attrs):
         return {
             **self.attrs(
@@ -93,6 +107,7 @@ class User(AbstractUser, BaseModel):
                 'last_name',
                 'date_joined',
                 'avatar_url',
+                'profile_link',
                 'is_active',
                 'is_staff',
                 'is_superuser',
