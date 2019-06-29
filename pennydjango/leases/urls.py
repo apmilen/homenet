@@ -4,7 +4,7 @@ from rest_framework import routers
 from leases.views import (
     LeaseCreate, LeasesList, LeaseViewSet, LeaseDetail, LeaseMemberCreate,
     MoveInCostCreate, LeaseClientCreate, ClientLeasesList,
-    ResendLeaseInvitation, ClientLease
+    ResendLeaseInvitation, ClientLease, SignAgreementView
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -29,5 +29,6 @@ urlpatterns = [
          name='send-invitation'),
     path('client/', ClientLeasesList.as_view(), name='client'),
     path('client/<uuid:pk>', ClientLease.as_view(), name='detail-client'),
+    path('agreement/<uuid:pk>', SignAgreementView.as_view(), name='agreement'),
     path('', include(router.urls))
 ]

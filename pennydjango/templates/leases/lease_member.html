@@ -14,7 +14,9 @@
         <div>{{ lease_member.email }}</div>
         <div>Total Paid: TODO</div>
         {% if lease_member.user %}
-          <div>Signed Agreement · 06/06/19</div>
+          {% if lease_member.signed_agreement %}
+          <div>Signed Agreement · {{ lease_member.signed_agreement }}</div>
+          {% endif %}
           <div>Rental Application: Completed <a
                   href="#">(Review)</a>
           </div>

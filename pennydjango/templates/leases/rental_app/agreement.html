@@ -1,0 +1,21 @@
+{% load bootstrap4 %}
+<div class="row">
+	<div class="col-12 col-lg-8 offset-lg-2">
+		<h5>Deposit Agreement</h5>
+		<hr/>
+		<p style="text-align: justify;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque massa dolor, pharetra ut mi vehicula, tincidunt feugiat felis. Curabitur cursus nulla leo, et maximus sem laoreet in. Aliquam erat volutpat. Cras purus lacus, viverra ut justo eu, suscipit elementum risus. Pellentesque sed quam lectus. Proin eu ligula diam. Phasellus ac eros ut metus malesuada vehicula. Sed placerat nibh sed ultrices tincidunt. Donec aliquet nunc sed neque aliquam, a porta urna convallis. Cras fringilla bibendum blandit. Curabitur sed nulla a dui varius congue eget sit amet urna. Nam at gravida dolor. Vivamus finibus nisl nunc, at pellentesque est pharetra vitae. Maecenas sem lectus, consectetur vitae dui vitae, bibendum maximus ipsum.</p>
+		<form action="{% url 'leases:agreement' pk=leasemember.id %}" method="post">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-12 col-md-8">
+					{% bootstrap_field agreement_form.legal_name show_label=False %}
+				</div>
+				<div class="col-12 col-md-4">
+					<button class="btn btn-primary" type="submit">
+						Agree
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

@@ -7,7 +7,9 @@ Lease Detail
 {% endblock inner_title %}
 
 {% block inner_content %}
-  hello
+{% if not leasemember.signed_agreement %}
+  {% include "leases/rental_app/agreement.html" %}
+{% endif %}
 {% endblock inner_content %}
 
 {% block after_card %}
