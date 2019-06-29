@@ -20,7 +20,7 @@ from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
 from listings.constants import (
-    PETS_ALLOWED, AMENITIES, LISTING_TYPES, PARKING_OPTIONS
+    PETS_ALLOWED, AMENITIES, LISTING_TYPES
 )
 from listings.utils import filter_listings
 

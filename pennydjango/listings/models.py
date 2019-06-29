@@ -66,7 +66,8 @@ class Listing(BaseModel):
     )
     parking = models.CharField(
         max_length=255, 
-        choices=PARKING_OPTIONS 
+        choices=PARKING_OPTIONS,
+        null=True 
     )    
     listing_agent = models.ForeignKey(
         User,
