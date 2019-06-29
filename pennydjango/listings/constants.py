@@ -128,5 +128,5 @@ PARKING_OPTIONS = [
     ('dedicated_reserved_spot', 'Dedicated reserved spot'),
     ('shared_street_permit_parking', 'Shared street permit parking'),
     ('shared_public_street_parking', 'Shared public street parking'),
-    (' no_parking_available', ' No parking available') ,
+    ('no_parking_available', 'No parking available') ,
 ]
