@@ -292,6 +292,15 @@ hr.divider-hr {
     background-color:#c3c7cc;
 }
 
+.jobs-link {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.jobs-link, .jobs-link:hover {
+    color: rgba(0,0,0,.5);
+}
+
 /*    Settings gear    */
 .settings-gear {
     font-size: 2rem;
@@ -364,4 +373,16 @@ input:checked + .slider:before {
 /*    Mapbox    */
 .mapbox-component {
     height: 100%;
+}
+
+.nearby-transit  {
+    font-size: 12px;
+}
+.nearby-transit div {
+    padding: 10px 5px 10px;
+}
+.new-listing-badge.badge.badge-pill.badge-success {
+    right: 5.9375rem;
+    position: absolute;
+    z-index: 10;
 }
