@@ -76,6 +76,18 @@
               <div class="col-sm-8 text-left">{{ listing.detail.building_access }}</div>
             </div>
             <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Walkability Score</b></div>
+              <div class="col-sm-8 text-left">{{ listing.detail.walkability_score }}%</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Bikability Score</b></div>
+              <div class="col-sm-8 text-left">{{ listing.detail.bikability_score }}%</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Parking</b></div>
+              <div class="col-sm-8 text-left">{{ listing.detail.parking }}</div>
+            </div>
+            <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left"><b>Utilities</b></div>
               <div class="col-sm-8 text-left">{{ listing.utilities }}</div>
             </div>
@@ -124,6 +136,10 @@
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left"><b>Owner Pays</b></div>
               <div class="col-sm-8 text-left">{{ listing.owner_pays }}%</div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Nearby Transit</b></div>
+              <div class="col-sm-8 text-left">{{ listing.nearby_transit }}</div>
             </div>
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left"><b>Agent Notes</b></div>
