@@ -67,6 +67,17 @@ export const listing_idFilter = (listing_id, func) =>
         {listing_id && textInputClearFilter(func, 'listing_id')}
     </div>
 
+export const lease_idFilter = (lease_id, func) =>
+    <div style={{width: '14vw', minWidth: 100, height: '100%'}}>
+        <FormControl name='lease_id' size="sm"
+                     type='text' id='lease_id'
+                     value={lease_id}
+                     placeholder='Lease ID'
+                     style={formControlStyle}
+                     onChange={func} />
+        {lease_id && textInputClearFilter(func, 'lease_id')}
+    </div>
+
 // Range input filters
 const rangeTitle = (title, range, pre='', pos='') =>
 `${title}${
@@ -278,6 +289,21 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
                     </Tab>
                 )}
             </Tabs>
+        </div>
+    </DropdownButton>
+
+export const lease_statusFilter = (lease_status, status_dict, func) =>
+    <DropdownButton title={[multipleSelectionTitle("Status", lease_status),
+                            lease_status.length > 0 && multipleSelectionClearFilter(func, "lease_status")]}
+                    className={lease_status.length > 0 ? 'no-caret' : ''}>
+        <div className='agents-container'>
+            {status_dict.map(status =>
+                <FormCheckbox id={status[0]} key={`${status[0]}-lease-status`}
+                              checked={lease_status.includes(status[0])}
+                              onChange={e => func(e, "lease_status")}>
+                    {status[1]}
+                </FormCheckbox>
+            )}
         </div>
     </DropdownButton>
 

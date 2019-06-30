@@ -28,6 +28,8 @@ class ListingForm(forms.ModelForm):
         })
         self.fields['bathrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
+        self.fields['walkability_score'].widget.attrs.update({'addon_before': '%'})
+        self.fields['bikability_score'].widget.attrs.update({'addon_before': '%'})
 
     class Meta:
         model = Listing
@@ -35,14 +37,15 @@ class ListingForm(forms.ModelForm):
             'listing_type', 'price', 'move_in_cost', 'owner_pays',
             'agent_bonus', 'no_fee_listing', 'description', 'agent_notes',
             'utilities', 'size', 'bathrooms', 'bedrooms', 'date_available',
-            'term', 'pets', 'address', 'geopoint', 'unit_number',
-            'neighborhood', 'listing_agent', 'sales_agent'
+            'term', 'pets', 'address', 'geopoint', 'nearby_transit', 'unit_number',
+            'neighborhood', 'listing_agent', 'sales_agent', 'walkability_score',
+            'bikability_score', 'parking'
         )
         widgets = {
             'address': forms.HiddenInput,
             'geopoint': GooglePointFieldWidgetJQuery,
             'listing_type': Select2Widget,
-            'neighborhood': Select2Widget
+            'neighborhood': Select2Widget,
         }
 
 

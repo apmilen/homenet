@@ -1,38 +1,25 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {FiltersBar, ListingComponent} from '@/listings/components'
+import {ListingComponent} from '@/listings/components'
+import {FiltersBar} from '@/components/filtersbar'
 
 
 class Listings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                address: '',
-                unit: '',
-                sales_agents: [],
-                listing_agents: [],
-                hoods: [],
-                price: [],
-                price_per_bed: [],
-                beds: [],
-                baths: [],
-                listing_type: 'any',
-                listing_id: '',
-                size: [],
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: [],
-                owner_pays: false,
-                exclusive: false,
-                vacant: false,
-                draft_listings: false,
-                date_available: '',
-            },
             listings: [],
             more_listings_link: null,
         }
+    }
+    fetchListings(params) {
+        $.get(this.props.endpoint, params, (resp) =>
+            this.setState({
+                listings: resp.results,
+                more_listings_link: resp.next
+            })
+        )        
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
@@ -43,15 +30,24 @@ class Listings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint} = this.props
-        const {listings, filters, more_listings_link} = this.state
+        const {constants} = this.props
+        const {listings, more_listings_link} = this.state
         const last_listing = listings.length > 0 && listings.slice(-1)[0]
+
+        const filters = [
+            "address", "unit", "sales_agents", "listing_agents", "hoods",
+            "price", "price_per_bed", "beds", "baths", "listing_type",
+            "listing_id", "size", "pets_allowed", "nofeeonly", "amenities",
+            "owner_pays", "exclusive", "vacant", "draft_listings", "date_available"
+        ]
 
         return [
             <div className="row justify-content-center">
                 <div className="m-2 my-md-1 mx-md-5">
-                    <FiltersBar filters={filters} constants={constants} endpoint={endpoint}
-                                updateParentState={new_state => this.setState(new_state)} />
+                    <FiltersBar filters={filters}
+                                constants={constants}
+                                updateParams={::this.fetchListings}
+                            />
                 </div>
             </div>,
             <div className= "row">

@@ -376,7 +376,20 @@ input:checked + .slider:before {
     height: 100%;
 }
 
+
+.nearby-transit  {
+    font-size: 12px;
+}
+.nearby-transit div {
+    padding: 10px 5px 10px;
+}
+.new-listing-badge.badge.badge-pill.badge-success {
+    right: 5.9375rem;
+    position: absolute;
+    z-index: 10;
+}
+
 /*    Users cards    */
-.usercards-container{
+.usercards-container {
     margin: .625rem 3rem;
 }
