@@ -85,7 +85,7 @@ class Users(AdminRequiredMixin, PublicReactView):
     def props(self, request, *args, **kwargs):
         query_filter = {'is_active': True}
 
-        users = User.objects.filter(**query_filter)
+        users = User.objects.filter(**query_filter).order_by('-modified')
 
         return {
             'users': [user.__json__() for user in users],

@@ -36,6 +36,11 @@
         min-width: 320px;
         min-height: 320px;
     }
+
+    /* User cards */
+    .usercards-container{
+        margin: .625rem 0;
+    }
 }
 
 @media (max-width:639px) {

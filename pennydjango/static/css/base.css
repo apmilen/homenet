@@ -375,3 +375,8 @@ input:checked + .slider:before {
 .mapbox-component {
     height: 100%;
 }
+
+/*    Users cards    */
+.usercards-container{
+    margin: .625rem 3rem;
+}
