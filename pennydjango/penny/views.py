@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
@@ -83,10 +84,7 @@ class Users(AdminRequiredMixin, PublicReactView):
     component = 'pages/users.js'
 
     def props(self, request, *args, **kwargs):
-        query_filter = {'is_active': True}
-
-        users = User.objects.filter(**query_filter).order_by('-modified')
-
+        users = User.objects.order_by('-modified')
         return {
             'users': [user.__json__() for user in users],
             'user_types': USER_TYPE,
@@ -102,6 +100,19 @@ class Users(AdminRequiredMixin, PublicReactView):
             email = request.POST.get('email')
             user_type = request.POST.get('user_type')
             response = invite_new_user(name, username, email, user_type)
+
+        if request_type == 'FILTER_USER':
+            searching_text = request.POST.get('searching_text', '')
+            query_filter = (
+                Q(username__icontains=searching_text) |
+                Q(first_name__icontains=searching_text) |
+                Q(last_name__icontains=searching_text) |
+                Q(email__icontains=searching_text)
+            )
+            users = User.objects.filter(query_filter).order_by('-modified')
+            response = {
+                'users': [user.__json__() for user in users]
+            }
 
         return JsonResponse(response)
 

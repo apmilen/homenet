@@ -5,6 +5,8 @@ import {
     Row, Card, FormControl, Button, Alert, InputGroup
 } from 'react-bootstrap'
 
+import {FiltersBar} from '@/components/filtersbar'
+
 
 class UserCard extends React.Component {
     render() {
@@ -51,7 +53,7 @@ class Users extends React.Component {
 
         $.post('', post_data, (resp) => {
             if (resp.success) {
-                const new_users = this.state.users.concat(resp.new_user)
+                const new_users = [resp.new_user].concat(this.state.users)
                 this.setState({
                     name: '',
                     username: '',
@@ -64,11 +66,20 @@ class Users extends React.Component {
             }
         })
     }
+    fetchUsers(params) {
+        const post_data = {...params, type: 'FILTER_USER'}
+        $.post('', post_data, (resp) =>
+            this.setState({users: resp.users})
+        )
+    }
     render() {
         const {user_types} = this.props
         const {users} = this.state
+        const filters = ["searching_text"]
 
-        return (
+        return [
+            <FiltersBar filters={filters}
+                        updateParams={::this.fetchUsers} />,
             <Row className="justify-content-center usercards-container">
                 <Card style={{ width: '18rem', height: 370, margin: 5 }}>
                     <div style={{ margin: 'auto', width: '80%' }}>
@@ -116,7 +127,7 @@ class Users extends React.Component {
                     <UserCard {...user} />
                 )}
             </Row>
-        )
+        ]
     }
 }
 
