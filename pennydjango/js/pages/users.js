@@ -71,7 +71,7 @@ class Users extends React.Component {
         return (
             <Row className="justify-content-center usercards-container">
                 <Card style={{ width: '18rem', height: 370, margin: 5 }}>
-                    <div style={{ margin: 'auto', padding: '60px 0', width: '80%' }}>
+                    <div style={{ margin: 'auto', width: '80%' }}>
                         {this.state.errors &&
                             <Alert variant='danger' style={{textAlign: 'center', width: '100%'}}>
                                 {this.state.errors}
