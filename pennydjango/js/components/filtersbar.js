@@ -17,7 +17,7 @@ export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
         let initial_filters = {}
-        props.filters.concat(props.advancedFilters).map(filter_name =>
+        props.filters.concat(props.advancedFilters || []).map(filter_name =>
             initial_filters[filter_name] = props.filtersState && props.filtersState[filter_name] ?
                 props.filtersState[filter_name] : ALL_FILTERS[filter_name]
         )
