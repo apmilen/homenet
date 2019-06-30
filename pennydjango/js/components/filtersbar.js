@@ -8,7 +8,7 @@ import {
     pets_allowedFilter, amenitiesFilter, nofeeonlyFilter, owner_paysFilter,
     exclusiveFilter, vacantFilter, draft_listingsFilter, date_availableFilter,
     sales_agentsFilter, listing_agentsFilter, hoodsFilter, lease_idFilter,
-    lease_statusFilter
+    lease_statusFilter, only_activeFilter
 } from "./filters"
 import {ALL_FILTERS} from '@/constants'
 
@@ -103,7 +103,7 @@ export class FiltersBar extends React.Component {
     }
 
     componentDidMount() {
-        this.updateParent()
+        window.addEventListener('load', () => this.updateParent())
     }
 
     renderFilters(filters) {
@@ -111,7 +111,7 @@ export class FiltersBar extends React.Component {
             searching_text, address, unit, sales_agents, listing_agents, hoods,
             price, price_per_bed, beds, baths, listing_type, listing_id, size,
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
-            draft_listings, date_available, lease_id, lease_status
+            draft_listings, date_available, lease_id, lease_status, only_active
         } = filters
 
         return [
@@ -180,6 +180,9 @@ export class FiltersBar extends React.Component {
 
             draft_listings != undefined &&
             <div className='filter-container'>{draft_listingsFilter(draft_listings, ::this.filterToggle)}</div>,
+
+            only_active != undefined &&
+            <div className='filter-container'>{only_activeFilter(only_active, ::this.filterToggle)}</div>,
 
             date_available != undefined &&
             <div className='filter-container'>{date_availableFilter(date_available, ::this.changeDate)}</div>,

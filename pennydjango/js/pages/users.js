@@ -37,7 +37,7 @@ class Users extends React.Component {
             username: '',
             email: '',
             user_type: props.user_types[0][0],
-            users: props.users,
+            users: [],
             errors: '',
         }
     }
@@ -75,7 +75,7 @@ class Users extends React.Component {
     render() {
         const {user_types} = this.props
         const {users} = this.state
-        const filters = ["searching_text"]
+        const filters = ["searching_text", "only_active"]
 
         return [
             <FiltersBar filters={filters}

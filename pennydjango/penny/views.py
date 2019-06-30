@@ -84,9 +84,7 @@ class Users(AdminRequiredMixin, PublicReactView):
     component = 'pages/users.js'
 
     def props(self, request, *args, **kwargs):
-        users = User.objects.order_by('-modified')
         return {
-            'users': [user.__json__() for user in users],
             'user_types': USER_TYPE,
         }
 
@@ -102,19 +100,34 @@ class Users(AdminRequiredMixin, PublicReactView):
             response = invite_new_user(name, username, email, user_type)
 
         if request_type == 'FILTER_USER':
-            searching_text = request.POST.get('searching_text', '')
-            query_filter = (
-                Q(username__icontains=searching_text) |
-                Q(first_name__icontains=searching_text) |
-                Q(last_name__icontains=searching_text) |
-                Q(email__icontains=searching_text)
-            )
-            users = User.objects.filter(query_filter).order_by('-modified')
+            users = qs_from_filters(
+                User.objects.all(),
+                request.POST
+            ).order_by('-modified')
             response = {
                 'users': [user.__json__() for user in users]
             }
 
         return JsonResponse(response)
+
+
+def qs_from_filters(queryset, params):
+
+    searching_text = params.get('searching_text')
+    only_active = params.get('only_active')
+
+    if searching_text:
+        queryset = queryset.filter(
+            Q(username__icontains=searching_text) |
+            Q(first_name__icontains=searching_text) |
+            Q(last_name__icontains=searching_text) |
+            Q(email__icontains=searching_text)
+        )
+
+    if only_active == 'true':
+        queryset = queryset.filter(is_active=True)
+
+    return queryset
 
 
 def invite_new_user(name, username, email, user_type):

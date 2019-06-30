@@ -373,6 +373,11 @@ export const vacantFilter = (vacant, func) =>
         Vacant
     </Button>
 
+export const only_activeFilter = (only_active, func) =>
+    <Button outline={!only_active} onClick={func} name="only_active">
+        Only active
+    </Button>
+
 // Date filters
 export const date_availableFilter = (date_available, func) =>
     <DatePicker selected={date_available}
