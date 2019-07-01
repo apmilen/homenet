@@ -85,7 +85,9 @@ class Users(AdminRequiredMixin, PublicReactView):
 
     def props(self, request, *args, **kwargs):
         return {
-            'user_types': USER_TYPE,
+            'constants': {
+                'user_type': dict(USER_TYPE),
+            }
         }
 
     def post(self, request, *args, **kwargs):
@@ -115,6 +117,7 @@ def qs_from_filters(queryset, params):
 
     searching_text = params.get('searching_text')
     only_active = params.get('only_active')
+    user_type = params.get('user_type')
 
     if searching_text:
         queryset = queryset.filter(
@@ -126,6 +129,9 @@ def qs_from_filters(queryset, params):
 
     if only_active == 'true':
         queryset = queryset.filter(is_active=True)
+
+    if user_type and user_type != 'any':
+        queryset = queryset.filter(user_type=user_type)
 
     return queryset
 

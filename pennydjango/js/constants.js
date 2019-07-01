@@ -23,5 +23,6 @@ export const ALL_FILTERS = {
     searching_text: "",
     size: [],
     unit: "",
+    user_type: "any",
     vacant: false,
 }

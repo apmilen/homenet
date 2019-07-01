@@ -36,7 +36,7 @@ class Users extends React.Component {
             name: '',
             username: '',
             email: '',
-            user_type: props.user_types[0][0],
+            user_type: props.constants.user_type['agent'],
             users: [],
             errors: '',
         }
@@ -73,12 +73,13 @@ class Users extends React.Component {
         )
     }
     render() {
-        const {user_types} = this.props
+        const {constants} = this.props
         const {users} = this.state
-        const filters = ["searching_text", "only_active"]
+        const filters = ["searching_text", "only_active", "user_type"]
 
         return [
             <FiltersBar filters={filters}
+                        constants={constants}
                         updateParams={::this.fetchUsers} />,
             <Row className="justify-content-center usercards-container">
                 <Card style={{ width: '18rem', height: 370, margin: 5 }}>
@@ -113,8 +114,8 @@ class Users extends React.Component {
                                      as='select'
                                      value={this.state.user_type}
                                      onChange={::this.changeField} >
-                            {user_types.map(user_type =>
-                                <option value={user_type[0]}>{user_type[1]}</option>
+                            {Object.keys(constants.user_type).map(u_type =>
+                                <option value={u_type}>{constants.user_type[u_type]}</option>
                             )}
                         </FormControl>
                         <Button variant="primary" onClick={::this.postUser}>
