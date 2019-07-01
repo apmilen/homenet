@@ -29,7 +29,9 @@ class UserCard extends React.Component {
                     </Badge>
                 }
                 <div style={{ padding: '20px 0', margin: '0 30px' }}>
-                    <div class="circle-avatar" style={{ backgroundImage: `url(${user.avatar_url})` }}></div>
+                    <a href={user.profile_link} target="_blank">
+                        <div class="circle-avatar" style={{ backgroundImage: `url(${user.avatar_url})` }}></div>
+                    </a>
                 </div>
                 <div style={{ padding: '0 1.9rem' }}>
                 <h3>{user.first_name || 'Unnamed'}</h3>

@@ -16,7 +16,7 @@ class ListingCard extends React.Component {
         const {listing, hoverOn, clickOn} = this.props
         const listing_existance = moment().diff(listing.created, 'days')
         const new_listing = listing_existance < 1 ? 'New Listing' : ''
-            
+
         return (
             <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
                  onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
