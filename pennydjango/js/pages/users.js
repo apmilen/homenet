@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {
-    Row, Card, FormControl, Button, Alert, InputGroup
+    Row, Card, FormControl, Button, Alert, InputGroup, Badge
 } from 'react-bootstrap'
 
 import {FiltersBar} from '@/components/filtersbar'
@@ -11,9 +11,23 @@ import {FiltersBar} from '@/components/filtersbar'
 class UserCard extends React.Component {
     render() {
         const user = this.props
+        const user_variant = {
+            admin: "primary",
+            agent: "secondary",
+            client: "info",
+        }
 
         return (
             <Card style={{ width: '18rem', height: 370, margin: 5 }}>
+                <Badge variant={user_variant[user.user_type]}
+                       className="usercard-badge">
+                    {user.user_type_str}
+                </Badge>
+                {!user.is_active &&
+                    <Badge variant="danger" className="usercard-inactive-badge">
+                        INACTIVE
+                    </Badge>
+                }
                 <div style={{ padding: '20px 0', margin: '0 30px' }}>
                     <div class="circle-avatar" style={{ backgroundImage: `url(${user.avatar_url})` }}></div>
                 </div>
@@ -21,7 +35,6 @@ class UserCard extends React.Component {
                 <h3>{user.first_name || 'Unnamed'}</h3>
                 <Card.Title>@{user.username}</Card.Title>
                 <Card.Subtitle className="text-muted">{user.email || 'no email'}</Card.Subtitle>
-                <Card.Subtitle className="">{user.user_type_str}</Card.Subtitle>
                 </div>
             </Card>
         )

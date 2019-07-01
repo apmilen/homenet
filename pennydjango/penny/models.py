@@ -82,36 +82,13 @@ class User(AbstractUser, BaseModel):
                 'last_name',
                 'date_joined',
                 'avatar_url',
-                'is_active',
-                'is_staff',
-                'is_superuser',
-                'is_authenticated',
-                'user_type_str',
-                'last_login',
-            ),
-            'str': str(self),
-            **(self.attrs(*attrs) if attrs else {}),
-        }
-
-    @cached_property
-    def profile_link(self):
-        return reverse('userprofile', args=[self.username])
-
-    def __json__(self, *attrs):
-        return {
-            **self.attrs(
-                'id',
-                'email',
-                'username',
-                'first_name',
-                'last_name',
-                'date_joined',
-                'avatar_url',
                 'profile_link',
                 'is_active',
                 'is_staff',
                 'is_superuser',
                 'is_authenticated',
+                'user_type',
+                'user_type_str',
             ),
             'str': str(self),
             **(self.attrs(*attrs) if attrs else {}),
@@ -128,6 +105,10 @@ class User(AbstractUser, BaseModel):
             usertype = name[8:]
             return usertype == str(self.user_type)
         raise AttributeError(f"{self} object has not attribute '{name}'")
+
+    @cached_property
+    def profile_link(self):
+        return reverse('userprofile', args=[self.username])
 
     @cached_property
     def avatar_url(self):

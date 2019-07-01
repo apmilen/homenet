@@ -393,3 +393,14 @@ input:checked + .slider:before {
 .usercards-container {
     margin: .625rem 3rem;
 }
+.usercard-badge {
+    margin: 0.8rem;
+    position: absolute;
+    right: 0;
+    font-size: 1rem;
+}
+.usercard-inactive-badge {
+    margin: 0.8rem;
+    position: absolute;
+    font-size: 1rem;
+}
