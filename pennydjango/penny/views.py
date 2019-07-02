@@ -110,7 +110,38 @@ class Users(AdminRequiredMixin, PublicReactView):
                 'users': [user.__json__() for user in users]
             }
 
+        if request_type == 'UPDATE_USER':
+            fields = request.POST.dict().copy()
+            fields['is_active'] = (
+                True if fields['is_active'] == 'true' else False)
+            fields.pop('type', None)
+            user_id = fields.pop('id', None)
+            response = update_user(user_id, fields)
+
         return JsonResponse(response)
+
+
+def update_user(user_id, fields):
+    username = fields.get('username').strip()
+
+    if not username:
+        return {
+            'success': False,
+            'details': "Username cannot be empty",
+        }
+
+    users = User.objects.filter(id=user_id)
+    if not users or users.count() > 1:
+        return {
+            'success': False,
+            'details': "User not found",
+        }
+
+    users.update(**fields)
+    return {
+        'success': True,
+        'user': users[0].__json__(),
+    }
 
 
 def qs_from_filters(queryset, params):

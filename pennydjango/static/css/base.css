@@ -398,9 +398,16 @@ input:checked + .slider:before {
     position: absolute;
     right: 0;
     font-size: 1rem;
+    user-select: none;
 }
 .usercard-inactive-badge {
     margin: 0.8rem;
     position: absolute;
     font-size: 1rem;
+    user-select: none;
+}
+.usercard-modal {
+    position: absolute;
+    bottom: 0px;
+    right: 5px;
 }

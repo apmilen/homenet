@@ -2,15 +2,109 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import {
-    Row, Card, FormControl, Button, Alert, InputGroup, Badge
+    Row, Card, FormControl, Alert, InputGroup, Badge
 } from 'react-bootstrap'
+import {
+    Modal, ModalBody, ModalHeader, ModalFooter, Button, FormCheckbox
+} from 'shards-react'
 
 import {FiltersBar} from '@/components/filtersbar'
+import {SettingsGear} from '@/components/misc'
 
+
+class UserModal extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            open: false,
+            ...props.user
+        }
+    }
+    toggle() {
+        this.setState({open: !this.state.open, ...this.props.user})
+    }
+    changeField(e) {
+        this.setState({[e.target.id]: e.target.value})
+    }
+    toggleField(e) {
+        this.setState({[e.target.id]: !this.state[e.target.id]})
+    }
+    updateUser() {
+        const {
+            id, first_name, last_name, username, email, is_active, user_type
+        } = this.state
+        this.props.updateUser({
+            id, first_name, last_name, username, email, is_active, user_type
+        })
+        this.toggle()
+    }
+    render() {
+        const {
+            open, first_name, last_name, username, email, is_active, user_type
+        } = this.state
+        const {constants} = global.props
+
+        return (
+            <div className="usercard-modal">
+                <SettingsGear onClick={::this.toggle}/>
+                <Modal open={open} toggle={::this.toggle}>
+                    <ModalHeader>Modify user</ModalHeader>
+                    <ModalBody>
+                        <h6>⚠️ Warning: update this info at your own risk</h6>
+                        <div>
+                            <FormControl id='first_name' className="my-2" type='text'
+                                         value={first_name} placeholder='First name'
+                                         autoComplete="off"
+                                         onChange={::this.changeField} />
+                            <FormControl id='last_name' className="my-2" type='text'
+                                         value={last_name} placeholder='Last name'
+                                         autoComplete="off"
+                                         onChange={::this.changeField} />
+                            <InputGroup className="my-2">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>@</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <FormControl id='username'
+                                             type='text'
+                                             value={username}
+                                             placeholder='username'
+                                             autoComplete="off"
+                                             onChange={::this.changeField} />
+                            </InputGroup>
+                            <FormControl id='email' className="my-2"
+                                         type='email'
+                                         value={email}
+                                         placeholder='User email'
+                                         autoComplete="off"
+                                         onChange={::this.changeField} />
+                            <FormControl id='user_type' className="my-2"
+                                         as='select'
+                                         value={user_type}
+                                         onChange={::this.changeField} >
+                                {Object.keys(constants.user_type).map(u_type =>
+                                    <option value={u_type}>{constants.user_type[u_type]}</option>
+                                )}
+                            </FormControl>
+                            <FormCheckbox id='is_active'
+                                          checked={is_active}
+                                          onChange={::this.toggleField}>
+                                is active
+                            </FormCheckbox>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button outline theme="secondary" onClick={::this.toggle}>Cancel</Button>
+                        <Button theme="warning" onClick={::this.updateUser}>Update</Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
+        )
+    }
+}
 
 class UserCard extends React.Component {
     render() {
-        const user = this.props
+        const {user, updateUser} = this.props
         const user_variant = {
             admin: "primary",
             agent: "secondary",
@@ -19,6 +113,7 @@ class UserCard extends React.Component {
 
         return (
             <Card style={{ width: '18rem', height: 370, margin: 5 }}>
+                <UserModal user={user} updateUser={updateUser}/>
                 <Badge variant={user_variant[user.user_type]}
                        className="usercard-badge">
                     {user.user_type_str}
@@ -34,9 +129,9 @@ class UserCard extends React.Component {
                     </a>
                 </div>
                 <div style={{ padding: '0 1.9rem' }}>
-                <h3>{user.first_name || 'Unnamed'}</h3>
-                <Card.Title>@{user.username}</Card.Title>
-                <Card.Subtitle className="text-muted">{user.email || 'no email'}</Card.Subtitle>
+                    <h3>{user.first_name || 'Unnamed'}</h3>
+                    <Card.Title>@{user.username}</Card.Title>
+                    <Card.Subtitle className="text-muted">{user.email || 'no email'}</Card.Subtitle>
                 </div>
             </Card>
         )
@@ -87,6 +182,13 @@ class Users extends React.Component {
             this.setState({users: resp.users})
         )
     }
+    updateUser(params) {
+        const post_data = {...params, type: 'UPDATE_USER'}
+        $.post('', post_data, (resp) => {
+            const users_without_user = this.state.users.filter(user => user.id != resp.user.id)
+            this.setState({users: [resp.user].concat(users_without_user)})
+        })
+    }
     render() {
         const {constants} = this.props
         const {users} = this.state
@@ -133,14 +235,14 @@ class Users extends React.Component {
                                 <option value={u_type}>{constants.user_type[u_type]}</option>
                             )}
                         </FormControl>
-                        <Button variant="primary" onClick={::this.postUser}>
+                        <Button onClick={::this.postUser}>
                             Send invitation
                         </Button>
 
                     </div>
                 </Card>
                 {users.map(user =>
-                    <UserCard {...user} />
+                    <UserCard user={user} updateUser={::this.updateUser} />
                 )}
             </Row>
         ]

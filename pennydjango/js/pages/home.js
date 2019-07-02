@@ -6,9 +6,10 @@ import {Dropdown} from "react-bootstrap";
 import moment from "moment";
 
 import {tooltip} from '@/util/dom'
-import {FiltersBar} from '@/components/filtersbar'
 
+import {FiltersBar} from '@/components/filtersbar'
 import {MapComponent, coordinates} from '@/components/maps'
+import {Switch, SettingsGear} from '@/components/misc'
 
 
 class ListingCard extends React.Component {
@@ -146,21 +147,6 @@ class ListingDetail extends React.Component {
         )
     }
 }
-
-
-const Switch = ({label, checked, onClick}) =>
-    <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
-        <label class="switch" style={{margin: 'auto'}}>
-            <input type="checkbox" checked={checked} />
-            <span class="slider round" onClick={e => onClick(e)}></span>
-        </label>
-        <div style={{margin: 'auto', paddingLeft: 8}} onClick={e => onClick(e)}>{label}</div>
-    </div>
-
-const SettingsGear = ({onClick}) =>
-    <div className="settings-gear" onClick={(e) => onClick(e)}>
-        <i className="material-icons">settings</i>
-    </div>
 
 
 class PublicListings extends React.Component {
