@@ -3,51 +3,58 @@ import ReactDOM from 'react-dom'
 
 import {Row, Col, Button} from "shards-react";
 import {Dropdown} from "react-bootstrap";
+import moment from "moment";
 
 import {tooltip} from '@/util/dom'
-import {FiltersBar} from '@/listings/components'
+import {FiltersBar} from '@/components/filtersbar'
 
 import {MapComponent, coordinates} from '@/components/maps'
 
 
-const ListingGrid = ({listing, hoverOn, clickOn}) => (
-    <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
-         onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
-        <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
-        <div class="card-post__image text-center">
-            <img class="box-wd" src={listing.default_image} />
-            {listing.no_fee_listing &&
-                <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
-            }
-            <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+const ListingGrid = ({listing, hoverOn, clickOn}) => {
+    const listing_existance = moment().diff(listing.created, 'days')
+    const new_listing = listing_existance < 1 ? 'New Listing' : ''
+
+    return (
+        <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+             onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
+            <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
+            <div class="card-post__image text-center">
+                <img class="box-wd" src={listing.default_image} />
+                {listing.no_fee_listing &&
+                    <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+                }
+                <span class="card-post__category new-listing-badge badge badge-pill badge-success">{new_listing}</span>
+                <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+            </div>
+            <div class="card-body p-0 text-center">
+                <table class="table mb-0 listing-info">
+                    <tbody>
+                        <tr>
+                            <td class="wrap-info"
+                                {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
+                                {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Bath
+                            </td>
+                            <td class="wrap-info" colspan="2"
+                                {...tooltip(listing.address)}>
+                                {listing.neighborhood}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="wrap-info">{listing.pets}</td>
+                            <td class="wrap-info">
+                                <i className="material-icons">share</i> Share
+                            </td>
+                            <td class="wrap-info">
+                                <i className="material-icons">place</i>Map
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="card-body p-0 text-center">
-            <table class="table mb-0 listing-info">
-                <tbody>
-                    <tr>
-                        <td class="wrap-info"
-                            {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
-                            {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Baths
-                        </td>
-                        <td class="wrap-info" colspan="2"
-                            {...tooltip(listing.address)}>
-                            {listing.neighborhood}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="wrap-info">{listing.pets}</td>
-                        <td class="wrap-info">
-                            <i className="material-icons">share</i> Share
-                        </td>
-                        <td class="wrap-info">
-                            <i className="material-icons">place</i>Map
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-)
+    )
+}
 
 
 const ListingList = ({listing, hoverOn, clickOn}) => (
@@ -181,24 +188,7 @@ class PublicListings extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filters: {
-                searching_text: '',
-                price: [],
-                beds: [],
-                baths: [],
-                pets_allowed: 'any',
-                nofeeonly: false,
-                amenities: [],
-                hoods: [],
-                vacant: false,
-                price_per_bed: [],
-                size: [],
-                address: '',
-                listing_type: 'any',
-                owner_pays: false,
-                exclusive: false,
-                date_available: '',
-            },
+            filters: {},
             listings: [],
             total_listings: 0,
             more_listings_link: null,
@@ -237,6 +227,15 @@ class PublicListings extends React.Component {
     toggleOption(option) {
         this.setState({[option]: !this.state[option]})
     }
+    fetchListings(params) {
+        $.get(this.props.endpoint, params, (resp) =>
+            this.setState({
+                listings: resp.results,
+                total_listings: resp.count,
+                more_listings_link: resp.next
+            })
+        )
+    }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) =>
             this.setState({
@@ -247,11 +246,15 @@ class PublicListings extends React.Component {
         )
     }
     render() {
-        const {constants, endpoint} = this.props
+        const {constants} = this.props
         const {
             listings, total_listings, more_listings_link, listing_detail,
             filters, map_center, map_zoom, listing_marked, show_map, as_grid
         } = this.state
+
+        const basic_filters = [
+            "searching_text", "price", "beds", "baths", "nofeeonly", "amenities"
+        ]
         const advanced_filters = [
             "hoods", "vacant", "pets_allowed", "price_per_bed", "listing_type",
             "address", "size", "owner_pays", "exclusive", "date_available"
@@ -267,11 +270,13 @@ class PublicListings extends React.Component {
                         Back to results
                     </a>
                 :
-                    <FiltersBar filters={filters}
+                    <FiltersBar filters={basic_filters}
                                 advancedFilters={advanced_filters}
+                                filtersState={filters}
                                 constants={constants}
-                                endpoint={endpoint}
-                                updateParentState={new_state => this.setState(new_state)} />
+                                updateFilters={filters => this.setState({filters})}
+                                updateParams={::this.fetchListings}
+                            />
                 }
                 <Dropdown className="settings-dropdown">
                     <Dropdown.Toggle as={SettingsGear} />

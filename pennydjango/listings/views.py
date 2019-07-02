@@ -22,7 +22,7 @@ from listings.serializer import (
 from listings.constants import (
     PETS_ALLOWED, AMENITIES, LISTING_TYPES
 )
-from listings.utils import filter_listings
+from listings.utils import qs_from_filters
 
 
 class MainListingCreate(AgentRequiredMixin, CreateView):
@@ -141,7 +141,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'agents': [
                 (agent.username, agent.get_full_name(), agent.avatar_url)
                 for agent in User.objects.filter(user_type=AGENT_TYPE)
-            ],
+            ]
         }
 
         return {
@@ -159,7 +159,7 @@ class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PublicListingSerializer
 
     def get_queryset(self):
-        queryset = filter_listings(self.queryset, self.request.query_params)
+        queryset = qs_from_filters(self.queryset, self.request.query_params)
 
         # remember to use always the page param
         # http://localhost:8000/listings/public/?page=1&price_min=3000
@@ -172,5 +172,5 @@ class PrivateListingViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = PrivateListingSerializer
 
     def get_queryset(self):
-        queryset = filter_listings(self.queryset, self.request.query_params)
+        queryset = qs_from_filters(self.queryset, self.request.query_params)
         return queryset.order_by('-modified')

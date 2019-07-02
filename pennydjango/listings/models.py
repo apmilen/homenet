@@ -4,13 +4,14 @@ from django.conf import settings
 from django.urls import reverse
 from django.db import models
 from django.utils.functional import cached_property
+from django.core.validators import MaxValueValidator
 
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, DEFAUL_RENT_IMAGE
 from penny.model_utils import BaseModel
 from penny.models import User
 from penny.utils import image_path, validate_file_size
 from listings.constants import (
-    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT
+    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT, PARKING_OPTIONS
 )
 
 
@@ -49,11 +50,25 @@ class Listing(BaseModel):
     pets = models.CharField(max_length=100, choices=PETS_ALLOWED)
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=100)
+    nearby_transit = models.TextField(max_length=500, blank=True)
     unit_number = models.CharField(
         max_length=50,
         verbose_name='Unit Number (Only one)'
     )
     neighborhood = models.CharField(max_length=100, choices=NEIGHBORHOODS)
+    walkability_score = models.PositiveSmallIntegerField(
+        validators=[MaxValueValidator(100)],
+        null=True
+    )
+    bikability_score = models.PositiveSmallIntegerField(
+        validators=[MaxValueValidator(100)],
+        null=True
+    )
+    parking = models.CharField(
+        max_length=255, 
+        choices=PARKING_OPTIONS,
+        null=True 
+    )    
     listing_agent = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -181,7 +196,11 @@ class Listing(BaseModel):
                 'term',
                 'created',
                 'modified',
-                'status'
+                'status',
+                'nearby_transit',
+                'walkability_score',
+                'bikability_score'
+                'parking'
             ),
             'str': str(self),
             'detail': self.detail.__json__(),
