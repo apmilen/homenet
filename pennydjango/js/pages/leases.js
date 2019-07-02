@@ -39,17 +39,13 @@ export class LeasesList extends React.PureComponent {
             "price", "beds", "lease_id", "lease_status"
         ]
 
-        return [
-            <div className="row justify-content-center">
-                <div className="m-2 my-md-1 mx-md-5">
+        return (
+            <div className= "row">
+                <div className= "col-12 col-md-10 offset-md-1">
                     <FiltersBar filters={filters}
                                 constants={constants}
                                 updateParams={::this.fetchLeases}
                             />
-                </div>
-            </div>,
-            <div className= "row">
-                <div className= "col-12 col-md-10 offset-md-1">
                     <div className= "card card-small mb-4">
                         <div className= "col">
                             {leases.map(lease => [
@@ -80,7 +76,7 @@ export class LeasesList extends React.PureComponent {
                     </div>
                 </div>
             </div>
-        ]
+        )
     }
 }
 
