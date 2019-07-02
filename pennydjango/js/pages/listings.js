@@ -41,17 +41,13 @@ class Listings extends React.Component {
             "owner_pays", "exclusive", "vacant", "draft_listings", "date_available"
         ]
 
-        return [
-            <div className="row justify-content-center">
-                <div className="m-2 my-md-1 mx-md-5">
+        return (
+            <div className= "row">
+                <div className= "col-12 col-md-10 offset-md-1">
                     <FiltersBar filters={filters}
                                 constants={constants}
                                 updateParams={::this.fetchListings}
                             />
-                </div>
-            </div>,
-            <div className= "row">
-                <div className= "col-12 col-md-10 offset-md-1">
                     <div className= "card card-small mb-4">
                         <div className= "col">
                             {listings.map(listing => [
@@ -82,7 +78,7 @@ class Listings extends React.Component {
                     </div>
                 </div>
             </div>
-        ]
+        )
     }
 }
 
