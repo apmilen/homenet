@@ -265,7 +265,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'leases',
     'job_applications',
-    'datatables_listview'
+    'datatables_listview',
+    'payments'
 ]
 
 MIDDLEWARE = [
@@ -385,3 +386,9 @@ check_django_invariants()
 chown_django_folders()
 STATUS_LINE = log_django_status_line()
 
+# Stripe Key Settings
+STRIPE_SECRET_KEY = 'sk_test_JMvIu8Y2VUpRtgkc1F2PJyEp00KdF6u0pE'
+STRIPE_PUBLISHABLE_KEY = 'pk_test_pwFJg5nhA95y3myECsDvuhxW003FKbgc7E'
+
+# Current Subscription Price
+SUBSCRIPTION_PRICE = 1500

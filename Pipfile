@@ -32,6 +32,7 @@ ipython = "*"
 django-select2 = "*"
 djangorestframework = "*"
 flake8 = "*"
+stripe = "*"
 
 [requires]
 python_version = "3.7"
