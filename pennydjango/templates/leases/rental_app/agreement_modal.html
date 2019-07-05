@@ -1,0 +1,28 @@
+{% load bootstrap4 %}
+<div class="modal fade" id="agreement-modal-{{ lease_member.short_id }}"
+     tabindex="-1" role="dialog" aria-labelledby="agreementlabel-{{ lease_member.short_id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="agreementlabel-{{ lease_member.short_id }}">Deposit Agreement</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+          <div class="modal-body">
+            {% include 'leases/rental_app/_agreement.html' %}
+            <hr/>
+            Signed: {% if lease_member.legal_name %}{{ lease_member.legal_name }}
+          </div>
+          <div class="modal-footer">
+            IP: {{ lease_member.ip_address }}<br>
+            User Agent: {{ lease_member.user_agent }}
+          </div>
+          {% else %}
+            <i>Not Signed Yet</i>
+          </div>
+          {% endif %}
+    </div>
+  </div>
+</div>
+		<h5></h5>

@@ -7,7 +7,9 @@ Lease Detail
 {% endblock inner_title %}
 
 {% block inner_content %}
-  {% include 'leases/lease_card.html' %}
+{% if not leasemember.signed_agreement %}
+  {% include "leases/rental_app/agreement_form.html" %}
+{% endif %}
 {% endblock inner_content %}
 
 {% block after_card %}
@@ -70,16 +72,10 @@ Lease Detail
                   </table>
                   <hr/>
                   <div class="row">
-                    <div class="col-6">
-                      {% bootstrap_field move_in_costs_form.charge %}
-                    </div>
-                    <div class="col-6">
-                      {% bootstrap_field move_in_costs_form.value %}
-                    </div>
                     <div class="col-12">
                       <button type="button" id="add-costs"
                               class="float-right btn-outline-info btn">
-                        Create
+                        Pay
                       </button>
                     </div>
                   </div>
@@ -92,32 +88,3 @@ Lease Detail
     </div>
   </div>
 {% endblock after_card %}
-
-{% block tail %}
-  {{ block.super }}
-  <script type="text/javascript">
-      $(document).ready(() => {
-          $("#add-costs").click((e) => {
-              $(this).attr('disable', 'disable')
-              let charge = $('#id_charge').val()
-              let value = $('#id_value').val()
-              $.post("{% url 'leases:create-moveincost' pk=lease.id %}",
-                  {
-                      value: value,
-                      charge: charge,
-                      csfr_token: "{{ csfr_token }}"
-                  },
-                  (response) => {
-                      if (response.status == 200) {
-                          $("#move-body-table").prepend(response.value)
-                          $("#total-cost-due").html(response.total)
-                      } else if(response.status == 500) {
-                          console.log(response.errors)
-                      }
-
-                      $(this).removeAttr('disable')
-                  })
-          })
-      })
-  </script>
-{% endblock tail %}

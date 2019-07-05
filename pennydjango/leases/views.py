@@ -3,16 +3,22 @@ from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, DatabaseError
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.utils import timezone
+from django.views.generic import (
+    CreateView, UpdateView, DetailView, TemplateView, RedirectView
+)
 
 from rest_framework import viewsets
 
 from datatables_listview.core.views import DatatablesListView
 
-from leases.form import LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm
+from leases.emails import send_invitation_email
+from leases.form import (
+    LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm
+)
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters
@@ -22,6 +28,8 @@ from listings.mixins import ListingContextMixin
 from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
+from penny.constants import CLIENT_TYPE
+from penny.forms import CustomUserCreationForm
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
@@ -29,47 +37,44 @@ from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
 from penny.model_utils import get_all_or_by_user
 from penny.models import User
-from penny.utils import ExtendedEncoder
+from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
 
 
+# Rest Framework
+class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Lease.objects.all()
+    serializer_class = LeaseSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = get_all_or_by_user(
+            Lease,
+            user,
+            'created_by',
+            self.queryset
+        )
+        queryset = qs_from_filters(queryset, self.request.query_params)
+        return queryset.order_by('-modified')
+
+
 # React
-class LeaseDetail(ClientOrAgentRequiredMixin, PublicReactView, DetailView):
+class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
     model = Lease
-    title = 'Lease Detail'
-    component = 'pages/lease.js'
-    pk_url_kwarg = 'pk'
     template_name = 'leases/lease_agent.html'
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        props = self.get_props(request, *args, **kwargs)
-        if request.GET.get('props_json'):
-            return JsonResponse(props, encoder=ExtendedEncoder)
-
-        context = self.get_context(request, *args, **kwargs)
-        context['props'] = props
-        context.update(**self.get_context_data())
-        return self.render_to_response(context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lease_members = self.object.leasemember_set.select_related('user')
         move_in_costs = self.object.moveincost_set.order_by('-created')
+        context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
         return context
-
-    def props(self, request, *args, **kwargs):
-        obj = self.get_object()
-
-        return {
-            'lease': LeaseSerializer(obj).data,
-        }
 
 
 class LeasesList(AgentRequiredMixin, PublicReactView):
@@ -143,9 +148,19 @@ class LeaseMemberCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
         return reverse('leases:detail', args=[self.main_object.id])
 
     def form_valid(self, form):
-        member = form.save(commit=False)
-        member.offer = self.get_main_object()
-        member.save()
+        try:
+            with transaction.atomic():
+                member = form.save(commit=False)
+                member.offer = self.get_main_object()
+                member.save()
+                send_invitation_email(member)
+        except DatabaseError:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "An error has occurred"
+            )
+
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -234,41 +249,102 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
-    model = Listing
-    template_name = 'penny/user_settings/_datatables_base.html'
-    fields = ('address', 'term', 'price')
-    column_names_and_defs = ('Address', 'Term', 'Rent')
-    table_name = 'Lease History'
-    options_list = [
-        {
-            'option_label': 'Enter',
-            'option_url': 'penny:user_settings',
-            'url_params': [],
-            'icon': 'user'
-        }
-    ]
+# class ClientLeasesList(LoginRequiredMixin, DatatablesListView, TemplateView):
+#     model = Listing
+#     template_name = 'penny/user_settings/_datatables_base.html'
+#     fields = ('address', 'term', 'price')
+#     column_names_and_defs = ('Address', 'Term', 'Rent')
+#     table_name = 'Lease History'
+#     options_list = [
+#         {
+#             'option_label': 'Enter',
+#             'option_url': 'penny:user_settings',
+#             'url_params': [],
+#             'icon': 'user'
+#         }
+#     ]
+#
+#     def get_queryset(self):
+#         user = self.request.user
+#         lookup = ["offer__listing__id", "offer__move_in_date"]
+#         lease_members = LeaseMember.objects.only(*lookup).filter(user=user)
+#         id_list = lease_members.values_list("offer__listing__id", flat=True)
+#         return self.model.objects.filter(id__in=id_list)
 
-    def get_queryset(self):
+
+class ClientLeasesList(LoginRequiredMixin, TemplateView):
+    template_name = 'penny/_aux_lease_dt.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         user = self.request.user
-        lookup = ["offer__listing__id", "offer__move_in_date"]
+        lookup = ["offer__listing__address",
+                  "offer__listing__term",
+                  "offer__listing__price",
+                  "offer__move_in_date"]
         lease_members = LeaseMember.objects.only(*lookup).filter(user=user)
-        id_list = lease_members.values_list("offer__listing__id", flat=True)
-        return self.model.objects.filter(id__in=id_list)
+        context.update({"rows": lease_members})
+        context['normal'] = True
+        return context
 
 
-# Rest Framework
-class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = Lease.objects.all()
-    serializer_class = LeaseSerializer
+class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
 
-    def get_queryset(self):
-        user = self.request.user
-        queryset = get_all_or_by_user(
-            Lease,
-            user,
-            'created_by',
-            self.queryset
+    def get_redirect_url(self, *args, **kwargs):
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Invitations sent"
         )
-        queryset = qs_from_filters(queryset, self.request.query_params)
-        return queryset.order_by('-modified')
+        pk = kwargs.get('lease_id')
+        return reverse("leases:detail", args=[pk])
+
+    def get(self, request, *args, **kwargs):
+        lease_member = get_object_or_404(LeaseMember, id=kwargs.get('pk'))
+        send_invitation_email(lease_member)
+        kwargs.update({"lease_id": lease_member.offer_id})
+        return super().get(request, *args, **kwargs)
+
+
+class ClientLease(ClientOrAgentRequiredMixin, DetailView):
+    model = LeaseMember
+    template_name = 'leases/client_lease.html'
+
+    def get_queryset(self, queryset=None):
+        return self.model.objects.select_related('offer', 'offer__listing')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lease = self.object.offer
+        lease_members = lease.leasemember_set.select_related('user')
+        move_in_costs = lease.moveincost_set.order_by('-created')
+        context['lease'] = lease
+        context['listing'] = lease.listing
+        context['lease_members'] = lease_members
+        context['move_in_costs'] = move_in_costs
+        context['total'] = MoveInCost.objects.total_by_offer(lease.id)
+        context['invite_member_form'] = BasicLeaseMemberForm()
+        context['agreement_form'] = SignAgreementForm()
+        return context
+
+
+class SignAgreementView(ClientOrAgentRequiredMixin, UpdateView):
+    http_method_names = ('post', )
+    model = LeaseMember
+    form_class = SignAgreementForm
+
+    def get_success_url(self):
+        return reverse('leases:detail-client', args=[self.object.id])
+
+    def form_valid(self, form):
+        member = form.save(commit=False)
+        ip_address = get_client_ip(self.request)
+        user_agent = self.request.META.get('HTTP_USER_AGENT', '')
+        member.signed_agreement = timezone.now()
+        member.ip_address = ip_address
+        member.user_agent = user_agent
+        member.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        return HttpResponseRedirect(self.get_success_url())

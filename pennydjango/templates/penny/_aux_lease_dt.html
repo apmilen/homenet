@@ -1,0 +1,30 @@
+{% extends 'penny/user_settings/_datatables_base.html' %}
+
+{% block user_settings_content %}
+  <table class="table" id="datatable-view">
+    <thead>
+    <tr>
+      <th>Address</th>
+      <th>Start Date</th>
+      <th>Term</th>
+      <th>Rent</th>
+      <th>Options</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td>{{ row.offer.listing.address }}</td>
+        <td>{{ row.offer.move_in_date }}</td>
+        <td>{{ row.offer.listing.term }}</td>
+        <td>{{ row.offer.listing.price }}</td>
+        <td>
+          <a class="btn btn-outline-info" href="{% url 'leases:detail-client' pk=row.id %}">
+            Enter Lease
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock user_settings_content %}

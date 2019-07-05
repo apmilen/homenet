@@ -12,3 +12,9 @@
   </div>
 </div>
 {% endblock inner_content %}
+
+{% if normal %}
+  {% block tail %}
+    {% include 'datatables_listview/normal_js.html' %}
+  {% endblock %}
+{% endif %}
