@@ -160,7 +160,6 @@ class LeaseMemberCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
                 messages.ERROR,
                 "An error has occurred"
             )
-            return self.form_invalid(form)
 
         return HttpResponseRedirect(self.get_success_url())
 
