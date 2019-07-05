@@ -7,7 +7,7 @@
                src="{{ lease_member.avatar }}"
                alt="Missing"></td>
       <td>
-        <div class="mb-2"><strong>{{ lease_member.get_full_name }}</strong> · Tenant</div>
+        <div class="mb-2"><strong>{{ lease_member.get_full_name }}</strong> · {{ lease_member.get_applicant_type_display }}</div>
         {% if lease_member.legal_name %}
           <div>Legal Name: {{ lease_member.legal_name }}</div>
         {% endif %}
@@ -36,9 +36,12 @@
           <a class="dropdown-item" href="{% url 'leases:send-invitation' pk=lease_member.id %}">
             Resend
           </a>
-          <button class="dropdown-item">
-            Cancel
-          </button>
+          <div class="dropdown-item">
+            <form id="delete-member-form" action="{% url 'leases:delete-member' pk=lease_member.id %}" method="post">
+              {% csrf_token %}
+              <span style="cursor: pointer;" onclick="(document.getElementById('delete-member-form').submit())();">Cancel</span>
+            </form>
+          </div>
         </div>
       </td>
     {% elif request.user.perms.has_agent_access %}

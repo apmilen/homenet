@@ -8,8 +8,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.generic import (
-    CreateView, UpdateView, DetailView, TemplateView, RedirectView
-)
+    CreateView, UpdateView, DetailView, TemplateView, RedirectView,
+    DeleteView)
 
 from rest_framework import viewsets
 
@@ -161,6 +161,14 @@ class LeaseMemberCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
                 "An error has occurred"
             )
 
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "An error has occurred while creating the user"
+        )
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -347,4 +355,25 @@ class SignAgreementView(ClientOrAgentRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
+    http_method_names = ['post']
+    model = LeaseMember
+
+    def get_success_url(self):
+        return reverse('leases:detail', args=[self.object.offer.id])
+
+    def delete(self, request, *args, **kwargs):
+        self.object = super().get_object()
+        if self.object.user:
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                "Cannot delete a lease member with a created account"
+            )
+            return HttpResponseRedirect(self.get_success_url())
+
+        self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
