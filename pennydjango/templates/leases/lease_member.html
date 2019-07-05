@@ -43,6 +43,7 @@
       </td>
     {% elif request.user.perms.has_agent_access %}
       <td class="dropdown">
+        {% include 'leases/rental_app/agreement_modal.html' %}
         <button class="btn btn-outline-info float-right mr-0 dropdown-toggle"
                 type="button" id="dropdownButtonClient" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="true">Actions
@@ -53,7 +54,7 @@
           <button data-toggle="modal" data-target="#leadModal-90234"
                   class="dropdown-item">Transfer
           </button>
-          <button data-toggle="modal" data-target="#leaseClientModal-90234"
+          <button
                   class="dropdown-item">Update
           </button>
           <div class="record-deposit" id="recordDeposit90234"
@@ -62,12 +63,11 @@
               <div><a class="dropdown-item">Record Deposit</a></div>
             </div>
           </div>
-          <div class="agreement-modal-preview" id="agreementPreview90234"
-               data="{&quot;id&quot;:90234,&quot;client&quot;:{&quot;full_legal_name&quot;:&quot;Diamond Young&quot;,&quot;deposit_agreement_agreed_at&quot;:&quot;2019-06-06T19:22:00.400-04:00&quot;,&quot;ip_address&quot;:&quot;38.109.150.4&quot;,&quot;user_agent&quot;:&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36&quot;}}">
-            <div>
-              <div><a class="dropdown-item">Deposit Agreement</a></div>
-            </div>
-          </div>
+          <button class="dropdown-item"
+                  data-toggle="modal"
+                  data-target="#agreement-modal-{{ lease_member.short_id }}" >
+            Deposit Agreement
+          </button>
         </div>
       </td>
     {% endif %}
