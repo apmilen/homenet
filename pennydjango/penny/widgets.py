@@ -1,37 +1,62 @@
+from django.conf import settings
 from django import forms
-from mapwidgets.settings import mw_settings
 
-from mapwidgets.widgets import GooglePointFieldWidget, minify_if_not_debug
+from mapbox_location_field.widgets import MapInput
 
 
-class GooglePointFieldWidgetJQuery(GooglePointFieldWidget):
+def parse_point(point):
+    if isinstance(point, str):
+        if point.startswith("POINT ("):
+            return tuple(map(float, point[len("POINT ("):-1].split(" ")))
+
+    return point
+
+
+class MapGeopoint(MapInput):
+
+    def get_config_settings(self):
+        """renders javascript configuration variables definitions"""
+        default_map_attrs = {
+            "style": "mapbox://styles/mapbox/outdoors-v11",
+            "zoom": 16 if self.center_point else 11,
+            "center": [-73.934196, 40.667398],
+            "marker_color": "blue",
+            "rotate": True,
+            "geocoder": True,
+            "fullscreen_button": True,
+            "navigation_buttons": True,
+            "track_location_button": False,
+        }
+
+        if self.center_point:
+            default_map_attrs["center"] = parse_point(self.center_point)
+
+        if self.map_attrs is not None:
+            default_map_attrs.update(self.map_attrs)
+        js = f"""
+<script>
+    mapboxgl.accessToken = '{settings.MAPBOX_KEY}';
+    {self.map_attrs_to_javascript(default_map_attrs)}
+</script>
+"""
+        return js
 
     @property
     def media(self):
-        css = {
-            "all": [
-                minify_if_not_debug("mapwidgets/css/map_widgets{}.css"),
-            ]
-        }
-
-        js = [
+        js = (
             "js/jquery-3.2.1.min.js",
-            "js/mw-custom-utils.js",
-            "https://maps.googleapis.com/maps/api/js?libraries=places&language={}&key={}".format(
-                mw_settings.LANGUAGE, mw_settings.GOOGLE_MAP_API_KEY
+            "js/mapbox-gl.js",
+            "js/mapbox-gl-geocoder.min.js",
+            # "mapbox_location_field/js/map_input.js",
+            "js/map_input.js",
+        )
+        css = {
+            "all": (
+                "mapbox_location_field/css/map_input.css",
+                "css/mapbox-gl.css",
+                "css/mapbox-gl-geocoder.css",
             )
-        ]
-
-        if not mw_settings.MINIFED:  # pragma: no cover
-            js = js + [
-                "mapwidgets/js/jquery_class.js",
-                "mapwidgets/js/django_mw_base.js",
-                "mapwidgets/js/mw_google_point_field.js",
-            ]
-        else:
-            js = js + [
-                "mapwidgets/js/mw_google_point_field.min.js"
-            ]
+        }
 
         return forms.Media(js=js, css=css)
 

@@ -5,7 +5,7 @@ from django_select2.forms import Select2Widget, Select2MultipleWidget
 from .models import Listing, ListingDetail, ListingPhotos, ListingPhoto, Amenity
 from penny.constants import AGENT_TYPE
 from penny.models import User
-from penny.widgets import GooglePointFieldWidgetJQuery
+from penny.widgets import MapGeopoint
 
 
 class ListingForm(forms.ModelForm):
@@ -30,6 +30,7 @@ class ListingForm(forms.ModelForm):
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['walkability_score'].widget.attrs.update({'addon_before': '%'})
         self.fields['bikability_score'].widget.attrs.update({'addon_before': '%'})
+        self.fields['address'].widget.attrs.update({'readonly': True})
 
     class Meta:
         model = Listing
@@ -42,8 +43,7 @@ class ListingForm(forms.ModelForm):
             'bikability_score', 'parking'
         )
         widgets = {
-            'address': forms.HiddenInput,
-            'geopoint': GooglePointFieldWidgetJQuery,
+            'geopoint': MapGeopoint,
             'listing_type': Select2Widget,
             'neighborhood': Select2Widget,
         }

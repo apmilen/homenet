@@ -376,6 +376,10 @@ input:checked + .slider:before {
     height: 100%;
 }
 
+#id_geopoint {
+    display: none;
+}
+
 .nearby-transit  {
     font-size: 12px;
 }
