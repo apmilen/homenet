@@ -75,10 +75,6 @@ class ListingPhotosForm(forms.ModelForm):
         model = ListingPhotos
         fields = ('primary_photo', )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['primary_photo'].required = False
-
 
 class SingleListingPhotoForm(forms.ModelForm):
 

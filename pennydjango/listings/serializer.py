@@ -47,7 +47,7 @@ class PrivateListingSerializer(serializers.ModelSerializer):
         fields = (
             'address', 'agent_bonus', 'agent_notes', 'amenities', 'bathrooms',
             'bedrooms', 'created', 'date_available', 'default_image',
-            'description', 'detail', 'detail_link', 'edit_link',
+            'description', 'detail', 'detail_link', 'edit_link', 'photos_link',
             'full_address', 'images', 'listing_agent', 'modified',
             'move_in_cost', 'neighborhood', 'no_fee_listing', 'owner_pays',
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id',
