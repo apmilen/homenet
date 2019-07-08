@@ -267,6 +267,7 @@ INSTALLED_APPS = [
     'leases',
     'job_applications',
     'datatables_listview',
+    'stripe',
     'payments'
 ]
 

@@ -72,11 +72,13 @@ Lease Detail
                   </table>
                   <hr/>
                   <div class="row">
+                      
                     <div class="col-12">
-                      <button type="button" id="add-costs"
-                              class="float-right btn-outline-info btn">
+                      <a  id="add-costs"
+                              class="float-right btn-outline-info btn"
+                              href="{% url 'payments' pk=lease.id %}">
                         Pay
-                      </button>
+                    </a>
                     </div>
                   </div>
                 </div>
@@ -86,5 +88,49 @@ Lease Detail
         </ul>
       </div>
     </div>
+    {% if lease_transactions %}
+      <div class="col-12 col-sm-12 ">
+          <div class="card card-small mb-4">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item p-3">
+                <div class="row">
+                  <div class="col-9 pb-2">
+                    Lease Transactions
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="payment-content container">
+                      <table class="table">
+                        <tbody id="move-body-table">
+                          <tr>
+                              <th>Client</th>
+                              <th>Amount</th>
+                              <th>Date Time</th>
+                          </tr>
+                          {% for transaction in lease_transactions %}
+                          <tr>
+                              <td>
+                                {{ transaction.made_by }}
+                              </td>
+                              <td>
+                                ${{ transaction.amount }}
+                              </td>
+                              <td>
+                                {{ transaction.timestamp }}
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                      <hr/>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+      </div>
+    {% endif %}
   </div>
 {% endblock after_card %}

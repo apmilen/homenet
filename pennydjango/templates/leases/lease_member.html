@@ -12,7 +12,7 @@
           <div>Legal Name: {{ lease_member.legal_name }}</div>
         {% endif %}
         <div>{{ lease_member.email }}</div>
-        <div>Total Paid: TODO</div>
+        <div>Total Paid: {{ total_paid }}</div>
         {% if lease_member.user %}
           {% if lease_member.signed_agreement %}
           <div>Signed Agreement · {{ lease_member.signed_agreement }}</div>

@@ -32,11 +32,8 @@ ipython = "*"
 django-select2 = "*"
 djangorestframework = "*"
 flake8 = "*"
-<<<<<<< HEAD
-stripe = "*"
-=======
 django-anymail = "*"
->>>>>>> 985f4c1b5491fe8bb465d3dc97eec0e5dd4f319a
+ipdb = "*"
 
 [requires]
 python_version = "3.7"

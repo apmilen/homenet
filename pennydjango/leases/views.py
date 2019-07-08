@@ -28,6 +28,8 @@ from listings.mixins import ListingContextMixin
 from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
+from payments.models import Transaction
+
 from penny.constants import CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
 from penny.mixins import (
@@ -40,6 +42,8 @@ from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
+
+from django.db.models import Sum
 
 
 # Rest Framework
@@ -318,6 +322,10 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         lease = self.object.offer
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
+        total_paid = Transaction.objects.filter(service=lease).aggregate(Sum('amount'))
+        total_paid = total_paid['amount__sum'] / 100
+        lease_transactions = Transaction.get_lease_transactions(lease)
+        
         context['lease'] = lease
         context['listing'] = lease.listing
         context['lease_members'] = lease_members
@@ -325,6 +333,9 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         context['total'] = MoveInCost.objects.total_by_offer(lease.id)
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
+        context['total_paid'] = total_paid
+        context['lease_transactions'] = lease_transactions
+        
         return context
 
 
