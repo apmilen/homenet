@@ -142,7 +142,6 @@ ZULIP_API_KEY = _PLACEHOLDER_FOR_UNSET
 
 MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 
-GOOGLE_MAP_API_KEY = _PLACEHOLDER_FOR_UNSET
 MAP_KEY = _PLACEHOLDER_FOR_UNSET
 
 
@@ -210,7 +209,6 @@ SECURE_SETTINGS_SOURCES = (ENV_SECRETS_FILE, 'os.environ')
 SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
-    'GOOGLE_MAP_API_KEY',
     'MAP_KEY',
     #'MAILGUN_API_KEY',
     #'ZULIP_API_KEY',
@@ -254,12 +252,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'anymail',
     'corsheaders',
     'penny',
     'listings',
     'ui',
     'schedule',
-    'mapwidgets',
+    'mapbox_location_field',
     'bootstrap4',
     'django_select2',
     'rest_framework',
@@ -326,17 +325,6 @@ ANYMAIL = {
 DEFAULT_FROM_EMAIL = f'support@{DEFAULT_HOST}'
 SERVER_EMAIL = f'server@{DEFAULT_HOST}'
 
-
-MAP_WIDGETS = {
-    "GooglePointFieldWidget": (
-        ("zoom", 12),
-        ("mapCenterLocationName", "new york"),
-        ("GooglePlaceAutocompleteOptions", {
-            'componentRestrictions': {'country': 'us'}}),
-    ),
-    "GOOGLE_MAP_API_KEY": GOOGLE_MAP_API_KEY
-}
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': (
         'rest_framework.pagination.PageNumberPagination'
@@ -378,6 +366,8 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+    BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}'
 
 # Assertions about the environment
 

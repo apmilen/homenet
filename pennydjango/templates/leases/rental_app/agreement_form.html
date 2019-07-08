@@ -1,0 +1,21 @@
+{% load bootstrap4 %}
+<div class="row">
+	<div class="col-12 col-lg-8 offset-lg-2">
+		<h5>Deposit Agreement</h5>
+		<hr/>
+		{% include 'leases/rental_app/_agreement.html' %}
+		<form action="{% url 'leases:agreement' pk=leasemember.id %}" method="post">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-12 col-md-8">
+					{% bootstrap_field agreement_form.legal_name show_label=False %}
+				</div>
+				<div class="col-12 col-md-4">
+					<button class="btn btn-primary" type="submit">
+						Agree
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

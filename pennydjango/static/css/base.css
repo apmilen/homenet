@@ -188,7 +188,6 @@ span.times {
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 100px;
-    padding: .35rem;
 }
 .card-post__category.left-badge {
     right: initial;
@@ -376,6 +375,9 @@ input:checked + .slider:before {
     height: 100%;
 }
 
+#id_geopoint {
+    display: none;
+}
 
 .nearby-transit  {
     font-size: 12px;
@@ -410,4 +412,12 @@ input:checked + .slider:before {
     position: absolute;
     bottom: 0px;
     right: 5px;
+}
+.block-center {
+    display: block;
+    margin: auto;
+}
+.top-right {
+    top: 0;
+    right: 0;
 }

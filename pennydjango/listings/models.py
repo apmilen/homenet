@@ -166,6 +166,9 @@ class Listing(BaseModel):
     def offer_link(self):
         return reverse('leases:create', args=[str(self.id)])
 
+    def photos_link(self):
+        return reverse("listing:photos", args=[self.id])
+
     def __json__(self, *attrs):
         return {
             **self.attrs(

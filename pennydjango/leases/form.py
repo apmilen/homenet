@@ -59,3 +59,20 @@ class MoveInCostForm(forms.ModelForm):
                      f"{first_name}'s Application Fee")
                 )
             self.fields['charge'] = forms.ChoiceField(choices=options)
+
+
+class SignAgreementForm(forms.ModelForm):
+
+    class Meta:
+        model = LeaseMember
+        fields = ('legal_name', )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['legal_name'].required = True
+
+    def clean_legal_name(self):
+        legal_name = self.cleaned_data.get('legal_name')
+        if not legal_name:
+            raise ValidationError('legal_name cannot be empty')
+        return legal_name
