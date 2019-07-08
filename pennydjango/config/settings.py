@@ -324,8 +324,6 @@ ANYMAIL = {
 DEFAULT_FROM_EMAIL = f'support@{DEFAULT_HOST}'
 SERVER_EMAIL = f'server@{DEFAULT_HOST}'
 
-MAPBOX_KEY = MAP_KEY
-
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': (
         'rest_framework.pagination.PageNumberPagination'
