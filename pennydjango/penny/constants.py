@@ -231,7 +231,7 @@ AGENT_TYPE = 'agent'
 CLIENT_TYPE = 'client'
 
 USER_TYPE = (
-    (ADMIN_TYPE, 'Admin'),
     (AGENT_TYPE, 'Agent'),
-    (CLIENT_TYPE, 'Client')
+    (CLIENT_TYPE, 'Client'),
+    (ADMIN_TYPE, 'Admin'),
 )

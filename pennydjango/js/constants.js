@@ -14,6 +14,7 @@ export const ALL_FILTERS = {
     listing_id: "",
     listing_type: "any",
     nofeeonly: false,
+    only_active: true,
     owner_pays: false,
     pets_allowed: "any",
     price: [],
@@ -22,5 +23,6 @@ export const ALL_FILTERS = {
     searching_text: "",
     size: [],
     unit: "",
+    user_type: "any",
     vacant: false,
 }

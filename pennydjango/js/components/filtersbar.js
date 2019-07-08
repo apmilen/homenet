@@ -8,7 +8,7 @@ import {
     pets_allowedFilter, amenitiesFilter, nofeeonlyFilter, owner_paysFilter,
     exclusiveFilter, vacantFilter, draft_listingsFilter, date_availableFilter,
     sales_agentsFilter, listing_agentsFilter, hoodsFilter, lease_idFilter,
-    lease_statusFilter
+    lease_statusFilter, only_activeFilter, user_typeFilter
 } from "./filters"
 import {ALL_FILTERS} from '@/constants'
 
@@ -17,7 +17,7 @@ export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
         let initial_filters = {}
-        props.filters.concat(props.advancedFilters).map(filter_name =>
+        props.filters.concat(props.advancedFilters || []).map(filter_name =>
             initial_filters[filter_name] = props.filtersState && props.filtersState[filter_name] ?
                 props.filtersState[filter_name] : ALL_FILTERS[filter_name]
         )
@@ -103,7 +103,7 @@ export class FiltersBar extends React.Component {
     }
 
     componentDidMount() {
-        this.updateParent()
+        window.addEventListener('load', () => this.updateParent())
     }
 
     renderFilters(filters) {
@@ -111,7 +111,8 @@ export class FiltersBar extends React.Component {
             searching_text, address, unit, sales_agents, listing_agents, hoods,
             price, price_per_bed, beds, baths, listing_type, listing_id, size,
             pets_allowed, amenities, nofeeonly, owner_pays, exclusive, vacant,
-            draft_listings, date_available, lease_id, lease_status
+            draft_listings, date_available, lease_id, lease_status, only_active,
+            user_type
         } = filters
 
         return [
@@ -180,6 +181,12 @@ export class FiltersBar extends React.Component {
 
             draft_listings != undefined &&
             <div className='filter-container'>{draft_listingsFilter(draft_listings, ::this.filterToggle)}</div>,
+
+            only_active != undefined &&
+            <div className='filter-container'>{only_activeFilter(only_active, ::this.filterToggle)}</div>,
+
+            user_type != undefined &&
+            <div className='filter-container'>{user_typeFilter(user_type, this.props.constants.user_type, ::this.filterOneSelection)}</div>,
 
             date_available != undefined &&
             <div className='filter-container'>{date_availableFilter(date_available, ::this.changeDate)}</div>,
