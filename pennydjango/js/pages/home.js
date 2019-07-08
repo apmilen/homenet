@@ -190,24 +190,6 @@ const ListingDetail = ({listing}) => (
 )
 
 
-<<<<<<< HEAD
-=======
-const Switch = ({label, checked, onClick}) =>
-    <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
-        <label class="switch" style={{margin: 'auto 0'}}>
-            <input type="checkbox" checked={checked} />
-            <span class="slider round" onClick={e => onClick(e)}></span>
-        </label>&nbsp;
-        <div style={{margin: 'auto 0'}} onClick={e => onClick(e)}>{label}</div>
-    </div>
-
-const SettingsGear = ({onClick}) =>
-    <div className="settings-gear" onClick={(e) => onClick(e)}>
-        <i className="material-icons">settings</i>
-    </div>
-
-
->>>>>>> dev
 class PublicListings extends React.Component {
     constructor(props) {
         super(props)
