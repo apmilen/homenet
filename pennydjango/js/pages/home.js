@@ -148,13 +148,33 @@ const ListingDetail = ({listing}) => (
                         <p><b>About the place</b></p>
                         <p>{ listing.description }</p>
                     </div>
-                    <div class="col-12 text-justify border-top pt-2">
+                    <div class="col-12 text-justify border-top border-bottom pt-2">
                         <p><b>Amenities</b></p>
                         <ul class="ul-2">
                             {listing.amenities.map(amenity =>
                                 <li>{ amenity }</li>
                             )}
                         </ul>
+                    </div>
+                    <div class="col-6 text-justify pt-2">
+                        <p><b>Nearby transit</b></p>
+                        <p>{ listing.nearby_transit }</p>
+                    </div>
+                    <div class="col-12 text-justify pt-2">
+                        <div class="row">
+                            <div class="col-6 text-justify border-top border-bottom pt-2">
+                                <p><b>Walkability score</b></p>
+                                <p>{ listing.walkability_score }%</p>
+                            </div>
+                            <div class="col-6 text-justify border-top border-bottom pt-2">
+                                <p><b>Bikability score</b></p>
+                                <p>{ listing.bikability_score }%</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 text-justify pt-2">
+                        <p><b>Parking</b></p>
+                        <p>{ listing.parking }</p>
                     </div>
                 </div>
                 <div class="col-md-4 col-12  p-0 pt-2 pb-2 border ">

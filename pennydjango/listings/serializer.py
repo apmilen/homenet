@@ -28,7 +28,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
             'address', 'amenities', 'bathrooms', 'bedrooms', 'default_image',
             'description', 'id', 'images', 'latitude', 'longitude',
             'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent', 'created',
-            'parking'
+            'parking', 'nearby_transit', 'walkability_score', 'bikability_score'
         )
 
 
