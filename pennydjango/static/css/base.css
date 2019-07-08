@@ -386,3 +386,12 @@ input:checked + .slider:before {
     position: absolute;
     z-index: 10;
 }
+
+.block-center {
+    display: block;
+    margin: auto;
+}
+.top-right {
+    top: 0;
+    right: 0;
+}

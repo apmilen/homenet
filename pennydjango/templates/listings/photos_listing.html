@@ -3,7 +3,8 @@
 
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% http2static 'css/dropzone.css'%}" type="text/css" crossorigin>
+  <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
+        type="text/css" crossorigin>
 {% endblock head %}
 {% block inner_title %}
   <h4>Photos</h4>
@@ -11,30 +12,77 @@
 
 {% block tabs %}
   <a href="{% url 'listings:edit' pk=listing.id %}" class="wizard-tab">Essentials</a>
-  <a href="{% url 'listings:detail' pk=listing.id %}" class="wizard-tab">Detail</a>
+  <a href="{% url 'listings:detail' pk=listing.id %}"
+     class="wizard-tab">Detail</a>
   <a href="{% url 'listings:photos' pk=listing.id %}" class="wizard-tab active">Photos</a>
-  <a href="{% url 'listings:review' pk=listing.id %}" class="wizard-tab">Review</a>
+  <a href="{% url 'listings:review' pk=listing.id %}"
+     class="wizard-tab">Review</a>
   <hr>
 {% endblock tabs %}
+{% block wizard_content %}
+  <h6>Primary Photo</h6>
+  {% if listingphotos.primary_photo %}
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <img src="{{ listingphotos.primary_photo.url }}"
+             class="img-fluid mx-w-250 block-center pb-1">
+      </div>
+      <div class="col-12 col-md-8">
+        <div id="primary-photo" class="dropzone">
 
-{% block extra_form_attr %} enctype="multipart/form-data" {% endblock extra_form_attr %}
+        </div>
+      </div>
+  </div>
+  {% else %}
+    <div id="primary-photo" class="dropzone">
 
-{% block extra_form %}
-  {{ photos_formset.management_form }}
-  {% for form in photos_formset %}
-    {% for field in form %}
-      {% bootstrap_field field %}
-    {% endfor %}
+    </div>
+  {% endif %}
+  <hr/>
+  <h6>Other Photos</h6>
+  {% for photo_obj in photos %}
+    <div class="d-inline-block position-relative">
+      <img src="{{ photo_obj.photo.url }}"
+           class="img-fluid mx-w-250 pb-1">
+      <span>
+        <form action="{% url 'listings:delete-extra' pk=photo_obj.id %}" method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm rounded-circle top-right position-absolute"
+                  type="submit">X</button>
+        </form>
+      </span>
+    </div>
   {% endfor %}
-{% endblock extra_form %}
-{% block form_buttons %}
-  <a href="{% url 'listings:detail' pk=listing.id %}" type="button" class="btn btn-primary">
-    Back
-  </a>
-  <button type="submit" class="btn btn-primary">
-    Continue
-  </button>
-{% endblock form_buttons %}
+  <div id="listing-photos" class="dropzone">
 
-{% block after_form %}
-{% endblock after_form %}
+  </div>
+{% endblock wizard_content %}
+{% block tail %}
+  <script src="{% static 'js/dropzone.js' %}"></script>
+  <script type="text/javascript">
+      Dropzone.autoDiscover = false;
+      $(document).ready(() => {
+          let mainDrop = new Dropzone("div#primary-photo", {
+              url: '{% url 'listings:photo' pk=listing.id %}',
+              paramName: 'primary_photo',
+              maxFilesize: 1,
+              maxFiles: 1,
+              headers: {"X-CSRFToken": "{{ csrf_token }}"},
+              acceptedFiles: "image/*",
+              addRemoveLinks: true,
+              success: () => setTimeout(() => window.location.reload(), 500),
+              removedfile: (file) => console.log(file)
+          });
+          let photosDrop = new Dropzone("div#listing-photos", {
+              url: '{% url 'listings:photo-extra' pk=listing.id %}',
+              paramName: 'photo',
+              maxFilesize: 1,
+              headers: {"X-CSRFToken": "{{ csrf_token }}"},
+              acceptedFiles: "image/*",
+              addRemoveLinks: true,
+              success: () => setTimeout(() => window.location.reload(), 500),
+              removedfile: (file) => console.log(file)
+          });
+      })
+  </script>
+{% endblock tail %}

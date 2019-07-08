@@ -10,7 +10,7 @@ export class ListingComponent extends React.Component {
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, walkability_score, bikability_score, 
-            parking
+            parking, photos_link
         } = this.props.listing
 
         return (
@@ -39,6 +39,9 @@ export class ListingComponent extends React.Component {
                                             </a>
                                             <a className="dropdown-item" href={detail_link}>
                                                 <i className={'material-icons'}>format_list_bulleted</i> Details
+                                            </a>
+                                            <a className="dropdown-item" href={photos_link}>
+                                                <i className={'material-icons'}>camera</i> Photos
                                             </a>
                                             <div className="dropdown-divider"></div>
                                             <a className="dropdown-item" href={offer_link}>
