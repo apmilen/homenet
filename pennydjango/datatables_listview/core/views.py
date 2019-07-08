@@ -197,6 +197,11 @@ class DatatablesListView:
             row.append(value)
         return row
 
+    def get_url_param(self, param, obj):
+        field = self.model._meta.get_field(param)
+        field_data = self.evaluate_data(obj, field)
+        return field_data
+
     def get_rendered_urls(self, obj):
         rendered_urls = []
         for option_conf in self.get_options_list():
@@ -213,9 +218,8 @@ class DatatablesListView:
             if self.evaluate_conditions(obj, permissions, conditions):
                 params = []
                 for param in option_conf['url_params']:
-                    field = self.model._meta.get_field(param)
-                    field_data = self.evaluate_data(obj, field)
-                    params.append(field_data)
+                    data = self.get_url_param(param, obj)
+                    params.append(data)
                 rendered_urls.append(
                     render_to_string(
                         "datatables_listview/url_rendering_tool.html",

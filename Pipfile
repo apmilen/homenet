@@ -31,6 +31,7 @@ ipython = "*"
 django-select2 = "*"
 djangorestframework = "*"
 flake8 = "*"
+django-anymail = "*"
 django-mapbox-location-field = "*"
 
 [requires]
