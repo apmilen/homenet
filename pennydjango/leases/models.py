@@ -57,6 +57,8 @@ class LeaseMember(BaseModel):
     app_fee = models.DecimalField(max_digits=15, decimal_places=2, default=100)
     legal_name = models.CharField(max_length=255, null=True)
     signed_agreement = models.DateField(null=True)
+    ip_address = models.CharField(max_length=50, null=True)
+    user_agent = models.CharField(max_length=255, null=True)
 
     @staticmethod
     def avatar():

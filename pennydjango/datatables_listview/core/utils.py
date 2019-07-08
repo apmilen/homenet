@@ -71,6 +71,18 @@ def create_column_defs_list(column_defs):
     return column_defs_list
 
 
+def get_field_name(field):
+    if type(field) == str:
+        return field
+    elif type(field) == dict:
+        try:
+            name = field['name']
+        except KeyError:
+            raise AttributeError('field of dict type must have name key')
+        return name
+    else:
+        raise AttributeError('field item must be str or dict type')
+
 # Using namedtuple for readability, the var name is capitalized because
 # this namedtuple is used like a class
 Draw = namedtuple(

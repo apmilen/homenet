@@ -108,3 +108,5 @@ env/secrets.env
 
 # Database
 data/
+
+supervisord.pid

@@ -254,6 +254,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'anymail',
     'corsheaders',
     'penny',
     'listings',
@@ -378,6 +379,8 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+    BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}'
 
 # Assertions about the environment
 
