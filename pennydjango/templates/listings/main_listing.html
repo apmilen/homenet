@@ -48,18 +48,10 @@
           type="text/javascript" crossorigin></script>
   <script>
       $(document).ready(() => {
-
           $("#id_date_available").datetimepicker({
               timepicker: false, format: 'Y-m-d',
           });
-
       })
-      $(document).on("google_point_map_widget:place_changed",
-          function (e, place) {
-              $('#id_address').val(place['formatted_address'])
-          }
-      );
-
   </script>
 
   {{ form.fields.listing_type.widget.media.js }}

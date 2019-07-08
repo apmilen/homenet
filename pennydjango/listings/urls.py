@@ -3,8 +3,9 @@ from rest_framework import routers
 
 from listings.views import (
     MainListingCreate, MainListingUpdate, DetailListingUpdate,
-    PhotosListingUpdate, ListingDetail, ReviewListing, Listings,
-    PublicListingViewSet, PrivateListingViewSet
+    PhotosListingUpdate, ListingDetailView, ReviewListing, Listings,
+    PublicListingViewSet, PrivateListingViewSet, UploadPrimaryPhoto,
+    UploadExtraPhoto, DeleteExtraPhoto
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -20,6 +21,13 @@ urlpatterns = [
     path('edit/<uuid:pk>/detail', DetailListingUpdate.as_view(), name='detail'),
     path('edit/<uuid:pk>/photos', PhotosListingUpdate.as_view(), name='photos'),
     path('edit/<uuid:pk>/review', ReviewListing.as_view(), name='review'),
-    path('<uuid:pk>/detail', ListingDetail.as_view(), name='listing'),
+    path('<uuid:pk>/detail', ListingDetailView.as_view(), name='listing'),
+    path('<uuid:pk>/photo', UploadPrimaryPhoto.as_view(), name='photo'),
+    path('<uuid:pk>/photo-extra',
+         UploadExtraPhoto.as_view(),
+         name='photo-extra'),
+    path('<uuid:pk>/delete-extra',
+         DeleteExtraPhoto.as_view(),
+         name='delete-extra'),
     path('', include(router.urls))
 ]

@@ -375,6 +375,10 @@ input:checked + .slider:before {
     height: 100%;
 }
 
+#id_geopoint {
+    display: none;
+}
+
 .nearby-transit  {
     font-size: 12px;
 }
@@ -385,4 +389,13 @@ input:checked + .slider:before {
     right: 5.9375rem;
     position: absolute;
     z-index: 10;
+}
+
+.block-center {
+    display: block;
+    margin: auto;
+}
+.top-right {
+    top: 0;
+    right: 0;
 }
