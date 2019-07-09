@@ -166,6 +166,7 @@ span.times {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    max-width: 420px;
 }
 .card span.badge.badge-pill {
     font-size: 100%;
