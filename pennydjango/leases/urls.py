@@ -4,7 +4,8 @@ from rest_framework import routers
 from leases.views import (
     LeaseCreate, LeasesList, LeaseViewSet, LeaseDetail, LeaseMemberCreate,
     MoveInCostCreate, LeaseClientCreate, ClientLeasesList,
-    ResendLeaseInvitation, ClientLease, SignAgreementView, DeleteLeaseMember
+    ResendLeaseInvitation, ClientLease, SignAgreementView, DeleteLeaseMember,
+    UpdateRentalApplication, UploadRentalAppDoc, DeleteRentalAppDoc
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -16,6 +17,9 @@ urlpatterns = [
     path('', include(router.urls)),
     path('<uuid:pk>/create', LeaseCreate.as_view(), name='create'),
     path('detail/<uuid:pk>', LeaseDetail.as_view(), name='detail'),
+    path('client/', ClientLeasesList.as_view(), name='client'),
+    path('client/<uuid:pk>', ClientLease.as_view(), name='detail-client'),
+    path('agreement/<uuid:pk>', SignAgreementView.as_view(), name='agreement'),
     path('<uuid:pk>/create-member',
          LeaseMemberCreate.as_view(),
          name='create-member'),
@@ -31,7 +35,13 @@ urlpatterns = [
     path('<uuid:pk>/send-invitation',
          ResendLeaseInvitation.as_view(),
          name='send-invitation'),
-    path('client/', ClientLeasesList.as_view(), name='client'),
-    path('client/<uuid:pk>', ClientLease.as_view(), name='detail-client'),
-    path('agreement/<uuid:pk>', SignAgreementView.as_view(), name='agreement'),
+    path('<uuid:pk>/update-application',
+         UpdateRentalApplication.as_view(),
+         name='update-application'),
+    path('<uuid:pk>/create-rental-doc',
+         UploadRentalAppDoc.as_view(),
+         name='create-rental-doc'),
+    path('<uuid:pk>/delete-rental-doc',
+         DeleteRentalAppDoc.as_view(),
+         name='delete-rental-doc'),
 ]

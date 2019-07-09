@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -10,6 +12,7 @@ from django.utils import timezone
 from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView, RedirectView,
     DeleteView)
+from django.views.generic.base import View
 
 from rest_framework import viewsets
 
@@ -18,9 +21,10 @@ from datatables_listview.core.views import DatatablesListView
 from leases.emails import send_invitation_email
 from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
-    AppPersonalInfoForm, AppRentalHistoryForm, AppWorkDetailsForm
-)
-from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication
+    RentalApplicationForm,
+    RentalAppDocForm)
+from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
+    RentalAppDocument
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters
 from leases.constants import LEASE_STATUS
@@ -341,9 +345,11 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
         # Application context
-        context['personal_info_form'] = AppPersonalInfoForm(instance=rental_app)
-        context['work_details_form'] = AppWorkDetailsForm(instance=rental_app)
-        context['rent_history_form'] = AppRentalHistoryForm(instance=rental_app)
+        if not rental_app.completed or rental_app.editing:
+            context['rental_application_form'] = RentalApplicationForm(
+                instance=rental_app
+            )
+            context['rental_docs'] = rental_app.rentalappdocument_set.all()
         return context
 
 
@@ -388,3 +394,59 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
 
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+    http_method_names = ['post']
+    form_class = RentalApplicationForm
+    model = RentalApplication
+
+    def get_success_url(self):
+        leasemember_id = self.object.lease_member.id
+        return reverse("leases:detail-client", args=[leasemember_id])
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class UploadRentalAppDoc(ClientOrAgentRequiredMixin, View):
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            rental_app = RentalApplication.objects.get(
+                id=kwargs.get('pk')
+            )
+            form = RentalAppDocForm(
+                None,
+                request.FILES,
+            )
+            doc = form.save(commit=False)
+            doc.rental_app = rental_app
+            doc.save()
+            return JsonResponse({'status': 200})
+        # Bad request
+        return JsonResponse({'status': 401})
+
+
+class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        rental_doc = get_object_or_404(RentalAppDocument, id=kwargs.get('pk'))
+        lease_member_id = rental_doc.rental_app.lease_member.id
+        delete_path = None
+        if rental_doc.file:
+            delete_path = rental_doc.file.path
+        rental_doc.delete()
+        # delete old image form disk
+        if delete_path:
+            try:
+                os.remove(delete_path)
+            except FileNotFoundError:
+                pass
+        messages.success(self.request, "Document deleted")
+        return HttpResponseRedirect(
+            reverse('leases:detail-client', args=[lease_member_id])
+        )

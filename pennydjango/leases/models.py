@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -6,6 +8,7 @@ from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
 from listings.models import Listing
 from leases.constants import LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE
+from penny.utils import rental_doc_path, validate_file_size
 
 
 class LeaseCostsManager(models.Manager):
@@ -80,7 +83,8 @@ class MoveInCost(BaseModel):
 
 class RentalApplication(BaseModel):
     lease_member = models.OneToOneField(LeaseMember, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
+    editing = models.BooleanField(default=False)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20, null=True)
     date_of_birth = models.DateField(null=True)
@@ -95,3 +99,14 @@ class RentalApplication(BaseModel):
     job_title = models.CharField(max_length=100, null=True)
     annual_income = models.CharField(max_length=100, null=True)
     time_at_current_job = models.CharField(max_length=100, null=True)
+
+
+class RentalAppDocument(BaseModel):
+    rental_app = models.ForeignKey(RentalApplication, on_delete=models.CASCADE)
+    file = models.FileField(
+        upload_to=rental_doc_path,
+        validators=[validate_file_size]
+    )
+
+    def filename(self):
+        return os.path.basename(self.file.name)
