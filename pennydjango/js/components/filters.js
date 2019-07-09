@@ -347,6 +347,25 @@ export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
         </div>
     </DropdownButton>
 
+export const user_typeFilter = (user_type, user_type_dict, func) =>
+    <DropdownButton title={`User Type: ${user_type == 'any' ? "Any" : user_type_dict[user_type]}`}>
+        <div className='pets-container'>
+            <FormRadio name='user_type' value='any'
+                       checked={user_type == 'any'}
+                       onChange={func} >
+            Any
+            </FormRadio>
+            {Object.keys(user_type_dict).map(u_type =>
+                <FormRadio key={`${u_type}-user-type`}
+                           name='user_type' value={u_type}
+                           checked={user_type == u_type}
+                           onChange={func} >
+                {user_type_dict[u_type]}
+                </FormRadio>
+            )}
+        </div>
+    </DropdownButton>
+
 // Toggle buttons
 export const nofeeonlyFilter = (nofeeonly, func) =>
     <Button outline={!nofeeonly} onClick={func} name="nofeeonly">
@@ -371,6 +390,11 @@ export const exclusiveFilter = (exclusive, func) =>
 export const vacantFilter = (vacant, func) =>
     <Button outline={!vacant} onClick={func} name="vacant">
         Vacant
+    </Button>
+
+export const only_activeFilter = (only_active, func) =>
+    <Button outline={!only_active} onClick={func} name="only_active">
+        Only active
     </Button>
 
 // Date filters

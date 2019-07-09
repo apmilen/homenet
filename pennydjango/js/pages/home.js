@@ -6,9 +6,10 @@ import {Dropdown} from "react-bootstrap";
 import moment from "moment";
 
 import {tooltip} from '@/util/dom'
-import {FiltersBar} from '@/components/filtersbar'
 
+import {FiltersBar} from '@/components/filtersbar'
 import {MapComponent, coordinates} from '@/components/maps'
+import {Switch, SettingsGear} from '@/components/misc'
 
 
 const ListingGrid = ({listing, hoverOn, clickOn}) => {
@@ -187,21 +188,6 @@ const ListingDetail = ({listing}) => (
         </div>
     </span>
 )
-
-
-const Switch = ({label, checked, onClick}) =>
-    <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
-        <label class="switch" style={{margin: 'auto 0'}}>
-            <input type="checkbox" checked={checked} />
-            <span class="slider round" onClick={e => onClick(e)}></span>
-        </label>&nbsp;
-        <div style={{margin: 'auto 0'}} onClick={e => onClick(e)}>{label}</div>
-    </div>
-
-const SettingsGear = ({onClick}) =>
-    <div className="settings-gear" onClick={(e) => onClick(e)}>
-        <i className="material-icons">settings</i>
-    </div>
 
 
 class PublicListings extends React.Component {

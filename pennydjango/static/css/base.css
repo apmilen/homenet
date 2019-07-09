@@ -375,6 +375,10 @@ input:checked + .slider:before {
     height: 100%;
 }
 
+#id_geopoint {
+    display: none;
+}
+
 .nearby-transit  {
     font-size: 12px;
 }
@@ -385,4 +389,35 @@ input:checked + .slider:before {
     right: 5.9375rem;
     position: absolute;
     z-index: 10;
+}
+
+/*    Users cards    */
+.usercards-container {
+    margin: .625rem 3rem;
+}
+.usercard-badge {
+    margin: 0.8rem;
+    position: absolute;
+    right: 0;
+    font-size: 1rem;
+    user-select: none;
+}
+.usercard-inactive-badge {
+    margin: 0.8rem;
+    position: absolute;
+    font-size: 1rem;
+    user-select: none;
+}
+.usercard-modal {
+    position: absolute;
+    bottom: 0px;
+    right: 5px;
+}
+.block-center {
+    display: block;
+    margin: auto;
+}
+.top-right {
+    top: 0;
+    right: 0;
 }
