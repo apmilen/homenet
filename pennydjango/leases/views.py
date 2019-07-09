@@ -331,7 +331,7 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
         total_paid = Transaction.objects.filter(service=lease).aggregate(Sum('amount'))
-        total_paid = total_paid['amount__sum'] / 100
+        total_paid = total_paid['amount__sum']
         lease_transactions = Transaction.get_lease_transactions(lease)
         
         context['lease'] = lease
