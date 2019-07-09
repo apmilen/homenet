@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 
 from penny.models import User
 from leases.constants import CHARGE_OPTIONS
-from leases.models import Lease, LeaseMember, MoveInCost
+from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication
 
 
 class LeaseCreateForm(forms.ModelForm):
@@ -76,3 +76,33 @@ class SignAgreementForm(forms.ModelForm):
         if not legal_name:
             raise ValidationError('legal_name cannot be empty')
         return legal_name
+
+
+class AppPersonalInfoForm(forms.ModelForm):
+
+    class Meta:
+        model = RentalApplication
+        fields = (
+            'name', 'phone', 'date_of_birth', 'ssn', 'driver_license',
+            'n_of_pets'
+        )
+
+
+class AppRentalHistoryForm(forms.ModelForm):
+
+    class Meta:
+        model = RentalApplication
+        fields = (
+            'current_address', 'current_monthly_rent', 'landlord_name',
+            'landlord_contact'
+        )
+
+
+class AppWorkDetailsForm(forms.ModelForm):
+
+    class Meta:
+        model = RentalApplication
+        fields = (
+            'current_company', 'job_title', 'annual_income',
+            'time_at_current_job'
+        )

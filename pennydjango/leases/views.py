@@ -16,10 +16,11 @@ from rest_framework import viewsets
 from datatables_listview.core.views import DatatablesListView
 
 from leases.emails import send_invitation_email
-from leases.form import (
-    LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm
+from leases.forms import (
+    LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
+    AppPersonalInfoForm, AppRentalHistoryForm, AppWorkDetailsForm
 )
-from leases.models import Lease, LeaseMember, MoveInCost
+from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters
 from leases.constants import LEASE_STATUS
@@ -323,16 +324,26 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Main objects
         lease = self.object.offer
+        rental_app, _ = RentalApplication.objects.get_or_create(
+            lease_member=self.object
+        )
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
+        # Context
         context['lease'] = lease
         context['listing'] = lease.listing
+        context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
         context['total'] = MoveInCost.objects.total_by_offer(lease.id)
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
+        # Application context
+        context['personal_info_form'] = AppPersonalInfoForm(instance=rental_app)
+        context['work_details_form'] = AppWorkDetailsForm(instance=rental_app)
+        context['rent_history_form'] = AppRentalHistoryForm(instance=rental_app)
         return context
 
 

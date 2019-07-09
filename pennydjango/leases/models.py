@@ -76,3 +76,22 @@ class MoveInCost(BaseModel):
     charge = models.CharField(max_length=255)
 
     objects = LeaseCostsManager()
+
+
+class RentalApplication(BaseModel):
+    lease_member = models.OneToOneField(LeaseMember, on_delete=models.CASCADE)
+    status = models.BooleanField(default=False)
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20, null=True)
+    date_of_birth = models.DateField(null=True)
+    ssn = models.CharField(max_length=30)
+    driver_license = models.CharField(max_length=100, null=True)
+    n_of_pets = models.PositiveSmallIntegerField(null=True)
+    current_address = models.CharField(max_length=255, null=True)
+    current_monthly_rent = models.PositiveIntegerField(null=True)
+    landlord_name = models.CharField(max_length=100, null=True)
+    landlord_contact = models.CharField(max_length=100, null=True)
+    current_company = models.CharField(max_length=100, null=True)
+    job_title = models.CharField(max_length=100, null=True)
+    annual_income = models.CharField(max_length=100, null=True)
+    time_at_current_job = models.CharField(max_length=100, null=True)

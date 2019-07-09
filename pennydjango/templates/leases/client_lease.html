@@ -7,9 +7,77 @@ Lease Detail
 {% endblock inner_title %}
 
 {% block inner_content %}
-{% if not leasemember.signed_agreement %}
-  {% include "leases/rental_app/agreement_form.html" %}
-{% endif %}
+  <div class="row">
+    <div class="col-12 col-lg-8 offset-lg-2">
+
+  {% if not leasemember.signed_agreement %}
+    {% include "leases/rental_app/agreement_form.html" %}
+  {% elif not rental_app.status %}
+    <h5>Rental Application</h5>
+    <form action="#" method="post">
+      <div class="accordion" id="accordion-rental-app">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Personal Information
+            </button>
+          </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion-rental-app">
+          <div class="card-body">
+            {% bootstrap_form personal_info_form %}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Work Details
+            </button>
+          </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion-rental-app">
+          <div class="card-body">
+            {% bootstrap_form work_details_form %}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Rental History
+            </button>
+          </h5>
+        </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion-rental-app">
+          <div class="card-body">
+            {% bootstrap_form rent_history_form %}
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header" id="headingFour">
+          <h5 class="mb-0">
+            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+              Documents
+            </button>
+          </h5>
+        </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordion-rental-app">
+          <div class="card-body">
+            Documents :v
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+  {% endif %}
+    </div>
+  </div>
 {% endblock inner_content %}
 
 {% block after_card %}
