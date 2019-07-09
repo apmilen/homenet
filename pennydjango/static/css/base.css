@@ -374,7 +374,12 @@ input:checked + .slider:before {
 .mapbox-component {
     height: 100%;
 }
-
+#map {
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:100%;
+}
 #id_geopoint {
     display: none;
 }
