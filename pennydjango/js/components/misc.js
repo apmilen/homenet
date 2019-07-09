@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Switch = ({label, checked, onClick}) =>
     <div onClick={e => e.stopPropagation()} style={{display: 'flex'}}>
-        <label class="switch" style={{margin: 'auto'}}>
+        <label class="switch">
             <input type="checkbox" checked={checked} />
             <span class="slider round" onClick={e => onClick(e)}></span>
         </label>
