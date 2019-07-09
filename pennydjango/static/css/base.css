@@ -323,6 +323,7 @@ hr.divider-hr {
   display: inline-block;
   width: 60px;
   height: 34px;
+  margin: auto auto auto 0;
 }
 .switch input { 
   opacity: 0;
