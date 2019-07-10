@@ -27,8 +27,9 @@ class PublicListingSerializer(serializers.ModelSerializer):
         fields = (
             'address', 'amenities', 'bathrooms', 'bedrooms', 'default_image',
             'description', 'id', 'images', 'latitude', 'longitude',
-            'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent', 'created',
-            'parking', 'nearby_transit', 'walkability_score', 'bikability_score'
+            'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent',
+            'created', 'parking', 'nearby_transit', 'walkability_score',
+            'bikability_score'
         )
 
 
