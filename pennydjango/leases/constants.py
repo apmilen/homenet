@@ -1,6 +1,7 @@
-DEFAULT_LEASE_STATUS = 'unsigned_unapproved'
+DEFAULT_LEASE_STATUS = 'awaiting_deposit'
 LEASE_STATUS = (
-    (DEFAULT_LEASE_STATUS, 'Unsigned, Unapproved'),
+    (DEFAULT_LEASE_STATUS, 'Awaiting Deposit'),
+    ('unsigned_unapproved', 'Unsigned, Unapproved'),
     ('unsigned_approved', 'Unsigned, Approved'),
     ('signed_approved', 'Signed, Approved'),
     ('client_backed_out', 'Client Backed Out'),
@@ -30,3 +31,11 @@ CHARGE_OPTIONS = [
     ('Storage Fee', 'Storage Fee'),
     ('Utility Fee', 'Utility Fee'),
 ]
+
+
+LEASE_STATUS_PROGRESS = {
+    'awaiting_deposit': 0,
+    'unsigned_unapproved': 25,
+    'unsigned_approved': 75,
+    'signed_approved': 100
+}

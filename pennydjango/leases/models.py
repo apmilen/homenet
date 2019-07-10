@@ -7,7 +7,8 @@ from django.urls import reverse
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
 from listings.models import Listing
-from leases.constants import LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE
+from leases.constants import LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE, \
+    LEASE_STATUS_PROGRESS
 from penny.utils import rental_doc_path, validate_file_size
 
 
@@ -49,6 +50,9 @@ class Lease(BaseModel):
 
     def detail_link(self):
         return reverse('leases:detail', args=[self.id])
+
+    def progress_status(self):
+        return LEASE_STATUS_PROGRESS.get(self.status, 0)
 
 
 class LeaseMember(BaseModel):

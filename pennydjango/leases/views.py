@@ -405,6 +405,13 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
         leasemember_id = self.object.lease_member.id
         return reverse("leases:detail-client", args=[leasemember_id])
 
+    def form_valid(self, form):
+        completed = self.request.GET.get('completed') == "true"
+        rental_app = form.save(commit=False)
+        rental_app.completed = completed
+        rental_app.save()
+        return HttpResponseRedirect(self.get_success_url())
+
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
         return HttpResponseRedirect(self.get_success_url())

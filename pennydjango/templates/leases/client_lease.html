@@ -141,7 +141,21 @@
           </div>
           <hr/>
           <button type="submit" class="btn btn-outline-primary">Save</button>
+          <button type="submit"
+                  formaction="{% url "leases:update-application" pk=rental_app.id %}?completed=true"
+                  class="btn btn-primary">Submit and Complete Rental Application</button>
         </form>
+      {% else %}
+        <h5 class="text-center">Lease Status</h5>
+        <div class="progress lease-status">
+          <div class="progress-bar progress-bar-striped"
+               role="progressbar"
+               style="width: {{ lease.progress_status }}%"
+               aria-valuenow="{{ lease.progress_status }}"
+               aria-valuemin="0"
+               aria-valuemax="100"></div>
+        </div>
+        <h6 class="text-center">{{ lease.get_status_display }}</h6>
       {% endif %}
     </div>
   </div>

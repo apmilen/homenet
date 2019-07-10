@@ -428,3 +428,7 @@ input:checked + .slider:before {
     top: 0;
     right: 0;
 }
+
+.lease-status, .lease-status .progress-bar {
+    height: 2.625rem;
+}
