@@ -30,6 +30,32 @@ from listings.constants import (
 from listings.utils import qs_from_filters
 
 
+# ViewSets define the view behavior.
+class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Listing.objects.filter(
+        status='approved',
+        detail__private=False
+    )
+    serializer_class = PublicListingSerializer
+
+    def get_queryset(self):
+        queryset = qs_from_filters(self.queryset, self.request.query_params)
+
+        # remember to use always the page param
+        # http://localhost:8000/listings/public/?page=1&price_min=3000
+        return queryset.order_by('-modified')
+
+
+# ViewSets define the view behavior.
+class PrivateListingViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
+    queryset = Listing.objects.all()
+    serializer_class = PrivateListingSerializer
+
+    def get_queryset(self):
+        queryset = qs_from_filters(self.queryset, self.request.query_params)
+        return queryset.order_by('-modified')
+
+
 class MainListingCreate(AgentRequiredMixin, CreateView):
     template_name = 'listings/main_listing.html'
     model = Listing
@@ -214,29 +240,3 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'constants': constants,
             'endpoint': '/listings/private/'
         }
-
-
-# ViewSets define the view behavior.
-class PublicListingViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Listing.objects.filter(
-        status='approved',
-        detail__private=False
-    )
-    serializer_class = PublicListingSerializer
-
-    def get_queryset(self):
-        queryset = qs_from_filters(self.queryset, self.request.query_params)
-
-        # remember to use always the page param
-        # http://localhost:8000/listings/public/?page=1&price_min=3000
-        return queryset.order_by('-modified')
-
-
-# ViewSets define the view behavior.
-class PrivateListingViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
-    queryset = Listing.objects.all()
-    serializer_class = PrivateListingSerializer
-
-    def get_queryset(self):
-        queryset = qs_from_filters(self.queryset, self.request.query_params)
-        return queryset.order_by('-modified')

@@ -145,14 +145,23 @@ class LeaseCreate(AgentRequiredMixin,
 
 
 # Django
-class LeaseMemberCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
+class LeaseMemberCreate(MainObjectContextMixin,
+                        ClientOrAgentRequiredMixin,
+                        CreateView):
     http_method_names = ['post']
     model = LeaseMember
     main_model = Lease
     form_class = BasicLeaseMemberForm
 
     def get_success_url(self):
-        return reverse('leases:detail', args=[self.main_object.id])
+        if self.request.user.is_user_client:
+            leasemember = LeaseMember.objects.only('id').get(
+                user=self.request.user.id,
+                offer_id=self.main_object.id
+            )
+            return reverse('leases:detail-client', args=[leasemember.id])
+        else:
+            return reverse('leases:detail', args=[self.main_object.id])
 
     def form_valid(self, form):
         try:
@@ -382,7 +391,14 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
     model = LeaseMember
 
     def get_success_url(self):
-        return reverse('leases:detail', args=[self.object.offer.id])
+        if self.request.user.is_user_client:
+            leasemember = LeaseMember.objects.only('id').get(
+                user=self.request.user.id,
+                offer_id=self.object.offer.id
+            )
+            return reverse('leases:detail-client', args=[leasemember.id])
+        else:
+            return reverse('leases:detail', args=[self.object.id])
 
     def delete(self, request, *args, **kwargs):
         self.object = super().get_object()
