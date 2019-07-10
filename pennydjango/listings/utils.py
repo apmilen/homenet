@@ -91,7 +91,7 @@ def qs_from_filters(queryset, params):
         queryset = queryset.filter(no_fee_listing=True)
 
     if owner_pays == 'true':
-        queryset = queryset.filter(owner_pays=True)
+        queryset = queryset.filter(owner_pays=100)
 
     if exclusive == 'true':
         queryset = queryset.filter(detail__exclusive=True)

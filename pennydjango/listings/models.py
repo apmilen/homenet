@@ -148,7 +148,7 @@ class Listing(BaseModel):
 
     @cached_property
     def price_per_bed(self):
-        return self.bedrooms and self.price / self.bedrooms
+        return self.bedrooms and round(self.price / self.bedrooms, 2)
 
     @cached_property
     def edit_link(self):
