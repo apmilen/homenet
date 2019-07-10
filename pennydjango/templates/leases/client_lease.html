@@ -1,15 +1,166 @@
 {% extends 'ui/base.html' %}
-{% load bootstrap4 %}
+{% load bootstrap4 utils %}
 
+{% block head %}
+  {{ block.super }}
+  {% if not rental_app.completed or rental_app.editing %}
+    <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
+          type="text/css" crossorigin>
+    {% endif %}
+{% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
 {% block inner_title %}
-Lease Detail
+  Lease Detail
 {% endblock inner_title %}
 
 {% block inner_content %}
-{% if not leasemember.signed_agreement %}
-  {% include "leases/rental_app/agreement_form.html" %}
-{% endif %}
+  <div class="row">
+    <div class="col-12 col-lg-8 offset-lg-2">
+      {% if not leasemember.signed_agreement %}
+        {% include "leases/rental_app/agreement_form.html" %}
+      {% elif not rental_app.completed or rental_app.editing %}
+        <h5>Rental Application</h5>
+        <form action="{% url "leases:update-application" pk=rental_app.id %}"
+              method="post">
+          {% csrf_token %}
+          <div class="accordion" id="accordion-rental-app">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" type="button"
+                          data-toggle="collapse" data-target="#collapseOne"
+                          aria-expanded="true" aria-controls="collapseOne">
+                    Personal Information
+                  </button>
+                </h5>
+              </div>
+
+              <div id="collapseOne" class="collapse show"
+                   aria-labelledby="headingOne"
+                   data-parent="#accordion-rental-app">
+                <div class="card-body">
+                  {% bootstrap_field rental_application_form.name %}
+                  {% bootstrap_field rental_application_form.phone %}
+                  {% bootstrap_field rental_application_form.date_of_birth %}
+                  {% bootstrap_field rental_application_form.ssn %}
+                  {% bootstrap_field rental_application_form.driver_license %}
+                  {% bootstrap_field rental_application_form.n_of_pets %}
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button"
+                          data-toggle="collapse" data-target="#cheadingTwo"
+                          aria-expanded="false" aria-controls="cheadingTwo">
+                    Rental History
+                  </button>
+                </h5>
+              </div>
+              <div id="cheadingTwo" class="collapse"
+                   aria-labelledby="headingTwo"
+                   data-parent="#accordion-rental-app">
+                <div class="card-body">
+                  {% bootstrap_field rental_application_form.current_address %}
+                  {% bootstrap_field rental_application_form.current_monthly_rent %}
+                  {% bootstrap_field rental_application_form.landlord_name %}
+                  {% bootstrap_field rental_application_form.landlord_contact %}
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingThree">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button"
+                          data-toggle="collapse" data-target="#collapseThree"
+                          aria-expanded="false" aria-controls="collapseThree">
+                    Work Details
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseThree" class="collapse"
+                   aria-labelledby="headingThree"
+                   data-parent="#accordion-rental-app">
+                <div class="card-body">
+                  {% bootstrap_field rental_application_form.current_company %}
+                  {% bootstrap_field rental_application_form.job_title %}
+                  {% bootstrap_field rental_application_form.annual_income %}
+                  {% bootstrap_field rental_application_form.time_at_current_job %}
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingFour">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button"
+                          data-toggle="collapse" data-target="#collapseFour"
+                          aria-expanded="false" aria-controls="collapseThree">
+                    Documents
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseFour" class="collapse"
+                   aria-labelledby="headingFour"
+                   data-parent="#accordion-rental-app">
+                <div class="card-body">
+                  {% include 'leases/rental_app/documents_modal.html' %}
+                  Documents -
+                  <a href="#" data-toggle="modal" data-target="#documents-modal">
+                    Information about the documents
+                  </a>
+                  <hr/>
+                  {% if rental_docs %}
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Filename</th>
+                          <th>Url</th>
+                          <th>Created</th>
+                          <th>Options</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for doc in rental_docs %}
+                        <tr>
+                          <td>{{ doc.filename }}</td>
+                          <td><a href="{{ doc.file.url }}" target="_blank">Link</a> </td>
+                          <td>{{ doc.created }}</td>
+                          <td>
+                            <a href="{% url 'leases:delete-rental-doc' pk=doc.id %}" >Delete</a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  {% endif %}
+                  <div id="rental-app-docs" class="dropzone">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <button type="submit" class="btn btn-outline-primary">Save</button>
+          <button type="submit"
+                  formaction="{% url "leases:update-application" pk=rental_app.id %}?completed=true"
+                  class="btn btn-primary">Submit and Complete Rental Application</button>
+        </form>
+      {% else %}
+        <h5 class="text-center">Lease Status</h5>
+        <div class="progress lease-status">
+          <div class="progress-bar progress-bar-striped"
+               role="progressbar"
+               style="width: {{ lease.progress_status }}%"
+               aria-valuenow="{{ lease.progress_status }}"
+               aria-valuemin="0"
+               aria-valuemax="100"></div>
+        </div>
+        <h6 class="text-center">{{ lease.get_status_display }}</h6>
+      {% endif %}
+    </div>
+  </div>
 {% endblock inner_content %}
 
 {% block after_card %}
@@ -66,7 +217,8 @@ Lease Detail
                     {% endfor %}
                     <tr>
                       <td><b class="font-weight-bold">Total Cost Due</b></td>
-                      <td>$<b class="font-weight-bold" id="total-cost-due">{{ total }}</b></td>
+                      <td>$<b class="font-weight-bold"
+                              id="total-cost-due">{{ total }}</b></td>
                     </tr>
                     </tbody>
                   </table>
@@ -88,3 +240,23 @@ Lease Detail
     </div>
   </div>
 {% endblock after_card %}
+
+{% block tail %}
+  {{ block.super }}
+
+  {% if not rental_app.completed or rental_app.editing %}
+  <script src="{% http2static 'js/dropzone.js' %}"></script>
+  <script type="text/javascript">
+      Dropzone.autoDiscover = false;
+      $(document).ready(() => {
+          let uploadDrop = new Dropzone("div#rental-app-docs", {
+              url: '{% url 'leases:create-rental-doc' pk=rental_app.id %}',
+              paramName: 'file',
+              maxFilesize: 5,
+              headers: {"X-CSRFToken": "{{ csrf_token }}"},
+              acceptedFiles: "image/*,application/pdf",
+          });
+      })
+  </script>
+  {% endif %}
+{% endblock tail %}

@@ -17,8 +17,9 @@
           {% if lease_member.signed_agreement %}
           <div>Signed Agreement · {{ lease_member.signed_agreement }}</div>
           {% endif %}
-          <div>Rental Application: Completed <a
-                  href="#">(Review)</a>
+
+          <div>Rental Application: {% if lease_member.rentalapplication and lease_member.rentalapplication.completed %}
+            Completed <a href="{% url 'leases:rental-detail' pk=lease_member.rentalapplication.id %}" target="_blank">Review</a> {% else %} Not Completed {% endif %}
           </div>
           <div id="creditReportStatus90234" class="credit-report-status">
             <div>Credit Report Status: TODO&nbsp;<a href="#">(Create PDF)</a>&nbsp;

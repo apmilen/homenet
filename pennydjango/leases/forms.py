@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 
 from penny.models import User
 from leases.constants import CHARGE_OPTIONS
-from leases.models import Lease, LeaseMember, MoveInCost
+from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
+    RentalAppDocument
 
 
 class LeaseCreateForm(forms.ModelForm):
@@ -76,3 +77,37 @@ class SignAgreementForm(forms.ModelForm):
         if not legal_name:
             raise ValidationError('legal_name cannot be empty')
         return legal_name
+
+
+class RentalApplicationForm(forms.ModelForm):
+    use_required_attribute = False
+
+    class Meta:
+        model = RentalApplication
+        fields = (
+            'name', 'phone', 'date_of_birth', 'ssn', 'driver_license',
+            'n_of_pets', 'current_address', 'current_monthly_rent',
+            'landlord_name', 'landlord_contact', 'current_company',
+            'job_title', 'annual_income', 'time_at_current_job'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date_of_birth'].required = False
+        self.fields['driver_license'].required = False
+        self.fields['n_of_pets'].required = False
+        self.fields['current_address'].required = False
+        self.fields['current_monthly_rent'].required = False
+        self.fields['landlord_name'].required = False
+        self.fields['landlord_contact'].required = False
+        self.fields['current_company'].required = False
+        self.fields['job_title'].required = False
+        self.fields['annual_income'].required = False
+        self.fields['time_at_current_job'].required = False
+
+
+class RentalAppDocForm(forms.ModelForm):
+
+    class Meta:
+        model = RentalAppDocument
+        fields = ('file', )

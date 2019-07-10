@@ -147,6 +147,13 @@ def image_path(instance, filename):
     ])
 
 
+def rental_doc_path(instance, filename):
+    return '/'.join([
+        str(instance.rental_app_id),
+        f"{filename}"
+    ])
+
+
 def avatar_path(instance, filename):
     _, file_extension = os.path.splitext(filename)
     return '/'.join([
@@ -165,6 +172,7 @@ def validate_file_size(value):
         pass
 
     return value
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

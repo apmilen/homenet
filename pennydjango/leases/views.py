@@ -1,8 +1,12 @@
+from io import BytesIO
+import os
+import zipfile
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, DatabaseError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -10,16 +14,19 @@ from django.utils import timezone
 from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView, RedirectView,
     DeleteView)
+from django.views.generic.base import View
 
 from rest_framework import viewsets
 
 from datatables_listview.core.views import DatatablesListView
 
 from leases.emails import send_invitation_email
-from leases.form import (
-    LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm
-)
-from leases.models import Lease, LeaseMember, MoveInCost
+from leases.forms import (
+    LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
+    RentalApplicationForm,
+    RentalAppDocForm)
+from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
+    RentalAppDocument
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters
 from leases.constants import LEASE_STATUS
@@ -323,16 +330,28 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Main objects
         lease = self.object.offer
+        rental_app, _ = RentalApplication.objects.get_or_create(
+            lease_member=self.object
+        )
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
+        # Context
         context['lease'] = lease
         context['listing'] = lease.listing
+        context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
         context['total'] = MoveInCost.objects.total_by_offer(lease.id)
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
+        # Application context
+        if not rental_app.completed or rental_app.editing:
+            context['rental_application_form'] = RentalApplicationForm(
+                instance=rental_app
+            )
+            context['rental_docs'] = rental_app.rentalappdocument_set.all()
         return context
 
 
@@ -377,3 +396,104 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
 
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+    http_method_names = ['post']
+    form_class = RentalApplicationForm
+    model = RentalApplication
+
+    def get_success_url(self):
+        leasemember_id = self.object.lease_member.id
+        return reverse("leases:detail-client", args=[leasemember_id])
+
+    def form_valid(self, form):
+        completed = self.request.GET.get('completed') == "true"
+        rental_app = form.save(commit=False)
+        rental_app.completed = completed
+        rental_app.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class UploadRentalAppDoc(ClientOrAgentRequiredMixin, View):
+    http_method_names = ['post']
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            rental_app = RentalApplication.objects.get(
+                id=kwargs.get('pk')
+            )
+            form = RentalAppDocForm(
+                None,
+                request.FILES,
+            )
+            doc = form.save(commit=False)
+            doc.rental_app = rental_app
+            doc.save()
+            return JsonResponse({'status': 200})
+        # Bad request
+        return JsonResponse({'status': 401})
+
+
+class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
+    http_method_names = ['get']
+
+    def get(self, request, *args, **kwargs):
+        rental_doc = get_object_or_404(RentalAppDocument, id=kwargs.get('pk'))
+        lease_member_id = rental_doc.rental_app.lease_member.id
+        delete_path = None
+        if rental_doc.file:
+            delete_path = rental_doc.file.path
+        rental_doc.delete()
+        # delete old image form disk
+        if delete_path:
+            try:
+                os.remove(delete_path)
+            except FileNotFoundError:
+                pass
+        messages.success(self.request, "Document deleted")
+        return HttpResponseRedirect(
+            reverse('leases:detail-client', args=[lease_member_id])
+        )
+
+
+class RentalApplicationDetail(AgentRequiredMixin, DetailView):
+    model = RentalApplication
+    template_name = 'leases/rental_app/rental_app_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lease_member'] = self.object.lease_member
+        context['rental_docs'] = self.object.rentalappdocument_set.all()
+        return context
+
+
+class DownloadRentalDocuments(AgentRequiredMixin, View):
+
+    def get(self, *args, **kwargs):
+        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        lease_member = rental_app.lease_member
+        zip_subdir = f'{lease_member.get_full_name()}'
+        zip_filename = f'{zip_subdir}.zip'
+
+        bytes_io = BytesIO()
+        zipf = zipfile.ZipFile(bytes_io, "w")
+
+        for doc in rental_app.rentalappdocument_set.all():
+            fdir, fname = os.path.split(doc.file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(doc.file.path, zip_path)
+
+        zipf.close()
+
+        response = HttpResponse(
+            bytes_io.getvalue(),
+            content_type="application/x-zip-compressed"
+        )
+
+        response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+        return response
