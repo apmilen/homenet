@@ -1,6 +1,5 @@
-{{ user }} \n
-\n
+{{ user }}
+
 Welcome to Homenet. You have been invited to apply for an apartment. Use the link below to accept and get started.
-\n
-\n
+
 {{ url }}
