@@ -10,7 +10,6 @@ from django.db.models import Sum
 import stripe
 
 from penny.mixins import ClientOrAgentRequiredMixin
-from penny.models import User
 from payments.models import Transaction
 from leases.models import Lease, LeaseMember
 
@@ -53,6 +52,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             messages.success(request, 'Your payment was successfull')
             
         except stripe.error.CardError as e:
-            message.info(request, "There has been a problem with your card")
+            messages.info(request, "There has been a problem with your card")
         return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
         
