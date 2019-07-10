@@ -7,8 +7,10 @@ from django.urls import reverse
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
 from listings.models import Listing
-from leases.constants import LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE, \
+from leases.constants import (
+    LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE,
     LEASE_STATUS_PROGRESS
+)
 from penny.utils import rental_doc_path, validate_file_size
 
 

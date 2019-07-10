@@ -3,8 +3,10 @@
 
 {% block head %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
-        type="text/css" crossorigin>
+  {% if not rental_app.completed or rental_app.editing %}
+    <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
+          type="text/css" crossorigin>
+    {% endif %}
 {% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
 {% block inner_title %}
@@ -50,20 +52,20 @@
               <div class="card-header" id="headingTwo">
                 <h5 class="mb-0">
                   <button class="btn btn-link collapsed" type="button"
-                          data-toggle="collapse" data-target="#collapseTwo"
-                          aria-expanded="false" aria-controls="collapseTwo">
-                    Work Details
+                          data-toggle="collapse" data-target="#cheadingTwo"
+                          aria-expanded="false" aria-controls="cheadingTwo">
+                    Rental History
                   </button>
                 </h5>
               </div>
-              <div id="collapseTwo" class="collapse"
+              <div id="cheadingTwo" class="collapse"
                    aria-labelledby="headingTwo"
                    data-parent="#accordion-rental-app">
                 <div class="card-body">
-                  {% bootstrap_field rental_application_form.current_company %}
-                  {% bootstrap_field rental_application_form.job_title %}
-                  {% bootstrap_field rental_application_form.annual_income %}
-                  {% bootstrap_field rental_application_form.time_at_current_job %}
+                  {% bootstrap_field rental_application_form.current_address %}
+                  {% bootstrap_field rental_application_form.current_monthly_rent %}
+                  {% bootstrap_field rental_application_form.landlord_name %}
+                  {% bootstrap_field rental_application_form.landlord_contact %}
                 </div>
               </div>
             </div>
@@ -73,7 +75,7 @@
                   <button class="btn btn-link collapsed" type="button"
                           data-toggle="collapse" data-target="#collapseThree"
                           aria-expanded="false" aria-controls="collapseThree">
-                    Rental History
+                    Work Details
                   </button>
                 </h5>
               </div>
@@ -81,10 +83,10 @@
                    aria-labelledby="headingThree"
                    data-parent="#accordion-rental-app">
                 <div class="card-body">
-                  {% bootstrap_field rental_application_form.current_address %}
-                  {% bootstrap_field rental_application_form.current_monthly_rent %}
-                  {% bootstrap_field rental_application_form.landlord_name %}
-                  {% bootstrap_field rental_application_form.landlord_contact %}
+                  {% bootstrap_field rental_application_form.current_company %}
+                  {% bootstrap_field rental_application_form.job_title %}
+                  {% bootstrap_field rental_application_form.annual_income %}
+                  {% bootstrap_field rental_application_form.time_at_current_job %}
                 </div>
               </div>
             </div>
@@ -241,6 +243,8 @@
 
 {% block tail %}
   {{ block.super }}
+
+  {% if not rental_app.completed or rental_app.editing %}
   <script src="{% http2static 'js/dropzone.js' %}"></script>
   <script type="text/javascript">
       Dropzone.autoDiscover = false;
@@ -254,4 +258,5 @@
           });
       })
   </script>
+  {% endif %}
 {% endblock tail %}

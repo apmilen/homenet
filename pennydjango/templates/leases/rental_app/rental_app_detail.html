@@ -1,0 +1,167 @@
+{% extends 'ui/base.html' %}
+
+{% block cardclass %}col-12 col-lg-6 offset-lg-3{% endblock %}
+{% block title %}Rental Application - {% endblock title %}
+{% block inner_content %}
+  <h4 class="text-center">{{ lease_member.get_full_name }}</h4>
+  <div class="text-center">
+    {% if rental_docs %}
+      <a type="button" class="btn btn-primary" href="{% url 'leases:rental-download' pk=object.id %}">
+        Download Documents
+      </a>
+    {% endif %}
+      <a type="button" class="btn btn-primary" href="#">
+        Generate PDF
+      </a>
+  </div>
+  <hr/>
+  <div class="accordion" id="accordion-rental-app">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-link" type="button"
+                  data-toggle="collapse" data-target="#collapseOne"
+                  aria-expanded="true" aria-controls="collapseOne">
+            Personal Information
+          </button>
+        </h5>
+      </div>
+
+      <div id="collapseOne" class="collapse show"
+           aria-labelledby="headingOne"
+           data-parent="#accordion-rental-app">
+        <div class="card-body">
+          <ul class="list-unstyled list-group">
+            <li class="list-group-item">
+              Name
+              <span class="float-right">{{ object.name }}</span>
+            </li>
+            <li class="list-group-item">
+              Phone
+              <span class="float-right">{{ object.phone }}</span>
+            </li>
+            <li class="list-group-item">
+              Date of Birth
+              <span class="float-right">{{ object.date_of_birth|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              SSN
+              <span class="float-right">{{ object.ssn }}</span>
+            </li>
+            <li class="list-group-item">
+              # of Pets
+              <span class="float-right">{{ object.n_of_pets|default_if_none:"" }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button"
+                  data-toggle="collapse" data-target="#collapseTwo"
+                  aria-expanded="false" aria-controls="collapseTwo">
+            Rental History
+          </button>
+        </h5>
+      </div>
+      <div id="collapseTwo" class="collapse"
+           aria-labelledby="headingTwo"
+           data-parent="#accordion-rental-app">
+        <div class="card-body">
+          <ul class="list-unstyled list-group">
+            <li class="list-group-item">
+              Current Address
+              <span class="float-right">{{ object.current_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Current Monthly Rent
+              <span class="float-right">{{ object.current_monthly_rent|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Landlord Name
+              <span class="float-right">{{ object.landlord_name|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Landlord Contact
+              <span class="float-right">{{ object.landlord_contact|default_if_none:"" }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingThree">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button"
+                  data-toggle="collapse" data-target="#collapseThree"
+                  aria-expanded="false" aria-controls="collapseThree">
+            Work Details
+          </button>
+        </h5>
+      </div>
+      <div id="collapseThree" class="collapse"
+           aria-labelledby="headingThree"
+           data-parent="#accordion-rental-app">
+        <div class="card-body">
+          <ul class="list-unstyled list-group">
+            <li class="list-group-item">
+              Current Company
+              <span class="float-right">{{ object.current_company|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Job Title
+              <span class="float-right">{{ object.job_title|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Annual Income
+              <span class="float-right">{{ object.annual_income|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Time At Current Job
+              <span class="float-right">{{ object.time_at_current_job|default_if_none:"" }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingFour">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button"
+                  data-toggle="collapse" data-target="#collapseFour"
+                  aria-expanded="false" aria-controls="collapseThree">
+            Documents
+          </button>
+        </h5>
+      </div>
+      <div id="collapseFour" class="collapse"
+           aria-labelledby="headingFour"
+           data-parent="#accordion-rental-app">
+        <div class="card-body">
+          {% if rental_docs %}
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Url</th>
+                <th>Created</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for doc in rental_docs %}
+                <tr>
+                  <td>{{ doc.filename }}</td>
+                  <td><a href="{{ doc.file.url }}" target="_blank">Link</a></td>
+                  <td>{{ doc.created }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock inner_content %}

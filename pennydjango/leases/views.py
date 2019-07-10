@@ -1,10 +1,12 @@
+from io import BytesIO
 import os
+import zipfile
 
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, DatabaseError
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -457,3 +459,41 @@ class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
         return HttpResponseRedirect(
             reverse('leases:detail-client', args=[lease_member_id])
         )
+
+
+class RentalApplicationDetail(AgentRequiredMixin, DetailView):
+    model = RentalApplication
+    template_name = 'leases/rental_app/rental_app_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lease_member'] = self.object.lease_member
+        context['rental_docs'] = self.object.rentalappdocument_set.all()
+        return context
+
+
+class DownloadRentalDocuments(AgentRequiredMixin, View):
+
+    def get(self, *args, **kwargs):
+        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        lease_member = rental_app.lease_member
+        zip_subdir = f'{lease_member.get_full_name()}'
+        zip_filename = f'{zip_subdir}.zip'
+
+        bytes_io = BytesIO()
+        zipf = zipfile.ZipFile(bytes_io, "w")
+
+        for doc in rental_app.rentalappdocument_set.all():
+            fdir, fname = os.path.split(doc.file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(doc.file.path, zip_path)
+
+        zipf.close()
+
+        response = HttpResponse(
+            bytes_io.getvalue(),
+            content_type="application/x-zip-compressed"
+        )
+
+        response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+        return response
