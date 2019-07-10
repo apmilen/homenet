@@ -369,6 +369,9 @@ if DEBUG:
 
     BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}'
 
+if PENNY_ENV == 'PROD':
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+
 # Assertions about the environment
 
 check_django_invariants()
