@@ -329,9 +329,7 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         lease = self.object.offer
         lease_members = lease.leasemember_set.select_related('user')
-        move_in_costs = lease.moveincost_set.order_by('-created')
-        total_paid = Transaction.objects.filter(service=lease).aggregate(Sum('amount'))
-        total_paid = total_paid['amount__sum']
+        move_in_costs = lease.moveincost_set.order_by('-created')   
         lease_transactions = Transaction.get_lease_transactions(lease)
         
         context['lease'] = lease
@@ -341,7 +339,6 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         context['total'] = MoveInCost.objects.total_by_offer(lease.id)
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
-        context['total_paid'] = total_paid
         context['lease_transactions'] = lease_transactions
         
         return context

@@ -381,5 +381,6 @@ STATUS_LINE = log_django_status_line()
 STRIPE_SECRET_KEY = 'sk_test_JMvIu8Y2VUpRtgkc1F2PJyEp00KdF6u0pE'
 STRIPE_PUBLISHABLE_KEY = 'pk_test_pwFJg5nhA95y3myECsDvuhxW003FKbgc7E'
 
-# Current Subscription Price
-SUBSCRIPTION_PRICE = 1500
+
+# Application name
+APP_NAME = 'Homenet'
