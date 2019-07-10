@@ -304,7 +304,7 @@ class PublicListings extends React.Component {
                         </Row>
                     : [
                         <center><h6>{total_listings} results</h6></center>,
-                        <Row>
+                        <Row className="justify-content-center">
                             {listings.map(listing =>
                                 as_grid ?
                                     <ListingGrid listing={listing}

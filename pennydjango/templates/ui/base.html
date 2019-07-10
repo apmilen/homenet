@@ -75,7 +75,7 @@
       {% bootstrap_messages %}
       {% block inner %}
         <div class="row">
-          <div class="col-12 col-lg-9 offset-lg-1">
+          <div class="{% block cardclass %}col-12 col-lg-9 offset-lg-1{% endblock %}">
             <div class="page-header row no-gutters py-4 mb-3 border-bottom text-center">
               <div class="col-12 text-center mb-0">
                 <h3 class="page-title">{% block inner_title %}{% endblock inner_title %}</h3>

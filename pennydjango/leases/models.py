@@ -1,3 +1,5 @@
+import os
+
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
@@ -5,7 +7,11 @@ from django.urls import reverse
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
 from listings.models import Listing
-from leases.constants import LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE
+from leases.constants import (
+    LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE,
+    LEASE_STATUS_PROGRESS
+)
+from penny.utils import rental_doc_path, validate_file_size
 
 
 class LeaseCostsManager(models.Manager):
@@ -47,6 +53,9 @@ class Lease(BaseModel):
     def detail_link(self):
         return reverse('leases:detail', args=[self.id])
 
+    def progress_status(self):
+        return LEASE_STATUS_PROGRESS.get(self.status, 0)
+
 
 class LeaseMember(BaseModel):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -84,3 +93,34 @@ class MoveInCost(BaseModel):
     charge = models.CharField(max_length=255)
 
     objects = LeaseCostsManager()
+
+
+class RentalApplication(BaseModel):
+    lease_member = models.OneToOneField(LeaseMember, on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
+    editing = models.BooleanField(default=False)
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20, null=True)
+    date_of_birth = models.DateField(null=True)
+    ssn = models.CharField(max_length=30)
+    driver_license = models.CharField(max_length=100, null=True)
+    n_of_pets = models.PositiveSmallIntegerField(null=True)
+    current_address = models.CharField(max_length=255, null=True)
+    current_monthly_rent = models.PositiveIntegerField(null=True)
+    landlord_name = models.CharField(max_length=100, null=True)
+    landlord_contact = models.CharField(max_length=100, null=True)
+    current_company = models.CharField(max_length=100, null=True)
+    job_title = models.CharField(max_length=100, null=True)
+    annual_income = models.CharField(max_length=100, null=True)
+    time_at_current_job = models.CharField(max_length=100, null=True)
+
+
+class RentalAppDocument(BaseModel):
+    rental_app = models.ForeignKey(RentalApplication, on_delete=models.CASCADE)
+    file = models.FileField(
+        upload_to=rental_doc_path,
+        validators=[validate_file_size]
+    )
+
+    def filename(self):
+        return os.path.basename(self.file.name)

@@ -210,7 +210,7 @@ SECURE_SETTINGS = (
     'POSTGRES_PASSWORD',
     'SECRET_KEY',
     'MAP_KEY',
-    #'MAILGUN_API_KEY',
+    'MAILGUN_API_KEY',
     #'ZULIP_API_KEY',
     #'SENTRY_DSN_KEY',
 )
@@ -370,6 +370,9 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
     BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}'
+
+if PENNY_ENV == 'PROD':
+    EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
 # Assertions about the environment
 
