@@ -29,23 +29,23 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         lease_cost = lease.moveincost_set.aggregate(Sum('value'))
         lease_cost = lease_cost['value__sum']
-        client = LeaseMember.objects.get(user=request.user)
+        lease_member = LeaseMember.objects.get(user=request.user)
         cost_for_stripe = int(lease_cost *100)
         token = request.POST['stripeToken']
 
         try:
-            stripe.Charge.create(
+            """ stripe.Charge.create(
                 amount=cost_for_stripe,
                 currency='usd',
                 description='A test charge',
                 source=token,
                 statement_descriptor='Custom descriptor'
-            )
+            ) """
             
             with transaction.atomic(): 
                 Transaction.objects.create(
-                    service = lease,
-                    made_by = request.user,
+                    lease_member = lease_member,
+                    transaction_user = request.user,
                     token = token,
                     amount = lease_cost
                 )
