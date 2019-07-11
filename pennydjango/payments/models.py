@@ -14,8 +14,8 @@ class Transaction(BaseModel):
         max_digits=15,
         decimal_places=2
     )
-    from_to = models.CharField(max_length=155, choices=FROM_TO, default=FROM_TO[0])
-    payment_method = models.CharField(max_length=155, choices=PAYMENT_METHOD, default=PAYMENT_METHOD[0])
+    from_to = models.CharField(max_length=155, choices=FROM_TO, default=FROM_TO[0][0])
+    payment_method = models.CharField(max_length=155, choices=PAYMENT_METHOD, default=PAYMENT_METHOD[0][0])
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     @classmethod

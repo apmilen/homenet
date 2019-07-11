@@ -56,6 +56,11 @@ class Lease(BaseModel):
     def progress_status(self):
         return LEASE_STATUS_PROGRESS.get(self.status, 0)
 
+    @classmethod
+    def update_lease_status(cls, lease):
+        lease.status = LEASE_STATUS[1][0]
+        lease.save()     
+
 
 class LeaseMember(BaseModel):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
@@ -81,7 +86,7 @@ class LeaseMember(BaseModel):
     @property
     def total_paid(self):
         try:
-            paid_amounts = self.user.transaction_set.values_list('amount', flat=True)
+            paid_amounts = self.transaction_set.values_list('amount', flat=True)
             return sum(paid_amount for paid_amount in paid_amounts)
         except AttributeError:
             return None

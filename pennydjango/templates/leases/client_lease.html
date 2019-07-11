@@ -268,10 +268,10 @@
                           <tr>
                               <td>{{ transaction.timestamp }}</td>
                               <td></td>
-                              <td>{{ transaction.made_by }}</td>
+                              <td>{{ transaction.transaction_user }}</td>
                               <td>${{ transaction.amount }}</td>
-                              <td></td>
-                              <td></td>
+                              <td>{{ transaction.get_payment_method_display }}</td>
+                              <td>{{ transaction.entered_by|default_if_none:"" }}</td>
                             </tr>
                           {% endfor %}
                         </tbody>

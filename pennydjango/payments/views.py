@@ -16,13 +16,13 @@ from leases.models import Lease, LeaseMember
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self):
-        stripe.api_key = settings.STRIPE_PUBLISHABLE_KEY
+        stripe.api_key = settings.STRIPE_SECRET_KEY
 
     template_name = 'payments/payments.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['key'] = stripe.api_key
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         return context
 
     def post(self, request, *args, **kwargs):
@@ -32,22 +32,23 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         lease_member = LeaseMember.objects.get(user=request.user)
         cost_for_stripe = int(lease_cost *100)
         token = request.POST['stripeToken']
+        client = LeaseMember.objects.get(user=request.user)
 
         try:
-            """ stripe.Charge.create(
-                amount=cost_for_stripe,
-                currency='usd',
-                description='A test charge',
-                source=token,
-                statement_descriptor='Custom descriptor'
-            ) """
-            
             with transaction.atomic(): 
+                stripe.Charge.create(
+                    amount=cost_for_stripe,
+                    currency='usd',
+                    description='A test charge',
+                    source=token,
+                    statement_descriptor='Custom descriptor'
+                )
+
                 Transaction.objects.create(
-                    lease_member = lease_member,
-                    transaction_user = request.user,
-                    token = token,
-                    amount = lease_cost
+                    lease_member=lease_member,
+                    transaction_user=request.user,
+                    token=token,
+                    amount=lease_cost
                 )
             messages.success(request, 'Your payment was successfull')
             

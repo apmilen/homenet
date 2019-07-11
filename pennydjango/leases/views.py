@@ -349,16 +349,22 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
             lease_member=self.object
         )
         lease_members = lease.leasemember_set.select_related('user')
-        move_in_costs = lease.moveincost_set.order_by('-created')   
-        lease_transactions = Transaction.get_lease_transactions(lease)
-
+        move_in_costs = lease.moveincost_set.order_by('-created')
+        total_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
+        
+        lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
+        lease_total_paid = lease_transactions.aggregate(Sum('amount'))
+        
+        if lease_total_paid['amount__sum'] == total_move_in_costs:
+            lease.update_lease_status(lease)
+ 
         # Context
         context['lease'] = lease
         context['listing'] = lease.listing
         context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
-        context['total'] = MoveInCost.objects.total_by_offer(lease.id)
+        context['total'] = total_move_in_costs
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
         context['lease_transactions'] = lease_transactions
