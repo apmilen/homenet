@@ -56,11 +56,6 @@ class Lease(BaseModel):
     def progress_status(self):
         return LEASE_STATUS_PROGRESS.get(self.status, 0)
 
-    @classmethod
-    def update_lease_status(cls, lease):
-        lease.status = LEASE_STATUS[1][0]
-        lease.save()     
-
 
 class LeaseMember(BaseModel):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)

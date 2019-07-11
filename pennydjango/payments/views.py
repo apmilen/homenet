@@ -4,14 +4,15 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
-from django.db import transaction
+from django.db import transaction, DatabaseError
 from django.db.models import Sum
 
 import stripe
 
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
-from leases.models import Lease, LeaseMember
+from leases.models import Lease, LeaseMember, MoveInCost
+from leases.constants import LEASE_STATUS
 
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
@@ -23,7 +24,18 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        
         return context
+
+    def update_lesase_status(self, lease):
+        lease_total_paid = Transaction.objects.filter(
+            lease_member__offer=lease
+        ).aggregate(Sum('amount'))
+        total_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
+
+        if lease_total_paid['amount__sum'] == total_move_in_costs:
+            lease.status = LEASE_STATUS[1][0]
+            lease.save()
 
     def post(self, request, *args, **kwargs):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
@@ -50,9 +62,14 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     token=token,
                     amount=lease_cost
                 )
+                self.update_lesase_status(lease)               
             messages.success(request, 'Your payment was successfull')
-            
-        except stripe.error.CardError as e:
-            messages.info(request, "There has been a problem with your card")
+        except stripe.error.CardError:
+            messages.warning(request, "There has been a problem with your card")
+        except DatabaseError:
+            messages.error(
+                request, 
+                "There has been an error in the database saving the transaction"
+            )
+
         return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
-        
