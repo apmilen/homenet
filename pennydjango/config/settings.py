@@ -331,8 +331,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': (
         'rest_framework.pagination.PageNumberPagination'
     ),
-    'PAGE_SIZE': 12
+    'PAGE_SIZE': 12,
+    'DATE_FORMAT': "%b %d, %Y",
+    'DATETIME_FORMAT': "%b %d, %Y, %I:%M %p"
 }
+
 
 SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
 SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'

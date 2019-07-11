@@ -17,7 +17,7 @@ const ListingGrid = ({listing, hoverOn, clickOn}) => {
     const new_listing = listing_existance < 1 ? 'New Listing' : ''
 
     return (
-        <div class="col-lg-6 col-md-12 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+        <div class="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
              onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
             <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
             <div class="card-post__image text-center">
