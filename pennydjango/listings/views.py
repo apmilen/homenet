@@ -63,9 +63,11 @@ class MainListingCreate(AgentRequiredMixin, CreateView):
 
     def form_valid(self, form):
         with transaction.atomic():
-            listing = form.save()
-            primary_photo = ListingPhoto(listing=listing)
+            self.object = form.save()
+            primary_photo = ListingPhotos(listing=self.object)
+            detail = ListingDetail(listing=self.object)
             primary_photo.save()
+            detail.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
