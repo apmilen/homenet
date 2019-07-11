@@ -17,9 +17,3 @@ class Transaction(BaseModel):
     from_to = models.CharField(max_length=155, choices=FROM_TO, default=FROM_TO[0][0])
     payment_method = models.CharField(max_length=155, choices=PAYMENT_METHOD, default=PAYMENT_METHOD[0][0])
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-
-    @classmethod
-    def get_lease_transactions(cls, lease):
-        transaction = cls.objects.filter(service=lease)
-        
-        return transaction
