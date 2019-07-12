@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
           type="text/css" crossorigin>
     {% endif %}
+    <link rel="preload" as="style" href="{% http2static 'css/stripe.css' '4' %}" crossorigin>
+    <script src="https://js.stripe.com/v3/"></script>
 {% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
 {% block inner_title %}
@@ -227,11 +229,17 @@
                   <div class="row">
                       
                     <div class="col-12">
-                      <a  id="add-costs"
+                        {% include 'payments/payments.html' %}
+                        <button type="button" class="btn btn-outline-info"
+                                data-toggle="modal"
+                                data-target="#paymentModal">
+                          Pay
+                        </button>
+                      <!-- <a  id="add-costs"
                               class="float-right btn-outline-info btn"
                               href="{% url 'payments' pk=lease.id %}">
                         Pay
-                    </a>
+                    </a> -->
                     </div>
                   </div>
                 </div>
