@@ -260,6 +260,7 @@ INSTALLED_APPS = [
     'django_select2',
     'rest_framework',
     'datatables_listview',
+    'django_extensions',
 
     'penny',
     'listings',
