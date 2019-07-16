@@ -351,6 +351,9 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
         lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
+        total_paid_lease = lease_transactions.aggregate(Sum('amount'))
+        total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
+        lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']
         
         # Context
         context['lease'] = lease
@@ -358,10 +361,11 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
-        context['total'] = MoveInCost.objects.total_by_offer(lease.id)
+        context['total'] = total_move_in_cost
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
         context['lease_transactions'] = lease_transactions
+        context['lease_pending_payment'] = lease_pending_payment
         
         # Application context
         if not rental_app.completed or rental_app.editing:

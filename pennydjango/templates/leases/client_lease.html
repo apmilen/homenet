@@ -1,4 +1,5 @@
 {% extends 'ui/base.html' %}
+{% load static %}
 {% load bootstrap4 utils %}
 
 {% block head %}
@@ -7,7 +8,8 @@
     <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
           type="text/css" crossorigin>
     {% endif %}
-    <link rel="preload" as="style" href="{% http2static 'css/stripe.css' '4' %}" crossorigin>
+    <link rel="stylesheet" href="{% http2static 'css/stripe.css' '4' %}" crossorigin>
+    
     <script src="https://js.stripe.com/v3/"></script>
 {% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
@@ -223,6 +225,14 @@
                       <td>$<b class="font-weight-bold"
                               id="total-cost-due">{{ total }}</b></td>
                     </tr>
+                    <tr>
+                      <td><b class="font-weight-bold">Pending Payment</b></td>
+                      <td>
+                        $<b class="font-weight-bold" id="lease-pending-payment">
+                          {{ lease_pending_payment|default_if_none:"" }}
+                        </b>
+                      </td>
+                    </tr>
                     </tbody>
                   </table>
                   <hr/>
@@ -312,6 +322,20 @@
               acceptedFiles: "image/*,application/pdf",
           });
       })
+      $('#paymentModal').on('shown.bs.modal', function (e) {
+        $.ajax({
+          url: "{% url 'payments' pk=lease.id %}",
+          data: {
+            'lease': 'id lease'
+          },
+          dataType: 'json',
+          success: function (data) {
+            $.getScript( "{% static 'js/stripe.js' '1' %}", function() {
+            let key = data.key;
+            excuteStripe(key)
+          })}
+        });
+      });
   </script>
   {% endif %}
 {% endblock tail %}

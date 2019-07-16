@@ -4,7 +4,8 @@ from django.conf import settings
 PAYMENT_METHOD = (
     ('stripe', 'Stripe'),
     ('check', 'Check'),
-    ('non-cash', 'Non cash')
+    ('non-cash', 'Non cash'),
+    ('bank', 'Bank')
 )
 
 APP_NAME = settings.APP_NAME
