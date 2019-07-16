@@ -17,6 +17,5 @@ class Collection(BaseModel):
     )
     listings = models.ManyToManyField(
         Listing,
-        null=True,
         related_name='collections',
     )
