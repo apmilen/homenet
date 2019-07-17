@@ -44,7 +44,7 @@ export class ListingComponent extends React.Component {
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, walkability_score, bikability_score, 
-            parking, photos_link
+            parking, photos_link, collections
         } = this.props.listing
 
         return (
@@ -85,7 +85,7 @@ export class ListingComponent extends React.Component {
                                     </div>
                                     <AddToCollection
                                         agent_collections={global.user.collections_list}
-                                        listing_collection_ids={['aaa111', 'bbb222']}
+                                        listing_collection_ids={collections}
                                     />
                                     {no_fee_listing && <span
                                         className="badge badge-info">No fee</span>}&nbsp;
