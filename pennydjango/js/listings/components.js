@@ -1,5 +1,39 @@
 import React from 'react'
 
+import {FormCheckbox} from "shards-react"
+
+
+const AddToCollection = ({agent_collections, listing_collection_ids}) =>
+    <div className="dropdown" style={{display: 'inline-block'}}>
+        <button
+            className="btn btn-sm btn-outline-info mr-1 dropdown-toggle"
+            type="button"
+            id="dropdownAddToCollectionButton"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">
+            Add to collection
+        </button>
+        <div className="dropdown-menu dropdown-menu-small"
+             aria-labelledby="dropdownAddToCollectionButton">
+            <div className="dropdown-checkbox-container" style={{width: 160}}>
+                <button className="btn btn-pill btn-outline-secondary w-100" style={{margin: '5px 0 10px 0'}}>
+                    Create collection
+                </button>
+                {agent_collections.map(collection => {
+                    const {id, name} = collection
+                    return (
+                        <FormCheckbox id={id} key={`${id}-collection`}
+                                      checked={listing_collection_ids.includes(id)}
+                                      onChange={e => console.log("NOT IMPLEMENTED YET", e.target)}>
+                            {name}
+                        </FormCheckbox>
+                    )
+                })}
+            </div>
+        </div>
+    </div>
+
 
 export class ListingComponent extends React.Component {
     render() {
@@ -49,10 +83,10 @@ export class ListingComponent extends React.Component {
                                             </a>
                                         </div>
                                     </div>
-                                    <button type="button"
-                                            className="btn btn-sm btn-outline-info mr-1">Add
-                                        to Listing Collection
-                                    </button>
+                                    <AddToCollection
+                                        agent_collections={global.user.collections_list}
+                                        listing_collection_ids={['aaa111', 'bbb222']}
+                                    />
                                     {no_fee_listing && <span
                                         className="badge badge-info">No fee</span>}&nbsp;
                                     {detail.vacant && <span

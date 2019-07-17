@@ -89,6 +89,7 @@ class User(AbstractUser, BaseModel):
                 'is_authenticated',
                 'user_type',
                 'user_type_str',
+                'collections_list'
             ),
             'str': str(self),
             **(self.attrs(*attrs) if attrs else {}),
@@ -119,6 +120,10 @@ class User(AbstractUser, BaseModel):
     @cached_property
     def user_type_str(self):
         return self.get_user_type_display()
+
+    @cached_property
+    def collections_list(self):
+        return [collection.__json__() for collection in self.collections.all()]
 
 
 class PermissionManager:

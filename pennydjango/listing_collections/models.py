@@ -19,3 +19,16 @@ class Collection(BaseModel):
         Listing,
         related_name='collections',
     )
+
+    def __json__(self, *attrs):
+        return {
+            **self.attrs(
+                'id',
+                'name',
+                'client_email',
+                'client_phone',
+                'notes',
+            ),
+            'str': str(self),
+            **(self.attrs(*attrs) if attrs else {}),
+        }
