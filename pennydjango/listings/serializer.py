@@ -1,6 +1,4 @@
 # Serializers define the API representation.
-from datetime import datetime
-
 from rest_framework import serializers
 
 from listings.models import Listing, ListingDetail
@@ -21,7 +19,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
     pets = serializers.CharField(source='get_pets_display')
     parking = serializers.CharField(source='get_parking_display')
     sales_agent = AgentSerializer()
-    
+
     class Meta:
         model = Listing
         fields = (
