@@ -34,8 +34,8 @@ CHARGE_OPTIONS = [
 
 
 LEASE_STATUS_PROGRESS = {
-    'awaiting_deposit': 0,
-    'unsigned_unapproved': 25,
+    'awaiting_deposit': 25,
+    'unsigned_unapproved': 50,
     'unsigned_approved': 75,
     'signed_approved': 100
 }
