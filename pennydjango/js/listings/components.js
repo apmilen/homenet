@@ -1,38 +1,27 @@
 import React from 'react'
 
+import {DropdownButton} from "react-bootstrap"
 import {FormCheckbox} from "shards-react"
 
 
 const AddToCollection = ({agent_collections, listing_collection_ids, onClickCollection}) =>
-    <div className="dropdown" style={{display: 'inline-block'}}>
-        <button
-            className="btn btn-sm btn-outline-info mr-1 dropdown-toggle"
-            type="button"
-            id="dropdownAddToCollectionButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false">
-            Add to collection
-        </button>
-        <div className="dropdown-menu dropdown-menu-small"
-             aria-labelledby="dropdownAddToCollectionButton">
-            <div className="dropdown-checkbox-container" style={{width: 160}}>
-                <button className="btn btn-pill btn-outline-secondary w-100" style={{margin: '5px 0 10px 0'}}>
-                    Create collection
-                </button>
-                {agent_collections.map(collection => {
-                    const {id, name} = collection
-                    return (
-                        <FormCheckbox id={id} key={`${id}-collection`}
-                                      checked={listing_collection_ids.includes(id)}
-                                      onChange={onClickCollection}>
-                            {name}
-                        </FormCheckbox>
-                    )
-                })}
-            </div>
+    <DropdownButton title="Add to collection" className="d-inline" variant="outline-info" size="sm">
+        <div className="dropdown-checkbox-container" style={{width: 160, fontSize: '.813rem'}}>
+            <button className="btn btn-pill btn-outline-secondary w-100" style={{margin: '5px 0 10px 0'}}>
+                Create collection
+            </button>
+            {agent_collections.map(collection => {
+                const {id, name} = collection
+                return (
+                    <FormCheckbox id={id} key={`${id}-collection`}
+                                  checked={listing_collection_ids.includes(id)}
+                                  onChange={onClickCollection}>
+                        {name}
+                    </FormCheckbox>
+                )
+            })}
         </div>
-    </div>
+    </DropdownButton>
 
 
 export class ListingComponent extends React.Component {
