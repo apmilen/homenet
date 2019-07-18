@@ -242,3 +242,28 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'constants': constants,
             'endpoint': '/listings/private/'
         }
+
+    def post(self, request, *args, **kwargs):
+        req_type = request.POST.get('type')
+        response = {'success': False}
+        if req_type == 'LISTING_COLLECTION':
+            collection_id = request.POST.get('collection_id')
+            listing_short_id = request.POST.get('listing_short_id')
+            assert collection_id and listing_short_id
+
+            listing = Listing.objects.get(id__startswith=listing_short_id)
+            listing_in_collection = listing.collections\
+                .filter(id=collection_id).exists()
+
+            if listing_in_collection:
+                listing.collections.remove(collection_id)
+            else:
+                listing.collections.add(collection_id)
+
+            listing_data = PrivateListingSerializer(listing).data
+            response = {
+                'success': True,
+                'collections': listing_data['collections']
+            }
+
+        return JsonResponse(response)

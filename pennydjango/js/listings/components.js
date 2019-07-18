@@ -3,7 +3,7 @@ import React from 'react'
 import {FormCheckbox} from "shards-react"
 
 
-const AddToCollection = ({agent_collections, listing_collection_ids}) =>
+const AddToCollection = ({agent_collections, listing_collection_ids, onClickCollection}) =>
     <div className="dropdown" style={{display: 'inline-block'}}>
         <button
             className="btn btn-sm btn-outline-info mr-1 dropdown-toggle"
@@ -25,7 +25,7 @@ const AddToCollection = ({agent_collections, listing_collection_ids}) =>
                     return (
                         <FormCheckbox id={id} key={`${id}-collection`}
                                       checked={listing_collection_ids.includes(id)}
-                                      onChange={e => console.log("NOT IMPLEMENTED YET", e.target)}>
+                                      onChange={onClickCollection}>
                             {name}
                         </FormCheckbox>
                     )
@@ -36,6 +36,24 @@ const AddToCollection = ({agent_collections, listing_collection_ids}) =>
 
 
 export class ListingComponent extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            collections: props.listing.collections
+        }
+    }
+    toggleCollection(e) {
+        const post_data = {
+            type: 'LISTING_COLLECTION',
+            collection_id: e.target.id,
+            listing_short_id: this.props.listing.short_id
+        }
+        $.post("", post_data, response => {
+            if (response.success) {
+                this.setState({collections: response.collections})
+            }
+        })
+    }
     render() {
         const {
             full_address, no_fee_listing, detail, detail_link, default_image,
@@ -44,8 +62,11 @@ export class ListingComponent extends React.Component {
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, walkability_score, bikability_score, 
-            parking, photos_link, collections
+            parking, photos_link
         } = this.props.listing
+        const {
+            collections
+        } = this.state
 
         return (
             <div className="row">
@@ -86,6 +107,7 @@ export class ListingComponent extends React.Component {
                                     <AddToCollection
                                         agent_collections={global.user.collections_list}
                                         listing_collection_ids={collections}
+                                        onClickCollection={::this.toggleCollection}
                                     />
                                     {no_fee_listing && <span
                                         className="badge badge-info">No fee</span>}&nbsp;
