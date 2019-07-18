@@ -35,10 +35,23 @@ export const Lease = ({lease}) => {
                                          style={{position: 'absolute', top: '0', left: '0', width: '100%', height: '100%'}}/>
                                 </a>
                             </div>
-                            <div className="row">
-                                <div className="listing-card-stub container-fluid">
+                            <div className="row listing-area-data-row">
+                                <div className="col-sm-4 text-left">
+                                    <b>Address</b>
+                                </div>
+                                <div className="col-sm-8 text-left">
+                                    {listing.address}
                                 </div>
                             </div>
+                            {lease.leasemember_set.map(member =>
+                            <div key={`${member.short_id}`}  className="row listing-area-data-row">
+                                <div className="col-sm-4 text-left">
+                                    <b>Client Name</b>
+                                </div>
+                                <div className="col-sm-8 text-left">
+                                    {member.name}
+                                </div>
+                            </div>)}
                         </div>
                         <div className="col-lg-4 listing-first-data-col">
                             <div className="row listing-area-data-row">
@@ -61,14 +74,6 @@ export const Lease = ({lease}) => {
                                 </div>
                                 <div className="col-sm-8 text-left">
                                     {listing.neighborhood}
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Site apply</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">
@@ -113,7 +118,7 @@ export const Lease = ({lease}) => {
                             </div>
                             <div className="row listing-area-data-row">
                                 <div className="col-sm-4 text-left">
-                                    <b>Office</b>
+                                    <b>Description</b>
                                 </div>
                                 <div className="col-sm-8 text-left">
 
@@ -127,54 +132,6 @@ export const Lease = ({lease}) => {
                                 </div>
                                 <div className="col-sm-8 text-left">
                                     {lease.move_in_date}
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Credit Checks</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Description</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Transactions</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Current Balance</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>OP Received at</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
-                                </div>
-                            </div>
-                            <div className="row listing-area-data-row">
-                                <div className="col-sm-4 text-left">
-                                    <b>Client Name</b>
-                                </div>
-                                <div className="col-sm-8 text-left">
-                                    TODO
                                 </div>
                             </div>
                             <div className="row listing-area-data-row">
@@ -199,6 +156,69 @@ export const Lease = ({lease}) => {
                                 </div>
                                 <div className="col-sm-8 text-left">
                                     {lease.modified}
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="listing-card-stub container-fluid">
+                                    <table className="table">
+                                        <tbody>
+                                        <tr>
+                                            <td style={{width: "90px"}}>
+                                                <img
+                                                    className="rounded-circle img-fluid mx-auto"
+                                                    width="75"
+                                                    height="75"
+                                                    src={`${listing.listing_agent.avatar_url}`}
+                                                    alt="Missing"/>
+                                                </td>
+                                            <td>
+                                                <div className="mb-2">
+                                                    <strong>{
+                                                        listing
+                                                        .listing_agent.get_full_name
+                                                    }</strong> ·
+                                                    Listing Agent
+                                                </div>
+                                                <div>Contact: {
+                                                    listing
+                                                    .listing_agent.phone
+                                                }</div>
+                                                <div>{
+                                                    listing
+                                                    .listing_agent.email
+                                                }</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style={{width: "90px"}}>
+                                                <img
+                                                    className="rounded-circle img-fluid mx-auto"
+                                                    width="75"
+                                                    height="75"
+                                                    src={`${listing.sales_agent.avatar_url}`}
+                                                    alt="Missing"/>
+                                            </td>
+                                            <td>
+                                                <div className="mb-2">
+                                                    <strong>{
+                                                        listing
+                                                        .sales_agent.get_full_name
+                                                    }</strong> ·
+                                                    Sales Agent
+                                                </div>
+                                                <div>Contact: {
+                                                    listing
+                                                    .sales_agent.phone
+                                                }</div>
+                                                <div>{
+                                                    listing
+                                                    .sales_agent.email
+                                                }</div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
