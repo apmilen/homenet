@@ -34,8 +34,12 @@ CHARGE_OPTIONS = [
 
 
 LEASE_STATUS_PROGRESS = {
+    'client_backed_out': 0,
+    'cancelled': 0,
+    'pending_deletion': 0,
     'awaiting_deposit': 25,
     'unsigned_unapproved': 50,
     'unsigned_approved': 75,
-    'signed_approved': 100
+    'signed_approved': 100,
+    'awaiting_op': 100
 }

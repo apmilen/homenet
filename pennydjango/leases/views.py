@@ -24,7 +24,7 @@ from leases.emails import send_invitation_email
 from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
     RentalApplicationForm,
-    RentalAppDocForm)
+    RentalAppDocForm, ChangeLeaseStatusForm)
 from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
@@ -67,7 +67,7 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
 
 
 # React
-class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
+class LeaseDetail(AgentRequiredMixin, DetailView):
     model = Lease
     template_name = 'leases/lease_agent.html'
 
@@ -75,10 +75,16 @@ class LeaseDetail(ClientOrAgentRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         lease_members = self.object.leasemember_set.select_related('user')
         move_in_costs = self.object.moveincost_set.order_by('-created')
+        change_status_url = reverse('leases:change-status',
+                                    args=[self.object.id])
         context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
         context['invite_member_form'] = BasicLeaseMemberForm()
+        context['change_status_form'] = ChangeLeaseStatusForm(
+            instance=self.object
+        )
+        context['change_status_url'] = change_status_url
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
         return context
@@ -142,6 +148,21 @@ class LeaseCreate(AgentRequiredMixin,
         return {
             'listing': PrivateListingSerializer(self.get_main_object()).data,
         }
+
+
+class LeaseUpdateView(AgentRequiredMixin, UpdateView):
+    model = Lease
+    form_class = LeaseCreateForm
+    template_name = 'leases/lease_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['listing'] = self.object.listing
+        return context
+
+    def get_success_url(self):
+        messages.success(self.request, "Leases updated successfully")
+        return self.object.detail_link()
 
 
 # Django
@@ -513,3 +534,26 @@ class DownloadRentalDocuments(AgentRequiredMixin, View):
 
         response['Content-Disposition'] = f'attachment; filename={zip_filename}'
         return response
+
+
+class ChangeLeaseStatusView(AgentRequiredMixin, UpdateView):
+    model = Lease
+    form_class = ChangeLeaseStatusForm
+
+    def get_success_url(self):
+        return self.object.detail_link()
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            "Lease updated"
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "An error has occurred while updating the lease"
+        )
+        return HttpResponseRedirect(self.get_success_url())

@@ -111,3 +111,10 @@ class RentalAppDocForm(forms.ModelForm):
     class Meta:
         model = RentalAppDocument
         fields = ('file', )
+
+
+class ChangeLeaseStatusForm(forms.ModelForm):
+
+    class Meta:
+        model = Lease
+        fields = ('status', )

@@ -13,9 +13,10 @@ export const Lease = ({lease}) => {
                                     className="btn btn-sm btn-outline-info mr-1">
                                 {listing.address}
                             </button>
-                            <button type="button"
-                                    className="btn btn-sm btn-outline-info mr-1">Manage
-                            </button>
+                            <a href={lease.detail_link}
+                               target="_blank"
+                               className="btn btn-sm btn-outline-info mr-1">Manage
+                            </a>
                             <a href={listing.listing_link}
                                target="_blank"
                                className="btn btn-sm btn-outline-info mr-1">Listing
