@@ -9,8 +9,11 @@
           type="text/css" crossorigin>
     {% endif %}
     <link rel="stylesheet" href="{% http2static 'css/stripe.css' '4' %}" crossorigin>
-    
+    <script>
+      let key = "{{key}}"
+    </script>
     <script src="https://js.stripe.com/v3/"></script>
+    
 {% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
 {% block inner_title %}
@@ -239,17 +242,14 @@
                   <div class="row">
                       
                     <div class="col-12">
-                        {% include 'payments/payments.html' %}
-                        <button type="button" class="btn btn-outline-info"
-                                data-toggle="modal"
-                                data-target="#paymentModal">
-                          Pay
-                        </button>
-                      <!-- <a  id="add-costs"
-                              class="float-right btn-outline-info btn"
-                              href="{% url 'payments' pk=lease.id %}">
-                        Pay
-                    </a> -->
+                        {% if lease_pending_payment %}
+                          {% include 'payments/payments.html' %}
+                          <button type="button" class="btn btn-outline-info"
+                                  data-toggle="modal"
+                                  data-target="#paymentModal">
+                            Pay
+                          </button>
+                        {% endif%}
                     </div>
                   </div>
                 </div>
@@ -322,20 +322,24 @@
               acceptedFiles: "image/*,application/pdf",
           });
       })
-      $('#paymentModal').on('shown.bs.modal', function (e) {
-        $.ajax({
-          url: "{% url 'payments' pk=lease.id %}",
-          data: {
-            'lease': 'id lease'
-          },
-          dataType: 'json',
-          success: function (data) {
-            $.getScript( "{% static 'js/stripe.js' '1' %}", function() {
-            let key = data.key;
-            excuteStripe(key)
-          })}
-        });
-      });
   </script>
   {% endif %}
+  
+  <script>
+    $('#paymentModal').on('shown.bs.modal', function (e) {
+      $.getScript( "{% static 'js/stripe.js' '1' %}", function() {});
+    });
+
+    getStripeFee = () => {
+      document.getElementById("total").innerHTML = ''
+      let amount = parseFloat(document.getElementById("amount").value)
+      if (amount > 0) {
+        let total_paid = (amount+0.30)/(1-0.029)
+        total_paid = total_paid.toFixed(2)
+        document.getElementById("amount-plus-fee").value = total_paid
+        document.getElementById("total").innerHTML = total_paid +
+        '<span  class="stripe-fee" data-toggle="tooltip" data-placement="top" title="Amount plus Stripe fee"></span>'
+      } 
+    }
+  </script>    
 {% endblock tail %}

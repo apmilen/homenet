@@ -13,20 +13,28 @@
         <form action="{% url 'payments' pk=lease.id %}" method="post" id="payment-form">
           {% csrf_token %}
           <div class="form-group row">
-              <label for="amount" class="col-sm-3 col-form-label">Amount to pay</label>
-              <div class="col-sm-6">
-                <span class="usd">
-                  <input type="text" id="amount" name="amount" class="form-control" placeholder="Amount">
-                </span>
-              </div>
-            </div>
-          <div class="form-group row">
-            <label for="card-element" class="col-sm-3 col-form-label">Credit or debit card</label>
+            <label for="amount" class="col-sm-3 col-form-label">Amount to pay</label>
             <div class="col-sm-6">
+              <span class="usd">
+                <input type="text" id="amount" name="amount" class="form-control" placeholder="Amount" onfocusout="getStripeFee()">
+                <small id="amountHelp" class="form-text text-muted">Stripe fee is 2.9% of amount plus 30¢</small>
+              </span>
+              <input type="hidden" id="amount-plus-fee" name="amount-plus-fee">
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-3 offset-md-3">
+              <span class="usd-plus-fee">
+                <span type="text" id="total" name="total"></span>
+              </span>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="card-element" class="col-sm-6 col-md-3 col-form-label">Credit or debit card</label>
+            <div class="col-md-6 col-sm-12">
             <div id="card-element">
               <!-- A Stripe Element will be inserted here. -->
             </div>
-
             <!-- Used to display Element errors. -->
             <div id="card-errors" role="alert"></div>
           </div>
@@ -37,6 +45,3 @@
     </div>
   </div>
 </div>
-<script>
-
-</script>

@@ -11,6 +11,7 @@ import stripe
 
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
+from payments.utils import get_amount_plus_fee
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.constants import LEASE_STATUS
 
@@ -23,36 +24,43 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
-            
         return context
 
     def update_lesase_status(self, lease):
-        lease_total_paid = Transaction.objects.filter(
+        lease.status = LEASE_STATUS[1][0]
+        lease.save()
+    
+    def lease_pending_payment(self, lease):
+        pending_payment = False
+        lease_total_paid = total_paid_by_lease = Transaction.objects.filter(
             lease_member__offer=lease
         ).aggregate(Sum('amount'))
-        total_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
+        lease_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
 
-        if lease_total_paid['amount__sum'] == total_move_in_costs:
-            lease.status = LEASE_STATUS[1][0]
-            lease.save()
+        if lease_move_in_costs > lease_total_paid['amount__sum']:
+            pending_payment = True
 
-    def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            data = {
-                'key':settings.STRIPE_PUBLISHABLE_KEY
-            }
-            return JsonResponse(data)
+        return pending_payment
 
     def post(self, request, *args, **kwargs):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
-        lease_member = LeaseMember.objects.get(user=request.user)
         client = LeaseMember.objects.get(user=request.user)
+        if not self.lease_pending_payment(lease):
+            messages.error(
+                request, 
+                "The lease has not pending payment"
+            )
+            return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
+
+        lease_member = LeaseMember.objects.get(user=request.user)
         token = request.POST['stripeToken']
         amount = request.POST['amount']
-
+        amount_plus_fee = get_amount_plus_fee(float(amount))
+     
+        assert float(request.POST['amount-plus-fee']) == amount_plus_fee, "The amount plus Stripe fee is inconsistent"
+           
         try:
-            amount_to_stripe = int(amount * 100) 
+            amount_to_stripe = int(amount_plus_fee * 100)
         except ValueError:
             messages.error(
                 request, 
@@ -67,7 +75,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     currency='usd',
                     description='A test charge',
                     source=token,
-                    statement_descriptor='Custom descriptor'
+                    statement_descriptor='Lease payment'
                 )
 
                 Transaction.objects.create(
@@ -76,8 +84,10 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     token=token,
                     amount=amount
                 )
-                self.update_lesase_status(lease)               
-            messages.success(request, 'Your payment was successfull')
+               
+                if not self.lease_pending_payment(lease):
+                    self.update_lesase_status(lease)              
+                messages.success(request, 'Your payment was successfull')
         except stripe.error.CardError:
             messages.warning(request, "There has been a problem with your card")
         except DatabaseError:

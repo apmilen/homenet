@@ -2,6 +2,7 @@ from io import BytesIO
 import os
 import zipfile
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -354,8 +355,8 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         total_paid_lease = lease_transactions.aggregate(Sum('amount'))
         total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
         lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']
-        
         # Context
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         context['lease'] = lease
         context['listing'] = lease.listing
         context['rental_app'] = rental_app
