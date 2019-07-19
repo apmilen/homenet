@@ -35,6 +35,7 @@ if (!mapboxgl.supported()) {
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
             countries: 'us',
+            language: 'en-US',
             filter: function (item) {
                 return filterRegion(item, "New York")
             }
