@@ -45,29 +45,37 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
+
         if not self.lease_pending_payment(lease):
-            messages.error(
+            messages.warning(
                 request, 
                 "The lease has not pending payment"
             )
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
 
-        lease_member = LeaseMember.objects.get(user=request.user)
-        token = request.POST['stripeToken']
-        amount = request.POST['amount']
-        amount_plus_fee = get_amount_plus_fee(float(amount))
-     
-        assert float(request.POST['amount-plus-fee']) == amount_plus_fee, "The amount plus Stripe fee is inconsistent"
-           
         try:
-            amount_to_stripe = int(amount_plus_fee * 100)
+            amount = float(request.POST['amount'])
+            request_amount_plus_fee = float(request.POST['amount-plus-fee'])
         except ValueError:
             messages.error(
                 request, 
-                "The amount to pay must be a postive value"
+                "Please provide a valid amount"
             )
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
-    
+
+        if amount <= 0:
+            messages.error(
+                request, 
+                "Invalid amount to pay"
+            )
+            return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
+       
+        amount_plus_fee = get_amount_plus_fee(amount)
+        amount_to_stripe = int(amount_plus_fee * 100)
+        assert request_amount_plus_fee == amount_plus_fee, "The amount plus Stripe fee is inconsistent"
+        lease_member = LeaseMember.objects.get(user=request.user)
+        token = request.POST['stripeToken']
+
         try:
             with transaction.atomic(): 
                 stripe.Charge.create(
