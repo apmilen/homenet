@@ -35,7 +35,7 @@ export class ListingComponent extends React.Component {
         const post_data = {
             type: 'LISTING_COLLECTION',
             collection_id: e.target.id,
-            listing_short_id: this.props.listing.short_id
+            listing_id: this.props.listing.id
         }
         $.post("", post_data, response => {
             if (response.success) {

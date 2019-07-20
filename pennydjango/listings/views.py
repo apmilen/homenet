@@ -248,10 +248,10 @@ class Listings(AgentRequiredMixin, PublicReactView):
         response = {'success': False}
         if req_type == 'LISTING_COLLECTION':
             collection_id = request.POST.get('collection_id')
-            listing_short_id = request.POST.get('listing_short_id')
-            assert collection_id and listing_short_id
+            listing_id = request.POST.get('listing_id')
+            assert collection_id and listing_id
 
-            listing = Listing.objects.get(id__startswith=listing_short_id)
+            listing = Listing.objects.get(id=listing_id)
             listing_in_collection = listing.collections\
                 .filter(id=collection_id).exists()
 
