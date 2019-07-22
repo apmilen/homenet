@@ -4,32 +4,32 @@
       <div class="container-fluid new-listing-card">
         <div class="row listing-admin-area">
           <div class="col-12">
-            <button type="button"
-                    class="btn btn-sm btn-outline-info mr-1">
-              {{ listing.full_address }}
-            </button>
-            <button type="button"
-                    class="btn btn-sm btn-outline-info mr-1">Manage
-            </button>
+            {% include 'penny/change_status_modal.html' %}
             <a href="{{ listing.listing_link }}"
                target="_blank"
-               class="btn btn-sm btn-outline-info mr-1">Listing
+               class="btn btn-sm btn-outline-info mr-1">{{ listing.full_address }}
             </a>
+            <a href="{% url 'leases:edit' pk=lease.id %}"
+               target="_blank"
+               class="btn btn-sm btn-outline-info mr-1">Edit
+            </a>
+            <button type="button"
+                    class="btn btn-sm btn-outline-info mr-1"
+                    data-toggle="modal" data-target="#changeStatusModal">
+              Change Status
+            </button>
           </div>
         </div>
         <div class="row listing-area-content">
           <div class="col-lg-4 listing-area-main">
             <div class="row"
                  style="position: relative; padding-top: 56.25%">
-              <a href="{{ lease.detail_link }}"
-                 target="_blank" rel="noreferrer noopener">
                 <img class="lazy img-fluid mx-auto"
                      alt="listing"
                      src="{{ listing.default_image }}"
                      width="960"
                      height="540"
                      style="position: absolute; top: 0; left:0; width: 100%; height: 100%;"/>
-              </a>
             </div>
             <div class="row">
               <div class="listing-card-stub container-fluid">

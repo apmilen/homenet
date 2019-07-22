@@ -88,3 +88,10 @@ ListingPhotoFormSet = forms.modelformset_factory(
     form=SingleListingPhotoForm,
     extra=3
 )
+
+
+class ChangeListingStatusForm(forms.ModelForm):
+
+    class Meta:
+        model = Listing
+        fields = ('status', )
