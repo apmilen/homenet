@@ -292,15 +292,34 @@ hr.divider-hr {
     border-radius:100%;
     background-color:#c3c7cc;
 }
+/*  Collections modal  */
+.collection-modal-field {
+    margin-bottom: .5rem;
+}
+.collection-modal-title {
+    margin-bottom: 0;
+}
+.collection-modal-body {
+    padding: 1rem;
+}
+.collection-modal-error {
+    border: solid 1px red;
+    margin-bottom: 10px;
+    color: #b20000;
+    background-color: #ffb2b2;
+    font-size: .8rem;
+}
 
+
+/*    Jobs   */
 .jobs-link {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-
 .jobs-link, .jobs-link:hover {
     color: rgba(0,0,0,.5);
 }
+
 
 /*    Settings gear    */
 .settings-gear {

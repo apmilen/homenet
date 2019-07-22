@@ -1,15 +1,118 @@
 import React from 'react'
 
-import {DropdownButton} from "react-bootstrap"
-import {FormCheckbox} from "shards-react"
+import {DropdownButton, Modal, FormControl} from 'react-bootstrap'
+import {FormCheckbox} from 'shards-react'
 
 
-const AddToCollection = ({agent_collections, listing_collection_ids, onClickCollection}) =>
+const validateCollectionForm = (collection_data) => {
+    const {name, notes} = collection_data
+    let errors = []
+    if (name === "") errors.push("Name cannot be empty")
+    if (notes === "") errors.push("Please fill notes with something useful")
+    return errors
+}
+
+class CreateCollectionModal extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            show: false,
+        }
+    }
+    toggleModal() {
+        this.setState({
+            show: !this.state.show,
+            errors: [],
+            name: '',
+            client_email: '',
+            client_phone: '',
+            notes: '',
+        })
+    }
+    handleInput(e) {
+        this.setState({[e.target.id]: e.target.value})
+    }
+    submitCollection() {
+        const {show, errors, ...collection_data} = this.state
+        const new_errors = validateCollectionForm(collection_data)
+        if (new_errors.length)
+            this.setState({errors: new_errors})
+        else {
+            const post_data = {
+                type: 'CREATE_COLLECTION',
+                listing_id: this.props.listing_id,
+                ...collection_data,
+            }
+            $.post("", post_data, response => {
+                if (response.success)
+                    global.location.reload()
+                else
+                    this.setState({errors: response.errors})
+            })
+        }
+    }
+    render() {
+        const {
+            show, errors, name, client_email, client_phone, notes
+        } = this.state
+        return (
+            <span>
+                <button
+                    className="btn btn-pill btn-outline-secondary w-100"
+                    onClick={::this.toggleModal}
+                    style={{margin: '5px 0 10px 0'}}>
+                    Create collection
+                </button>
+
+                {show &&
+                <Modal show={show} size="sm" onHide={::this.toggleModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title className="collection-modal-title">
+                            New collection
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="collection-modal-body">
+                        <span><center>
+                            {errors.map((error, i) =>
+                                <div key={i} className="collection-modal-error">{error}</div>
+                            )}
+                            <FormControl id='name' type='text' value={name}
+                                         autoComplete="off" required
+                                         className="collection-modal-field"
+                                         placeholder='Collection name (not client name)'
+                                         onChange={::this.handleInput} />
+                            <FormControl id='client_email' type='text' value={client_email}
+                                         autoComplete="off"
+                                         className="collection-modal-field"
+                                         placeholder='Client email'
+                                         onChange={::this.handleInput} />
+                            <FormControl id='client_phone' type='text' value={client_phone}
+                                         autoComplete="off"
+                                         className="collection-modal-field"
+                                         placeholder='Client phone number'
+                                         onChange={::this.handleInput} />
+                            <FormControl id='notes' type='text' value={notes}
+                                         autoComplete="off"
+                                         className="collection-modal-field"
+                                         placeholder='Additional notes (like client name)'
+                                         onChange={::this.handleInput} />
+                            <button
+                                className="btn btn-pill btn-outline-secondary"
+                                onClick={::this.submitCollection}>
+                                Create Collection
+                            </button>
+                        </center></span>
+                    </Modal.Body>
+                </Modal>}
+            </span>
+        )
+    }
+}
+
+const AddToCollection = ({listing_id, agent_collections, listing_collection_ids, onClickCollection}) =>
     <DropdownButton title="Add to collection" className="d-inline" variant="outline-info" size="sm">
         <div className="dropdown-checkbox-container" style={{width: 160, fontSize: '.813rem'}}>
-            <button className="btn btn-pill btn-outline-secondary w-100" style={{margin: '5px 0 10px 0'}}>
-                Create collection
-            </button>
+            <CreateCollectionModal listing_id={listing_id}/>
             {agent_collections.map(collection => {
                 const {id, name} = collection
                 return (
@@ -51,7 +154,7 @@ export class ListingComponent extends React.Component {
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, walkability_score, bikability_score, 
-            parking, photos_link
+            parking, photos_link, id
         } = this.props.listing
         const {
             collections
@@ -94,6 +197,7 @@ export class ListingComponent extends React.Component {
                                         </div>
                                     </div>
                                     <AddToCollection
+                                        listing_id={id}
                                         agent_collections={global.user.collections_list}
                                         listing_collection_ids={collections}
                                         onClickCollection={::this.toggleCollection}
