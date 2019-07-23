@@ -58,3 +58,10 @@ span.stripe-fee::before {
   background-color: aliceblue;
   cursor:pointer;
 }
+
+#total {
+  width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

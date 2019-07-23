@@ -334,11 +334,17 @@
       document.getElementById("total").innerHTML = ''
       let amount = parseFloat(document.getElementById("amount").value)
       if (amount > 0) {
-        let total_paid = (amount+0.30)/(1-0.029)
-        total_paid = total_paid.toFixed(2)
-        document.getElementById("amount-plus-fee").value = total_paid
-        document.getElementById("total").innerHTML = total_paid +
-        '<span  class="stripe-fee" data-toggle="tooltip" data-placement="top" title="Amount plus Stripe fee"></span>'
+        $.ajax({
+          url: "{% url 'payments' pk=lease.id %}",
+          data: {
+            'amount': amount
+          },
+          dataType: 'json',
+          success: function (data) {
+            document.getElementById("amount-plus-fee").value = data.total_paid
+            document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="'+ data.total_paid +'">'+data.total_paid+'</span>'
+          }
+        });       
       } 
     }
   </script>    

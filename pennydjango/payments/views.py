@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.views.generic.base import TemplateView
 from django.shortcuts import get_object_or_404
@@ -29,24 +31,29 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def update_lesase_status(self, lease):
         lease.status = LEASE_STATUS[1][0]
         lease.save()
-    
-    def lease_pending_payment(self, lease):
-        pending_payment = False
+
+    def get_lease_total_pending(self, lease):
         lease_total_paid = total_paid_by_lease = Transaction.objects.filter(
             lease_member__offer=lease
         ).aggregate(Sum('amount'))
         lease_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
+        lease_total_pending = lease_move_in_costs
+        if lease_total_paid['amount__sum'] is not None:
+            lease_total_pending = lease_move_in_costs - lease_total_paid['amount__sum']
+        return lease_total_pending  
 
-        if lease_move_in_costs > lease_total_paid['amount__sum']:
-            pending_payment = True
-
-        return pending_payment
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            amount = Decimal(request.GET.get('amount', False))
+            amount_plus_fee = get_amount_plus_fee(amount)
+            return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
-
-        if not self.lease_pending_payment(lease):
+        lease_total_pending = self.get_lease_total_pending(lease)
+       
+        if lease_total_pending == 0:
             messages.warning(
                 request, 
                 "The lease has not pending payment"
@@ -54,8 +61,8 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
 
         try:
-            amount = float(request.POST['amount'])
-            request_amount_plus_fee = float(request.POST['amount-plus-fee'])
+            amount = Decimal(request.POST['amount'])
+            request_amount_plus_fee = Decimal(request.POST['amount-plus-fee'])           
         except ValueError:
             messages.error(
                 request, 
@@ -69,13 +76,20 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                 "Invalid amount to pay"
             )
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
+
+        if amount > lease_total_pending:
+            messages.warning(
+                request, 
+                "This amount is more than the pending payment"
+            )
+            return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
        
         amount_plus_fee = get_amount_plus_fee(amount)
         amount_to_stripe = int(amount_plus_fee * 100)
         assert request_amount_plus_fee == amount_plus_fee, "The amount plus Stripe fee is inconsistent"
         lease_member = LeaseMember.objects.get(user=request.user)
         token = request.POST['stripeToken']
-
+        
         try:
             with transaction.atomic(): 
                 stripe.Charge.create(
@@ -92,8 +106,8 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     token=token,
                     amount=amount
                 )
-               
-                if not self.lease_pending_payment(lease):
+                new_lease_total_peding = self.get_lease_total_pending(lease)
+                if new_lease_total_peding == 0:
                     self.update_lesase_status(lease)              
                 messages.success(request, 'Your payment was successfull')
         except stripe.error.CardError:

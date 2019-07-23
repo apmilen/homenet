@@ -354,7 +354,9 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
         total_paid_lease = lease_transactions.aggregate(Sum('amount'))
         total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
-        lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']
+        lease_pending_payment = total_move_in_cost
+        if total_paid_lease['amount__sum'] is not None:
+            lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']           
         # Context
         context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         context['lease'] = lease
