@@ -2,6 +2,7 @@ from io import BytesIO
 import os
 import zipfile
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -35,6 +36,8 @@ from listings.mixins import ListingContextMixin
 from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
+from payments.models import Transaction
+
 from penny.constants import CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
 from penny.mixins import (
@@ -47,6 +50,8 @@ from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
+
+from django.db.models import Sum
 
 
 # Rest Framework
@@ -367,15 +372,25 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         )
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
+        lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
+        total_paid_lease = lease_transactions.aggregate(Sum('amount'))
+        total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
+        lease_pending_payment = total_move_in_cost
+        if total_paid_lease['amount__sum'] is not None:
+            lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']           
         # Context
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         context['lease'] = lease
         context['listing'] = lease.listing
         context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
-        context['total'] = MoveInCost.objects.total_by_offer(lease.id)
+        context['total'] = total_move_in_cost
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
+        context['lease_transactions'] = lease_transactions
+        context['lease_pending_payment'] = lease_pending_payment
+        
         # Application context
         if not rental_app.completed or rental_app.editing:
             context['rental_application_form'] = RentalApplicationForm(

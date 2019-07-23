@@ -78,6 +78,14 @@ class LeaseMember(BaseModel):
             return self.user.get_full_name()
         return self.name
 
+    @property
+    def total_paid(self):
+        try:
+            paid_amounts = self.transaction_set.values_list('amount', flat=True)
+            return sum(paid_amount for paid_amount in paid_amounts)
+        except AttributeError:
+            return None
+
 
 class MoveInCost(BaseModel):
     offer = models.ForeignKey(Lease, on_delete=models.CASCADE)

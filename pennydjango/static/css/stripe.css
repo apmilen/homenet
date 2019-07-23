@@ -1,0 +1,67 @@
+/**
+ * The CSS shown here will not be introduced in the Quickstart guide, but shows
+ * how you can use CSS to style your Element's container.
+ */
+.StripeElement {
+  box-sizing: border-box;
+
+  height: 40px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: white;
+
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+span.usd::before {
+    float: left;
+    content: "\0024"; /* $ */
+    padding: 7px 7px 3px 3px;
+}
+
+#amount, #amount-plus-fee {
+  width: 80%;
+}
+
+span.usd-plus-fee::before {
+  float: left;
+    content: "\0024"; /* $ */
+    padding: 0px 7px 3px 3px;
+}
+
+#amountHelp {
+  padding-left: 20px;
+}
+
+span.stripe-fee::before {
+  content: "\003F"; /* $ */
+  padding: 0px 7px 3px 3px;
+  border-radius: 9px;
+  padding-left: 6px;
+  background-color: aliceblue;
+  cursor:pointer;
+}
+
+#total {
+  width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
