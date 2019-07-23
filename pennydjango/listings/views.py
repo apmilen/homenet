@@ -1,5 +1,6 @@
 import os
 
+from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -18,7 +19,7 @@ from penny.constants import NEIGHBORHOODS, AGENT_TYPE
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import (
     ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet,
-    SingleListingPhotoForm)
+    SingleListingPhotoForm, ChangeListingStatusForm)
 from listings.mixins import WizardMixin
 from listings.models import Listing, ListingDetail, ListingPhotos, ListingPhoto
 from listings.serializer import (
@@ -216,6 +217,29 @@ class ListingDetailView(BaseContextMixin, DetailView):
         return Listing.objects.select_related(
             'detail', 'photos', 'listing_agent',
         )
+
+
+class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
+    model = Listing
+    form_class = ChangeListingStatusForm
+
+    def get_success_url(self):
+        return self.object.detail_link()
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            "Listing updated"
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "An error has occurred while updating the lease"
+        )
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class Listings(AgentRequiredMixin, PublicReactView):
