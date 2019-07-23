@@ -30,7 +30,16 @@ class CreateCollectionModal extends React.Component {
         })
     }
     handleInput(e) {
-        this.setState({[e.target.id]: e.target.value})
+        const field = e.target.id
+        const value = e.target.value
+        let errors = []
+        if (field == "name" && value.length > 32) errors.push("Name too large")
+        if (field == "client_email" && value.length > 64) errors.push("Client email too large")
+        if (field == "client_phone" && value.length > 64) errors.push("Client phone too large")
+        if (errors.length > 0)
+            this.setState({errors})
+        else
+            this.setState({[field]: value, errors})
     }
     submitCollection() {
         const {show, errors, ...collection_data} = this.state
