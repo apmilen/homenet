@@ -451,3 +451,31 @@ input:checked + .slider:before {
 .lease-status, .lease-status .progress-bar {
     height: 2.625rem;
 }
+
+
+/*    Collections    */
+div.modal-body>p {
+    margin: 0;
+}
+.collection-card-name {
+    position: absolute;
+    bottom: 0px;
+    color: white;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 66%, #000 100%);
+    width: 100%;
+    border-radius: inherit;
+    height: 50%;
+    align-items: flex-end;
+    display: flex;
+    padding: 5px;
+    font-size: 1.3rem;
+}
+.collection-card-count {
+    position: absolute;
+    background-color: #437cc4;
+    color: white;
+    padding: 0 0.7rem;
+    border-radius: 20px;
+    margin: 0.4rem;
+    border: solid 0.05rem;
+}

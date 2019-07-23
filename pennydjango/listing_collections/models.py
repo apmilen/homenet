@@ -1,6 +1,9 @@
 from django.db import models
+from django.conf import settings
+from django.utils.functional import cached_property
 
 from penny.models import BaseModel, User
+from penny.constants import DEFAUL_RENT_IMAGE
 from listings.models import Listing
 
 
@@ -32,3 +35,11 @@ class Collection(BaseModel):
             'str': str(self),
             **(self.attrs(*attrs) if attrs else {}),
         }
+
+    @cached_property
+    def default_image(self):
+        listing = self.listings.first()
+        if listing:
+            return listing.default_image
+
+        return f'{settings.STATIC_URL}{DEFAUL_RENT_IMAGE}'

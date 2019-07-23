@@ -29,6 +29,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('leases/', include(("leases.urls", "leases"), namespace='leases')),
     path('core/', include(("penny.urls", "penny"), namespace='penny')),
+    path('collections/', include(
+        ("listing_collections.urls", "collections"), namespace='collections')),
 ]
 
 
