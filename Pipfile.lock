@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0d2c2257d8fe3dc601eceb5a5d6f547cbc8b7f9ae0b514706204d118d8be619a"
+            "sha256": "8ff09f3295afa768aa3a98788e269739e6e22fc8a141fc743ffdd1699e6a4f26"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -197,10 +197,10 @@
         },
         "django-mapbox-location-field": {
             "hashes": [
-                "sha256:c05f4c553c99ef3ab8e27e642dbb28ac5650ad686c7d8a83f5979c8db206e821"
+                "sha256:1220190db4bf22ec57c8bb66c3a2c7ac639a3083159c7965ad0dc984c01dc9b0"
             ],
             "index": "pypi",
-            "version": "==0.2.4"
+            "version": "==0.2.6"
         },
         "django-pdb": {
             "hashes": [
@@ -248,11 +248,11 @@
         },
         "flake8": {
             "hashes": [
-                "sha256:859996073f341f2670741b51ec1e67a01da142831aa1fdc6242dbf88dffbe661",
-                "sha256:a796a115208f5c03b18f332f7c11729812c8c3ded6c46319c59b53efd3819da8"
+                "sha256:19241c1cbc971b9962473e4438a2ca19749a7dd002dd1a946eaba171b4114548",
+                "sha256:8e9dfa3cecb2400b3738a42c54c3043e821682b9c840b0448c0503f781130696"
             ],
             "index": "pypi",
-            "version": "==3.7.7"
+            "version": "==3.7.8"
         },
         "graphene": {
             "hashes": [
@@ -295,6 +295,13 @@
                 "sha256:cb6ee23b46173539939964df59d3d72c3e0c1b5d54b84f1d8a7e912fe43612db"
             ],
             "version": "==0.18"
+        },
+        "ipdb": {
+            "hashes": [
+                "sha256:dce2112557edfe759742ca2d0fee35c59c97b0cc7a05398b791079d78f1519ce"
+            ],
+            "index": "pypi",
+            "version": "==0.12"
         },
         "ipython": {
             "hashes": [
@@ -681,11 +688,11 @@
         },
         "flake8": {
             "hashes": [
-                "sha256:859996073f341f2670741b51ec1e67a01da142831aa1fdc6242dbf88dffbe661",
-                "sha256:a796a115208f5c03b18f332f7c11729812c8c3ded6c46319c59b53efd3819da8"
+                "sha256:19241c1cbc971b9962473e4438a2ca19749a7dd002dd1a946eaba171b4114548",
+                "sha256:8e9dfa3cecb2400b3738a42c54c3043e821682b9c840b0448c0503f781130696"
             ],
             "index": "pypi",
-            "version": "==3.7.7"
+            "version": "==3.7.8"
         },
         "ipdb": {
             "hashes": [
