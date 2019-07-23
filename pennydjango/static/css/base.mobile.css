@@ -27,8 +27,12 @@
     }
 
     /* Filters */
-    .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-        left: -160% !important;
+    .filter-container .dropdown .dropdown-menu{
+        position: fixed !important;
+        top: initial !important;
+        will-change: unset !important;
+        transform: none !important;
+        width: 100vw;
     }
 
     /* Mapbox */
