@@ -18,8 +18,9 @@ from penny.utils import ExtendedEncoder
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import (
-    ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet,
-    SingleListingPhotoForm, ChangeListingStatusForm)
+    ListingForm, ListingDetailForm, ListingPhotosForm, SingleListingPhotoForm,
+    ChangeListingStatusForm
+)
 from listings.mixins import WizardMixin
 from listings.models import Listing, ListingDetail, ListingPhotos, ListingPhoto
 from listings.serializer import (
