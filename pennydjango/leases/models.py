@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Sum
 from django.urls import reverse
 
 from penny.constants import DEFAUL_AVATAR
@@ -83,11 +84,8 @@ class LeaseMember(BaseModel):
 
     @property
     def total_paid(self):
-        try:
-            paid_amounts = self.transaction_set.values_list('amount', flat=True)
-            return sum(paid_amount for paid_amount in paid_amounts)
-        except AttributeError:
-            return None
+        lease_sum = self.transaction_set.aggregate(Sum('amount'))
+        return lease_sum.get('amount__sum') or 0
 
 
 class MoveInCost(BaseModel):
