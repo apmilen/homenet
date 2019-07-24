@@ -2,7 +2,7 @@ from django.db import models
 
 from penny.models import BaseModel, User
 from leases.models import Lease, LeaseMember
-from payments.constants import PAYMENT_METHOD, FROM_TO
+from payments.constants import PAYMENT_METHOD, FROM_TO, CLIENT_TO_APP, DEFAULT_PAYMENT_METHOD
 
 
 class Transaction(BaseModel):
@@ -14,6 +14,6 @@ class Transaction(BaseModel):
         max_digits=15,
         decimal_places=2
     )
-    from_to = models.CharField(max_length=155, choices=FROM_TO, default=FROM_TO[0][0])
-    payment_method = models.CharField(max_length=155, choices=PAYMENT_METHOD, default=PAYMENT_METHOD[0][0])
+    from_to = models.CharField(max_length=155, choices=FROM_TO, default=CLIENT_TO_APP)
+    payment_method = models.CharField(max_length=155, choices=PAYMENT_METHOD, default=DEFAULT_PAYMENT_METHOD)
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
