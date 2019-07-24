@@ -4,13 +4,21 @@
 {% block inner_title %}Collections{% endblock %}
 
 {% block inner_col %}
-  <div class="row">
+  <div class="row justify-content-center">
     {% for collection in collection_list %}
-      <div class="col-md-3">
-        <div class="card card-smallcard-post card-post--1 my-2">
+      <div class="col" style="max-width: 330px;">
+        <div class="card card-smallcard-post card-post--1 my-2 overlay-parent">
+
+          <!-- Card content -->
+          <a class="overlay" href="{% url 'collections:detail' collection.short_id %}"></a>
+          <img height="160" src="{{ collection.default_image }}" style="border-radius: inherit;">
+          <div class="collection-card-name">{{ collection.name|upper }}</div>
+          <div class="collection-card-count">
+            {{ collection.listings.count }} <i class="material-icons">dvr</i>
+          </div>
 
           <!-- Button trigger modal -->
-          <button type="button" class="card-post__category badge badge-pill badge-dark"
+          <button type="button" class="card-post__category badge badge-pill badge-dark" style="z-index: 5;" 
                   data-toggle="modal" data-target="#deleteModal_{{ collection.id }}">
             <font size="3rem"><i class="material-icons">delete_outline</i></font>
           </button>
@@ -43,13 +51,6 @@
                 </div>
               </div>
             </div>
-          </div>
-
-          <!-- Card content -->
-          <img height="160" src="{{ collection.default_image }}" style="border-radius: inherit;">
-          <div class="collection-card-name">{{ collection.name|upper }}</div>
-          <div class="collection-card-count">
-            {{ collection.listings.count }} <i class="material-icons">dvr</i>
           </div>
 
         </div>

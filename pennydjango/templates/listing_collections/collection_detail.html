@@ -1,0 +1,87 @@
+{% extends "ui/base.html" %}
+{% load utils %}
+
+
+{% block head %}
+    <link rel="stylesheet" href="{% http2static 'css/mapbox-gl.css' '1' %}" crossorigin>
+{% endblock %}
+
+
+{% block inner %}
+    <div class="row">
+        <div class="col main-scroll left-main-column">
+            <center><h3>{{ collection.name }}</h3></center>
+            <div class="row justify-content-center">
+            {% for listing in collection.listings.all %}
+                <div class="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent">
+                    <a class="overlay" target="_blank" href="{% url 'listings:listing' listing.id %}"></a>
+                    <div class="card-post__image text-center">
+                        <img class="box-wd" src="{{ listing.default_image }}" />
+                        {% if listing.no_fee_listing %}
+                            <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+                        {% endif %}
+                        <span class="card-post__category new-listing-badge badge badge-pill badge-success">{{ new_listing }}</span>
+                        <span class="card-post__category badge badge-pill badge-dark">${{ listing.price }}</span>
+                    </div>
+                    <div class="card-body p-0 text-center">
+                        <table class="table mb-0 listing-info">
+                            <tbody>
+                                <tr>
+                                    <td class="wrap-info">
+                                        {{ listing.bedrooms }} Beds / {{ listing.bathrooms }} Bath
+                                    </td>
+                                    <td class="wrap-info" colspan="2">
+                                        {{ listing.get_neighborhood_display }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="wrap-info">{{ listing.get_pets_display }}</td>
+                                    <td class="wrap-info">
+                                        <i class="material-icons">share</i>Share
+                                    </td>
+                                    <td class="wrap-info">
+                                        <i class="material-icons">place</i>Map
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% empty %}
+                <h3>Empty collection</h3>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="col map-panel">
+            <div id='map'></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block tail %}
+    <script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript" crossorigin></script>
+    <script>
+        mapboxgl.accessToken = '{{ map_key }}';
+        var map_center = [-73.956438, 40.648475]
+        var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: map_center,
+            zoom: 15,
+            minZoom: 12,
+            maxBounds,
+        });
+        var bounds = new mapboxgl.LngLatBounds();
+        {% for listing in collection.listings.all %}
+            var marker_center = [{{listing.longitude}}, {{listing.latitude}}]
+            var marker = new mapboxgl.Marker({
+                draggable: false,
+                color: 'blue',
+            }).setLngLat(marker_center).addTo(map);
+            bounds.extend(marker_center)
+        {% endfor %}
+        map.fitBounds(bounds);
+    </script>
+{% endblock %}
+
