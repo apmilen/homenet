@@ -16,8 +16,11 @@ from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView, RedirectView,
     DeleteView)
 from django.views.generic.base import View
+from django.utils.text import slugify
 
 from rest_framework import viewsets
+from weasyprint import HTML
+from weasyprint.fonts import FontConfiguration
 
 from datatables_listview.core.views import DatatablesListView
 
@@ -587,3 +590,22 @@ class ChangeLeaseStatusView(AgentRequiredMixin, UpdateView):
             "An error has occurred while updating the lease"
         )
         return HttpResponseRedirect(self.get_success_url())
+
+
+class GenerateRentalPDF(ClientOrAgentRequiredMixin, View):
+
+    def get(self, *args, **kwargs):
+        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        lease_member = rental_app.lease_member
+        filename = f'{slugify(lease_member.get_full_name())}.pdf'
+
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        html = render_to_string("leases/rental_app/rental_app_pdf.html", {
+            'rental_app': lease_member.rentalapplication
+        })
+        font_config = FontConfiguration()
+        HTML(string=html).write_pdf(response, font_config=font_config)
+
+        return response

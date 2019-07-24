@@ -266,7 +266,8 @@ INSTALLED_APPS = [
     'job_applications',
     'datatables_listview',
     'stripe',
-    'payments'
+    'payments',
+    'weasyprint'
 ]
 
 MIDDLEWARE = [
