@@ -1,3 +1,4 @@
+from email.utils import parseaddr
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -22,10 +23,12 @@ class BasicLeaseMemberForm(forms.ModelForm):
         fields = ('name', 'email', 'applicant_type', 'app_fee')
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if not email:
+
+        _, email = parseaddr(self.cleaned_data.get('email'))
+
+        if '@' not in email:
             raise ValidationError(
-                'Email cannot be empty'
+                'Email is invalid, double check it and try again'
             )
         if User.objects.filter(email__iexact=email).exists():
             raise ValidationError(
