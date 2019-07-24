@@ -35,6 +35,7 @@ django-anymail = "*"
 ipdb = "*"
 django-mapbox-location-field = "*"
 stripe = "*"
+weasyprint = "*"
 
 [requires]
 python_version = "3.7"
