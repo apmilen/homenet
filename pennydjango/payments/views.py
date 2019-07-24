@@ -45,7 +45,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
-            amount = Decimal(request.GET.get('amount', False))
+            amount = Decimal(request.GET.get('amount', 0))
             amount_plus_fee = get_amount_plus_fee(amount) / 100
             return JsonResponse({'total_paid': amount_plus_fee})
 
@@ -57,7 +57,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         if lease_total_pending == 0:
             messages.warning(
                 request, 
-                "The lease has not pending payment"
+                "The lease has no pending payments"
             )
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
 
