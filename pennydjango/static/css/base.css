@@ -421,3 +421,8 @@ input:checked + .slider:before {
 .lease-status, .lease-status .progress-bar {
     height: 2.625rem;
 }
+
+.current-balance {
+    color: #212529;
+    padding: 10px 0 30px 40px;
+}
