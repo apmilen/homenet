@@ -163,14 +163,6 @@
             </div>
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left">
-                <b>Credit Checks</b>
-              </div>
-              <div class="col-sm-8 text-left">
-                TODO
-              </div>
-            </div>
-            <div class="row listing-area-data-row">
-              <div class="col-sm-4 text-left">
                 <b>Description</b>
               </div>
               <div class="col-sm-8 text-left">
@@ -182,7 +174,7 @@
                 <b>Transactions</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                {{number_of_transactions}}
               </div>
             </div>
             <div class="row listing-area-data-row">
@@ -190,7 +182,7 @@
                 <b>Current Balance</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                ${{current_balance }}
               </div>
             </div>
             <div class="row listing-area-data-row">
@@ -198,7 +190,7 @@
                 <b>OP Received at</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                
               </div>
             </div>
             {% for member in lease_members %}

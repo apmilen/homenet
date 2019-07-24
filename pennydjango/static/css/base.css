@@ -422,7 +422,7 @@ input:checked + .slider:before {
     height: 2.625rem;
 }
 
-.current-balance {
+.transactions {
     color: #212529;
     padding: 10px 0 30px 40px;
 }
