@@ -270,7 +270,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
 
     def post(self, request, *args, **kwargs):
         req_type = request.POST.get('type')
-        response = {'success': False}
+        response = {'status': 400, 'success': False}
         if req_type == 'LISTING_COLLECTION':
             collection_id = request.POST.get('collection_id')
             listing_id = request.POST.get('listing_id')
@@ -287,6 +287,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
 
             listing_data = PrivateListingSerializer(listing).data
             response = {
+                'status': 200,
                 'success': True,
                 'collections': listing_data['collections']
             }
@@ -298,6 +299,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
 
             if not (name and notes and listing_id):
                 response = {
+                    'status': 400,
                     'success': False,
                     'errors': ["Missing data"],
                 }
@@ -308,6 +310,6 @@ class Listings(AgentRequiredMixin, PublicReactView):
                     notes=notes,
                     created_by=request.user
                 )
-                response = {'success': True}
+                response = {'status': 200, 'success': True}
 
         return JsonResponse(response)
