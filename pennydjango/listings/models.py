@@ -50,7 +50,7 @@ class Listing(BaseModel):
     pets = models.CharField(max_length=100, choices=PETS_ALLOWED)
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=100)
-    nearby_transit = models.TextField(max_length=500, blank=True)
+    nearby_transit = models.TextField(max_length=500, blank=True, null=True)
     unit_number = models.CharField(
         max_length=50,
         verbose_name='Unit Number (Only one)'
@@ -58,16 +58,19 @@ class Listing(BaseModel):
     neighborhood = models.CharField(max_length=100, choices=NEIGHBORHOODS)
     walkability_score = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(100)],
-        null=True
+        null=True,
+        blank=True,
     )
     bikeability_score = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(100)],
-        null=True
+        null=True,
+        blank=True,
     )
     parking = models.CharField(
-        max_length=255, 
+        max_length=64,
         choices=PARKING_OPTIONS,
-        null=True 
+        null=True,
+        blank=True,
     )    
     listing_agent = models.ForeignKey(
         User,
@@ -202,8 +205,8 @@ class Listing(BaseModel):
                 'status',
                 'nearby_transit',
                 'walkability_score',
-                'bikeability_score'
-                'parking'
+                'bikeability_score',
+                'parking',
             ),
             'str': str(self),
             'detail': self.detail.__json__(),
