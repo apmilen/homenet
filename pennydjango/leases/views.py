@@ -95,6 +95,7 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['change_status_url'] = change_status_url
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
+        context['lease_transactions'] = []
         return context
 
 

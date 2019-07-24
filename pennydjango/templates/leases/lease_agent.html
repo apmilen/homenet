@@ -90,6 +90,9 @@ Lease Detail
         </ul>
       </div>
     </div>
+    
+      {% include "leases/transactions_table.html"  with transactions=lease_transactions %}
+    
   </div>
 {% endblock after_card %}
 

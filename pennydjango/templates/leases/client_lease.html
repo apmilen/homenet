@@ -297,14 +297,14 @@
                   <div class="row">
 
                     <div class="col-12">
-                      {% if lease_pending_payment %}
+                      
                         {% include 'payments/payments.html' %}
                         <button type="button" class="btn btn-outline-info"
                                 data-toggle="modal"
                                 data-target="#paymentModal">
                           Pay
                         </button>
-                      {% endif %}
+                      
                     </div>
                   </div>
                 </div>
@@ -315,48 +315,7 @@
       </div>
     </div>
     {% if lease_transactions %}
-      <div class="col-12 col-sm-12 ">
-        <div class="card card-small mb-4">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item p-3">
-              <div class="row">
-                <div class="col-9 pb-2">
-                  Lease Transactions
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  <div class="payment-content container">
-                    <table class="table">
-                      <tbody id="move-body-table">
-                      <tr>
-                        <th>Date Time</th>
-                        <th>Category</th>
-                        <th>Client</th>
-                        <th>Amount</th>
-                        <th>Details</th>
-                        <th>Entered by</th>
-                      </tr>
-                      {% for transaction in lease_transactions %}
-                        <tr>
-                          <td>{{ transaction.timestamp }}</td>
-                          <td></td>
-                          <td>{{ transaction.transaction_user }}</td>
-                          <td>${{ transaction.amount }}</td>
-                          <td>{{ transaction.get_payment_method_display }}</td>
-                          <td>{{ transaction.entered_by|default_if_none:"" }}</td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                    <hr/>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+      {% include "leases/transactions_table.html"  with transactions=lease_transactions %}
     {% endif %}
   </div>
 {% endblock after_card %}
