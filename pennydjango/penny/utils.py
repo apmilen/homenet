@@ -139,7 +139,7 @@ def convert_to_snake(name):
 
 def image_path(instance, filename):
     _, file_extension = os.path.splitext(filename)
-    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
+    chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
     randomstr = ''.join((random.choice(chars)) for x in range(10))
     return '/'.join([
         str(instance.listing_id),
