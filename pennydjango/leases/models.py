@@ -84,8 +84,8 @@ class LeaseMember(BaseModel):
 
     @property
     def total_paid(self):
-        lease_sum = self.transaction_set.aggregate(Sum('amount'))
-        return lease_sum.get('amount__sum') or 0
+        paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
+        return paid_amnts.get('total_amount') or 0
 
 
 class MoveInCost(BaseModel):
