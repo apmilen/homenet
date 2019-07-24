@@ -513,7 +513,7 @@ class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
         )
 
 
-class RentalApplicationDetail(AgentRequiredMixin, DetailView):
+class RentalApplicationDetail(ClientOrAgentRequiredMixin, DetailView):
     model = RentalApplication
     template_name = 'leases/rental_app/rental_app_detail.html'
 
@@ -524,7 +524,7 @@ class RentalApplicationDetail(AgentRequiredMixin, DetailView):
         return context
 
 
-class DownloadRentalDocuments(AgentRequiredMixin, View):
+class DownloadRentalDocuments(ClientOrAgentRequiredMixin, View):
 
     def get(self, *args, **kwargs):
         rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
