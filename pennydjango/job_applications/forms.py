@@ -21,7 +21,7 @@ class JobApplicationForm(forms.ModelForm):
             raise ValidationError(
                 'Email cannot be empty'
             )
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             raise ValidationError(
                 'That email is already in use'
             )

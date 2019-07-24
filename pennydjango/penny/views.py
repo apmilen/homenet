@@ -174,7 +174,7 @@ def invite_new_user(name, username, email, user_type):
             'details': "Missing required data"
         }
 
-    qs = User.objects.filter(email=email)
+    qs = User.objects.filter(email__iexact=email)
     if qs.exists():
         return {
             'success': False,
