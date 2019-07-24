@@ -60,7 +60,7 @@ class Listing(BaseModel):
         validators=[MaxValueValidator(100)],
         null=True
     )
-    bikability_score = models.PositiveSmallIntegerField(
+    bikeability_score = models.PositiveSmallIntegerField(
         validators=[MaxValueValidator(100)],
         null=True
     )
@@ -202,7 +202,7 @@ class Listing(BaseModel):
                 'status',
                 'nearby_transit',
                 'walkability_score',
-                'bikability_score'
+                'bikeability_score'
                 'parking'
             ),
             'str': str(self),

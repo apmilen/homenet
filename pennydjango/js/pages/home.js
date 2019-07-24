@@ -168,7 +168,7 @@ const ListingDetail = ({listing}) => (
                             </div>
                             <div className="col-6 text-justify border-top border-bottom pt-2">
                                 <p><b>Bikability score</b></p>
-                                <p>{ listing.bikability_score }%</p>
+                                <p>{ listing.bikeability_score }%</p>
                             </div>
                         </div>
                     </div>

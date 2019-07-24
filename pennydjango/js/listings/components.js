@@ -9,7 +9,7 @@ export class ListingComponent extends React.Component {
             date_available, utilities, move_in_cost, size, landlord_contact,
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
-            offer_link, nearby_transit, walkability_score, bikability_score, 
+            offer_link, nearby_transit, walkability_score, bikeability_score,
             parking, photos_link
         } = this.props.listing
 
@@ -156,7 +156,7 @@ export class ListingComponent extends React.Component {
                                     <div className="row listing-area-data-row">
                                         <div className="col-sm-4 text-left">
                                             <b>Bikability Score</b></div>
-                                        <div className="col-sm-8 text-left">{bikability_score}%</div>
+                                        <div className="col-sm-8 text-left">{bikeability_score}%</div>
                                     </div>
                                     <div className="row listing-area-data-row">
                                         <div className="col-sm-4 text-left">
