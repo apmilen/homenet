@@ -9,6 +9,7 @@ Settings Usage:
 import os
 import sys
 import getpass
+from decimal import Decimal
 
 from time import time
 
@@ -148,6 +149,8 @@ MAP_KEY = _PLACEHOLDER_FOR_UNSET
 # Stripe Key Settings
 STRIPE_SECRET_KEY = _PLACEHOLDER_FOR_UNSET
 STRIPE_PUBLISHABLE_KEY = _PLACEHOLDER_FOR_UNSET
+
+STRIPE_FEE = Decimal(0.30)
 
 
 ################################################################################
