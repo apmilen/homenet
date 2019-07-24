@@ -7,13 +7,17 @@
   {% if not rental_app.completed or rental_app.editing %}
     <link rel="stylesheet" href="{% http2static 'css/dropzone.css' %}"
           type="text/css" crossorigin>
-    {% endif %}
-    <link rel="stylesheet" href="{% http2static 'css/stripe.css' '4' %}" crossorigin>
-    <script>
+  {% endif %}
+  <link rel="stylesheet" href="{% http2static 'css/stripe.css' '4' %}"
+        crossorigin>
+  <script>
       let key = "{{key}}"
-    </script>
-    <script src="https://js.stripe.com/v3/"></script>
-    
+  </script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="stylesheet"
+        href="{% http2static 'css/jquery.datetimepicker.min.css' %}"
+        type="text/css" crossorigin>
+
 {% endblock head %}
 {% block title %}Lease Detail{% endblock title %}
 {% block inner_title %}
@@ -22,7 +26,7 @@
 
 {% block inner_content %}
   <div class="row">
-    <div class="col-12 col-lg-8 offset-lg-2">
+    <div class="col-12 col-lg-10 offset-lg-1">
       {% if not leasemember.signed_agreement %}
         {% include "leases/rental_app/agreement_form.html" %}
       {% elif not rental_app.completed or rental_app.editing %}
@@ -113,28 +117,30 @@
                 <div class="card-body">
                   {% include 'leases/rental_app/documents_modal.html' %}
                   Documents -
-                  <a href="#" data-toggle="modal" data-target="#documents-modal">
+                  <a href="#" data-toggle="modal"
+                     data-target="#documents-modal">
                     Information about the documents
                   </a>
                   <hr/>
                   {% if rental_docs %}
                     <table class="table">
                       <thead>
-                        <tr>
-                          <th>Filename</th>
-                          <th>Url</th>
-                          <th>Created</th>
-                          <th>Options</th>
-                        </tr>
+                      <tr>
+                        <th>Filename</th>
+                        <th>Url</th>
+                        <th>Created</th>
+                        <th>Options</th>
+                      </tr>
                       </thead>
                       <tbody>
                       {% for doc in rental_docs %}
                         <tr>
                           <td>{{ doc.filename }}</td>
-                          <td><a href="{{ doc.file.url }}" target="_blank">Link</a> </td>
+                          <td><a href="{{ doc.file.url }}"
+                                 target="_blank">Link</a></td>
                           <td>{{ doc.created }}</td>
                           <td>
-                            <a href="{% url 'leases:delete-rental-doc' pk=doc.id %}" >Delete</a>
+                            <a href="{% url 'leases:delete-rental-doc' pk=doc.id %}">Delete</a>
                           </td>
                         </tr>
                       {% endfor %}
@@ -152,19 +158,68 @@
           <button type="submit" class="btn btn-outline-primary">Save</button>
           <button type="submit"
                   formaction="{% url "leases:update-application" pk=rental_app.id %}?completed=true"
-                  class="btn btn-primary">Submit and Complete Rental Application</button>
+                  class="btn btn-primary">Submit and Complete Rental Application
+          </button>
         </form>
       {% else %}
-        <h5 class="text-center">Lease Status</h5>
-        <div class="progress lease-status">
-          <div class="progress-bar progress-bar-striped"
-               role="progressbar"
-               style="width: {{ lease.progress_status }}%"
-               aria-valuenow="{{ lease.progress_status }}"
-               aria-valuemin="0"
-               aria-valuemax="100"></div>
+        <div class="row">
+          <div class="col-12">
+             <h5 class="text-center">Lease Status</h5>
+            <div class="progress lease-status">
+              <div class="progress-bar progress-bar-striped"
+                   role="progressbar"
+                   style="width: {{ lease.progress_status }}%"
+                   aria-valuenow="{{ lease.progress_status }}"
+                   aria-valuemin="0"
+                   aria-valuemax="100"></div>
+            </div>
+            <h6 class="text-center">{{ lease.get_status_display }}</h6>
+          </div>
+          <div class="col-12">
+            <form action="{% url "leases:editing" pk=rental_app.id %}" method="post" class="text-center">
+              {% csrf_token %}
+              <input type="hidden" name="editing" value="true"/>
+              <button type="submit" class="btn btn-primary">Edit Rental Application</button>
+            </form>
+          <br/>
+          </div>
+          <div class="col-12">
+            <table class="table">
+              <thead>
+              <tr>
+                <th>Status</th>
+                <th>Progress</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>Awaiting Deposit</td>
+                <td>25%</td>
+              </tr>
+              <tr>
+                <td>Unsigned, Unapproved</td>
+                <td>50%</td>
+              </tr>
+              <tr>
+                <td>Unsigned, Approved</td>
+                <td>75%</td>
+              </tr>
+              <tr>
+                <td>Signed, Approved</td>
+                <td>100%</td>
+              </tr>
+              <tr>
+                <td>Awaiting OP</td>
+                <td>100%</td>
+              </tr>
+              <tr>
+                <td>Cancelled, Client Backed Out, Pending Deletion</td>
+                <td>Cancelled</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <h6 class="text-center">{{ lease.get_status_display }}</h6>
       {% endif %}
     </div>
   </div>
@@ -179,7 +234,7 @@
           <li class="list-group-item p-3">
             <div class="row">
               <div class="col-9">
-                Lease Members 
+                Lease Members
               </div>
               <div class="col-3">
                 <button type="button" class="btn btn-outline-info"
@@ -191,7 +246,7 @@
             </div>
             <div class="row">
               <div class="col-12">
-                  
+
                 {% include 'leases/invite_modal.html' %}
                 {% for lease_member in lease_members %}
                   {% include 'leases/lease_member.html' %}
@@ -232,24 +287,24 @@
                       <td><b class="font-weight-bold">Pending Payment</b></td>
                       <td>
                         $<b class="font-weight-bold" id="lease-pending-payment">
-                          {{ lease_pending_payment|default_if_none:"" }}
-                        </b>
+                        {{ lease_pending_payment|default_if_none:"" }}
+                      </b>
                       </td>
                     </tr>
                     </tbody>
                   </table>
                   <hr/>
                   <div class="row">
-                      
+
                     <div class="col-12">
-                        {% if lease_pending_payment %}
-                          {% include 'payments/payments.html' %}
-                          <button type="button" class="btn btn-outline-info"
-                                  data-toggle="modal"
-                                  data-target="#paymentModal">
-                            Pay
-                          </button>
-                        {% endif%}
+                      {% if lease_pending_payment %}
+                        {% include 'payments/payments.html' %}
+                        <button type="button" class="btn btn-outline-info"
+                                data-toggle="modal"
+                                data-target="#paymentModal">
+                          Pay
+                        </button>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
@@ -261,46 +316,46 @@
     </div>
     {% if lease_transactions %}
       <div class="col-12 col-sm-12 ">
-          <div class="card card-small mb-4">
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item p-3">
-                <div class="row">
-                  <div class="col-9 pb-2">
-                    Lease Transactions
+        <div class="card card-small mb-4">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item p-3">
+              <div class="row">
+                <div class="col-9 pb-2">
+                  Lease Transactions
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="payment-content container">
+                    <table class="table">
+                      <tbody id="move-body-table">
+                      <tr>
+                        <th>Date Time</th>
+                        <th>Category</th>
+                        <th>Client</th>
+                        <th>Amount</th>
+                        <th>Details</th>
+                        <th>Entered by</th>
+                      </tr>
+                      {% for transaction in lease_transactions %}
+                        <tr>
+                          <td>{{ transaction.timestamp }}</td>
+                          <td></td>
+                          <td>{{ transaction.transaction_user }}</td>
+                          <td>${{ transaction.amount }}</td>
+                          <td>{{ transaction.get_payment_method_display }}</td>
+                          <td>{{ transaction.entered_by|default_if_none:"" }}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                    <hr/>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="payment-content container">
-                      <table class="table">
-                        <tbody id="move-body-table">
-                          <tr>
-                              <th>Date Time</th>
-                              <th>Category</th>
-                              <th>Client</th>
-                              <th>Amount</th>
-                              <th>Details</th>
-                              <th>Entered by</th>
-                          </tr>
-                          {% for transaction in lease_transactions %}
-                          <tr>
-                              <td>{{ transaction.timestamp }}</td>
-                              <td></td>
-                              <td>{{ transaction.transaction_user }}</td>
-                              <td>${{ transaction.amount }}</td>
-                              <td>{{ transaction.get_payment_method_display }}</td>
-                              <td>{{ transaction.entered_by|default_if_none:"" }}</td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                      <hr/>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     {% endif %}
   </div>
@@ -310,42 +365,50 @@
   {{ block.super }}
 
   {% if not rental_app.completed or rental_app.editing %}
-  <script src="{% http2static 'js/dropzone.js' %}"></script>
-  <script type="text/javascript">
-      Dropzone.autoDiscover = false;
+  <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
+          type="text/javascript" crossorigin></script>
+    <script src="{% http2static 'js/dropzone.js' %}"></script>
+    <script type="text/javascript">
+        Dropzone.autoDiscover = false;
+        $(document).ready(() => {
+            let uploadDrop = new Dropzone("div#rental-app-docs", {
+                url: '{% url 'leases:create-rental-doc' pk=rental_app.id %}',
+                paramName: 'file',
+                maxFilesize: 5,
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                acceptedFiles: "image/*,application/pdf",
+            });
+        })
       $(document).ready(() => {
-          let uploadDrop = new Dropzone("div#rental-app-docs", {
-              url: '{% url 'leases:create-rental-doc' pk=rental_app.id %}',
-              paramName: 'file',
-              maxFilesize: 5,
-              headers: {"X-CSRFToken": "{{ csrf_token }}"},
-              acceptedFiles: "image/*,application/pdf",
+          $("#id_date_of_birth").datetimepicker({
+              timepicker: false, format: 'Y-m-d',
           });
       })
-  </script>
+    </script>
   {% endif %}
-  
-  <script>
-    $('#paymentModal').on('shown.bs.modal', function (e) {
-      $.getScript( "{% static 'js/stripe.js' '1' %}", function() {});
-    });
 
-    getStripeFee = () => {
-      document.getElementById("total").innerHTML = ''
-      let amount = parseFloat(document.getElementById("amount").value)
-      if (amount > 0) {
-        $.ajax({
-          url: "{% url 'payments' pk=lease.id %}",
-          data: {
-            'amount': amount
-          },
-          dataType: 'json',
-          success: function (data) {
-            document.getElementById("amount-plus-fee").value = data.total_paid
-            document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="'+ data.total_paid +'">'+data.total_paid+'</span>'
+  <script>
+      $('#paymentModal').on('shown.bs.modal', function (e) {
+          $.getScript("{% static 'js/stripe.js' '1' %}", function () {
+          });
+      });
+
+      getStripeFee = () => {
+          document.getElementById("total").innerHTML = ''
+          let amount = parseFloat(document.getElementById("amount").value)
+          if (amount > 0) {
+              $.ajax({
+                  url: "{% url 'payments' pk=lease.id %}",
+                  data: {
+                      'amount': amount
+                  },
+                  dataType: 'json',
+                  success: function (data) {
+                      document.getElementById("amount-plus-fee").value = data.total_paid
+                      document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
+                  }
+              });
           }
-        });       
-      } 
-    }
-  </script>    
+      }
+  </script>
 {% endblock tail %}

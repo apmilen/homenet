@@ -7,7 +7,7 @@ from leases.views import (
     ResendLeaseInvitation, ClientLease, SignAgreementView, DeleteLeaseMember,
     UpdateRentalApplication, UploadRentalAppDoc, DeleteRentalAppDoc,
     RentalApplicationDetail, DownloadRentalDocuments, LeaseUpdateView,
-    ChangeLeaseStatusView)
+    ChangeLeaseStatusView, UpdateEditingRentalApplication)
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -55,4 +55,7 @@ urlpatterns = [
     path('<uuid:pk>/change-status',
          ChangeLeaseStatusView.as_view(),
          name='change-status'),
+    path('<uuid:pk>/editing',
+         UpdateEditingRentalApplication.as_view(),
+         name='editing'),
 ]

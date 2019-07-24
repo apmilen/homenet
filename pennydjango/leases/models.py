@@ -78,6 +78,9 @@ class LeaseMember(BaseModel):
             return self.user.get_full_name()
         return self.name
 
+    def client_detail_link(self):
+        return reverse('leases:detail-client', args=[self.id])
+
     @property
     def total_paid(self):
         try:

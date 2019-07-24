@@ -106,6 +106,14 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['time_at_current_job'].required = False
 
 
+class RentalApplicationEditingForm(forms.ModelForm):
+    use_required_attribute = False
+
+    class Meta:
+        model = RentalApplication
+        fields = ('editing', )
+
+
 class RentalAppDocForm(forms.ModelForm):
 
     class Meta:
