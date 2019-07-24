@@ -40,7 +40,7 @@ from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
-from payments.constants import FROM_TO
+from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
 
 from penny.constants import CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
@@ -90,10 +90,10 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
             lease_member__offer=self.object
         )
         lease_postive_balance = lease_transactions.filter(
-            from_to=FROM_TO[0][0]
+            from_to=CLIENT_TO_APP
         ).aggregate(Sum('amount'))
         lease_negative_balance = lease_transactions.filter(
-            from_to=FROM_TO[1][0]
+            from_to=APP_TO_CLIENT
         ).aggregate(Sum('amount'))
         lease_postive_balance = lease_postive_balance['amount__sum'] or 0
         lease_negative_balance = lease_negative_balance['amount__sum'] or 0
