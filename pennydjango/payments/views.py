@@ -46,7 +46,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             amount = Decimal(request.GET.get('amount', False))
-            amount_plus_fee = get_amount_plus_fee(amount)
+            amount_plus_fee = get_amount_plus_fee(amount) / 100
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
@@ -63,7 +63,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 
         try:
             amount = Decimal(request.POST['amount'])
-            request_amount_plus_fee = Decimal(request.POST['amount-plus-fee'])           
+            request_amount_plus_fee = Decimal(request.POST['amount-plus-fee']) * 100
         except ValueError:
             messages.error(
                 request, 
@@ -86,7 +86,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
        
         amount_plus_fee = get_amount_plus_fee(amount)
-        amount_to_stripe = int(amount_plus_fee * 100)
+        amount_to_stripe = int(amount_plus_fee)
         assert request_amount_plus_fee == amount_plus_fee, "The amount plus Stripe fee is inconsistent"
         lease_member = LeaseMember.objects.get(user=request.user)
         token = request.POST['stripeToken']
