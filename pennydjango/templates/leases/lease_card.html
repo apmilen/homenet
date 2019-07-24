@@ -4,20 +4,22 @@
       <div class="container-fluid new-listing-card">
         <div class="row listing-admin-area">
           <div class="col-12">
-            {% include 'penny/change_status_modal.html' %}
             <a href="{{ listing.listing_link }}"
                target="_blank"
                class="btn btn-sm btn-outline-info mr-1">{{ listing.full_address }}
             </a>
-            <a href="{% url 'leases:edit' pk=lease.id %}"
-               target="_blank"
-               class="btn btn-sm btn-outline-info mr-1">Edit
-            </a>
-            <button type="button"
-                    class="btn btn-sm btn-outline-info mr-1"
-                    data-toggle="modal" data-target="#changeStatusModal">
-              Change Status
-            </button>
+            {% if change_status_url %}
+              {% include 'penny/change_status_modal.html' %}
+              <a href="{% url 'leases:edit' pk=lease.id %}"
+                 target="_blank"
+                 class="btn btn-sm btn-outline-info mr-1">Edit
+              </a>
+              <button type="button"
+                      class="btn btn-sm btn-outline-info mr-1"
+                      data-toggle="modal" data-target="#changeStatusModal">
+                Change Status
+              </button>
+            {% endif %}
           </div>
         </div>
         <div class="row listing-area-content">
