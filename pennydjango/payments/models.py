@@ -31,11 +31,11 @@ class Transaction(BaseModel):
         decimal_places=2
     )
     from_to = models.CharField(
-        max_length=155,
+        max_length=64,
         choices=FROM_TO,
         default=CLIENT_TO_APP)
     payment_method = models.CharField(
-        max_length=155,
+        max_length=32,
         choices=PAYMENT_METHOD,
         default=DEFAULT_PAYMENT_METHOD
     )
