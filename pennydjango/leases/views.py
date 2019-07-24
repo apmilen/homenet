@@ -40,6 +40,7 @@ from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
+from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
 
 from penny.constants import CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
@@ -85,6 +86,18 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         move_in_costs = self.object.moveincost_set.order_by('-created')
         change_status_url = reverse('leases:change-status',
                                     args=[self.object.id])
+        lease_transactions = Transaction.objects.filter(
+            lease_member__offer=self.object
+        )
+        lease_postive_balance = lease_transactions.filter(
+            from_to=CLIENT_TO_APP
+        ).aggregate(Sum('amount'))
+        lease_negative_balance = lease_transactions.filter(
+            from_to=APP_TO_CLIENT
+        ).aggregate(Sum('amount'))
+        lease_postive_balance = lease_postive_balance['amount__sum'] or 0
+        lease_negative_balance = lease_negative_balance['amount__sum'] or 0
+        current_balance = lease_postive_balance - lease_negative_balance
         context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
@@ -95,6 +108,10 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['change_status_url'] = change_status_url
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
+        context['lease_transactions'] = lease_transactions
+        context['number_of_transactions'] = lease_transactions.count()
+        context['current_balance'] = current_balance
+        
         return context
 
 

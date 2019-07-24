@@ -14,6 +14,7 @@ import stripe
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
 from payments.utils import get_amount_plus_fee
+from payments.constants import DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.constants import LEASE_STATUS
 
@@ -105,7 +106,9 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     lease_member=lease_member,
                     transaction_user=request.user,
                     token=token,
-                    amount=amount
+                    amount=amount,
+                    from_to=CLIENT_TO_APP,
+                    payment_method=DEFAULT_PAYMENT_METHOD
                 )
                 new_lease_total_peding = self.get_lease_total_pending(lease)
                 if new_lease_total_peding == 0:
