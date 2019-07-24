@@ -48,7 +48,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             amount = Decimal(request.GET.get('amount', 0))
-            amount_plus_fee = get_amount_plus_fee(amount) / 100
+            amount_plus_fee = get_amount_plus_fee(amount) / Decimal(100)
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
@@ -68,7 +68,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         try:
             amount = Decimal(request.POST['amount'])
             amt_with_fee = Decimal(request.POST['amount-plus-fee'])
-            request_amount_plus_fee = amt_with_fee * 100
+            request_amount_plus_fee = amt_with_fee * Decimal(100)
         except ValueError:
             messages.error(
                 request, 
