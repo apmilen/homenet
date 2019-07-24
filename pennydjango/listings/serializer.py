@@ -1,5 +1,4 @@
 # Serializers define the API representation.
-from datetime import datetime
 
 from rest_framework import serializers
 

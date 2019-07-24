@@ -1,7 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from django_select2.forms import Select2Widget
 from job_applications.models import JobApplication
 from penny.models import User
 
