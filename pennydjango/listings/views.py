@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
@@ -218,6 +219,9 @@ class ListingDetailView(BaseContextMixin, DetailView):
         return Listing.objects.select_related(
             'detail', 'photos', 'listing_agent',
         )
+
+    def context(self, request, *args, **kwargs):
+        return {'map_key': settings.MAP_KEY}
 
 
 class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
