@@ -7,7 +7,8 @@ in the function, not at the top!!!
 
 import os
 import sys
-# import getpass
+import pwd
+import getpass
 
 import psutil
 import shutil
@@ -110,7 +111,7 @@ def check_system_invariants(PENNY_ENV):
 
     ALLOWED_ENVS = ('DEV', 'CI', 'BETA', 'PROD')
 
-    # DJANGO_USER = getpass.getuser() or os.getlogin()
+    DJANGO_USER = pwd.getpwuid(os.getuid()).pw_name or getpass.getuser() or os.getlogin()
 
     assert PENNY_ENV in ALLOWED_ENVS, (
         f'PENNY_ENV={PENNY_ENV} is not one of the allowed values: '
@@ -121,7 +122,7 @@ def check_system_invariants(PENNY_ENV):
 
     # running as root even once will corrupt
     # the permissions on all the DATA_DIRS
-    # assert DJANGO_USER != 'root', 'Django should never be run as root!'
+    assert DJANGO_USER != 'root', 'Django should never be run as root!'
 
     # python -O strips asserts from our code, but we use them for critical logic
     try:
