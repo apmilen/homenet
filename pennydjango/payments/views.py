@@ -104,14 +104,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         token = request.POST['stripeToken']
         
         try:
-            with transaction.atomic(): 
-                stripe.Charge.create(
-                    amount=amount_to_stripe,
-                    currency='usd',
-                    description='A test charge',
-                    source=token,
-                    statement_descriptor='Lease payment'
-                )
+            with transaction.atomic():
 
                 Transaction.objects.create(
                     lease_member=lease_member,
@@ -120,6 +113,13 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     amount=amount,
                     from_to=CLIENT_TO_APP,
                     payment_method=DEFAULT_PAYMENT_METHOD
+                )
+                stripe.Charge.create(
+                    amount=amount_to_stripe,
+                    currency='usd',
+                    description='A test charge',
+                    source=token,
+                    statement_descriptor='Lease payment'
                 )
                 new_lease_total_peding = self.get_lease_total_pending(lease)
                 if new_lease_total_peding == 0:
