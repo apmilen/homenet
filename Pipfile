@@ -34,6 +34,7 @@ flake8 = "*"
 django-anymail = "*"
 ipdb = "*"
 django-mapbox-location-field = "*"
+stripe = "*"
 
 [requires]
 python_version = "3.7"

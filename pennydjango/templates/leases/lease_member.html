@@ -21,10 +21,6 @@
           <div>Rental Application: {% if lease_member.rentalapplication and lease_member.rentalapplication.completed %}
             Completed <a href="{% url 'leases:rental-detail' pk=lease_member.rentalapplication.id %}" target="_blank">Review</a> {% else %} Not Completed {% endif %}
           </div>
-          <div id="creditReportStatus90234" class="credit-report-status">
-            <div>Credit Report Status: TODO&nbsp;<a href="#">(Create PDF)</a>&nbsp;
-            </div>
-          </div>
         {% endif %}
       </td>
     {% if not lease_member.user %}
@@ -55,14 +51,13 @@
         <div class="dropdown-menu" aria-labelledby="dropdownButtonClient"
              x-placement="bottom-start"
              style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(2px, 65px, 0px);">
-          <button data-toggle="modal" data-target="#leadModal-90234"
-                  class="dropdown-item">Transfer
-          </button>
-          <button
-                  class="dropdown-item">Update
-          </button>
-          <div class="record-deposit" id="recordDeposit90234"
-               data="{&quot;id&quot;:90234,&quot;lease_id&quot;:&quot;F2CY5PkPsvZTMSEum792fUvP&quot;,&quot;client_id&quot;:90234,&quot;client_name&quot;:&quot;Diamond Young&quot;}">
+{#          <button data-toggle="modal" data-target="#leadModal-90234"#}
+{#                  class="dropdown-item">Transfer#}
+{#          </button>#}
+{#          <button#}
+{#                  class="dropdown-item">Update#}
+{#          </button>#}
+          <div class="record-deposit" id="recordDeposit90234">
             <div>
               <div><a class="dropdown-item">Record Deposit</a></div>
             </div>

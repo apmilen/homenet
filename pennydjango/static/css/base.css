@@ -89,17 +89,6 @@ div.circle-avatar{
     display:none;
 }
 
-/* Filters bar */
-.home-filters .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-    left: 0 !important;
-}
-.filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-    position: absolute;
-    top: initial !important;
-    left: -130% !important;
-    will-change: unset !important;
-    transform: none !important;
-}
 .filter-container {
     margin: 3px;
 }
