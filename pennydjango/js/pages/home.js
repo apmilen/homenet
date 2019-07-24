@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Row, Col, Button} from "shards-react";
-import {Dropdown} from "react-bootstrap";
+import Dropdown from "react-bootstrap/Dropdown";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import differenceInDays from "date-fns/difference_in_days";
 
 import {tooltip} from '@/util/dom'
@@ -320,7 +322,7 @@ class PublicListings extends React.Component {
                         </Row>,
                         <Row key="row2" className="justify-content-center">
                             {more_listings_link ?
-                                <Button outline onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
+                                <Button variant="outline-primary" onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
                                     Load more...
                                 </Button>
                             :
