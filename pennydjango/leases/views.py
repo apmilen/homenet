@@ -256,7 +256,7 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
             messages.SUCCESS,
             "Account created successfully"
         )
-        return reverse('home')
+        return self.main_object.client_detail_link()
 
     def get(self, request, *args, **kwargs):
         self.main_object = self.get_main_object()
