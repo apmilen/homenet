@@ -25,7 +25,7 @@ from leases.emails import send_invitation_email
 from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
     RentalApplicationForm,
-    RentalAppDocForm, ChangeLeaseStatusForm)
+    RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
@@ -463,8 +463,23 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
         completed = self.request.GET.get('completed') == "true"
         rental_app = form.save(commit=False)
         rental_app.completed = completed
+        rental_app.editing = not completed
         rental_app.save()
         return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateEditingRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+    http_method_names = ['post']
+    form_class = RentalApplicationEditingForm
+    model = RentalApplication
+
+    def get_success_url(self):
+        leasemember_id = self.object.lease_member.id
+        return reverse("leases:detail-client", args=[leasemember_id])
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
