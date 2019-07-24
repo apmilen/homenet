@@ -9,8 +9,6 @@ from listings.models import Listing
 
 class Collection(BaseModel):
     name = models.CharField(max_length=32)
-    client_email = models.CharField(max_length=64, blank=True)
-    client_phone = models.CharField(max_length=64, blank=True)
     notes = models.TextField()
     created_by = models.ForeignKey(
         User,
@@ -28,8 +26,6 @@ class Collection(BaseModel):
             **self.attrs(
                 'id',
                 'name',
-                'client_email',
-                'client_phone',
                 'notes',
             ),
             'str': str(self),

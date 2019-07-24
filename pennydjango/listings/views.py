@@ -293,8 +293,6 @@ class Listings(AgentRequiredMixin, PublicReactView):
 
         if req_type == 'CREATE_COLLECTION':
             name = request.POST.get('name')
-            client_phone = request.POST.get('client_phone')
-            client_email = request.POST.get('client_email')
             notes = request.POST.get('notes')
             listing_id = request.POST.get('listing_id')
 
@@ -307,8 +305,6 @@ class Listings(AgentRequiredMixin, PublicReactView):
                 listing = Listing.objects.get(id=listing_id)
                 listing.collections.create(
                     name=name,
-                    client_phone=client_phone,
-                    client_email=client_email,
                     notes=notes,
                     created_by=request.user
                 )

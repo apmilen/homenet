@@ -24,8 +24,6 @@ class CreateCollectionModal extends React.Component {
             show: !this.state.show,
             errors: [],
             name: '',
-            client_email: '',
-            client_phone: '',
             notes: '',
         })
     }
@@ -34,8 +32,6 @@ class CreateCollectionModal extends React.Component {
         const value = e.target.value
         let errors = []
         if (field == "name" && value.length > 32) errors.push("Name too large")
-        if (field == "client_email" && value.length > 64) errors.push("Client email too large")
-        if (field == "client_phone" && value.length > 64) errors.push("Client phone too large")
         if (errors.length > 0)
             this.setState({errors})
         else
@@ -61,9 +57,7 @@ class CreateCollectionModal extends React.Component {
         }
     }
     render() {
-        const {
-            show, errors, name, client_email, client_phone, notes
-        } = this.state
+        const {show, errors, name, notes} = this.state
         return (
             <span>
                 <button
@@ -88,22 +82,12 @@ class CreateCollectionModal extends React.Component {
                             <FormControl id='name' type='text' value={name}
                                          autoComplete="off" required
                                          className="collection-modal-field"
-                                         placeholder='Collection name (not client name)'
-                                         onChange={::this.handleInput} />
-                            <FormControl id='client_email' type='text' value={client_email}
-                                         autoComplete="off"
-                                         className="collection-modal-field"
-                                         placeholder='Client email'
-                                         onChange={::this.handleInput} />
-                            <FormControl id='client_phone' type='text' value={client_phone}
-                                         autoComplete="off"
-                                         className="collection-modal-field"
-                                         placeholder='Client phone number'
+                                         placeholder='Collection name'
                                          onChange={::this.handleInput} />
                             <FormControl id='notes' type='text' value={notes}
                                          autoComplete="off"
                                          className="collection-modal-field"
-                                         placeholder='Additional notes (like client name)'
+                                         placeholder='Additional notes'
                                          onChange={::this.handleInput} />
                             <button
                                 className="btn btn-pill btn-outline-secondary"
