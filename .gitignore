@@ -15,3 +15,4 @@ env/secrets.env
 data/database/
 data/logs/
 data/caches/
+data/tmp/
