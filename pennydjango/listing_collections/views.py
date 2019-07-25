@@ -12,7 +12,9 @@ class CollectionsList(AgentRequiredMixin, ListView):
     template_name = 'listing_collections/collections.html'
 
     def get_queryset(self):
-        return Collection.objects.filter(created_by=self.request.user)
+        return Collection.objects.filter(
+            created_by=self.request.user
+        ).order_by('-modified')
 
 
 class CollectionDelete(AgentRequiredMixin, DeleteView):

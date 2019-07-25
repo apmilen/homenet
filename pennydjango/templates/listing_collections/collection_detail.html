@@ -52,7 +52,7 @@
             {% endfor %}
             </div>
         </div>
-        <div class="col map-panel">
+        <div class="col d-none d-sm-inline map-panel">
             <div id='map'></div>
         </div>
     </div>
@@ -69,19 +69,18 @@
             style: 'mapbox://styles/mapbox/streets-v11',
             center: map_center,
             zoom: 15,
-            minZoom: 12,
             maxBounds,
         });
         var bounds = new mapboxgl.LngLatBounds();
         {% for listing in collection.listings.all %}
-            var marker_center = [{{listing.longitude}}, {{listing.latitude}}]
-            var marker = new mapboxgl.Marker({
-                draggable: false,
-                color: 'blue',
-            }).setLngLat(marker_center).addTo(map);
-            bounds.extend(marker_center)
+        var marker_center = [{{listing.longitude}}, {{listing.latitude}}]
+        var marker = new mapboxgl.Marker({
+            draggable: false,
+            color: 'blue',
+        }).setLngLat(marker_center).addTo(map);
+        bounds.extend(marker_center)
         {% endfor %}
-        map.fitBounds(bounds);
+        map.fitBounds(bounds, {padding: 80});
     </script>
 {% endblock %}
 
