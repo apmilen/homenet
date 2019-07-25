@@ -1,5 +1,4 @@
 # Serializers define the API representation.
-from datetime import datetime
 
 from rest_framework import serializers
 
@@ -29,7 +28,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
             'description', 'id', 'images', 'latitude', 'longitude',
             'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent',
             'created', 'parking', 'nearby_transit', 'walkability_score',
-            'bikability_score'
+            'bikeability_score'
         )
 
 
@@ -53,5 +52,5 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'move_in_cost', 'neighborhood', 'no_fee_listing', 'owner_pays',
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id',
             'size', 'status', 'term', 'utilities', 'listing_link', 'offer_link',
-            'nearby_transit', 'walkability_score', 'bikability_score', 'parking'
+            'nearby_transit', 'walkability_score', 'bikeability_score', 'parking'
         )

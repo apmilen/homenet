@@ -45,7 +45,7 @@ class DatatablesListView(TemplateView):
             for option in self.options_list:
                 try:
                     option['label_opcion']
-                except KeyError as e:
+                except KeyError:
                     raise ImproperlyConfigured(
                         "%(cls)s necesita el atributo options_list el cual debe contener una lista de diccionarios "
                         "los cuales deben contener entre sus atributos uno llamado label_opcion con un string" % {
@@ -55,7 +55,7 @@ class DatatablesListView(TemplateView):
 
                 try:
                     option['url_opcion']
-                except KeyError as e:
+                except KeyError:
                     raise ImproperlyConfigured(
                         "%(cls)s necesita el atributo options_list el cual debe contener una lista de diccionarios "
                         "los cuales deben contener entre sus atributos uno llamado url_opcion con un string" % {
@@ -65,7 +65,7 @@ class DatatablesListView(TemplateView):
 
                 try:
                     option['parametros_url']
-                except KeyError as e:
+                except KeyError:
                     raise ImproperlyConfigured(
                         "%(cls)s necesita el atributo options_list el cual debe contener una lista de diccionarios "
                         "los cuales deben contener entre sus atributos uno llamado parametros_url con una lista de "

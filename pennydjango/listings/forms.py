@@ -29,7 +29,7 @@ class ListingForm(forms.ModelForm):
         self.fields['bathrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['walkability_score'].widget.attrs.update({'addon_before': '%'})
-        self.fields['bikability_score'].widget.attrs.update({'addon_before': '%'})
+        self.fields['bikeability_score'].widget.attrs.update({'addon_before': '%'})
         self.fields['address'].widget.attrs.update({'readonly': True})
 
     class Meta:
@@ -40,7 +40,7 @@ class ListingForm(forms.ModelForm):
             'utilities', 'size', 'bathrooms', 'bedrooms', 'date_available',
             'term', 'pets', 'address', 'geopoint', 'nearby_transit', 'unit_number',
             'neighborhood', 'listing_agent', 'sales_agent', 'walkability_score',
-            'bikability_score', 'parking'
+            'bikeability_score', 'parking'
         )
         widgets = {
             'geopoint': MapGeopoint,
