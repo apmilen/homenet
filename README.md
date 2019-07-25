@@ -1,36 +1,44 @@
-# pennybags
-Super secret real-estate project...
+# Pennybags (aka HomeNet)
+
+Apartment rental listing platform to match realtors with potential home renters and buyers.
 
 ## Project Quickstart
 
+---
+
 ### 0. Clone the repository
 
-Make sure to clone the repo into the `/opt` directory:
+Clone this repo into the `/opt` directory:
 ```bash
-# Make sure to clone with ssh (not https)
+# Use ssh (not https) to avoid push permission errors
 git clone git@github.com:pirate/pennybags.git /opt/pennybags
 ```
-If you clone it elsewhere instead, make sure to symlink `/opt/pennybags` to the repo location:
+
+If you clone it elsewhere instead (e.g. inside your home folder), you must symlink `/opt/pennybags` to the repo location:
 ```bash
-ln -s /path/to/repo/pennybags /opt/pennybags
+ln -s /path/to/cloned/repo/pennybags /opt/pennybags
 ```
+
+---
 
 ### 1. Install the dependencies
 
 #### Python dependencies
 
-Install Python >=3.7.4:
+##### Install `Python >= 3.7.4`
 ```bash
 sudo apt install python3.7 python3-pip python3.7-dev  # or `brew install python3`
 ```
 Optional: You can also use [pyenv](https://github.com/pyenv/pyenv) to install python3.7 if you have trouble installing it with `apt` or `brew`.
 
-Install [`pipenv`](https://github.com/pypa/pipenv):
+##### Install the [`pipenv`](https://github.com/pypa/pipenv) package manager
 ```bash
 python3.7 -m pip install --user pipenv
 ```
 
-Install the Python dependencies defined in `./Pipfile`:
+##### Install the project Python dependencies
+
+(The Python dependencies are defined in `./Pipfile`)
 ```bash
 cd /opt/pennybags
 pipenv install
@@ -38,46 +46,58 @@ pipenv install
 
 #### Javascript dependencies (dev machines only):
 
-Install [`yarn`](https://yarnpkg.com/):
+##### Install `Node >= 12.6.0`
 ```bash
 sudo apt install npm gdal-bin   # or `brew install node gdal`
 npm install -g npm
+```
+
+##### Install the [`yarn`](https://yarnpkg.com/) package manager
+```bash
 npm install --upgrade --global yarn
 ```
 
-Then install the JS dependencies defined in `./pennydjango/js/package.json`:
+##### Install the project JS dependencies
+
+(The JS dependencies are defined in `./pennydjango/js/package.json`)
 ```bash
 cd /opt/pennybags/pennydjango/js
 yarn install
 ```
 
+---
+
 ### 2. Setup the system environment
 
-#### Point homenet.l domain to localhost
+#### Point `homenet.l` domain traffic to localhost
 
-Add this line to your `/etc/hosts` file:
+Add this line to your `/etc/hosts` file (`sudo` is required to edit it):
 ```
 127.0.0.1   homenet.l
 ```
 
-#### Make project JS and Python binaries runnable
+#### Make the JS and Python dependencies accessible from your `$PATH`
 
-Add these lines to your `~/.bashrc` or `~/.bash_profile` file:
+If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
 ```bash
-PATH=./node_modules/.bin:$PATH   # for fish: `set -x ./node_modules/.bin $PATH`
-PIPENV_VENV_IN_PROJECT=1         # for fish: `set -x PIPENV_VENV_IN_PROJECT 1`
+PATH=./node_modules/.bin:$PATH
+PIPENV_VENV_IN_PROJECT=1
 ```
 
-If you're using Fish, add these lines to `~/.config/fish/config.fish` instead:
+If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
 ```fish
 set -x ./node_modules/.bin $PATH
 set -x PIPENV_VENV_IN_PROJECT 1
 ```
 
 #### Install supervisord
+
+Supervisord is used to manage starting and stopping nginx, postgresql, and any other background services.
 ```bash
 sudo apt install supervisor   # or `brew install supervisor`
 ```
+
+---
 
 ### 3. Setup Postgresql
 
@@ -113,9 +133,13 @@ psql -c "ALTER USER penny CREATEDB;" postgres
 
 #### Run the initial migrations
 ```bash
+cd /opt/pennybags
+
 # Run the initial db migrations
 ./.venv/bin/python ./pennydjango/manage.py migrate
 ```
+
+---
 
 ### 4. Setup the Nginx webserver
 
@@ -133,20 +157,37 @@ On macOS:
 brew install nginx
 ```
 
-#### Install a self-signed SSL certificate
+#### Generate a self-signed SSL certificate for `homenet.l`
 ```bash
 cd /opt/pennybags/data/certs
-./generate.sh
+./generate.sh homenet.l
 ```
+
+---
 
 ### 5. Run the development server
 
+#### Start Postgresql and Nginx
+Background processes are managed by Supervisord, they must be started in order for Django to work.
+
+On Ubuntu:
+```bash
+supervisord -c /opt/pennybags/etc/supervisor/ubuntu-dev.conf
+```
+
+On macOS:
+```bash
+supervisord -c /opt/pennybags/etc/supervisor/mac-dev.conf
+```
+
+#### Start Django Runserver
 ```bash
 cd /opt/pennybags
 
-# start nginx/postgresql/etc for your environment using supervisord
-# <file> can be one of: mac-dev.conf, ubuntu-dev.conf, or ubuntu-prod.conf
-supervisord -c etc/supervisor/<file>
+# activate the virtualenv
+pipenv shell
+# or source .venb/bin/activate       (in bash)
+# or source .venv/bin/activate.fish  (in fish)
 
 # Start the django runserver
 ./manage.py runserver
@@ -154,11 +195,88 @@ supervisord -c etc/supervisor/<file>
 
 ✅ Then open [https://homenet.l](https://homenet.l) in your browser.
 
-*Note: It will warn about using an invalid/self-signed certificate.*  
-Click "Advanced" and then "Visit site" to bypass the warning, or install a trusted local development certificate with [mkcert](https://github.com/FiloSottile/mkcert) to get rid of it entirely:
+Alternatively, open [http://127.0.0.1:8000](http://127.0.0.1:8000) to access runserver directly without using nginx (always use nginx if possible though).
+
+---
+
+## Common Tasks
+
+### Activate the Python Virtualenv
 ```bash
-cd /opt/pennybags/data/certs
-./generate.sh homenet.l
+cd /opt/pennybags
+source .venv/bin/activate  # or source .venv/bin/activate.fish
 ```
 
-Alternatively, open [http://127.0.0.1:8000](http://127.0.0.1:8000) to access runserver directly without using nginx (always use nginx if possible though).
+### Start/stop/restart Nginx or Postgresql
+
+Replace `ubuntu-dev.conf` below with `mac-dev.conf` if using macOS.
+```bash
+cd /opt/pennybags
+
+# make sure supervisord is running first
+supervisord -c etc/supervisor/ubuntu-dev.conf
+
+# then check the status of all services or a specific service
+supervisorctl -c etc/supervisor/ubuntu-dev.conf status <service|all>
+supervisorctl -c etc/supervisor/ubuntu-dev.conf stop <service|all>
+supervisorctl -c etc/supervisor/ubuntu-dev.conf start <service|all>
+```
+
+### Inspect logfile output
+```bash
+cd /opt/pennybags/data/logs
+tail -f nginx.err
+tail -f nginx.out
+tail -f postgresql.err
+tail -f postgresql.out
+tail -f reloads.log
+# etc.
+```
+
+### Run Migrations
+```bash
+# first make sure postgresql is running with supervisord
+
+cd /opt/pennybags/pennydjango
+# activate virtualenv (see above)
+
+./manage.py migrate
+```
+
+---
+
+## Troubleshooting
+
+#### Check the installed binary versions
+```bash
+python3 --version       # should be >= 3.7.3, check inside virtualenv too
+pipenv --version        # should be >= 2018.11.26
+
+node --version          # should be >= 12.6.0
+npm --version           # should be >= 6.10.2
+yarn --version          # should be >= 1.17.3
+
+supervisord --version   # should be >= 3.3.5
+postgres --version      # should be >= 10.0
+nginx --version         # should be >= 1.15.12      
+```
+
+#### Check the installed binary locations
+```bash
+which <binary>      # e.g. `which nginx` or `which python3`
+```
+
+#### Yarn install/locking failures
+Clear the yarn cache and try again.
+```bash
+yarn cache clean
+yarn install
+```
+
+#### Pipenv install/locking failures
+Clear the pipenv cache and try again.
+```bash
+pipenv lock --clear
+pipenv clean
+pipenv install
+```

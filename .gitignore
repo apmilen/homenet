@@ -16,3 +16,4 @@ data/database/
 data/logs/
 data/caches/
 data/tmp/
+data/certs/
