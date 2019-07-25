@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from penny.models import User
-from django.utils.functional import cached_property
 from penny.model_utils import BaseModel
 from penny.constants import NEIGHBORHOODS, DAYS
 
@@ -41,3 +41,11 @@ class Availability(BaseModel):
             start_day <= dt_now.weekday() <= end_day
         )
         return all(conditions)
+
+    @cached_property
+    def borough(self):
+        matches = [
+            borough for borough, hoods in NEIGHBORHOODS
+            for hood in hoods if hood[0] == self.neighborhood
+        ]
+        return matches and matches[0]

@@ -7,6 +7,7 @@
 
 
 {% block head %}
+<link rel="stylesheet" href="{% http2static 'css/mapbox-gl.css' %}" type="text/css" crossorigin>
 <link rel="stylesheet" href="{% http2static 'css/jquery.datetimepicker.min.css' %}" type="text/css" crossorigin>
 {{ form.media.css }}
 {% endblock %}
@@ -19,43 +20,39 @@
     <div class="col-md-4">
 
         <div class="card card-smallcard-post card-post--1 m-3">
-            <div style="line-height: 0">
+            <div id="map-{{ obj.short_id }}" style="width: 100%; height: 300px"></div>
 
-                <iframe src='https://maps.google.com/maps?q={{ obj.get_neighborhood_display|urlencode }}+new+york&t=&z=13&ie=UTF8&iwloc=&output=embed' frameborder="0" width="100%" height="300px" scrolling="no"></iframe>
+            <!-- Button trigger modal -->
+            <button type="button" class="card-post__category badge badge-pill badge-dark"
+                    data-toggle="modal" data-target="#deleteModal_{{ obj.id }}">
+                <font size="4em"><i class="material-icons">delete_outline</i></font>
+            </button>
 
-
-                <!-- Button trigger modal -->
-                <button type="button" class="card-post__category badge badge-pill badge-dark"
-                        data-toggle="modal" data-target="#deleteModal_{{ obj.id }}">
-                    <font size="4em"><i class="material-icons">delete_outline</i></font>
-                </button>
-
-                <!-- Modal -->
-                <div class="modal fade" id="deleteModal_{{ obj.id }}" tabindex="-1" role="dialog"
-                     aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Warning!</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete this itinerary?</p>
-                                <p>Neighborhood: <span class="font-weight-bold">{{ obj.get_neighborhood_display }}</span></p>
-                                <p>Working days: {{ obj.start_day }} - {{ obj.end_day }}</p>
-                                <p>Working hours: {{ obj.start_time }} - {{ obj.end_time }}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <form action="{% url 'schedule-delete' pk=obj.pk %}" method="post">
-                                    {% csrf_token %}
-                                    {% buttons %}
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                    {% endbuttons %}
-                                </form>
-                            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="deleteModal_{{ obj.id }}" tabindex="-1" role="dialog"
+                 aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Warning!</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this itinerary?</p>
+                            <p>Neighborhood: <span class="font-weight-bold">{{ obj.get_neighborhood_display }}</span></p>
+                            <p>Working days: {{ obj.start_day }} - {{ obj.end_day }}</p>
+                            <p>Working hours: {{ obj.start_time }} - {{ obj.end_time }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form action="{% url 'schedule-delete' pk=obj.pk %}" method="post">
+                                {% csrf_token %}
+                                {% buttons %}
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                                {% endbuttons %}
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -67,7 +64,7 @@
                     <tbody>
                         <tr>
                             <td><i class="material-icons">explore</i>
-                                {{ obj.get_neighborhood_display }}
+                                {{ obj.get_neighborhood_display }} ({{ obj.borough }})
                             </td>
                         </tr>
                         <tr>
@@ -113,7 +110,41 @@
 
 
 {% block tail %}
-<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}" type="text/javascript" crossorigin></script>
+<script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript" crossorigin></script>
+<script src="{% http2static 'js/jquery.datetimepicker.full.min.js' %}" type="text/javascript" crossorigin></script>
+
+<script>
+    mapboxgl.accessToken = '{{ map_key }}';
+    var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
+    var mapbox_endpoint = "https://api.mapbox.com/geocoding/v5/mapbox.places/"
+    var params = {
+        access_token: mapboxgl.accessToken,
+        types: "neighborhood",
+        bbox: maxBounds,
+    }
+    
+    {% for obj in object_list %}
+    var query = encodeURIComponent("{{ obj.get_neighborhood_display|safe }}")
+    var url = mapbox_endpoint + query + ".json?" + $.param(params)
+    $.get(url, function(response) {
+        if (response.features.length > 0) {
+            var map_center = response.features[0].center
+            var map = new mapboxgl.Map({
+                container: 'map-{{ obj.short_id }}',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: map_center,
+                zoom: 13,
+                minZoom: 10,
+                maxBounds,
+            });
+            var marker = new mapboxgl.Marker({
+                draggable: false,
+                color: 'blue',
+            }).setLngLat(map_center).addTo(map);
+        }
+    })
+    {% endfor %}
+</script>
 
 <script>
 $(function () {
