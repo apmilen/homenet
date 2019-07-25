@@ -55,7 +55,8 @@ class User(AbstractUser, BaseModel):
     job_application = models.OneToOneField(
         JobApplication,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     ) 
 
     avatar = models.ImageField(

@@ -2,6 +2,7 @@ from io import BytesIO
 import os
 import zipfile
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,16 +16,17 @@ from django.views.generic import (
     CreateView, UpdateView, DetailView, TemplateView, RedirectView,
     DeleteView)
 from django.views.generic.base import View
+from django.utils.text import slugify
 
 from rest_framework import viewsets
-
-from datatables_listview.core.views import DatatablesListView
+from weasyprint import HTML
+from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
 from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
     RentalApplicationForm,
-    RentalAppDocForm, ChangeLeaseStatusForm)
+    RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
@@ -32,11 +34,11 @@ from leases.utils import qs_from_filters
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
-from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
-from penny.constants import CLIENT_TYPE
-from penny.forms import CustomUserCreationForm
+from payments.models import Transaction
+from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
+
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )
@@ -47,6 +49,8 @@ from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
+
+from django.db.models import Sum
 
 
 # Rest Framework
@@ -77,6 +81,18 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         move_in_costs = self.object.moveincost_set.order_by('-created')
         change_status_url = reverse('leases:change-status',
                                     args=[self.object.id])
+        lease_transactions = Transaction.objects.filter(
+            lease_member__offer=self.object
+        )
+        lease_postive_balance = lease_transactions.filter(
+            from_to=CLIENT_TO_APP
+        ).aggregate(Sum('amount'))
+        lease_negative_balance = lease_transactions.filter(
+            from_to=APP_TO_CLIENT
+        ).aggregate(Sum('amount'))
+        lease_postive_balance = lease_postive_balance['amount__sum'] or 0
+        lease_negative_balance = lease_negative_balance['amount__sum'] or 0
+        current_balance = lease_postive_balance - lease_negative_balance
         context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
@@ -87,6 +103,10 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['change_status_url'] = change_status_url
         context['move_in_costs_form'] = MoveInCostForm(pk=self.object.id)
         context['total'] = MoveInCost.objects.total_by_offer(self.object.id)
+        context['lease_transactions'] = lease_transactions
+        context['number_of_transactions'] = lease_transactions.count()
+        context['current_balance'] = current_balance
+        
         return context
 
 
@@ -251,7 +271,7 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
             messages.SUCCESS,
             "Account created successfully"
         )
-        return reverse('home')
+        return self.main_object.client_detail_link()
 
     def get(self, request, *args, **kwargs):
         self.main_object = self.get_main_object()
@@ -367,15 +387,25 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         )
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
+        lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
+        total_paid_lease = lease_transactions.aggregate(Sum('amount'))
+        total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
+        lease_pending_payment = total_move_in_cost
+        if total_paid_lease['amount__sum'] is not None:
+            lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']           
         # Context
+        context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         context['lease'] = lease
         context['listing'] = lease.listing
         context['rental_app'] = rental_app
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
-        context['total'] = MoveInCost.objects.total_by_offer(lease.id)
+        context['total'] = total_move_in_cost
         context['invite_member_form'] = BasicLeaseMemberForm()
         context['agreement_form'] = SignAgreementForm()
+        context['lease_transactions'] = lease_transactions
+        context['lease_pending_payment'] = lease_pending_payment
+        
         # Application context
         if not rental_app.completed or rental_app.editing:
             context['rental_application_form'] = RentalApplicationForm(
@@ -448,8 +478,23 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
         completed = self.request.GET.get('completed') == "true"
         rental_app = form.save(commit=False)
         rental_app.completed = completed
+        rental_app.editing = not completed
         rental_app.save()
         return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class UpdateEditingRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+    http_method_names = ['post']
+    form_class = RentalApplicationEditingForm
+    model = RentalApplication
+
+    def get_success_url(self):
+        leasemember_id = self.object.lease_member.id
+        return reverse("leases:detail-client", args=[leasemember_id])
 
     def form_invalid(self, form):
         messages.error(self.request, form.errors)
@@ -498,7 +543,7 @@ class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
         )
 
 
-class RentalApplicationDetail(AgentRequiredMixin, DetailView):
+class RentalApplicationDetail(ClientOrAgentRequiredMixin, DetailView):
     model = RentalApplication
     template_name = 'leases/rental_app/rental_app_detail.html'
 
@@ -509,7 +554,7 @@ class RentalApplicationDetail(AgentRequiredMixin, DetailView):
         return context
 
 
-class DownloadRentalDocuments(AgentRequiredMixin, View):
+class DownloadRentalDocuments(ClientOrAgentRequiredMixin, View):
 
     def get(self, *args, **kwargs):
         rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
@@ -557,3 +602,22 @@ class ChangeLeaseStatusView(AgentRequiredMixin, UpdateView):
             "An error has occurred while updating the lease"
         )
         return HttpResponseRedirect(self.get_success_url())
+
+
+class GenerateRentalPDF(ClientOrAgentRequiredMixin, View):
+
+    def get(self, *args, **kwargs):
+        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        lease_member = rental_app.lease_member
+        filename = f'{slugify(lease_member.get_full_name())}.pdf'
+
+        response = HttpResponse(content_type="application/pdf")
+        response['Content-Disposition'] = f'attachment; filename={filename}'
+
+        html = render_to_string("leases/rental_app/rental_app_pdf.html", {
+            'rental_app': lease_member.rentalapplication
+        })
+        font_config = FontConfiguration()
+        HTML(string=html).write_pdf(response, font_config=font_config)
+
+        return response

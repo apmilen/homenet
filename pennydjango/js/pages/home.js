@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Row, Col, Button} from "shards-react";
-import {Dropdown} from "react-bootstrap";
-import moment from "moment";
+import Dropdown from "react-bootstrap/Dropdown";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
+import differenceInDays from "date-fns/difference_in_days";
 
 import {tooltip} from '@/util/dom'
 
@@ -13,40 +15,40 @@ import {Switch, SettingsGear} from '@/components/misc'
 
 
 const ListingGrid = ({listing, hoverOn, clickOn}) => {
-    const listing_existance = moment().diff(listing.created, 'days')
+    const listing_existance = differenceInDays(Date.now(), listing.created)
     const new_listing = listing_existance < 1 ? 'New Listing' : ''
 
     return (
-        <div class="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
+        <div className="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
              onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
             <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
-            <div class="card-post__image text-center">
-                <img class="box-wd" src={listing.default_image} />
+            <div className="card-post__image text-center">
+                <img className="box-wd" src={listing.default_image} />
                 {listing.no_fee_listing &&
-                    <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+                    <span className="card-post__category left-badge badge badge-pill badge-info">no fee</span>
                 }
-                <span class="card-post__category new-listing-badge badge badge-pill badge-success">{new_listing}</span>
-                <span class="card-post__category badge badge-pill badge-dark">${listing.price}</span>
+                <span className="card-post__category new-listing-badge badge badge-pill badge-success">{new_listing}</span>
+                <span className="card-post__category badge badge-pill badge-dark">${listing.price}</span>
             </div>
-            <div class="card-body p-0 text-center">
-                <table class="table mb-0 listing-info">
+            <div className="card-body p-0 text-center">
+                <table className="table mb-0 listing-info">
                     <tbody>
                         <tr>
-                            <td class="wrap-info"
+                            <td className="wrap-info"
                                 {...tooltip(`${listing.bedrooms} Beds / ${listing.baths} Bath`)}>
                                 {parseFloat(listing.bedrooms).toString()} Beds / {parseFloat(listing.bathrooms).toString()} Bath
                             </td>
-                            <td class="wrap-info" colspan="2"
+                            <td className="wrap-info" colSpan="2"
                                 {...tooltip(listing.address)}>
                                 {listing.neighborhood}
                             </td>
                         </tr>
                         <tr>
-                            <td class="wrap-info">{listing.pets}</td>
-                            <td class="wrap-info">
+                            <td className="wrap-info">{listing.pets}</td>
+                            <td className="wrap-info">
                                 <i className="material-icons">share</i> Share
                             </td>
-                            <td class="wrap-info">
+                            <td className="wrap-info">
                                 <i className="material-icons">place</i>Map
                             </td>
                         </tr>
@@ -59,27 +61,27 @@ const ListingGrid = ({listing, hoverOn, clickOn}) => {
 
 
 const ListingList = ({listing, hoverOn, clickOn}) => (
-    <div class="card col-11 col-md-12 col-lg-11 col-xl-10 px-0 mx-auto my-1 overlay-parent"
+    <div className="card col-11 col-md-12 col-lg-11 col-xl-10 px-0 mx-auto my-1 overlay-parent"
          onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
         <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
-        <div class="d-flex align-items-center">
+        <div className="d-flex align-items-center">
 
-            <div class="">
+            <div className="">
                 <img height="60" width="100"
                      style={{borderRadius: '.625rem 0 0 .625rem'}}
                      src={listing.default_image} />
             </div>
 
-            <div class="col text-center">
+            <div className="col text-center">
                 {parseFloat(listing.bedrooms).toString()} Beds<br/>
                 {parseFloat(listing.bathrooms).toString()} Baths
             </div>
-            <div class="col d-none d-sm-inline" {...tooltip(listing.address)}>{listing.neighborhood}</div>
-            <div class="col d-none d-md-inline">{listing.pets}</div>
-            <div class="col ml-auto text-right">
-                <div class="badge badge-pill badge-dark">${listing.price}</div><br/>
+            <div className="col d-none d-sm-inline" {...tooltip(listing.address)}>{listing.neighborhood}</div>
+            <div className="col d-none d-md-inline">{listing.pets}</div>
+            <div className="col ml-auto text-right">
+                <div className="badge badge-pill badge-dark">${listing.price}</div><br/>
                 {listing.no_fee_listing &&
-                    <div class="badge badge-pill badge-info">no fee</div>
+                    <div className="badge badge-pill badge-info">no fee</div>
                 }
             </div>
 
@@ -90,97 +92,97 @@ const ListingList = ({listing, hoverOn, clickOn}) => (
 
 const ListingDetail = ({listing}) => (
     <span>
-        <div id="carouselExampleIndicators" class="carousel slide"
+        <div id="carouselExampleIndicators" className="carousel slide"
              data-ride="carousel" data-interval="2500">
-            <ol class="carousel-indicators">
+            <ol className="carousel-indicators">
                 {listing.images.map((image_url, idx) =>
-                    <li data-target="#carouselExampleIndicators" data-slide-to={idx}
-                        class={idx == 0 ? 'active' : ''}></li>
+                    <li key={`${idx}-indicator`} data-target="#carouselExampleIndicators" data-slide-to={idx}
+                        className={idx == 0 ? 'active' : ''}></li>
                 )}
             </ol>
-            <div class="carousel-inner">
+            <div className="carousel-inner">
                 {listing.images.map((image_url, idx) =>
-                    <div class={`carousel-item ${idx == 0 ? 'active' : ''}`}>
-                        <img class="d-block w-100" src={image_url} alt="First slide" />
+                    <div key={`${idx}-slide`}  className={`carousel-item ${idx == 0 ? 'active' : ''}`}>
+                        <img className="d-block w-100" src={image_url} alt="First slide" />
                     </div>
                 )}
             </div>
             {listing.images.length > 1 ? [
-                <a class="carousel-control-prev" href="#carouselExampleIndicators"
+                <a className="carousel-control-prev" href="#carouselExampleIndicators"
                    role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
+                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span className="sr-only">Previous</span>
                 </a>,
-                <a class="carousel-control-next" href="#carouselExampleIndicators"
+                <a className="carousel-control-next" href="#carouselExampleIndicators"
                    role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
+                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span className="sr-only">Next</span>
                 </a>] : null}
         </div>
 
-        <div class="card card-smallcard-post card-post--1 card-listing">
-            <div class="card-body p-0 text-center row m-0">
-                <div class="col-4 wrap-info p-0 pt-2 pb-2 border border"
+        <div className="card card-smallcard-post card-post--1 card-listing">
+            <div className="card-body p-0 text-center row m-0">
+                <div className="col-4 wrap-info p-0 pt-2 pb-2 border border"
                      data-toggle="tooltip"
                      title={`$${ listing.price }/Month`}>
                     ${ listing.price }/Month
                 </div>
-                <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
+                <div className="col-4 wrap-info p-0 pt-2 pb-2 border"
                      data-toggle="tooltip"
                      title={`${ listing.bedrooms } Beds`}>
                     { parseFloat(listing.bedrooms).toString() } Beds
                 </div>
-                <div class="col-4 wrap-info p-0 pt-2 pb-2 border"
+                <div className="col-4 wrap-info p-0 pt-2 pb-2 border"
                      data-toggle="tooltip"
                      title={`${ listing.baths } Bath`}>
                     { parseFloat(listing.bathrooms).toString() } Bath
                 </div>
-                <div class="col-4 p-0 pt-2 pb-2  border">
+                <div className="col-4 p-0 pt-2 pb-2  border">
                     Pets: { listing.pets }
                 </div>
-                <div class="col-8 wrap-info p-0 pt-2 pb-2 border"
+                <div className="col-8 wrap-info p-0 pt-2 pb-2 border"
                      data-toggle="tooltip"
                      title={ listing.address }>
                     { listing.address }
                 </div>
-                <div class="col-md-8 col-12 p-0 pt-2 pb-2 border">
-                    <div class="col-12 text-justify border-bottom pt-2">
+                <div className="col-md-8 col-12 p-0 pt-2 pb-2 border">
+                    <div className="col-12 text-justify border-bottom pt-2">
                         <p><b>About the place</b></p>
                         <p>{ listing.description }</p>
                     </div>
-                    <div class="col-12 text-justify border-top border-bottom pt-2">
+                    <div className="col-12 text-justify border-top border-bottom pt-2">
                         <p><b>Amenities</b></p>
-                        <ul class="ul-2">
+                        <ul className="ul-2">
                             {listing.amenities.map(amenity =>
                                 <li>{ amenity }</li>
                             )}
                         </ul>
                     </div>
-                    <div class="col-6 text-justify pt-2">
+                    <div className="col-6 text-justify pt-2">
                         <p><b>Nearby transit</b></p>
                         <p>{ listing.nearby_transit }</p>
                     </div>
-                    <div class="col-12 text-justify pt-2">
-                        <div class="row">
-                            <div class="col-6 text-justify border-top border-bottom pt-2">
+                    <div className="col-12 text-justify pt-2">
+                        <div className="row">
+                            <div className="col-6 text-justify border-top border-bottom pt-2">
                                 <p><b>Walkability score</b></p>
                                 <p>{ listing.walkability_score }%</p>
                             </div>
-                            <div class="col-6 text-justify border-top border-bottom pt-2">
+                            <div className="col-6 text-justify border-top border-bottom pt-2">
                                 <p><b>Bikability score</b></p>
-                                <p>{ listing.bikability_score }%</p>
+                                <p>{ listing.bikeability_score }%</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 text-justify pt-2">
+                    <div className="col-6 text-justify pt-2">
                         <p><b>Parking</b></p>
                         <p>{ listing.parking }</p>
                     </div>
                 </div>
-                <div class="col-md-4 col-12  p-0 pt-2 pb-2 border ">
+                <div className="col-md-4 col-12  p-0 pt-2 pb-2 border ">
                     <p><b>Contact</b></p>
-                    <a class="contact-avatar" href="#" role="button">
-                        <div class="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
+                    <a className="contact-avatar" href="#" role="button">
+                        <div className="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
                     </a>
                     <div>{ listing.sales_agent.first_name }</div>
                 </div>
@@ -266,13 +268,13 @@ class PublicListings extends React.Component {
             "address", "size", "owner_pays", "exclusive", "date_available"
         ]
 
-        return [
-            <Row style={{minHeight: 43}}>
+        return <div>
+            <Row key="mainrow1" style={{minHeight: 43}}>
                 {listing_detail ?
                     <a href='#'
                        style={{margin: 'auto 0 auto 35px'}}
                        onClick={::this.hideDetail}>
-                        <i class="material-icons">keyboard_arrow_left</i>
+                        <i className="material-icons">keyboard_arrow_left</i>
                         Back to results
                     </a>
                 :
@@ -295,30 +297,32 @@ class PublicListings extends React.Component {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
-            </Row>,
-            <Row>
+            </Row>
+            <Row  key="mainrow2">
                 <Col className="main-scroll left-main-column">
                     {listing_detail ?
                         <Row>
                             <ListingDetail listing={listing_detail} />
                         </Row>
                     : [
-                        <center><h6>{total_listings} results</h6></center>,
-                        <Row className="justify-content-center">
+                        <center key="center"><h6>{total_listings} results</h6></center>,
+                        <Row key="row1" className="justify-content-center">
                             {listings.map(listing =>
                                 as_grid ?
                                     <ListingGrid listing={listing}
+                                                 key={listing.id}
                                                  hoverOn={::this.hoverOn}
                                                  clickOn={::this.showDetail} />
                                 :
                                     <ListingList listing={listing}
+                                                 key={listing.id}
                                                  hoverOn={::this.hoverOn}
                                                  clickOn={::this.showDetail} />
                             )}
                         </Row>,
-                        <Row className="justify-content-center">
+                        <Row key="row2" className="justify-content-center">
                             {more_listings_link ?
-                                <Button outline onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
+                                <Button variant="outline-primary" onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
                                     Load more...
                                 </Button>
                             :
@@ -343,7 +347,7 @@ class PublicListings extends React.Component {
                     </Col>
                 }
             </Row>
-        ]
+        </div>
     }
 }
 

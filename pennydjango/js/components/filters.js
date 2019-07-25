@@ -99,7 +99,7 @@ const rangeClearFilter = (func, elem_id) =>
     }}>&times;</span>
 
 export const priceFilter = (price, func) =>
-    <DropdownButton title={[rangeTitle("Price", price, '$'),
+    <DropdownButton alignRight title={[rangeTitle("Price", price, '$'),
                             validRange(price) && rangeClearFilter(func, "price")]}
                     className={validRange(price) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
@@ -122,7 +122,7 @@ export const priceFilter = (price, func) =>
     </DropdownButton>
 
 export const price_per_bedFilter = (price_per_bed, func) =>
-    <DropdownButton title={[rangeTitle("Price per Bed", price_per_bed, '$'),
+    <DropdownButton alignRight title={[rangeTitle("Price per Bed", price_per_bed, '$'),
                             validRange(price_per_bed) && rangeClearFilter(func, "price_per_bed")]}
                     className={validRange(price_per_bed) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
@@ -145,7 +145,7 @@ export const price_per_bedFilter = (price_per_bed, func) =>
     </DropdownButton>
 
 export const sizeFilter = (size, func) =>
-    <DropdownButton title={[rangeTitle("Size", size, '', 'sq.ft'),
+    <DropdownButton alignRight title={[rangeTitle("Size", size, '', 'sq.ft'),
                             validRange(size) && rangeClearFilter(func, "size")]}
                     className={validRange(size) ? 'no-caret' : ''}>
         <InputGroup style={{width: 300, margin: '0 5px'}}>
@@ -178,7 +178,7 @@ const multipleSelectionClearFilter = (func, elem_id) =>
     }}>&times;</span>
 
 export const bedsFilter = (beds, func) =>
-    <DropdownButton title={[`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`,
+    <DropdownButton alignRight title={[`Bedrooms${beds.length ? `: ${beds.sort()}` : ''}`,
                             beds.length > 0 && multipleSelectionClearFilter(func, "beds")]}
                     className={beds.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
@@ -193,7 +193,7 @@ export const bedsFilter = (beds, func) =>
     </DropdownButton>
 
 export const bathsFilter = (baths, func) =>
-    <DropdownButton title={[`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`,
+    <DropdownButton alignRight title={[`Bathrooms${baths.length ? `: ${baths.sort()}` : ''}`,
                             baths.length > 0 && multipleSelectionClearFilter(func, "baths")]}
                     className={baths.length > 0 ? 'no-caret' : ''}>
         <div className='rooms-container'>
@@ -208,9 +208,9 @@ export const bathsFilter = (baths, func) =>
     </DropdownButton>
 
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
-    <DropdownButton title={[multipleSelectionTitle("Amenities", amenities),
+    <DropdownButton alignRight title={[multipleSelectionTitle("Amenities", amenities),
                             amenities.length > 0 && multipleSelectionClearFilter(func, "amenities")]}
-                    className={`dropdown-menu-mobile ${amenities.length > 0 ? 'no-caret' : ''}`}>
+                    className={`${amenities.length > 0 ? 'no-caret' : ''}`}>
         <div className='dropdown-checkbox-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
@@ -223,7 +223,7 @@ export const amenitiesFilter = (amenities, amenities_dict, func) =>
     </DropdownButton>
 
 export const sales_agentsFilter = (sales_agents, agents, func) =>
-    <DropdownButton title={[multipleSelectionTitle("Sales Agents", sales_agents),
+    <DropdownButton alignRight title={[multipleSelectionTitle("Sales Agents", sales_agents),
                             sales_agents.length > 0 && multipleSelectionClearFilter(func, "sales_agents")]}
                     className={sales_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
@@ -238,7 +238,7 @@ export const sales_agentsFilter = (sales_agents, agents, func) =>
     </DropdownButton>
 
 export const listing_agentsFilter = (listing_agents, agents, func) =>
-    <DropdownButton title={[multipleSelectionTitle("Listing Agents", listing_agents),
+    <DropdownButton alignRight title={[multipleSelectionTitle("Listing Agents", listing_agents),
                             listing_agents.length > 0 && multipleSelectionClearFilter(func, "listing_agents")]}
                     className={listing_agents.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
@@ -262,9 +262,9 @@ const hoodsList = (borough_hoods, hoods) => {
 }
 
 export const hoodsFilter = (hoods, hoods_dict, func) =>
-    <DropdownButton title={[multipleSelectionTitle("Hoods", hoods),
+    <DropdownButton alignRight title={[multipleSelectionTitle("Hoods", hoods),
                             hoods.length > 0 && multipleSelectionClearFilter(func, "hoods")]}
-                    className={`dropdown-menu-mobile ${hoods.length > 0 ? 'no-caret' : ''}`}>
+                    className={` ${hoods.length > 0 ? 'no-caret' : ''}`}>
         <div className='borough-container'>
             <Tabs defaultActiveKey={0}>
                 {Object.keys(hoods_dict).map((borough, idx) =>
@@ -293,7 +293,7 @@ export const hoodsFilter = (hoods, hoods_dict, func) =>
     </DropdownButton>
 
 export const lease_statusFilter = (lease_status, status_dict, func) =>
-    <DropdownButton title={[multipleSelectionTitle("Status", lease_status),
+    <DropdownButton alignRight title={[multipleSelectionTitle("Status", lease_status),
                             lease_status.length > 0 && multipleSelectionClearFilter(func, "lease_status")]}
                     className={lease_status.length > 0 ? 'no-caret' : ''}>
         <div className='agents-container'>
@@ -309,7 +309,7 @@ export const lease_statusFilter = (lease_status, status_dict, func) =>
 
 // One selection filters
 export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
-    <DropdownButton className="dropdown-menu-mobile"
+    <DropdownButton alignRight className=""
                     title={`Pets: ${pets_allowed == 'any' ? "Any" : pets_allowed_dict[pets_allowed]}`}>
         <div className='pets-container'>
             <FormRadio name='pets_allowed' value='any'
@@ -329,7 +329,7 @@ export const pets_allowedFilter = (pets_allowed, pets_allowed_dict, func) =>
     </DropdownButton>
 
 export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
-    <DropdownButton title={`Listing Type: ${listing_type == 'any' ? "Any" : listing_type_dict[listing_type]}`}>
+    <DropdownButton alignRight title={`Listing Type: ${listing_type == 'any' ? "Any" : listing_type_dict[listing_type]}`}>
         <div className='pets-container'>
             <FormRadio name='listing_type' value='any'
                        checked={listing_type == 'any'}
@@ -348,7 +348,7 @@ export const listing_typeFilter = (listing_type, listing_type_dict, func) =>
     </DropdownButton>
 
 export const user_typeFilter = (user_type, user_type_dict, func) =>
-    <DropdownButton title={`User Type: ${user_type == 'any' ? "Any" : user_type_dict[user_type]}`}>
+    <DropdownButton alignRight title={`User Type: ${user_type == 'any' ? "Any" : user_type_dict[user_type]}`}>
         <div className='pets-container'>
             <FormRadio name='user_type' value='any'
                        checked={user_type == 'any'}

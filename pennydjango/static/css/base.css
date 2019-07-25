@@ -89,17 +89,6 @@ div.circle-avatar{
     display:none;
 }
 
-/* Filters bar */
-.home-filters .filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-    left: 0 !important;
-}
-.filter-container .dropdown.dropdown-menu-mobile .dropdown-menu{
-    position: absolute;
-    top: initial !important;
-    left: -130% !important;
-    will-change: unset !important;
-    transform: none !important;
-}
 .filter-container {
     margin: 3px;
 }
@@ -458,6 +447,13 @@ input:checked + .slider:before {
 }
 
 
+/*    Transactions    */
+.transactions {
+    color: #212529;
+    padding: 10px 0 30px 40px;
+}
+
+
 /*    Collections    */
 div.modal-body>p {
     margin: 0;
@@ -484,3 +480,4 @@ div.modal-body>p {
     margin: 0.4rem;
     border: solid 0.05rem;
 }
+

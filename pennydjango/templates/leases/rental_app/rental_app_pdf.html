@@ -1,0 +1,87 @@
+<h4>Rental Application</h4>
+<br/>
+<hr/>
+<h6>Personal Information</h6>
+<br/>
+<table style="width: 100%;">
+  <tbody>
+  <tr style="width: 50%;">
+    <td>Name</td>
+    <td>{{ rental_app.name }}</td>
+  </tr>
+  <tr style="width: 50%;">
+    <td>Phone</td>
+    <td>{{ rental_app.phone }}</td>
+  </tr>
+  <tr style="width: 50%;">
+    <td>Date of Birth</td>
+    <td>{{ rental_app.date_of_birth|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>SSN</td>
+    <td>{{ rental_app.ssn }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td># of Pets</td>
+    <td>{{ rental_app.n_of_pets|default_if_none:"" }}</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+<hr/>
+<h6>Rental History</h6>
+<br/>
+<table style="width: 100%;">
+  <tbody>
+
+  <tr style="width: 50%;">
+    <td>Current Address</td>
+    <td>{{ rental_app.current_address|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Current Monthly Rent</td>
+    <td>{{ rental_app.current_monthly_rent|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Landlord Name</td>
+    <td>{{ rental_app.landlord_name|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Landlord Contact</td>
+    <td>{{ rental_app.landlord_contact|default_if_none:"" }}</td>
+  </tr>
+  </tbody>
+</table>
+<br/>
+<hr/>
+<h6>Work Details</h6>
+<br/>
+<table style="width: 100%;">
+  <tbody>
+
+  <tr style="width: 50%;">
+    <td>Current Company</td>
+    <td>{{ rental_app.current_company|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Job Title</td>
+    <td>{{ rental_app.job_title|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Annual Income</td>
+    <td>{{ rental_app.annual_income|default_if_none:"" }}</td>
+  </tr>
+
+  <tr style="width: 50%;">
+    <td>Time At Current Job</td>
+    <td>{{ rental_app.time_at_current_job|default_if_none:"" }}</td>
+  </tr>
+  </tbody>
+</table>

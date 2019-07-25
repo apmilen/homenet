@@ -1,3 +1,4 @@
+from email.utils import parseaddr
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -22,12 +23,14 @@ class BasicLeaseMemberForm(forms.ModelForm):
         fields = ('name', 'email', 'applicant_type', 'app_fee')
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if not email:
+
+        _, email = parseaddr(self.cleaned_data.get('email'))
+
+        if '@' not in email:
             raise ValidationError(
-                'Email cannot be empty'
+                'Email is invalid, double check it and try again'
             )
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email__iexact=email).exists():
             raise ValidationError(
                 'That email is already in use with a different account'
             )
@@ -104,6 +107,14 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['job_title'].required = False
         self.fields['annual_income'].required = False
         self.fields['time_at_current_job'].required = False
+
+
+class RentalApplicationEditingForm(forms.ModelForm):
+    use_required_attribute = False
+
+    class Meta:
+        model = RentalApplication
+        fields = ('editing', )
 
 
 class RentalAppDocForm(forms.ModelForm):

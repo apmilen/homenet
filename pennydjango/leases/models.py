@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Sum
 from django.urls import reverse
 
 from penny.constants import DEFAUL_AVATAR
@@ -77,6 +78,14 @@ class LeaseMember(BaseModel):
         if self.user:
             return self.user.get_full_name()
         return self.name
+
+    def client_detail_link(self):
+        return reverse('leases:detail-client', args=[self.id])
+
+    @property
+    def total_paid(self):
+        paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
+        return paid_amnts.get('total_amount') or 0
 
 
 class MoveInCost(BaseModel):

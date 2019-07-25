@@ -4,20 +4,22 @@
       <div class="container-fluid new-listing-card">
         <div class="row listing-admin-area">
           <div class="col-12">
-            {% include 'penny/change_status_modal.html' %}
             <a href="{{ listing.listing_link }}"
                target="_blank"
                class="btn btn-sm btn-outline-info mr-1">{{ listing.full_address }}
             </a>
-            <a href="{% url 'leases:edit' pk=lease.id %}"
-               target="_blank"
-               class="btn btn-sm btn-outline-info mr-1">Edit
-            </a>
-            <button type="button"
-                    class="btn btn-sm btn-outline-info mr-1"
-                    data-toggle="modal" data-target="#changeStatusModal">
-              Change Status
-            </button>
+            {% if change_status_url %}
+              {% include 'penny/change_status_modal.html' %}
+              <a href="{% url 'leases:edit' pk=lease.id %}"
+                 target="_blank"
+                 class="btn btn-sm btn-outline-info mr-1">Edit
+              </a>
+              <button type="button"
+                      class="btn btn-sm btn-outline-info mr-1"
+                      data-toggle="modal" data-target="#changeStatusModal">
+                Change Status
+              </button>
+            {% endif %}
           </div>
         </div>
         <div class="row listing-area-content">
@@ -161,14 +163,6 @@
             </div>
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left">
-                <b>Credit Checks</b>
-              </div>
-              <div class="col-sm-8 text-left">
-                TODO
-              </div>
-            </div>
-            <div class="row listing-area-data-row">
-              <div class="col-sm-4 text-left">
                 <b>Description</b>
               </div>
               <div class="col-sm-8 text-left">
@@ -180,7 +174,7 @@
                 <b>Transactions</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                {{number_of_transactions}}
               </div>
             </div>
             <div class="row listing-area-data-row">
@@ -188,7 +182,7 @@
                 <b>Current Balance</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                ${{current_balance }}
               </div>
             </div>
             <div class="row listing-area-data-row">
@@ -196,7 +190,7 @@
                 <b>OP Received at</b>
               </div>
               <div class="col-sm-8 text-left">
-                TODO
+                
               </div>
             </div>
             {% for member in lease_members %}

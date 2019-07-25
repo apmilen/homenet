@@ -1,4 +1,5 @@
 # Serializers define the API representation.
+
 from rest_framework import serializers
 
 from listings.models import Listing, ListingDetail
@@ -27,7 +28,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
             'description', 'id', 'images', 'latitude', 'longitude',
             'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent',
             'created', 'parking', 'nearby_transit', 'walkability_score',
-            'bikability_score'
+            'bikeability_score'
         )
 
 
@@ -52,5 +53,5 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id', 'id',
             'size', 'status', 'term', 'utilities', 'listing_link',
             'offer_link', 'nearby_transit', 'walkability_score',
-            'bikability_score', 'parking', 'collections'
+            'bikeability_score', 'parking', 'collections'
         )

@@ -9,6 +9,7 @@ Settings Usage:
 import os
 import sys
 import getpass
+from decimal import Decimal
 
 from time import time
 
@@ -145,6 +146,14 @@ MAILGUN_API_KEY = _PLACEHOLDER_FOR_UNSET
 MAP_KEY = _PLACEHOLDER_FOR_UNSET
 
 
+# Stripe Key Settings
+STRIPE_SECRET_KEY = _PLACEHOLDER_FOR_UNSET
+STRIPE_PUBLISHABLE_KEY = _PLACEHOLDER_FOR_UNSET
+
+STRIPE_FEE = Decimal("0.029")  # 2.9% stripe fee
+STRIPE_FIXED_FEE = Decimal("0.3")  # 30¢ flat fee
+
+
 ################################################################################
 ### Internationalization & Formatting Settings
 ################################################################################
@@ -268,7 +277,10 @@ INSTALLED_APPS = [
     'schedule',
     'leases',
     'job_applications',
-    'listing_collections'
+    'stripe',
+    'payments',
+    'weasyprint',
+    'listing_collections',
 ]
 
 MIDDLEWARE = [
@@ -385,3 +397,6 @@ check_django_invariants()
 chown_django_folders()
 STATUS_LINE = log_django_status_line()
 
+
+# Application name
+APP_NAME = 'Homenet'
