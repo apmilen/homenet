@@ -6,6 +6,8 @@ __pycache__/
 .venv/
 venv/
 virtualenv/
+node_modules/
+yarn-error.log
 
 supervisord.pid
 
