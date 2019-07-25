@@ -144,29 +144,6 @@ def check_django_invariants():
 
     from django.conf import settings as s
 
-    # DEBUG features and permissions mistakes must be forbidden on production boxes
-    if 'blitzka-prod' in s.HOSTNAME:
-        assert s.PENNY_ENV == 'PROD', 'blitzka-prod must run in ENV=PROD mode'
-        assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
-        assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
-        assert not s.ENABLE_DEBUG_TOOLBAR, 'Debug toolbar is never allowed on prod!'
-        assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
-        assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
-        assert s.REPO_DIR == '/opt/blitzka', 'Repo must be in /opt/blitzka on prod'
-
-        # tests can pollute the data dir and use lots of CPU / Memory
-        # only disable this check if you're 100% confident it's safe and have a
-        # very good reason to run tests on production. remember to try beta first
-        assert not s.IS_TESTING, 'Tests should not be run on prod machines'
-
-    elif 'blitzka-beta' in s.HOSTNAME:
-        assert s.PENNY_ENV == 'BETA', 'blitzka-beta must run in ENV=BETA mode'
-        assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
-        assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
-        assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
-        assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
-        assert s.REPO_DIR == '/opt/blitzka', 'Repo must be in /opt/blitzka on prod'
-
     # make sure all security-sensitive settings are coming from safe sources
     for setting_name in s.SECURE_SETTINGS:
         defined_in = get_setting_source(s.SETTINGS_SOURCES, setting_name)
