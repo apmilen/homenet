@@ -27,7 +27,7 @@ ln -s /path/to/cloned/repo/pennybags /opt/pennybags
 
 ##### Install `Python >= 3.7.4`
 ```bash
-sudo apt install python3.7 python3-pip python3.7-dev  # or `brew install python3`
+sudo apt install python3.7 python3-pip python3.7-dev libpango1.0-0  # or `brew install python3 pango`
 ```
 Optional: You can also use [pyenv](https://github.com/pyenv/pyenv) to install python3.7 if you have trouble installing it with `apt` or `brew`.
 
@@ -125,10 +125,12 @@ cd /opt/pennybags
 initdb data/database
 
 # Create role, db, and grant privileges
+pg_ctl -D data/database start
 psql -c "CREATE USER penny WITH PASSWORD 'penny';" postgres
 psql -c "CREATE DATABASE penny OWNER penny;" postgres
 psql -c "GRANT ALL PRIVILEGES ON DATABASE penny TO penny;" postgres
 psql -c "ALTER USER penny CREATEDB;" postgres
+pg_ctl -D data/database stop
 ```
 
 #### Run the initial migrations
@@ -136,7 +138,9 @@ psql -c "ALTER USER penny CREATEDB;" postgres
 cd /opt/pennybags
 
 # Run the initial db migrations
+pg_ctl -D data/database start
 ./.venv/bin/python ./pennydjango/manage.py migrate
+pg_ctl -D data/database stop
 ```
 
 ---
