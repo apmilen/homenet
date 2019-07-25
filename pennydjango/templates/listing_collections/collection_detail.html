@@ -28,19 +28,14 @@
                             <tbody>
                                 <tr>
                                     <td class="wrap-info">
-                                        {{ listing.bedrooms }} Beds / {{ listing.bathrooms }} Bath
+                                        {{ listing.bedrooms }} <i class="material-icons">hotel</i> |
+                                        {{ listing.bathrooms }} <i class="material-icons">wc</i>
                                     </td>
-                                    <td class="wrap-info" colspan="2">
+                                    <td class="wrap-info">
                                         {{ listing.get_neighborhood_display }}
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td class="wrap-info">{{ listing.get_pets_display }}</td>
                                     <td class="wrap-info">
-                                        <i class="material-icons">share</i>Share
-                                    </td>
-                                    <td class="wrap-info">
-                                        <i class="material-icons">place</i>Map
+                                        {{ listing.get_pets_display }}
                                     </td>
                                 </tr>
                             </tbody>
