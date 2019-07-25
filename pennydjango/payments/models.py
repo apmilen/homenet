@@ -39,4 +39,10 @@ class Transaction(BaseModel):
         choices=PAYMENT_METHOD,
         default=DEFAULT_PAYMENT_METHOD
     )
+    stripe_charge_id = modles.CharField(
+        max_length=100, 
+        unique=True, 
+        null=True, 
+        blank=True
+    )
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
