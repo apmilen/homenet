@@ -17,7 +17,9 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-small">
                     <a class="dropdown-item" href="#" onclick="copyToClipboard()">Copy link to clipboard</a>
-                    <a class="dropdown-item" href="#">Send to email address</a>
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#sendLinkModal">Send to email address</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="d-flex"><h3 class="mx-auto">{{ collection.name }}</h3></div>
@@ -61,6 +63,35 @@
             <div id='map'></div>
         </div>
     </div>
+
+    <!-- Send collection URL modal -->
+    <div class="modal fade" id="sendLinkModal" tabindex="-1" role="dialog"
+         aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendLinkModalLabel">Send collection link</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div role="alert" id="sendCollectionAlert" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="sendCollectionEmail">Email address</label>
+                        <input type="email" class="form-control" id="sendCollectionEmail" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="sendCollectionNote">Additional note:</label>
+                        <textarea class="form-control" id="sendCollectionNote" rows="3"></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary float-right" onclick="sendCollection()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block tail %}
@@ -96,6 +127,22 @@
             document.execCommand('copy');
             document.body.removeChild(tempInput);
             alert('Copied!');
+        }
+        function sendCollection() {
+            var alert_elem = document.getElementById("sendCollectionAlert")
+            var post_data = {
+                email: document.querySelector('#sendCollectionEmail').value,
+                note: document.querySelector('#sendCollectionNote').value,
+            }
+            alert_elem.style.display = "none";
+            $.post("", post_data, function (response){
+                if (response.success)
+                    alert_elem.className = 'alert alert-success'
+                else
+                    alert_elem.className = 'alert alert-danger'
+                alert_elem.style.display = "block";
+                alert_elem.innerHTML = response.message
+            })
         }
     </script>
 {% endblock %}
