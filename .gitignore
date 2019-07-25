@@ -12,6 +12,6 @@ yarn-error.log
 supervisord.pid
 
 env/secrets.env
-data/database/*
-data/logs/*
-data/caches/*
+data/database/
+data/logs/
+data/caches/
