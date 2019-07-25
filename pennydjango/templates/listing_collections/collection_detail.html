@@ -10,7 +10,17 @@
 {% block inner %}
     <div class="row">
         <div class="col main-scroll left-main-column">
-            <center><h3>{{ collection.name }}</h3></center>
+            <div class="dropdown">
+                <button class="btn btn-pill btn-outline-primary collection-share-button dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Share
+                </button>
+                <div class="dropdown-menu dropdown-menu-small">
+                    <a class="dropdown-item" href="#" onclick="copyToClipboard()">Copy link to clipboard</a>
+                    <a class="dropdown-item" href="#">Send to email address</a>
+                </div>
+            </div>
+            <div class="d-flex"><h3 class="mx-auto">{{ collection.name }}</h3></div>
             <div class="row justify-content-center">
             {% for listing in collection.listings.all %}
                 <div class="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent">
@@ -76,6 +86,17 @@
         bounds.extend(marker_center)
         {% endfor %}
         map.fitBounds(bounds, {padding: 80});
+    </script>
+    <script>
+        function copyToClipboard() {
+            var tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.setAttribute('value', location.href)
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Copied!');
+        }
     </script>
 {% endblock %}
 

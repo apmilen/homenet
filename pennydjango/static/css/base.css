@@ -292,7 +292,8 @@ hr.divider-hr {
     border-radius:100%;
     background-color:#c3c7cc;
 }
-/*  Collections modal  */
+
+/*  Collections  */
 .collection-modal-field {
     margin-bottom: .5rem;
 }
@@ -308,6 +309,10 @@ hr.divider-hr {
     color: #b20000;
     background-color: #ffb2b2;
     font-size: .8rem;
+}
+.collection-share-button {
+    float: right;
+    margin: 7px 0 0 7px;
 }
 
 
