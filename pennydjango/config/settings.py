@@ -99,19 +99,28 @@ STDOUT_IO_SUMMARY = DEBUG
 ### Security Settings
 ################################################################################
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
-X_FRAME_OPTIONS = None
-SECURE_BROWSER_XSS_FILTER = True
+
+X_FRAME_OPTIONS = None                 # handled by nginx
+SECURE_BROWSER_XSS_FILTER = False      # handled by nginx
+SECURE_CONTENT_TYPE_NOSNIFF = False    # handled by nginx
+
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SESSION_COOKIE_SECURE = True
+
 CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://homenet.l',
+)
+CORS_ORIGIN_ALLOW_ALL = False
+
 LOGIN_URL = '/accounts/login/'
 LOGOUT_REDIRECT_URL = '/'
-CORS_ORIGIN_WHITELIST = ('http://localhost', 'http://127.0.0.1')
-CORS_ORIGIN_ALLOW_ALL = True
 
 
 ################################################################################
