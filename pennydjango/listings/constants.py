@@ -9,11 +9,13 @@ LISTING_TYPES = (
 # Listing Status
 DRAFT = 'draft'
 APPROVED = 'approved'
-NON_APPROVED = 'not_approved'
+CANCELLED = 'cancelled'
+RENTED = 'rented'
 LISTING_STATUS = (
     (DRAFT, 'Draft'),
     (APPROVED, 'Approved'),
-    (NON_APPROVED, 'Not Approved')
+    (CANCELLED, 'Cancelled'),
+    (RENTED, 'Rented')
 )
 
 

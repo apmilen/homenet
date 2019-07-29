@@ -88,6 +88,9 @@ class User(AbstractUser, BaseModel):
                 'is_staff',
                 'is_superuser',
                 'is_authenticated',
+                'is_user_admin',
+                'is_user_agent',
+                'is_user_client',
                 'user_type',
                 'user_type_str',
                 'collections_list'
@@ -105,7 +108,7 @@ class User(AbstractUser, BaseModel):
         """
         if name.startswith('is_user_'):
             usertype = name[8:]
-            return usertype == str(self.user_type)
+            return usertype == str(self.user_type) or self.is_superuser
         raise AttributeError(f"{self} object has not attribute '{name}'")
 
     @cached_property

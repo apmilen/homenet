@@ -56,6 +56,13 @@
   <div id="listing-photos" class="dropzone">
 
   </div>
+  <hr/>
+  <a href="{% url 'listings:detail' pk=listing.id %}" type="button" class="btn btn-primary">
+    Back
+  </a>
+  <a href="{% url 'listings:review' pk=listing.id %}" type="button" class="btn btn-primary">
+    Continue
+  </a>
 {% endblock wizard_content %}
 {% block tail %}
   <script src="{% static 'js/dropzone.js' %}"></script>
