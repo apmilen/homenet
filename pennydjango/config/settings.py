@@ -261,22 +261,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'anymail',
     'corsheaders',
-    'penny',
-    'listings',
-    'ui',
-    'schedule',
     'mapbox_location_field',
     'bootstrap4',
     'django_select2',
     'rest_framework',
+    'datatables_listview',
+    'django_extensions',
+
+    'penny',
+    'listings',
+    'ui',
+    'schedule',
     'leases',
     'job_applications',
-    'datatables_listview',
     'stripe',
     'payments',
-    'weasyprint'
+    'weasyprint',
+    'listing_collections',
 ]
 
 MIDDLEWARE = [
