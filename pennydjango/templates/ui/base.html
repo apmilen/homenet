@@ -81,26 +81,28 @@
                 <h3 class="page-title">{% block inner_title %}{% endblock inner_title %}</h3>
               </div>
             </div>
-          {% block before_card %}
-          {% endblock before_card %}
-            <div class="card card-small mb-4">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item p-3">
-                  <div class="row">
-                    <div class="col">
-                      {% block before_inner_content %}
-                      {% endblock before_inner_content %}
-                      {% block inner_content %}
-                      {% endblock inner_content %}
-                      {% block after_inner_content %}
-                      {% endblock after_inner_content %}
+          {% block inner_col %}
+            {% block before_card %}
+            {% endblock before_card %}
+              <div class="card card-small mb-4">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item p-3">
+                    <div class="row">
+                      <div class="col">
+                        {% block before_inner_content %}
+                        {% endblock before_inner_content %}
+                        {% block inner_content %}
+                        {% endblock inner_content %}
+                        {% block after_inner_content %}
+                        {% endblock after_inner_content %}
+                      </div>
                     </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          {% block after_card %}
-          {% endblock after_card %}
+                  </li>
+                </ul>
+              </div>
+            {% block after_card %}
+            {% endblock after_card %}
+          {% endblock inner_col %}
           </div>
         </div>
       {% endblock inner %}
