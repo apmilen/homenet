@@ -14,7 +14,9 @@ import stripe
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
 from payments.utils import get_amount_plus_fee
-from payments.constants import DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP
+from payments.constants import (
+    DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED
+)
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.constants import LEASE_STATUS
 
@@ -106,7 +108,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         try:
             with transaction.atomic():
 
-                Transaction.objects.create(
+                stripe_transaction = Transaction.objects.create(
                     lease_member=lease_member,
                     transaction_user=request.user,
                     token=token,
@@ -114,19 +116,29 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     from_to=CLIENT_TO_APP,
                     payment_method=DEFAULT_PAYMENT_METHOD
                 )
-                stripe.Charge.create(
-                    amount=amount_to_stripe,
-                    currency='usd',
-                    description='A test charge',
-                    source=token,
-                    statement_descriptor='Lease payment'
-                )
-                new_lease_total_peding = self.get_lease_total_pending(lease)
-                if new_lease_total_peding == 0:
-                    self.update_lesase_status(lease)              
-                messages.success(request, 'Your payment was successful')
-        except stripe.error.CardError:
-            messages.warning(request, "There has been a problem with your card")
+                try:
+                    stripe_charge = stripe.Charge.create(
+                        amount=amount_to_stripe,
+                        currency='usd',
+                        description='A test charge',
+                        source=token,
+                        statement_descriptor='Lease payment'
+                    )
+                except stripe.error.CardError:
+                    stripe_transaction.status = FAILED
+                    stripe_transaction.save()
+                    messages.warning(
+                        request, 
+                        "There has been a problem with your card"
+                    )
+                else:
+                    stripe_transaction.status = APPROVED
+                    stripe_transaction.stripe_charge_id = stripe_charge.id
+                    stripe_transaction.save()
+                    new_lease_total_peding = self.get_lease_total_pending(lease)
+                    if new_lease_total_peding == 0:
+                        self.update_lesase_status(lease)              
+                    messages.success(request, 'Your payment was successful')       
         except DatabaseError:
             messages.error(
                 request, 
