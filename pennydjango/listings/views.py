@@ -229,7 +229,7 @@ class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
     form_class = ChangeListingStatusForm
 
     def get_success_url(self):
-        return self.object.detail_link()
+        return reverse("listings:listings")
 
     def form_valid(self, form):
         messages.success(
@@ -242,7 +242,7 @@ class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
         messages.add_message(
             self.request,
             messages.ERROR,
-            "An error has occurred while updating the lease"
+            "An error has occurred while updating the Listing"
         )
         return HttpResponseRedirect(self.get_success_url())
 
