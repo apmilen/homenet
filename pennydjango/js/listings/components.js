@@ -103,7 +103,7 @@ class CreateCollectionModal extends React.Component {
 }
 
 const AddToCollection = ({listing_id, agent_collections, listing_collection_ids, onClickCollection}) =>
-    <DropdownButton title="Add to collection" className="d-inline" variant="outline-info" size="sm">
+    <DropdownButton title="Add to collection" className="d-inline mr-1" variant="outline-info" size="sm">
         <div className="dropdown-checkbox-container" style={{width: 160, fontSize: '.813rem'}}>
             <CreateCollectionModal listing_id={listing_id}/>
             {agent_collections.map(collection => {
