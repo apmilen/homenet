@@ -108,7 +108,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         try:
             with transaction.atomic():
 
-                transaction = Transaction.objects.create(
+                stripe_transaction = Transaction.objects.create(
                     lease_member=lease_member,
                     transaction_user=request.user,
                     token=token,
@@ -125,16 +125,16 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                         statement_descriptor='Lease payment'
                     )
                 except stripe.error.CardError:
-                    transaction.status = FAILED
-                    transaction.stripe_charge = stripe_charge.id
-                    transaction.save()
+                    stripe_transaction.status = FAILED
+                    stripe_transaction.save()
                     messages.warning(
                         request, 
                         "There has been a problem with your card"
                     )
                 else:
-                    transaction.status = APPROVED
-                    transaction.save()
+                    stripe_transaction.status = APPROVED
+                    stripe_transaction.stripe_charge_id = stripe_charge.id
+                    stripe_transaction.save()
                     new_lease_total_peding = self.get_lease_total_pending(lease)
                     if new_lease_total_peding == 0:
                         self.update_lesase_status(lease)              
