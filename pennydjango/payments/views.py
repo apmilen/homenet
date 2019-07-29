@@ -99,6 +99,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             )
        
         amount_plus_fee = get_amount_plus_fee(amount)
+        fee = amount_plus_fee / Decimal(100) - amount
         amount_to_stripe = int(amount_plus_fee)
         assert request_amount_plus_fee == amount_plus_fee, \
             "The amount plus Stripe fee is inconsistent"
@@ -114,7 +115,8 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     token=token,
                     amount=amount,
                     from_to=CLIENT_TO_APP,
-                    payment_method=DEFAULT_PAYMENT_METHOD
+                    payment_method=DEFAULT_PAYMENT_METHOD,
+                    fee = fee
                 )
                 try:
                     stripe_charge = stripe.Charge.create(

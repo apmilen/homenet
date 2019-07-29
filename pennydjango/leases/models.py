@@ -87,6 +87,16 @@ class LeaseMember(BaseModel):
         paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
         return paid_amnts.get('total_amount') or 0
 
+    @property
+    def total_fee(self):
+        paid_Fee = self.transaction_set.aggregate(total_fee=Sum('fee'))
+        return paid_Fee.get('total_fee') or 0
+
+    @property
+    def total_paid_plus_fee(self):
+        total_paid_plus_fee = self.total_paid + self.total_fee
+        return total_paid_plus_fee
+
 
 class MoveInCost(BaseModel):
     offer = models.ForeignKey(Lease, on_delete=models.CASCADE)

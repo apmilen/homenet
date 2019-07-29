@@ -53,4 +53,9 @@ class Transaction(BaseModel):
         choices=TRANSACTION_STATUS,
         default=PENDING
     )
+    fee = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True
+    )
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
