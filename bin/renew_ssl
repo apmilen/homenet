@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Dynamic DNS Script for DigitalOcean DNS
+
+# apt install dnsutils certbot curl
+# pip3 install certbot-dns-digitalocean
+
+CONFIG_FILE="/opt/panacea/env/prod.env"
+CREDENTIALS_FILE="/opt/panacea/env/secrets.env"
+
+source "$CONFIG_FILE"
+source "$CREDENTIALS_FILE"
+
+API_KEY="$dns_digitalocean_token"
+EMAIL="$ssl_email"
+FQDN="$subdomain.$domain"
+RECORD_URL="https://api.digitalocean.com/v2/domains/$domain/records/$dns_digitalocean_record"
+RECORD_NAME="$FQDN A"
+RECORD_TTL="360"
+REFRESH_RATE="360"
+
+LETSENCRYPT_ETC="/opt/panacea/data/letsencrypt/etc"
+LETSENCRYPT_VAR="/opt/panacea/data/letsencrypt/var"
+LETSENCRYPT_LOGS="/opt/panacea/data/letsencrypt/logs"
+CERTS_DIR="/opt/panacea/data/certs"
+
+
+function renew_digitalocean_dns {
+    PUBLIC_IP="$(dig -4 +short myip.opendns.com @resolver1.opendns.com)"
+
+    echo "[$(date +"%Y-%m-%d %H:%M")] Checking DNS record $RECORD_URL..."
+
+    CURRENT_IP=$(curl -q -X GET \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $API_KEY" \
+        "$RECORD_URL" 2>/dev/null | sed -E 's/^.*"data":"([0-9..]+)".*$/\1\n/g')
+
+    if [[ "$CURRENT_IP" == "$PUBLIC_IP" ]]; then
+        echo "[$(date +"%Y-%m-%d %H:%M")] DNS $RECORD_NAME $PUBLIC_IP is up-to-date."
+        return 0
+    fi
+
+    RESULT=$(curl -q -X PUT \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $API_KEY" \
+        -d "{\"data\": \"$PUBLIC_IP\", \"ttl\": $RECORD_TTL}" "$RECORD_URL" 2>/dev/null)
+    UPDATE_STATUS=$?
+
+    UPDATED_SUBDOMAIN=$(echo -- "$RESULT" | sed -E 's/^.*"name":"([a-zA-Z..]+)".*$/\1\n/g')
+    UPDATED_IP=$(echo -- "$RESULT" | sed -E 's/^.*"data":"([0-9..]+)".*$/\1\n/g')
+
+    if [[ "$UPDATED_SUBDOMAIN.$domain" != "$FQDN" ]]; then
+        echo "[$(date +"%Y-%m-%d %H:%M")] The DigitalOcean record URL $RECORD_URL is incorrect for this domain $DOMAIN (got $UPDATED_DOMAIN instead)!"
+        exit 2
+    fi
+    if [[ "$UPDATED_IP" != "$PUBLIC_IP" ]]; then
+        echo "[$(date +"%Y-%m-%d %H:%M")] Failed to update the DigitalOcean record $RECORD_URL to $PUBLIC_IP (got $UPDATED_IP instead)!"
+        exit 1
+    fi
+    if ((UPDATE_STATUS>0)); then
+        echo "[$(date +"%Y-%m-%d %H:%M")] Failed to update $RECORD_URL to $PUBLIC_IP!"
+        exit 1
+    fi
+    echo "[$(date +"%Y-%m-%d %H:%M")] Updated $RECORD_NAME from $CURRENT_IP to $PUBLIC_IP."
+}
+
+
+function renew_letsencrypt_ssl {
+    echo "[$(date +"%Y-%m-%d %H:%M")] Checking SSL certificate for $FQDN..."
+
+    if certbot certonly \
+        --keep-until-expiring \
+        --dns-digitalocean \
+        --dns-digitalocean-credentials "$CREDENTIALS_FILE" \
+        --agree-tos \
+        -m "$EMAIL" \
+        --non-interactive \
+        --quiet \
+        --config-dir "$LETSENCRYPT_ETC" \
+        --work-dir "$LETSENCRYPT_VAR" \
+        --logs-dir "$LETSENCRYPT_LOGS" \
+        --domain "$FQDN"; then
+
+        if diff -q "$LETSENCRYPT_ETC/live/$FQDN/fullchain.pem" "$CERTS_DIR/$FQDN.crt" 2> /dev/null; then
+            echo "[$(date +"%Y-%m-%d %H:%M")] SSL certificate is up-to-date."
+        else
+            cp -L "$LETSENCRYPT_ETC/live/$FQDN/fullchain.pem" \
+                  "$CERTS_DIR/$FQDN.crt"
+            cp -L "$LETSENCRYPT_ETC/live/$FQDN/fullchain.pem" \
+                  "$CERTS_DIR/$FQDN.crt"
+            echo "[$(date +"%Y-%m-%d %H:%M")] Renewed SSL certificate succesfully."
+        fi
+    else
+        echo "[$(date +"%Y-%m-%d %H:%M")] Failed to load or renew SSL certificate!"
+        exit 1
+    fi
+
+    # TODO: figure out how to run certbot ^ statelessly or store all state in data/
+}
+
+function main {
+    function on_quit {
+        local reason="$*"
+        echo "[$(date +"%Y-%m-%d %H:%M")] Stopped (received $reason)!"
+        exit 2
+    }
+
+    trap 'on_quit SIGINT' SIGINT
+    trap 'on_quit SIGQUIT' SIGQUIT
+    trap 'on_quit SIGTSTP' SIGTSTP
+
+    while :
+    do
+        renew_digitalocean_dns
+        renew_letsencrypt_ssl
+        sleep "$REFRESH_RATE"
+    done
+}
+
+main "$@"
