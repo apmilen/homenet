@@ -82,15 +82,15 @@ class LeaseMember(BaseModel):
     def client_detail_link(self):
         return reverse('leases:detail-client', args=[self.id])
 
-    @property
+    @cachedproperty
     def total_paid(self):
         paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
         return paid_amnts.get('total_amount') or 0
 
-    @property
+    @cachedproperty
     def total_fee(self):
-        paid_Fee = self.transaction_set.aggregate(total_fee=Sum('fee'))
-        return paid_Fee.get('total_fee') or 0
+        paid_fee = self.transaction_set.aggregate(total_fee=Sum('fee'))
+        return paid_fee.get('total_fee') or 0
 
     @property
     def total_paid_plus_fee(self):
