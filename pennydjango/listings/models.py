@@ -172,6 +172,9 @@ class Listing(BaseModel):
     def photos_link(self):
         return reverse("listing:photos", args=[self.id])
 
+    def change_status_link(self):
+        return reverse("listing:change-status", args=[self.id])
+
     def __json__(self, *attrs):
         return {
             **self.attrs(

@@ -53,5 +53,5 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id', 'id',
             'size', 'status', 'term', 'utilities', 'listing_link',
             'offer_link', 'nearby_transit', 'walkability_score',
-            'bikeability_score', 'parking', 'collections'
+            'bikeability_score', 'parking', 'collections', 'change_status_link'
         )

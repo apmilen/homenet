@@ -1,6 +1,11 @@
 import React from 'react'
 
-import {DropdownButton, Modal, FormControl} from 'react-bootstrap'
+import FormControl from 'react-bootstrap/FormControl'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Modal from 'react-bootstrap/Modal'
+import FormGroup from 'react-bootstrap/FormGroup'
+import FormLabel from 'react-bootstrap/FormLabel'
+import Form from 'react-bootstrap/Form'
 import {FormCheckbox} from 'shards-react'
 
 
@@ -10,6 +15,65 @@ const validateCollectionForm = (collection_data) => {
     if (name === "") errors.push("Name cannot be empty")
     if (notes === "") errors.push("Please fill notes with something useful")
     return errors
+}
+
+class ChangeStatusModal extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            show: false,
+        }
+    }
+    toggleModal() {
+        this.setState({
+            show: !this.state.show,
+            status: '',
+        })
+    }
+    handleInput(e) {
+        const field = e.target.id
+        const value = e.target.value
+        this.setState({[field]: value})
+    }
+    render() {
+        const {show} = this.state
+        return (
+            <span>
+                <a className="dropdown-item" href="#" onClick={::this.toggleModal}>
+                    <i className={'material-icons'}>settings</i> Change Status
+                </a>
+                {show &&
+                <Modal show={show} size="sm" onHide={::this.toggleModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title className="collection-modal-title">
+                            Change Status
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="collection-modal-body">
+                        <span>
+                            <Form method={"post"} action={this.props.link}>
+                                <input type="hidden" name="csrfmiddlewaretoken" value={global.csrftoken} />
+                                <FormGroup controlId="id_status" >
+                                    <FormLabel>Status</FormLabel>
+                                    <FormControl as="select" name={'status'}>
+                                      <option value={'draft'}>Draft</option>
+                                      <option value={'approved'}>Approved</option>
+                                      <option value={'cancelled'}>Cancelled</option>
+                                      <option value={'rented'}>Rented</option>
+                                    </FormControl>
+                                  </FormGroup>
+                                <button
+                                    className="btn btn-primary"
+                                    type={'submit'}>
+                                    Submit
+                                </button>
+                            </Form>
+                        </span>
+                    </Modal.Body>
+                </Modal>}
+            </span>
+        )
+    }
 }
 
 class CreateCollectionModal extends React.Component {
@@ -147,7 +211,7 @@ export class ListingComponent extends React.Component {
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, walkability_score, bikeability_score, 
-            parking, photos_link, id
+            parking, photos_link, id, change_status_link
         } = this.props.listing
         const {
             collections
@@ -187,6 +251,12 @@ export class ListingComponent extends React.Component {
                                             <a className="dropdown-item" href={offer_link}>
                                                 <i className={'material-icons'}>create_new_folder</i> Create Offer
                                             </a>
+                                            {global.user.is_user_admin ?
+                                                <>
+                                                <div className="dropdown-divider"></div>
+                                                    <ChangeStatusModal link={change_status_link}/>
+                                                </>
+                                                : null}
                                         </div>
                                     </div>
                                     <AddToCollection
