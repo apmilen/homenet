@@ -30,6 +30,8 @@ urlpatterns = [
     path('leases/', include(("leases.urls", "leases"), namespace='leases')),
     path('core/', include(("penny.urls", "penny"), namespace='penny')),
     path('payments/', include('payments.urls')),
+    path('collections/', include(
+        ("listing_collections.urls", "collections"), namespace='collections')),
 ]
 
 

@@ -50,6 +50,7 @@
         "@babel/preset-env",
         {
           "useBuiltIns": "usage",
+          "corejs": "2",
           "targets": [
             "last 5 versions",
             "> 0.25%",

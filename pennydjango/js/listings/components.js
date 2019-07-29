@@ -1,7 +1,144 @@
 import React from 'react'
 
+import {DropdownButton, Modal, FormControl} from 'react-bootstrap'
+import {FormCheckbox} from 'shards-react'
+
+
+const validateCollectionForm = (collection_data) => {
+    const {name, notes} = collection_data
+    let errors = []
+    if (name === "") errors.push("Name cannot be empty")
+    if (notes === "") errors.push("Please fill notes with something useful")
+    return errors
+}
+
+class CreateCollectionModal extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            show: false,
+        }
+    }
+    toggleModal() {
+        this.setState({
+            show: !this.state.show,
+            errors: [],
+            name: '',
+            notes: '',
+        })
+    }
+    handleInput(e) {
+        const field = e.target.id
+        const value = e.target.value
+        let errors = []
+        if (field == "name" && value.length > 32) errors.push("Name too large")
+        if (errors.length > 0)
+            this.setState({errors})
+        else
+            this.setState({[field]: value, errors})
+    }
+    submitCollection() {
+        const {show, errors, ...collection_data} = this.state
+        const new_errors = validateCollectionForm(collection_data)
+        if (new_errors.length)
+            this.setState({errors: new_errors})
+        else {
+            const post_data = {
+                type: 'CREATE_COLLECTION',
+                listing_id: this.props.listing_id,
+                ...collection_data,
+            }
+            $.post("", post_data, response => {
+                if (response.success)
+                    global.location.reload()
+                else
+                    this.setState({errors: response.errors})
+            })
+        }
+    }
+    render() {
+        const {show, errors, name, notes} = this.state
+        return (
+            <span>
+                <button
+                    className="btn btn-pill btn-outline-secondary w-100"
+                    onClick={::this.toggleModal}
+                    style={{margin: '5px 0 10px 0'}}>
+                    Create collection
+                </button>
+
+                {show &&
+                <Modal show={show} size="sm" onHide={::this.toggleModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title className="collection-modal-title">
+                            New collection
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="collection-modal-body">
+                        <span><center>
+                            {errors.map((error, i) =>
+                                <div key={i} className="collection-modal-error">{error}</div>
+                            )}
+                            <FormControl id='name' type='text' value={name}
+                                         autoComplete="off" required
+                                         className="collection-modal-field"
+                                         placeholder='Collection name'
+                                         onChange={::this.handleInput} />
+                            <FormControl id='notes' type='text' value={notes}
+                                         autoComplete="off"
+                                         className="collection-modal-field"
+                                         placeholder='Additional notes'
+                                         onChange={::this.handleInput} />
+                            <button
+                                className="btn btn-pill btn-outline-secondary"
+                                onClick={::this.submitCollection}>
+                                Create Collection
+                            </button>
+                        </center></span>
+                    </Modal.Body>
+                </Modal>}
+            </span>
+        )
+    }
+}
+
+const AddToCollection = ({listing_id, agent_collections, listing_collection_ids, onClickCollection}) =>
+    <DropdownButton title="Add to collection" className="d-inline" variant="outline-info" size="sm">
+        <div className="dropdown-checkbox-container" style={{width: 160, fontSize: '.813rem'}}>
+            <CreateCollectionModal listing_id={listing_id}/>
+            {agent_collections.map(collection => {
+                const {id, name} = collection
+                return (
+                    <FormCheckbox id={id} key={`${id}-collection`}
+                                  checked={listing_collection_ids.includes(id)}
+                                  onChange={onClickCollection}>
+                        {name}
+                    </FormCheckbox>
+                )
+            })}
+        </div>
+    </DropdownButton>
+
 
 export class ListingComponent extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            collections: props.listing.collections
+        }
+    }
+    toggleCollection(e) {
+        const post_data = {
+            type: 'LISTING_COLLECTION',
+            collection_id: e.target.id,
+            listing_id: this.props.listing.id
+        }
+        $.post("", post_data, response => {
+            if (response.success) {
+                this.setState({collections: response.collections})
+            }
+        })
+    }
     render() {
         const {
             full_address, no_fee_listing, detail, detail_link, default_image,
@@ -9,9 +146,12 @@ export class ListingComponent extends React.Component {
             date_available, utilities, move_in_cost, size, landlord_contact,
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
-            offer_link, nearby_transit, walkability_score, bikeability_score,
-            parking, photos_link
+            offer_link, nearby_transit, walkability_score, bikeability_score, 
+            parking, photos_link, id
         } = this.props.listing
+        const {
+            collections
+        } = this.state
 
         return (
             <div className="row">
@@ -49,10 +189,12 @@ export class ListingComponent extends React.Component {
                                             </a>
                                         </div>
                                     </div>
-                                    <button type="button"
-                                            className="btn btn-sm btn-outline-info mr-1">Add
-                                        to Listing Collection
-                                    </button>
+                                    <AddToCollection
+                                        listing_id={id}
+                                        agent_collections={global.user.collections_list}
+                                        listing_collection_ids={collections}
+                                        onClickCollection={::this.toggleCollection}
+                                    />
                                     {no_fee_listing && <span
                                         className="badge badge-info">No fee</span>}&nbsp;
                                     {detail.vacant && <span
