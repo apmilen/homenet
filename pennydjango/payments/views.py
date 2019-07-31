@@ -2,9 +2,11 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.views.generic.base import TemplateView
+from django.views.generic import CreateView
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.db import transaction, DatabaseError
 from django.db.models import Sum
@@ -13,6 +15,7 @@ import stripe
 
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
+from payments.forms import ManualTransactionForm
 from payments.utils import get_amount_plus_fee
 from payments.constants import DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP
 from leases.models import Lease, LeaseMember, MoveInCost
@@ -123,3 +126,38 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             )
 
         return HttpResponseRedirect(reverse('leases:detail-client', args=[client.id]))
+
+
+class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
+    model = Transaction
+    form_class = ManualTransactionForm
+    template_name = 'payments/manual_transaction_modal.html'
+    success_url = reverse_lazy('home') 
+    
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            lease_member_id = request.GET.get('lease_member_id', False)
+            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
+            
+            context = {
+                'form' : ManualTransactionForm(),
+            }
+            response = render_to_string(
+                'payments/manual_transaction_form.html',
+                context,
+                request
+            )
+            return HttpResponse(response)
+
+
+    def get_success_url(self):
+        return reverse('leases:list')
+
+    def form_invalid(self, form):
+        """If the form is invalid, render the invalid form."""
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def form_valid(self, form):
+        super().form_valid(form)
+        messages.success(self.request, 'Your transaction was submmited')
+        return HttpResponseRedirect(self.get_success_url())

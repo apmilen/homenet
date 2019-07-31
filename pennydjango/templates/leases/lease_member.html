@@ -91,7 +91,7 @@
 <script>
   getManualTransactionForm = (lease_member_id) => {
     $.ajax({
-        url: "{% url 'leases:manual-transaction' %}",
+        url: "{% url 'manual-transaction' %}",
         data: {
             'lease_member_id': lease_member_id
         },

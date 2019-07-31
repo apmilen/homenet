@@ -5,7 +5,8 @@ PAYMENT_METHOD = (
     ('stripe', 'Stripe'),
     ('check', 'Check'),
     ('non-cash', 'Non cash'),
-    ('bank', 'Bank')
+    ('bank', 'Bank'),
+    ('cash', 'Cash')
 )
 DEFAULT_PAYMENT_METHOD = 'stripe'
 

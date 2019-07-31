@@ -84,16 +84,6 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lease_members = self.object.leasemember_set.select_related('user')
-        #For lease member create a Transaction Form
-        for lease_member in lease_members:
-            form_name = f'uno_{lease_member.short_id}'
-            print(form_name)
-            context['forms'] = {
-                form_name: ManualTransactionForm(initial={
-                    'lease_member': lease_member.name
-                })
-            } 
-        print(context['forms'])
         move_in_costs = self.object.moveincost_set.order_by('-created')
         change_status_url = reverse('leases:change-status',
                                     args=[self.object.id])
@@ -122,25 +112,8 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['lease_transactions'] = lease_transactions
         context['number_of_transactions'] = lease_transactions.count()
         context['current_balance'] = current_balance
-        
+
         return context
-
-
-class LeaseManualTransaction(AgentRequiredMixin, TemplateView):
-     def get(self, request, *args, **kwargs):
-        if request.is_ajax():
-            lease_member_id = request.GET.get('lease_member_id', False)
-            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
-            context = {
-                'form' : ManualTransactionForm(initial={
-                    'lease_member': lease_member.name
-                })
-            }
-            response = render_to_string(
-                'payments/manual_transaction_form.html',
-                context
-            )
-            return HttpResponse(response)
 
 
 class LeasesList(AgentRequiredMixin, PublicReactView):
