@@ -20,3 +20,13 @@ FROM_TO = (
     (APP_TO_CLIENT, f'{APP_NAME} to Client'),
     (APP_TO_AGENT, f'{APP_NAME} to Agent')
 )
+
+# Transaction Status
+FAILED = 'failed'
+APPROVED = 'approved'
+PENDING = 'pending'
+TRANSACTION_STATUS = (
+    (FAILED, 'failed'),
+    (APPROVED, 'Approved'),
+    (PENDING, 'Pending')
+)

@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
@@ -18,8 +19,9 @@ from penny.utils import ExtendedEncoder
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE
 from ui.views.base_views import BaseContextMixin, PublicReactView
 from listings.forms import (
-    ListingForm, ListingDetailForm, ListingPhotosForm, ListingPhotoFormSet,
-    SingleListingPhotoForm, ChangeListingStatusForm)
+    ListingForm, ListingDetailForm, ListingPhotosForm, SingleListingPhotoForm,
+    ChangeListingStatusForm
+)
 from listings.mixins import WizardMixin
 from listings.models import Listing, ListingDetail, ListingPhotos, ListingPhoto
 from listings.serializer import (
@@ -218,6 +220,32 @@ class ListingDetailView(BaseContextMixin, DetailView):
             'detail', 'photos', 'listing_agent',
         )
 
+    def context(self, request, *args, **kwargs):
+        return {'map_key': settings.MAP_KEY}
+
+
+class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
+    model = Listing
+    form_class = ChangeListingStatusForm
+
+    def get_success_url(self):
+        return reverse("listings:listings")
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            "Listing updated"
+        )
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "An error has occurred while updating the Listing"
+        )
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class Listings(AgentRequiredMixin, PublicReactView):
     title = 'Listings Management'
@@ -244,25 +272,48 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'endpoint': '/listings/private/'
         }
 
+    def post(self, request, *args, **kwargs):
+        req_type = request.POST.get('type')
+        response = {'status': 400, 'success': False}
+        if req_type == 'LISTING_COLLECTION':
+            collection_id = request.POST.get('collection_id')
+            listing_id = request.POST.get('listing_id')
+            assert collection_id and listing_id
 
-class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
-    model = Listing
-    form_class = ChangeListingStatusForm
+            listing = Listing.objects.get(id=listing_id)
+            listing_in_collection = listing.collections\
+                .filter(id=collection_id).exists()
 
-    def get_success_url(self):
-        return self.object.detail_link()
+            if listing_in_collection:
+                listing.collections.remove(collection_id)
+            else:
+                listing.collections.add(collection_id)
 
-    def form_valid(self, form):
-        messages.success(
-            self.request,
-            "Listing updated"
-        )
-        return super().form_valid(form)
+            listing_data = PrivateListingSerializer(listing).data
+            response = {
+                'status': 200,
+                'success': True,
+                'collections': listing_data['collections']
+            }
 
-    def form_invalid(self, form):
-        messages.add_message(
-            self.request,
-            messages.ERROR,
-            "An error has occurred while updating the lease"
-        )
-        return HttpResponseRedirect(self.get_success_url())
+        if req_type == 'CREATE_COLLECTION':
+            name = request.POST.get('name')
+            notes = request.POST.get('notes')
+            listing_id = request.POST.get('listing_id')
+
+            if not (name and notes and listing_id):
+                response = {
+                    'status': 400,
+                    'success': False,
+                    'errors': ["Missing data"],
+                }
+            else:
+                listing = Listing.objects.get(id=listing_id)
+                listing.collections.create(
+                    name=name,
+                    notes=notes,
+                    created_by=request.user
+                )
+                response = {'status': 200, 'success': True}
+
+        return JsonResponse(response)

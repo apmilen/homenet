@@ -14,4 +14,4 @@ class RentPropertyTestCase(SimpleRentTest):
         assert rent_prop.bedrooms == 3
         assert rent_prop.baths == 2
         assert rent_prop.pets_allowed
-        assert rent_prop.amenities is ""
+        assert rent_prop.amenities == ""

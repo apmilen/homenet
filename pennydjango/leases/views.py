@@ -22,8 +22,6 @@ from rest_framework import viewsets
 from weasyprint import HTML
 from weasyprint.fonts import FontConfiguration
 
-from datatables_listview.core.views import DatatablesListView
-
 from leases.emails import send_invitation_email
 from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
@@ -36,15 +34,12 @@ from leases.utils import qs_from_filters
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
-from listings.models import Listing
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
 from payments.forms import ManualTransactionForm
 from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
 
-from penny.constants import CLIENT_TYPE
-from penny.forms import CustomUserCreationForm
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
 )

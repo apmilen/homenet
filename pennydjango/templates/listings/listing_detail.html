@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-6 text-justify border-top border-bottom pt-2">
                         <p><b>Bikability score</b></p>
-                        <p>{{ listing.bikability_score|default_if_none:""}}%</p>
+                        <p>{{ listing.bikeability_score|default_if_none:""}}%</p>
                     </div>
                 </div>
             </div>
@@ -131,7 +131,7 @@
 {% block tail %}
   <script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript" crossorigin></script>
   <script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zZXp5IiwiYSI6ImNqd3ZmdGFmbzA4dGQ0OW41em5reDU3cmMifQ.5Ab2UzBgSWEoRgjxN9fMhg';
+    mapboxgl.accessToken = '{{ map_key }}';
     var map_center = [{{ listing.longitude }}, {{ listing.latitude }}]
     var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
     var map = new mapboxgl.Map({

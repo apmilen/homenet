@@ -5,7 +5,7 @@ from listings.views import (
     MainListingCreate, MainListingUpdate, DetailListingUpdate,
     PhotosListingUpdate, ListingDetailView, ReviewListing, Listings,
     PublicListingViewSet, PrivateListingViewSet, UploadPrimaryPhoto,
-    UploadExtraPhoto, DeleteExtraPhoto
+    UploadExtraPhoto, DeleteExtraPhoto, ChangeListingStatusView
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -29,5 +29,8 @@ urlpatterns = [
     path('<uuid:pk>/delete-extra',
          DeleteExtraPhoto.as_view(),
          name='delete-extra'),
+    path('change-status/<uuid:pk>',
+         ChangeListingStatusView.as_view(),
+         name='change-status'),
     path('', include(router.urls))
 ]
