@@ -13,12 +13,14 @@ from django.db.models import Sum
 
 import stripe
 
+from penny.models import User
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
 from payments.forms import ManualTransactionForm
 from payments.utils import get_amount_plus_fee
 from payments.constants import (
-    DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED
+    PAYMENT_METHOD, DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED,
+    FROM_TO
 )
 from leases.models import Lease, LeaseMember, MoveInCost
 from leases.constants import LEASE_STATUS
@@ -176,16 +178,92 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
             )
             return HttpResponse(response)
 
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            error = False
+            form = request.POST
+            lease = request.POST.get('lease', False)
+            lease_member_id = request.POST.get('lease_member', False)
+            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
+            entered_by_id = request.POST.get('entered_by', False)
+            entered_by = get_object_or_404(User, id=entered_by_id)
+            from_to = request.POST.get('from_to', False)
+            payment_method = request.POST.get('payment_method', False)
 
-    def get_success_url(self):
-        return reverse('leases:list')
+            context = {
+                'form': ManualTransactionForm(initial=form)
+            }
+            
+            try:
+                amount = Decimal(request.POST['amount'])
+            except ValueError:
+                messages.error(
+                    request, 
+                    "Please provide a valid amount"
+                )
+                
+                response = render_to_string(
+                    'payments/manual_transaction_form.html',
+                    context,
+                    request
+                )
+                return HttpResponse(response)
+           
+            if amount <= 0:
+                error = True
+                messages.error(
+                    request, 
+                    'Invalid amount to pay'
+                )
 
-    def form_invalid(self, form):
-        """If the form is invalid, render the invalid form."""
-        return self.render_to_response(self.get_context_data(form=form))
+            from_to_options = dict(FROM_TO)
+            if not from_to in from_to_options:
+                error = True
+                messages.error(
+                    request, 
+                    'Invalid payment method'
+                )
+                
+            valid_payment_method = dict(PAYMENT_METHOD)
+            if not payment_method in valid_payment_method:
+                error = True
+                messages.error(
+                    request, 
+                    'Invalid payment method'
+                )
+                
+            if not error:
+                try:
+                    with transaction.atomic(): 
+                        manual_transaction = Transaction.objects.create(
+                            lease_member=lease_member,
+                            entered_by=entered_by,
+                            transaction_user=request.user,
+                            amount=amount,
+                            from_to=from_to,
+                            payment_method=payment_method,
+                        )
+                        messages.success(
+                            request, 
+                            'Your transaction was completed'
+                        )
+                        
+                        return JsonResponse({'complete': True})
+                except DatabaseError:
+                    messages.error(
+                        request,
+                        "An error has occurred"
+                    )             
+                       
+            response = render_to_string(
+                'payments/manual_transaction_form.html',
+                context,
+                request
+            )
 
-    def form_valid(self, form):
-        super().form_valid(form)
-        messages.success(self.request, 'Your transaction was submmited')
-        return HttpResponseRedirect(self.get_success_url())
+            return HttpResponse(response)
+            
+
+            
+            
         

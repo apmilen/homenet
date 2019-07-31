@@ -1,0 +1,12 @@
+{% load bootstrap4 %}
+{% bootstrap_messages %}
+{% if form %}
+    <form method="post" action="{% url 'manual-transaction' %}" id="manual-transaction-form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button onclick="submitTransaction({{lease.id}})" class="btn btn-primary">
+            Create Transaction
+        </button>
+    </form>
+{% endif %}
+
