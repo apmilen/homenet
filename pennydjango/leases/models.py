@@ -71,6 +71,9 @@ class LeaseMember(BaseModel):
     ip_address = models.CharField(max_length=50, null=True)
     user_agent = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return self.name
+
     @staticmethod
     def avatar():
         return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"

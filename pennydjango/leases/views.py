@@ -106,7 +106,7 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['lease_transactions'] = lease_transactions
         context['number_of_transactions'] = lease_transactions.count()
         context['current_balance'] = current_balance
-        
+
         return context
 
 

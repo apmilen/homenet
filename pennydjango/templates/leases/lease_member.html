@@ -1,3 +1,4 @@
+{% load static %}
 <div class="lease-member-content">
   <table class="table">
     <tbody>
@@ -46,6 +47,7 @@
     {% elif request.user.perms.has_agent_access %}
       <td class="dropdown">
         {% include 'leases/rental_app/agreement_modal.html' %}
+        {% include 'payments/manual_transaction_modal.html' %}
         <button class="btn btn-outline-info float-right mr-0 dropdown-toggle"
                 type="button" id="dropdownButtonClient" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="true">Actions
@@ -59,16 +61,16 @@
 {#          <button#}
 {#                  class="dropdown-item">Update#}
 {#          </button>#}
-          <div class="record-deposit" id="recordDeposit90234">
-            <div>
-              <div><a class="dropdown-item">Record Deposit</a></div>
-            </div>
-          </div>
-          <button class="dropdown-item"
-                  data-toggle="modal"
-                  data-target="#agreement-modal-{{ lease_member.short_id }}" >
-            Deposit Agreement
-          </button>
+            <button class="dropdown-item"
+              onclick='getManualTransactionForm("{{ lease_member.id }}")'>
+                    Record Transaction
+            </button>
+            
+            <button class="dropdown-item"
+                    data-toggle="modal"
+                    data-target="#agreement-modal-{{ lease_member.short_id }}" >
+              Deposit Agreement
+            </button>
         </div>
       </td>
     {% endif %}
@@ -78,3 +80,43 @@
     </tbody>
   </table>
 </div>
+<script src="{% static 'js/jquery-3.2.1.min.js' %}" type="text/javascript" crossorigin></script>
+
+<script>
+  getManualTransactionForm = (lease_member_id) => {
+    $.ajax({
+        url: "{% url 'manual-transaction' %}",
+        data: {
+            'lease_member_id': lease_member_id
+        },
+        dataType: 'text',
+        success: function (data) {
+          $('#manual-transaction-modal .modal-body').empty()
+          $('#manual-transaction-modal .modal-body').append(data)
+          $('#manual-transaction-form').append(
+            '<input type="hidden" name="lease" value={{lease.id}} />'
+            )
+          $('#manual-transaction-modal').modal('show')
+        }
+    });
+  }
+  submitTransaction = () => {
+    $('#manual-transaction-form').submit(function() { // catch the form's submit event
+          $.ajax({
+              data: $(this).serialize(), 
+              type: $(this).attr('method'), 
+              url: $(this).attr('action'),
+              success: function(data, textStatus, xhr) { 
+               if (data.complete) {
+                window.location.replace("{% url 'leases:detail' pk=lease.id %}")
+               } else {
+                 $('#manual-transaction-modal .modal-body').empty()
+                 $('#manual-transaction-modal .modal-body').append(data)
+               }
+              }
+          });
+        return false;
+    });
+  }
+  
+</script>
