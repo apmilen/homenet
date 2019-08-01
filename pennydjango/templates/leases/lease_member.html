@@ -61,27 +61,16 @@
 {#          <button#}
 {#                  class="dropdown-item">Update#}
 {#          </button>#}
-          <!-- <div class="record-deposit" id="recordDeposit90234">
-            <div>
-              <div><a class="dropdown-item">Record Transaction</a></div>
-            </div>
-          </div> 
-          
-          <button class="dropdown-item"
-                  data-toggle="modal"
-                  data-target="#manual-transaction-modal-{{ lease_member.short_id }}">
-                  Record Transaction
-          </button>-->
-          <button class="dropdown-item"
-            onclick='getManualTransactionForm("{{ lease_member.id }}")'>
-                  Record Transaction
-          </button>
-          
-          <button class="dropdown-item"
-                  data-toggle="modal"
-                  data-target="#agreement-modal-{{ lease_member.short_id }}" >
-            Deposit Agreement
-          </button>
+            <button class="dropdown-item"
+              onclick='getManualTransactionForm("{{ lease_member.id }}")'>
+                    Record Transaction
+            </button>
+            
+            <button class="dropdown-item"
+                    data-toggle="modal"
+                    data-target="#agreement-modal-{{ lease_member.short_id }}" >
+              Deposit Agreement
+            </button>
         </div>
       </td>
     {% endif %}
