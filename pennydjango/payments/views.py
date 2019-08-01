@@ -6,10 +6,9 @@ from django.views.generic import CreateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.template.loader import render_to_string
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.contrib import messages
 from django.db import transaction, DatabaseError
-from django.db.models import Sum
 
 import stripe
 
@@ -24,8 +23,7 @@ from payments.constants import (
     PAYMENT_METHOD, DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED,
     FROM_TO
 )
-from leases.models import Lease, LeaseMember, MoveInCost
-from leases.constants import LEASE_STATUS
+from leases.models import Lease, LeaseMember
 
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
@@ -144,17 +142,9 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         )
 
 
-class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
-    model = Transaction
-    form_class = ManualTransactionForm
-    template_name = 'payments/manual_transaction_modal.html'
-    success_url = reverse_lazy('home') 
-    
+class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):    
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
-            lease_member_id = request.GET.get('lease_member_id', False)
-            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
-            
             context = {
                 'form' : ManualTransactionForm(),
             }
@@ -238,7 +228,7 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
                 try:
                     with transaction.atomic():
 
-                        manual_transaction = Transaction.objects.create(
+                        Transaction.objects.create(
                             lease_member=lease_member,
                             entered_by=entered_by,
                             transaction_user=request.user,

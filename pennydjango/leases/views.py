@@ -37,7 +37,6 @@ from listings.mixins import ListingContextMixin
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
-from payments.forms import ManualTransactionForm
 from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
 
 from penny.mixins import (
