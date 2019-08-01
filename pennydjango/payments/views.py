@@ -17,7 +17,9 @@ from penny.models import User
 from penny.mixins import ClientOrAgentRequiredMixin
 from payments.models import Transaction
 from payments.forms import ManualTransactionForm
-from payments.utils import get_amount_plus_fee
+from payments.utils import (
+    get_amount_plus_fee, get_lease_total_pending, update_lesase_status
+)
 from payments.constants import (
     PAYMENT_METHOD, DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED,
     FROM_TO
@@ -35,22 +37,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return context
-
-    def update_lesase_status(self, lease):
-        lease.status = LEASE_STATUS[1][0]
-        lease.save()
-
-    def get_lease_total_pending(self, lease):
-        lease_total_paid = Transaction.objects.filter(
-            lease_member__offer=lease
-        ).aggregate(Sum('amount'))
-        lease_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
-        lease_total_pending = lease_move_in_costs
-        if lease_total_paid['amount__sum'] is not None:
-            total_sum = lease_total_paid['amount__sum']
-            lease_total_pending = lease_move_in_costs - total_sum
-        return lease_total_pending  
+        return context 
 
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
@@ -61,7 +48,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
-        lease_total_pending = self.get_lease_total_pending(lease)
+        lease_total_pending = get_lease_total_pending(lease)
        
         if lease_total_pending == 0:
             messages.warning(
@@ -142,9 +129,9 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     stripe_transaction.status = APPROVED
                     stripe_transaction.stripe_charge_id = stripe_charge.id
                     stripe_transaction.save()
-                    new_lease_total_peding = self.get_lease_total_pending(lease)
+                    new_lease_total_peding = get_lease_total_pending(lease)
                     if new_lease_total_peding == 0:
-                        self.update_lesase_status(lease)              
+                        update_lesase_status(lease)              
                     messages.success(request, 'Your payment was successful')       
         except DatabaseError:
             messages.error(
@@ -182,14 +169,14 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
         if request.is_ajax():
             error = False
             form = request.POST
-            lease = request.POST.get('lease', False)
+            lease_id = request.POST.get('lease', False)
+            lease = get_object_or_404(Lease, id=lease_id)
             lease_member_id = request.POST.get('lease_member', False)
             lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
             entered_by_id = request.POST.get('entered_by', False)
             entered_by = get_object_or_404(User, id=entered_by_id)
             from_to = request.POST.get('from_to', False)
             payment_method = request.POST.get('payment_method', False)
-
             context = {
                 'form': ManualTransactionForm(initial=form)
             }
@@ -231,10 +218,26 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
                     request, 
                     'Invalid payment method'
                 )
-                
+            
+            lease_total_pending = get_lease_total_pending(lease)
+            if lease_total_pending == 0:
+                messages.warning(
+                    request, 
+                    "The lease has no pending payments"
+                )
+                return JsonResponse({'complete': True})
+            
+            if amount > lease_total_pending:
+                messages.warning(
+                    request, 
+                    "This amount is more than the pending payment"
+                )
+                return JsonResponse({'complete': True})
+            
             if not error:
                 try:
-                    with transaction.atomic(): 
+                    with transaction.atomic():
+
                         manual_transaction = Transaction.objects.create(
                             lease_member=lease_member,
                             entered_by=entered_by,
@@ -242,12 +245,16 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
                             amount=amount,
                             from_to=from_to,
                             payment_method=payment_method,
+                            status=APPROVED
                         )
+
+                        new_lease_total_peding = get_lease_total_pending(lease)
+                        if new_lease_total_peding == 0:
+                            update_lesase_status(lease)
                         messages.success(
                             request, 
                             'Your transaction was completed'
                         )
-                        
                         return JsonResponse({'complete': True})
                 except DatabaseError:
                     messages.error(
