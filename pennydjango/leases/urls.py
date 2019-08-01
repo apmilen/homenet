@@ -8,7 +8,6 @@ from leases.views import (
     UpdateRentalApplication, UploadRentalAppDoc, DeleteRentalAppDoc,
     RentalApplicationDetail, DownloadRentalDocuments, LeaseUpdateView,
     ChangeLeaseStatusView, UpdateEditingRentalApplication, GenerateRentalPDF,
-    #LeaseManualTransaction)
 )
 
 # Routers provide an easy way of automatically determining the URL conf.

@@ -145,8 +145,12 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):    
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
+            lease_member_id = request.GET.get('lease_member_id', False)
+            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
             context = {
-                'form' : ManualTransactionForm(),
+                'form' : ManualTransactionForm(
+                    initial={'lease_member': lease_member}
+                ),
             }
             response = render_to_string(
                 'payments/manual_transaction_form.html',
