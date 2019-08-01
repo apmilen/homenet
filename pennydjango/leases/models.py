@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
@@ -82,12 +83,12 @@ class LeaseMember(BaseModel):
     def client_detail_link(self):
         return reverse('leases:detail-client', args=[self.id])
 
-    @cachedproperty
+    @cached_property
     def total_paid(self):
         paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
         return paid_amnts.get('total_amount') or 0
 
-    @cachedproperty
+    @cached_property
     def total_fee(self):
         paid_fee = self.transaction_set.aggregate(total_fee=Sum('fee'))
         return paid_fee.get('total_fee') or 0
