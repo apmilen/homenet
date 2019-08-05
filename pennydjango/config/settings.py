@@ -142,7 +142,6 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'                # allow login vi
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/accounts/email/'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = DEFAULT_HTTP_PROTOCOL
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 SIGNUP_EMAIL_ENTER_TWICE = False
 ACCOUNT_USERNAME_MIN_LENGTH = 2
@@ -268,8 +267,12 @@ DATA_DIRS = [
 ################################################################################
 ### Django Core Setup
 ################################################################################
+
+APP_NAME = 'Homenet'
+
 BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
-ENDPOINT = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}/gql'
+if DEFAULT_HTTP_PORT not in (443, 80):
+    BASE_URL = BASE_URL + ':' + str(DEFAULT_HTTP_PORT)
 
 AUTH_USER_MODEL = 'penny.User'
 ROOT_URLCONF = 'config.urls'
@@ -354,6 +357,8 @@ DATABASES = {
     }
 }
 
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = DEFAULT_HTTP_PROTOCOL
+
 ANYMAIL = {
     "MAILGUN_API_KEY": MAILGUN_API_KEY,
     "MAILGUN_SENDER_DOMAIN": DEFAULT_HOST,
@@ -375,24 +380,6 @@ SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
 SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'
 
 
-if PY_TYPE == 'pypy':
-    # Use psycopg2cffi instead of psycopg2 when run with pypy
-    from psycopg2cffi import compat
-    compat.register()
-
-if IS_TESTING:
-    ENABLE_DRAMATIQ = False
-
-if PENNY_ENV == 'CI':
-    # Save Junit test timing summary for circleci pretty info display
-    TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'
-    TEST_OUTPUT_DIR = '/tmp/reports/testpy'
-    TEST_OUTPUT_FILE_NAME = 'results.xml'
-
-# ANSI Terminal escape sequences for printing colored log messages to terminal
-FANCY_STDOUT = CLI_COLOR and DEBUG
-
-
 if DEBUG:
     # pretty exceptions with context,
     # see https://github.com/Qix-/better-exceptions
@@ -406,14 +393,8 @@ if DEBUG:
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-    BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}:{DEFAULT_HTTP_PORT}'
-
 if PENNY_ENV == 'PROD':
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-
-
-# Application name
-APP_NAME = 'Homenet'
 
 
 ################################################################################

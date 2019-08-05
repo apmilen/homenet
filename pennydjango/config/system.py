@@ -280,7 +280,7 @@ def check_django_settings(settings: dict):
         assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
         assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
         assert s.DEFAULT_HTTP_PORT == 443, 'https (443) is required on prod servers'
-        assert s.DEFAULT_HOST.startswith('https://'), 'https is required on prod servers'
+        assert s.BASE_URL.startswith('https://'), 'https is required on prod servers'
         assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
         assert s.REPO_DIR == '/opt/monadical.homenet', 'Repo must be in /opt/monadical.homenet on prod'
 
