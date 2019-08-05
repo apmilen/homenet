@@ -199,9 +199,11 @@ class LeaseMemberCreate(MainObjectContextMixin,
 
     def my_test_func(self):
         user = self.request.user
-        main_object = self.get_main_object()
-        qs = LeaseMember.objects.filter(user=user, offer_id=main_object.id)
-        return qs.exists()
+        if user.is_user_client:
+            main_object = self.get_main_object()
+            qs = LeaseMember.objects.filter(user=user, offer_id=main_object.id)
+            return qs.exists()
+        return True
 
     def get_success_url(self):
         if self.request.user.is_user_client:
@@ -389,9 +391,11 @@ class ResendLeaseInvitation(ClientOrAgentRequiredMixin,
 
     def my_test_func(self):
         user = self.request.user
-        main_object_id = self.get_object().offer_id
-        qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
-        return qs.exists()
+        if user.is_user_client:
+            main_object_id = self.get_object().offer_id
+            qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
+            return qs.exists()
+        return True
 
     def get_object(self):
         if self.object:
@@ -421,7 +425,9 @@ class ResendLeaseInvitation(ClientOrAgentRequiredMixin,
         return super().get(request, *args, **kwargs)
 
 
-class ClientLease(ClientOrAgentRequiredMixin, DetailView):
+class ClientLease(ClientOrAgentRequiredMixin,
+                  ClientLeaseAccessMixin,
+                  DetailView):
     model = LeaseMember
     template_name = 'leases/client_lease.html'
 
@@ -497,9 +503,11 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin,
 
     def my_test_func(self):
         user = self.request.user
-        main_object_id = self.get_object().offer_id
-        qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
-        return qs.exists()
+        if user.is_user_client:
+            main_object_id = self.get_object().offer_id
+            qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
+            return qs.exists()
+        return True
 
     def get_success_url(self):
         if self.request.user.is_user_client:
