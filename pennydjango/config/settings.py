@@ -379,6 +379,8 @@ REST_FRAMEWORK = {
 SELECT2_JS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js'
 SELECT2_CSS = '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css'
 
+# ANSI Terminal escape sequences for printing colored log messages to terminal
+FANCY_STDOUT = CLI_COLOR and DEBUG
 
 if DEBUG:
     # pretty exceptions with context,
