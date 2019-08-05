@@ -27,6 +27,7 @@ from leases.forms import (
     LeaseCreateForm, BasicLeaseMemberForm, MoveInCostForm, SignAgreementForm,
     RentalApplicationForm,
     RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
+from leases.mixins import ClientLeaseAccessMixin
 from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
@@ -188,11 +189,19 @@ class LeaseUpdateView(AgentRequiredMixin, UpdateView):
 # Django
 class LeaseMemberCreate(MainObjectContextMixin,
                         ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
                         CreateView):
     http_method_names = ['post']
     model = LeaseMember
     main_model = Lease
     form_class = BasicLeaseMemberForm
+    get_object = 'get_main_object'
+
+    def my_test_func(self):
+        user = self.request.user
+        main_object = self.get_main_object()
+        qs = LeaseMember.objects.filter(user=user, offer_id=main_object.id)
+        return qs.exists()
 
     def get_success_url(self):
         if self.request.user.is_user_client:
@@ -264,14 +273,23 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
     form_class = CustomUserCreationForm
     main_model = LeaseMember
     template_name = 'leases/create_client.html'
+    message = 'created'
 
     def get_success_url(self):
         messages.add_message(
             self.request,
             messages.SUCCESS,
-            "Account created successfully"
+            f"Account {self.message} successfully"
         )
         return self.main_object.client_detail_link()
+
+    def not_logged_url(self):
+        messages.add_message(
+            self.request,
+            messages.ERROR,
+            "You must log in with the account linked to the email to accept."
+        )
+        return reverse('home')
 
     def get(self, request, *args, **kwargs):
         self.main_object = self.get_main_object()
@@ -283,6 +301,17 @@ class LeaseClientCreate(MainObjectContextMixin, CreateView):
                 "account to access your current lease"
             )
             return redirect(reverse('home'))
+        try:
+            user = User.objects.get(email__iexact=self.main_object.email)
+            if not user.id == self.request.user.id:
+                return HttpResponseRedirect(self.not_logged_url())
+            self.main_object.user = user
+            self.main_object.save()
+            self.message = 'linked'
+        except User.DoesNotExist:
+            print(self.main_object.email, flush=True)
+        else:
+            return HttpResponseRedirect(self.get_success_url())
         return super().get(request, *args, **kwargs)
 
     def get_initial(self):
@@ -353,7 +382,22 @@ class ClientLeasesList(LoginRequiredMixin, TemplateView):
         return context
 
 
-class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
+class ResendLeaseInvitation(ClientOrAgentRequiredMixin,
+                            ClientLeaseAccessMixin,
+                            RedirectView):
+    object = None
+
+    def my_test_func(self):
+        user = self.request.user
+        main_object_id = self.get_object().offer_id
+        qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
+        return qs.exists()
+
+    def get_object(self):
+        if self.object:
+            return self.object
+        self.object = get_object_or_404(LeaseMember, id=self.kwargs.get('pk'))
+        return self.object
 
     def get_redirect_url(self, *args, **kwargs):
         messages.add_message(
@@ -361,11 +405,17 @@ class ResendLeaseInvitation(ClientOrAgentRequiredMixin, RedirectView):
             messages.SUCCESS,
             "Invitations sent"
         )
-        pk = kwargs.get('lease_id')
-        return reverse("leases:detail", args=[pk])
+        if self.request.user.is_user_client:
+            leasemember = LeaseMember.objects.only('id').get(
+                user=self.request.user.id,
+                offer_id=self.object.offer.id
+            )
+            return reverse('leases:detail-client', args=[leasemember.id])
+        else:
+            return reverse('leases:detail', args=[self.object.offer.id])
 
     def get(self, request, *args, **kwargs):
-        lease_member = get_object_or_404(LeaseMember, id=kwargs.get('pk'))
+        lease_member = self.get_object()
         send_invitation_email(lease_member)
         kwargs.update({"lease_id": lease_member.offer_id})
         return super().get(request, *args, **kwargs)
@@ -415,7 +465,9 @@ class ClientLease(ClientOrAgentRequiredMixin, DetailView):
         return context
 
 
-class SignAgreementView(ClientOrAgentRequiredMixin, UpdateView):
+class SignAgreementView(ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
+                        UpdateView):
     http_method_names = ('post', )
     model = LeaseMember
     form_class = SignAgreementForm
@@ -437,9 +489,17 @@ class SignAgreementView(ClientOrAgentRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
+class DeleteLeaseMember(ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
+                        DeleteView):
     http_method_names = ['post']
     model = LeaseMember
+
+    def my_test_func(self):
+        user = self.request.user
+        main_object_id = self.get_object().offer_id
+        qs = LeaseMember.objects.filter(user=user, offer_id=main_object_id)
+        return qs.exists()
 
     def get_success_url(self):
         if self.request.user.is_user_client:
@@ -449,7 +509,7 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
             )
             return reverse('leases:detail-client', args=[leasemember.id])
         else:
-            return reverse('leases:detail', args=[self.object.id])
+            return reverse('leases:detail', args=[self.object.offer.id])
 
     def delete(self, request, *args, **kwargs):
         self.object = super().get_object()
@@ -460,15 +520,17 @@ class DeleteLeaseMember(ClientOrAgentRequiredMixin, DeleteView):
                 "Cannot delete a lease member with a created account"
             )
             return HttpResponseRedirect(self.get_success_url())
-
         self.object.delete()
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+class UpdateRentalApplication(ClientOrAgentRequiredMixin,
+                              ClientLeaseAccessMixin,
+                              UpdateView):
     http_method_names = ['post']
     form_class = RentalApplicationForm
     model = RentalApplication
+    direct = False
 
     def get_success_url(self):
         leasemember_id = self.object.lease_member.id
@@ -487,10 +549,13 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UpdateEditingRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
+class UpdateEditingRentalApplication(ClientOrAgentRequiredMixin,
+                                     ClientLeaseAccessMixin,
+                                     UpdateView):
     http_method_names = ['post']
     form_class = RentalApplicationEditingForm
     model = RentalApplication
+    direct = False
 
     def get_success_url(self):
         leasemember_id = self.object.lease_member.id
@@ -501,14 +566,23 @@ class UpdateEditingRentalApplication(ClientOrAgentRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class UploadRentalAppDoc(ClientOrAgentRequiredMixin, View):
+class UploadRentalAppDoc(ClientOrAgentRequiredMixin,
+                         ClientLeaseAccessMixin,
+                         View):
     http_method_names = ['post']
+    direct = False
+
+    def get_object(self):
+        if self.object:
+            return self.object
+        self.object = get_object_or_404(
+            RentalApplication, id=self.kwargs.get('pk')
+        )
+        return self.object
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            rental_app = RentalApplication.objects.get(
-                id=kwargs.get('pk')
-            )
+            rental_app = self.get_object()
             form = RentalAppDocForm(
                 None,
                 request.FILES,
@@ -521,11 +595,25 @@ class UploadRentalAppDoc(ClientOrAgentRequiredMixin, View):
         return JsonResponse({'status': 401})
 
 
-class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
+class DeleteRentalAppDoc(ClientOrAgentRequiredMixin,
+                         ClientLeaseAccessMixin,
+                         View):
     http_method_names = ['get']
+    direct = False
+
+    def get_lease_member(self, test_object):
+        return test_object.rental_app.lease_member
+
+    def get_object(self):
+        if self.object:
+            return self.object
+        self.object = get_object_or_404(
+            RentalAppDocument, id=self.kwargs.get('pk')
+        )
+        return self.object
 
     def get(self, request, *args, **kwargs):
-        rental_doc = get_object_or_404(RentalAppDocument, id=kwargs.get('pk'))
+        rental_doc = self.get_object()
         lease_member_id = rental_doc.rental_app.lease_member.id
         delete_path = None
         if rental_doc.file:
@@ -543,9 +631,12 @@ class DeleteRentalAppDoc(ClientOrAgentRequiredMixin, View):
         )
 
 
-class RentalApplicationDetail(ClientOrAgentRequiredMixin, DetailView):
+class RentalApplicationDetail(ClientOrAgentRequiredMixin,
+                              ClientLeaseAccessMixin,
+                              DetailView):
     model = RentalApplication
     template_name = 'leases/rental_app/rental_app_detail.html'
+    direct = False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -554,10 +645,21 @@ class RentalApplicationDetail(ClientOrAgentRequiredMixin, DetailView):
         return context
 
 
-class DownloadRentalDocuments(ClientOrAgentRequiredMixin, View):
+class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
+                              ClientLeaseAccessMixin,
+                              View):
+    direct = False
+
+    def get_object(self):
+        if self.object:
+            return self.object
+        self.object = get_object_or_404(
+            RentalApplication, id=self.kwargs.get('pk')
+        )
+        return self.object
 
     def get(self, *args, **kwargs):
-        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        rental_app = self.get_object()
         lease_member = rental_app.lease_member
         zip_subdir = f'{lease_member.get_full_name()}'
         zip_filename = f'{zip_subdir}.zip'
@@ -604,10 +706,21 @@ class ChangeLeaseStatusView(AgentRequiredMixin, UpdateView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class GenerateRentalPDF(ClientOrAgentRequiredMixin, View):
+class GenerateRentalPDF(ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
+                        View):
+    direct = False
+
+    def get_object(self):
+        if self.object:
+            return self.object
+        self.object = get_object_or_404(
+            RentalApplication, id=self.kwargs.get('pk')
+        )
+        return self.object
 
     def get(self, *args, **kwargs):
-        rental_app = get_object_or_404(RentalApplication, id=kwargs.get('pk'))
+        rental_app = self.get_object()
         lease_member = rental_app.lease_member
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
 
