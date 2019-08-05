@@ -274,10 +274,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
             lease = get_object_or_404(Lease, id=kwargs.get('pk'))
-            client = LeaseMember.objects.get(user=request.user)
-            client_id = client.id
             lease_member = LeaseMember.objects.get(user=request.user)
-            
             response = {
                 'complete': True
             }
@@ -320,8 +317,8 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                 client_id=settings.PLAID_CLIENT_ID,
                 secret=settings.PLAID_SECRET_KEY,
                 public_key=settings.PLAID_PUBLIC_KEY,
-                environment='sandbox')
-            
+                environment='sandbox'
+            )
             exchange_token_response = client.Item.public_token.exchange(
                 PLAID_LINK_PUBLIC_TOKEN
             )
