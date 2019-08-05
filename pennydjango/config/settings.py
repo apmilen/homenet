@@ -398,7 +398,7 @@ if PENNY_ENV == 'PROD':
 # Assertions about the environment
 
 check_django_invariants()
-# chown_django_folders() # UNCOMMENT WHEN STORM GOES AWAY
+chown_django_folders()
 STATUS_LINE = log_django_status_line()
 
 
