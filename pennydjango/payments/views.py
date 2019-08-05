@@ -276,7 +276,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
             lease = get_object_or_404(Lease, id=kwargs.get('pk'))
             lease_member = LeaseMember.objects.get(user=request.user)
             response = {
-                'complete': True
+                'complete': True,
             }
             try:
                 amount = Decimal(request.POST['amount'])
@@ -286,6 +286,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                     request, 
                     "Please provide a valid amount"
                 )
+                response['status'] = 400
                 return JsonResponse(response)
 
             if amount <= 0:
@@ -293,6 +294,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                     request, 
                     "Invalid amount to pay"
                 )
+                response['status'] = 400
                 return JsonResponse(response)
 
             lease_total_pending = get_lease_total_pending(lease)
@@ -301,6 +303,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                     request, 
                     "The lease has no pending payments"
                 )
+                response['status'] = 202
                 return JsonResponse(response)
 
             if stripe_plaid_amt > lease_total_pending:
@@ -308,6 +311,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                     request, 
                     "This amount is more than the pending payment"
                 )
+                response['status'] = 202
                 return JsonResponse(response)
 
             PLAID_LINK_PUBLIC_TOKEN = request.POST.get('public_token', None)
@@ -361,13 +365,14 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                         if new_lease_total_peding == 0:
                             update_lesase_status(lease)              
                         messages.success(request, 'Your payment was successful')
+                        response['status'] = 200
                         return JsonResponse(response)       
             except DatabaseError:
                 messages.error(
                     request, 
                     "There has been an error in the database saving the transaction"
                 )
-            
+            response['status'] = 400
             return JsonResponse(response)
             
             
