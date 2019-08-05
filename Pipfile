@@ -37,6 +37,7 @@ django-mapbox-location-field = "*"
 stripe = "*"
 weasyprint = "*"
 plaid-python = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.7"
