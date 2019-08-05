@@ -135,7 +135,6 @@ class PublicReactView(BaseView):
             'ENVIRONMENT': settings.PENNY_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
             'user': self.user_json(request),
-            'endpoint': settings.ENDPOINT
         }
 
         return base_props

@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.views.generic.base import TemplateView
 from django.views.generic import CreateView
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.db import transaction, DatabaseError
 
 import stripe
+from plaid import Client
 
 from penny.models import User
 from penny.mixins import ClientOrAgentRequiredMixin
@@ -20,8 +21,8 @@ from payments.utils import (
     get_amount_plus_fee, get_lease_total_pending, update_lesase_status
 )
 from payments.constants import (
-    PAYMENT_METHOD, DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED,
-    FROM_TO
+    DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED, PAYMENT_METHOD,
+    FROM_TO, BANK_TRANSFER
 )
 from leases.models import Lease, LeaseMember
 
@@ -265,6 +266,114 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
             return HttpResponse(response)
             
 
+class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            lease = get_object_or_404(Lease, id=kwargs.get('pk'))
+            lease_member = LeaseMember.objects.get(user=request.user)
+            response = {
+                'complete': True,
+            }
+            try:
+                amount = Decimal(request.POST['amount'])
+                stripe_plaid_amt = amount * 100
+            except ValueError:
+                messages.error(
+                    request, 
+                    "Please provide a valid amount"
+                )
+                response['status'] = 400
+                return JsonResponse(response)
+
+            if amount <= 0:
+                messages.error(
+                    request, 
+                    "Invalid amount to pay"
+                )
+                response['status'] = 400
+                return JsonResponse(response)
+
+            lease_total_pending = get_lease_total_pending(lease)
+            if lease_total_pending == 0:
+                messages.warning(
+                    request, 
+                    "The lease has no pending payments"
+                )
+                response['status'] = 202
+                return JsonResponse(response)
+
+            if stripe_plaid_amt > lease_total_pending:
+                messages.warning(
+                    request, 
+                    "This amount is more than the pending payment"
+                )
+                response['status'] = 202
+                return JsonResponse(response)
+
+            PLAID_LINK_PUBLIC_TOKEN = request.POST.get('public_token', None)
+            ACCOUNT_ID = request.POST.get('account_id', None)
+            # Using Plaid's Python bindings (https://github.com/plaid/plaid-python)
+            client = Client(
+                client_id=settings.PLAID_CLIENT_ID,
+                secret=settings.PLAID_SECRET_KEY,
+                public_key=settings.PLAID_PUBLIC_KEY,
+                environment='sandbox'
+            )
+            exchange_token_response = client.Item.public_token.exchange(
+                PLAID_LINK_PUBLIC_TOKEN
+            )
+            access_token = exchange_token_response['access_token']
+            stripe_response = client.Processor.stripeBankAccountTokenCreate(
+                access_token, ACCOUNT_ID
+            )
+            bank_account_token = stripe_response['stripe_bank_account_token']
+    
+            try:
+                with transaction.atomic():
+                    
+                    plaid_stripe_transaction = Transaction.objects.create(
+                        lease_member=lease_member,
+                        transaction_user=request.user,
+                        amount=amount,
+                        from_to=CLIENT_TO_APP,
+                        payment_method=BANK_TRANSFER
+                    )
+                    try:
+                        plaid_stripe_charge = stripe.Charge.create(
+                            amount=stripe_plaid_amt,
+                            currency='usd',
+                            source=bank_account_token,
+                            description='Test charge from Plaid - Stripe',
+                        )
+                    except stripe.error.account_invalid:
+                        plaid_stripe_transaction.status = FAILED
+                        plaid_stripe_transaction.save()
+                        messages.warning(
+                            request, 
+                            "There has been a problem with the transaction"
+                        )
+                        return JsonResponse(response)
+                    else:
+                        plaid_stripe_transaction.status = APPROVED
+                        plaid_stripe_transaction.stripe_charge_id = plaid_stripe_charge.id
+                        plaid_stripe_transaction.save()
+                        new_lease_total_peding = self.get_lease_total_pending(lease)
+                        if new_lease_total_peding == 0:
+                            update_lesase_status(lease)              
+                        messages.success(request, 'Your payment was successful')
+                        response['status'] = 200
+                        return JsonResponse(response)       
+            except DatabaseError:
+                messages.error(
+                    request, 
+                    "There has been an error in the database saving the transaction"
+                )
+            response['status'] = 400
+            return JsonResponse(response)
             
             
         

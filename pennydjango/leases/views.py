@@ -451,6 +451,7 @@ class ClientLease(ClientOrAgentRequiredMixin,
             lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']           
         # Context
         context['key'] = settings.STRIPE_PUBLISHABLE_KEY
+        context['plaid_key'] = settings.PLAID_PUBLIC_KEY
         context['lease'] = lease
         context['listing'] = lease.listing
         context['rental_app'] = rental_app

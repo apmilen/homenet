@@ -26,6 +26,7 @@ class ListingForm(forms.ModelForm):
         self.fields['date_available'].widget.attrs.update({
             'addon_before': '&#x1F4C5;'
         })
+        self.fields['agent_bonus'].widget.attrs.update({'addon_before': '$'})
         self.fields['bathrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['walkability_score'].widget.attrs.update({'addon_before': '%'})

@@ -1,0 +1,24 @@
+{% load bootstrap4 %}
+<div class="modal fade" id="paymentMethodModal"
+     tabindex="-1" role="dialog" aria-labelledby="paymentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header align-self-center">
+        <h5 class="modal-title center" id="paymentLabel">Payment Method</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body align-self-center">
+        <button type="button" class="btn btn-primary" data-toggle="modal"
+        data-target="#plaidModal">
+            Bank Transfer
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal"
+        data-target="#paymentModal">
+            Credit Card
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

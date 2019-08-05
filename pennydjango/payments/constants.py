@@ -9,6 +9,7 @@ PAYMENT_METHOD = (
     ('cash', 'Cash')
 )
 DEFAULT_PAYMENT_METHOD = 'stripe'
+BANK_TRANSFER = 'bank'
 
 APP_NAME = settings.APP_NAME
 
