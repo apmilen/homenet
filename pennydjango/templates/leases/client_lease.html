@@ -403,13 +403,11 @@
             },
             dataType: 'json',
             success: function (data) {
-              if (data.status) {
+              if (data.complete) {
                 window.location.replace("{% url 'leases:detail-client' pk=object.id %}")
                 }
             }
         });
-        console.log('Public Token: ' + public_token);
-        console.log('Customer-selected account ID: ' + metadata.account_id);
       },
       onExit: function(err, metadata) {
         // The user exited the Link flow.

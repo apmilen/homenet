@@ -155,6 +155,8 @@ STRIPE_FIXED_FEE = Decimal("0.3")  # 30¢ flat fee
 
 # Plaid Keys Settings
 PLAID_PUBLIC_KEY = _PLACEHOLDER_FOR_UNSET
+PLAID_SECRET_KEY = _PLACEHOLDER_FOR_UNSET
+PLAID_CLIENT_ID = _PLACEHOLDER_FOR_UNSET
 
 ################################################################################
 ### Internationalization & Formatting Settings
