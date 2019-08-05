@@ -1,5 +1,43 @@
-<h1>500 Error</h2>
+<center>
+    <br/><br/><br/>
+    <img src="/static/errors/error.jpg" width="120px" title="Sad HomeNet"/>
+    <br/><br/><br/><br/>
+    <h1><span id="status-code" style="opacity: 0.5">500</span> Error</h1>
 
-Sorry for the trouble!
+    Sorry for the trouble!
+    <br/><br/>
+    <br/>
+    <br/><br/>
+    <b>You can try returning to the <a href="/">HomeNet Homepage</a> or <a href="?">refreshing the current page</a>.</b>
+    <br/><br/><br/>
+    This error can be caused by the server being down, an intermittent glitch, or a page-specific problem.<br/>
+    If it persists after refreshing for more than a few minutes, we recommend contacting support so we can fix it.
 
-Return to the <a href="/">Homepage</a>.
+    <br/><br/><br/>
+    You can <a href="https://github.com/pirate/pennybags/issues/new?title=500+Error">report this issue on GitHub</a> 
+    or open a <a href="https://hangouts.google.com/chat/person/111079193312754413701">live chat with Monadical support</a> for a quicker response.
+    <br/><br/>
+    (copy the error details below when reporting)
+    <br/><br/><br/>
+    <br/>
+
+    <pre style="background-color: #eee; border-radius: 8px; padding: 20px;max-width: 400px; margin: auto"><span id="url" style="opacity: 0.7"></span><hr/><br/><span id="headers">Loading debug info...</span><br/>(If you're a developer, make sure Django is running)<br/></pre>
+    <script>
+        const status_elem = document.getElementById('status-code')
+        const url_elem = document.getElementById('url')
+        const errors_elem = document.getElementById('headers')
+        url_elem.innerHTML = document.location.toString();
+        fetch(document.location, {
+            method: 'GET',
+            credentials: 'include'
+        }).then(
+            response => {
+                status_elem.innerHTML = response.status;
+                status_elem.style.opacity = 1;
+                errors_elem.innerHTML = '';
+                response.headers.forEach((val, name) => errors_elem.innerHTML += (name + '=' + val + '<br/>'));
+                errors_elem.innerHTML += '<br/><hr/>' + response.statusText
+            }
+        )
+    </script>
+</center>
