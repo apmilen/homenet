@@ -2,7 +2,10 @@ from django.db import models
 
 from penny.models import BaseModel, User
 from leases.models import LeaseMember
-from payments.constants import PAYMENT_METHOD, FROM_TO, CLIENT_TO_APP, DEFAULT_PAYMENT_METHOD
+from payments.constants import (
+    PAYMENT_METHOD, FROM_TO, CLIENT_TO_APP, DEFAULT_PAYMENT_METHOD, 
+    TRANSACTION_STATUS, PENDING
+)
 
 
 class Transaction(BaseModel):
@@ -38,5 +41,21 @@ class Transaction(BaseModel):
         max_length=32,
         choices=PAYMENT_METHOD,
         default=DEFAULT_PAYMENT_METHOD
+    )
+    stripe_charge_id = models.CharField(
+        max_length=100, 
+        unique=True, 
+        null=True, 
+        blank=True
+    )
+    status = models.CharField(
+        max_length=50,
+        choices=TRANSACTION_STATUS,
+        default=PENDING
+    )
+    fee = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        null=True
     )
     timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)

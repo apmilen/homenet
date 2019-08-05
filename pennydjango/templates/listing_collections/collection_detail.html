@@ -1,0 +1,149 @@
+{% extends "ui/base.html" %}
+{% load utils %}
+
+
+{% block head %}
+    <link rel="stylesheet" href="{% http2static 'css/mapbox-gl.css' '1' %}" crossorigin>
+{% endblock %}
+
+
+{% block inner %}
+    <div class="row">
+        <div class="col main-scroll left-main-column">
+            <div class="dropdown">
+                <button class="btn btn-pill btn-outline-primary collection-share-button dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Share
+                </button>
+                <div class="dropdown-menu dropdown-menu-small">
+                    <a class="dropdown-item" href="#" onclick="copyToClipboard()">Copy link to clipboard</a>
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#sendLinkModal">Send to email address</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="d-flex"><h3 class="mx-auto">{{ collection.name }}</h3></div>
+            <div class="row justify-content-center">
+            {% for listing in collection.listings.all %}
+                <div class="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent">
+                    <a class="overlay" target="_blank" href="{% url 'listings:listing' listing.id %}"></a>
+                    <div class="card-post__image text-center">
+                        <img class="box-wd" src="{{ listing.default_image }}" />
+                        {% if listing.no_fee_listing %}
+                            <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+                        {% endif %}
+                        <span class="card-post__category new-listing-badge badge badge-pill badge-success">{{ new_listing }}</span>
+                        <span class="card-post__category badge badge-pill badge-dark">${{ listing.price }}</span>
+                    </div>
+                    <div class="card-body p-0 text-center">
+                        <table class="table mb-0 listing-info">
+                            <tbody>
+                                <tr>
+                                    <td class="wrap-info">
+                                        {{ listing.bedrooms }} <i class="material-icons">hotel</i> |
+                                        {{ listing.bathrooms }} <i class="material-icons">wc</i>
+                                    </td>
+                                    <td class="wrap-info">
+                                        {{ listing.get_neighborhood_display }}
+                                    </td>
+                                    <td class="wrap-info">
+                                        {{ listing.get_pets_display }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% empty %}
+                <h3>Empty collection</h3>
+            {% endfor %}
+            </div>
+        </div>
+        <div class="col d-none d-sm-inline map-panel">
+            <div id='map'></div>
+        </div>
+    </div>
+
+    <!-- Send collection URL modal -->
+    <div class="modal fade" id="sendLinkModal" tabindex="-1" role="dialog"
+         aria-labelledby="sendLinkModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sendLinkModalLabel">Send collection link</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div role="alert" id="sendCollectionAlert" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="sendCollectionEmail">Email address</label>
+                        <input type="email" class="form-control" id="sendCollectionEmail" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="sendCollectionNote">Additional note:</label>
+                        <textarea class="form-control" id="sendCollectionNote" rows="3"></textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary float-right" onclick="sendCollection()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block tail %}
+    <script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript" crossorigin></script>
+    <script>
+        mapboxgl.accessToken = '{{ map_key }}';
+        var map_center = [-73.956438, 40.648475]
+        var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: map_center,
+            zoom: 15,
+            maxBounds,
+        });
+        var bounds = new mapboxgl.LngLatBounds();
+        {% for listing in collection.listings.all %}
+        var marker_center = [{{listing.longitude}}, {{listing.latitude}}]
+        var marker = new mapboxgl.Marker({
+            draggable: false,
+            color: 'blue',
+        }).setLngLat(marker_center).addTo(map);
+        bounds.extend(marker_center)
+        {% endfor %}
+        map.fitBounds(bounds, {padding: 80});
+    </script>
+    <script>
+        function copyToClipboard() {
+            var tempInput = document.createElement('input');
+            document.body.appendChild(tempInput);
+            tempInput.setAttribute('value', location.href)
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('Copied!');
+        }
+        function sendCollection() {
+            var alert_elem = document.getElementById("sendCollectionAlert")
+            var post_data = {
+                email: document.querySelector('#sendCollectionEmail').value,
+                note: document.querySelector('#sendCollectionNote').value,
+            }
+            alert_elem.style.display = "none";
+            $.post("", post_data, function (response){
+                if (response.success)
+                    alert_elem.className = 'alert alert-success'
+                else
+                    alert_elem.className = 'alert alert-danger'
+                alert_elem.style.display = "block";
+                alert_elem.innerHTML = response.message
+            })
+        }
+    </script>
+{% endblock %}
+

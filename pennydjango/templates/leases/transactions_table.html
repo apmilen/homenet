@@ -35,8 +35,14 @@
                         {% for transaction in transactions %}
                         <tr>
                             <td>{{ transaction.timestamp }}</td>
-                            <td>{{ transaction.transaction_user.get_full_name }}</td>
-                            <td>${{ transaction.amount }}</td>
+                            <td>{{ transaction.lease_member.get_full_name }}</td>
+                            <td>${{ transaction.amount }}
+                                {% if transaction.fee %}
+                                <small>
+                                    Plus ${{transaction.fee}} fee
+                                </small>
+                                {% endif %}
+                            </td>
                             <td>{{ transaction.get_from_to_display }}</td>
                             <td>{{ transaction.get_payment_method_display }}</td>
                             <td>{{ transaction.entered_by|default_if_none:"" }}</td>

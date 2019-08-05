@@ -4,7 +4,7 @@ import {FormControl, DropdownButton, Tabs, Tab} from 'react-bootstrap'
 import {
     Button, ButtonToolbar, InputGroup, InputGroupText, FormRadio, FormCheckbox,
     DatePicker
-} from "shards-react";
+} from "shards-react"
 
 
 
@@ -210,8 +210,8 @@ export const bathsFilter = (baths, func) =>
 export const amenitiesFilter = (amenities, amenities_dict, func) =>
     <DropdownButton alignRight title={[multipleSelectionTitle("Amenities", amenities),
                             amenities.length > 0 && multipleSelectionClearFilter(func, "amenities")]}
-                    className={` ${amenities.length > 0 ? 'no-caret' : ''}`}>
-        <div className='amenities-container'>
+                    className={`${amenities.length > 0 ? 'no-caret' : ''}`}>
+        <div className='dropdown-checkbox-container'>
             {Object.keys(amenities_dict).map(amenity =>
                 <FormCheckbox id={amenity} key={`${amenity}-amen`}
                               checked={amenities.includes(amenity)}

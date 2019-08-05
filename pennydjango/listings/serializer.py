@@ -20,7 +20,7 @@ class PublicListingSerializer(serializers.ModelSerializer):
     pets = serializers.CharField(source='get_pets_display')
     parking = serializers.CharField(source='get_parking_display')
     sales_agent = AgentSerializer()
-    
+
     class Meta:
         model = Listing
         fields = (
@@ -50,7 +50,8 @@ class PrivateListingSerializer(serializers.ModelSerializer):
             'description', 'detail', 'detail_link', 'edit_link', 'photos_link',
             'full_address', 'images', 'listing_agent', 'modified',
             'move_in_cost', 'neighborhood', 'no_fee_listing', 'owner_pays',
-            'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id',
-            'size', 'status', 'term', 'utilities', 'listing_link', 'offer_link',
-            'nearby_transit', 'walkability_score', 'bikeability_score', 'parking'
+            'pets', 'price', 'price_per_bed', 'sales_agent', 'short_id', 'id',
+            'size', 'status', 'term', 'utilities', 'listing_link',
+            'offer_link', 'nearby_transit', 'walkability_score',
+            'bikeability_score', 'parking', 'collections', 'change_status_link'
         )

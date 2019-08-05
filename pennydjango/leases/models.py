@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
@@ -70,6 +71,9 @@ class LeaseMember(BaseModel):
     ip_address = models.CharField(max_length=50, null=True)
     user_agent = models.CharField(max_length=255, null=True)
 
+    def __str__(self):
+        return self.name
+
     @staticmethod
     def avatar():
         return f"{settings.STATIC_URL}{DEFAUL_AVATAR}"
@@ -82,10 +86,20 @@ class LeaseMember(BaseModel):
     def client_detail_link(self):
         return reverse('leases:detail-client', args=[self.id])
 
-    @property
+    @cached_property
     def total_paid(self):
         paid_amnts = self.transaction_set.aggregate(total_amount=Sum('amount'))
         return paid_amnts.get('total_amount') or 0
+
+    @cached_property
+    def total_fee(self):
+        paid_fee = self.transaction_set.aggregate(total_fee=Sum('fee'))
+        return paid_fee.get('total_fee') or 0
+
+    @property
+    def total_paid_plus_fee(self):
+        total_paid_plus_fee = self.total_paid + self.total_fee
+        return total_paid_plus_fee
 
 
 class MoveInCost(BaseModel):

@@ -173,6 +173,10 @@ STRIPE_PUBLISHABLE_KEY = _PLACEHOLDER_FOR_UNSET
 STRIPE_FEE = Decimal("0.029")  # 2.9% stripe fee
 STRIPE_FIXED_FEE = Decimal("0.3")  # 30¢ flat fee
 
+# Plaid Keys Settings
+PLAID_PUBLIC_KEY = _PLACEHOLDER_FOR_UNSET
+PLAID_SECRET_KEY = _PLACEHOLDER_FOR_UNSET
+PLAID_CLIENT_ID = _PLACEHOLDER_FOR_UNSET
 
 ################################################################################
 ### Internationalization & Formatting Settings
@@ -277,22 +281,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'anymail',
     'corsheaders',
-    'penny',
-    'listings',
-    'ui',
-    'schedule',
     'mapbox_location_field',
     'bootstrap4',
     'django_select2',
     'rest_framework',
+    'datatables_listview',
+    'django_extensions',
+
+    'penny',
+    'listings',
+    'ui',
+    'schedule',
     'leases',
     'job_applications',
-    'datatables_listview',
     'stripe',
     'payments',
-    'weasyprint'
+    'weasyprint',
+    'listing_collections',
 ]
 
 MIDDLEWARE = [

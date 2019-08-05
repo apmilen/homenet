@@ -88,8 +88,12 @@ class User(AbstractUser, BaseModel):
                 'is_staff',
                 'is_superuser',
                 'is_authenticated',
+                'is_user_admin',
+                'is_user_agent',
+                'is_user_client',
                 'user_type',
                 'user_type_str',
+                'collections_list'
             ),
             'str': str(self),
             **(self.attrs(*attrs) if attrs else {}),
@@ -104,7 +108,7 @@ class User(AbstractUser, BaseModel):
         """
         if name.startswith('is_user_'):
             usertype = name[8:]
-            return usertype == str(self.user_type)
+            return usertype == str(self.user_type) or self.is_superuser
         raise AttributeError(f"{self} object has not attribute '{name}'")
 
     @cached_property
@@ -120,6 +124,10 @@ class User(AbstractUser, BaseModel):
     @cached_property
     def user_type_str(self):
         return self.get_user_type_display()
+
+    @cached_property
+    def collections_list(self):
+        return [collection.__json__() for collection in self.collections.all()]
 
 
 class PermissionManager:

@@ -54,6 +54,11 @@
           
           {% if request.user.perms.has_agent_access %}
 
+            <a class="dropdown-item" href="{% url 'collections:list' %}">
+              <i class="material-icons">library_books</i>
+              <span>Collections</span>
+            </a><div class="dropdown-divider"></div>
+
             <a class="dropdown-item" href="{% url 'schedule' %}">
               <i class="material-icons">schedule</i>
               <span>Schedule</span>

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
 from django.views.generic.list import ListView
@@ -18,7 +19,10 @@ class Schedule(AgentRequiredMixin, BaseContextMixin, FormMixin, ListView):
         return Availability.objects.filter(agent=self.request.user)
 
     def context(self, request, *args, **kwargs):
-        return {'form': self.get_form()}
+        return {
+            'form': self.get_form(),
+            'map_key': settings.MAP_KEY
+        }
 
     def get_success_url(self):
         return reverse('schedule')

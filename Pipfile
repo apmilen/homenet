@@ -8,6 +8,7 @@ flake8 = "*"
 mypy = "*"
 django-stubs = "*"
 ipdb = "*"
+django-extensions = "*"
 
 [packages]
 django = "*"
@@ -35,6 +36,7 @@ ipdb = "*"
 django-mapbox-location-field = "*"
 stripe = "*"
 weasyprint = "*"
+plaid-python = "*"
 
 [requires]
 python_version = "3.7"

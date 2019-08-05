@@ -416,6 +416,13 @@
             "index": "pypi",
             "version": "==6.1.0"
         },
+        "plaid-python": {
+            "hashes": [
+                "sha256:d35ca602af195775e6202068768462f6a5922686e18004ecf47763bf27ca6abd"
+            ],
+            "index": "pypi",
+            "version": "==3.3.0"
+        },
         "pluggy": {
             "hashes": [
                 "sha256:0825a152ac059776623854c1543d65a4ad408eb3d33ee114dff91e57ec6ae6fc",
