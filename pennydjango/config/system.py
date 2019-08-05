@@ -275,9 +275,9 @@ def check_django_settings(settings: dict):
 
     # DEBUG features and permissions mistakes must be forbidden on production boxes
     if s.HOSTNAME == s.PROD_HOSTNAME:
+        # assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
         assert s.PENNY_ENV == 'PROD', 'prod must run in ENV=PROD mode'
         assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
-        assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
         assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
         assert s.DEFAULT_HTTP_PORT == 443, 'https (443) is required on prod servers'
         assert s.BASE_URL.startswith('https://'), 'https is required on prod servers'
