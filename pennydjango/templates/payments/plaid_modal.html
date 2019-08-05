@@ -1,0 +1,35 @@
+{% load bootstrap4 %}
+<div class="modal fade" id="plaidModal"
+     tabindex="-1" role="dialog" aria-labelledby="paymentLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentLabel">Move in cost payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+            <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-8 col-sm-6">
+                            <span class="usd">
+                                <input 
+                                type="text" 
+                                id="amount" 
+                                name="amount" 
+                                class="form-control" 
+                                placeholder="Amount">
+                            </span>
+                        </div>
+                        <div class="col-4 col-sm-6">
+                            <button id="linkButton" class="btn btn-primary">
+                                Select your bank
+                            </button>
+                        </div>
+                    </div>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
