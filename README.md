@@ -11,12 +11,12 @@ Apartment rental listing platform to match realtors with potential home renters 
 Clone this repo into the `/opt` directory:
 ```bash
 # Use ssh (not https) to avoid push permission errors
-git clone git@github.com:pirate/pennybags.git /opt/pennybags
+git clone git@github.com:pirate/pennybags.git /opt/monadical.homenet
 ```
 
-If you clone it elsewhere instead (e.g. inside your home folder), you must symlink `/opt/pennybags` to the repo location:
+If you clone it elsewhere instead (e.g. inside your home folder), you must symlink `/opt/monadical.homenet` to the repo location:
 ```bash
-ln -s /path/to/cloned/repo/pennybags /opt/pennybags
+ln -s /path/to/cloned/repo/pennybags /opt/monadical.homenet
 ```
 
 ---
@@ -40,7 +40,7 @@ python3.7 -m pip install --user pipenv
 
 (The Python dependencies are defined in `./Pipfile`)
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 pipenv install
 ```
 
@@ -61,7 +61,7 @@ npm install --upgrade --global yarn
 
 (The JS dependencies are defined in `./pennydjango/js/package.json`)
 ```bash
-cd /opt/pennybags/pennydjango/js
+cd /opt/monadical.homenet/pennydjango/js
 yarn install
 ```
 
@@ -119,7 +119,7 @@ brew link --overwrite --force postgresql
 
 #### Instantiate the pennybags database
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 
 # instantiate a new postgresql db data dir
 initdb data/database
@@ -135,7 +135,7 @@ pg_ctl -D data/database stop
 
 #### Run the initial migrations
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 
 # Run the initial db migrations
 pg_ctl -D data/database start
@@ -163,7 +163,7 @@ brew install nginx
 
 #### Generate a self-signed SSL certificate for `homenet.l`
 ```bash
-cd /opt/pennybags/data/certs
+cd /opt/monadical.homenet/data/certs
 ./generate.sh homenet.l
 ```
 
@@ -176,17 +176,17 @@ Background processes are managed by Supervisord, they must be started in order f
 
 On Ubuntu:
 ```bash
-supervisord -c /opt/pennybags/etc/supervisor/ubuntu-dev.conf
+supervisord -c /opt/monadical.homenet/etc/supervisor/ubuntu-dev.conf
 ```
 
 On macOS:
 ```bash
-supervisord -c /opt/pennybags/etc/supervisor/mac-dev.conf
+supervisord -c /opt/monadical.homenet/etc/supervisor/mac-dev.conf
 ```
 
 #### Start Django Runserver
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 
 # activate the virtualenv
 pipenv shell
@@ -207,7 +207,7 @@ Alternatively, open [http://127.0.0.1:8000](http://127.0.0.1:8000) to access run
 
 ### Activate the Python Virtualenv
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 source .venv/bin/activate  # or source .venv/bin/activate.fish
 ```
 
@@ -215,7 +215,7 @@ source .venv/bin/activate  # or source .venv/bin/activate.fish
 
 Replace `ubuntu-dev.conf` below with `mac-dev.conf` if using macOS.
 ```bash
-cd /opt/pennybags
+cd /opt/monadical.homenet
 
 # make sure supervisord is running first
 supervisord -c etc/supervisor/ubuntu-dev.conf
@@ -228,7 +228,7 @@ supervisorctl -c etc/supervisor/ubuntu-dev.conf start <service|all>
 
 ### Inspect logfile output
 ```bash
-cd /opt/pennybags/data/logs
+cd /opt/monadical.homenet/data/logs
 tail -f nginx.err
 tail -f nginx.out
 tail -f postgresql.err
@@ -241,7 +241,7 @@ tail -f reloads.log
 ```bash
 # first make sure postgresql is running with supervisord
 
-cd /opt/pennybags/pennydjango
+cd /opt/monadical.homenet/pennydjango
 # activate virtualenv (see above)
 
 ./manage.py migrate
