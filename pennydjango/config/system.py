@@ -105,7 +105,7 @@ def get_current_django_command() -> Optional[str]:
     return None
 
 def get_current_hostname() -> str:
-    """get short system hostname, e.g. squash, panacea, jose-laptop, etc."""
+    """get short system hostname, e.g. squash, prod, jose-laptop, etc."""
     return os.uname()[1]
 
 def get_current_user() -> str:
@@ -239,14 +239,14 @@ def check_system_invariants(settings: dict):
 
     s = AttributeDict(settings)
 
-    assert s.PANACEA_ENV in s.ALLOWED_ENVS, (
-        f'PANACEA_ENV={s.PANACEA_ENV} is not one of the allowed values: '
+    assert s.PENNY_ENV in s.ALLOWED_ENVS, (
+        f'PENNY_ENV={s.PENNY_ENV} is not one of the allowed values: '
         f'{",".join(s.ALLOWED_ENVS)}')
 
     assert sys.version_info >= (3, 7)
     assert sys.implementation.name in ('cpython', 'pypy')
 
-    if s.PANACEA_ENV == 'PROD':
+    if s.PENNY_ENV == 'PROD':
         # running as root even once will corrupt the permissions on all the DATA_DIRS
         assert s.DJANGO_USER != 'root', 'Django should never be run as root!'
     else:
@@ -275,7 +275,7 @@ def check_django_settings(settings: dict):
 
     # DEBUG features and permissions mistakes must be forbidden on production boxes
     if s.HOSTNAME == s.PROD_HOSTNAME:
-        assert s.PANACEA_ENV == 'PROD', 'prod must run in ENV=PROD mode'
+        assert s.PENNY_ENV == 'PROD', 'prod must run in ENV=PROD mode'
         assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
         assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
         assert not s.ENABLE_DEBUG_TOOLBAR, 'Debug toolbar is never allowed on prod!'
@@ -283,17 +283,17 @@ def check_django_settings(settings: dict):
         assert s.DEFAULT_HTTP_PORT == 443, 'https (443) is required on prod servers'
         assert s.DEFAULT_HOST.startswith('https://'), 'https is required on prod servers'
         assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
-        assert s.REPO_DIR == '/opt/panacea', 'Repo must be in /opt/panacea on prod'
+        assert s.REPO_DIR == '/opt/monadical.homenet', 'Repo must be in /opt/monadical.homenet on prod'
 
         # tests can pollute the data dir and use lots of CPU / Memory
         # only disable this check if you're 100% confident it's safe and have a
         # very good reason to run tests on production. remember to try beta first
         assert not s.IS_TESTING, 'Tests should not be run on prod machines'
 
-    if s.PANACEA_ENV == 'PROD' and s.HOSTNAME != s.PROD_HOSTNAME:
+    if s.PENNY_ENV == 'PROD' and s.HOSTNAME != s.PROD_HOSTNAME:
         # can be safely ignored when testing PROD mode on dev machines
         print(
-            f'[!] Warning: Running as PANACEA_ENV={s.PANACEA_ENV} but system '
+            f'[!] Warning: Running as PENNY_ENV={s.PENNY_ENV} but system '
             f'hostname {s.HOSTNAME} does not match settings.PROD_HOSTNAME!'
         )
 
@@ -307,7 +307,7 @@ def check_secure_settings(settings: dict):
     for setting_name in s.SECURE_SETTINGS:
         defined_in = get_setting_source(s.SETTINGS_SOURCES, setting_name)
 
-        if s.PANACEA_ENV == 'PROD':
+        if s.PENNY_ENV == 'PROD':
             assert defined_in in s.SECURE_SETTINGS_SOURCES, (
                 'Security-sensitive settings must only be defined in secrets.env!\n'
                 f'    Missing setting: {setting_name} in secrets.env\n'
@@ -326,7 +326,7 @@ def check_secure_settings(settings: dict):
 
 def get_django_status_line(settings: dict, pretty: bool=False) -> str:
     """the status line with process info printed every time django starts"""
-    # > ./manage.py check; ⚙️ DEV 👾 True 📂 ../data 🗄 127.0.0.1/panacea ...
+    # > ./manage.py check; ⚙️ DEV 👾 True 📂 ../data 🗄 127.0.0.1/penny ...
     
     s = AttributeDict(settings)
     term = PrettyTerm(color=pretty, truncate=pretty)
@@ -336,7 +336,7 @@ def get_django_status_line(settings: dict, pretty: bool=False) -> str:
 
     mng_str = term.format('> ./manage.py ', color='yellow')
     cmd_str = term.format(cli_arguments, color='blue')
-    env_str = term.format(s.PANACEA_ENV, color='green')
+    env_str = term.format(s.PENNY_ENV, color='green')
     debug_str = term.format(s.DEBUG, color=('green', 'red')[s.DEBUG])
     pytype_str = " PYPY" if s.PY_TYPE == "pypy" else ""
     path_str = s.DATA_DIR.replace(s.REPO_DIR + "/", "../")

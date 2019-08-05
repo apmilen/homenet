@@ -43,7 +43,7 @@ REPO_DIR = os.path.dirname(BASE_DIR)
 
 DJANGO_USER = get_current_user()
 HOSTNAME = get_current_hostname()
-PROD_HOSTNAME = 'panacea'
+PROD_HOSTNAME = 'carrot'
 PID = get_current_pid()
 START_TIME = get_current_system_time()
 DJANGO_COMMAND = get_current_django_command()
