@@ -8,43 +8,54 @@ Settings Usage:
 
 import os
 import sys
-import getpass
 from decimal import Decimal
 
-from time import time
-
-
 from config.system import (
-    check_system_invariants,
-    check_django_invariants,
-    chown_django_folders,
-    log_django_status_line,
+    AttributeDict,
+    get_current_django_command,
+    get_current_user,
+    get_current_hostname,
+    get_current_pid,
+    get_current_system_time,
+    get_python_implementation,
+    get_active_git_branch,
+    get_active_git_commit,
     load_env_settings,
+    check_system_invariants,
+    check_django_settings,
+    check_secure_settings,
+    check_data_folders,
+    get_django_status_line,
+    log_django_startup,
 )
 
 
-PENNY_ENV = os.getenv('PENNY_ENV', 'DEV').upper()
-check_system_invariants(PENNY_ENV)
+_PLACEHOLDER_FOR_UNSET = SECRET_KEY = 'set-this-value-in-secrets.env'
+ALLOWED_ENVS = ('DEV', 'PROD')
 
 
 ################################################################################
 ### Environment Setup
 ################################################################################
+PENNY_ENV = os.getenv('PENNY_ENV', 'DEV').upper()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
-DJANGO_USER = getpass.getuser() or os.getlogin()
-HOSTNAME = os.uname()[1]
-PID = os.getpid()
-START_TIME = time()
-IS_TESTING = len(sys.argv) > 1 and sys.argv[1].lower() == "test"
-IS_MIGRATING = len(sys.argv) > 1 and sys.argv[1].lower() == "migrate"
-IS_SHELL = len(sys.argv) > 1 and sys.argv[1].lower() == 'shell_plus'
-GIT_SHA = "someshafornow"
-PY_TYPE = sys.implementation.name        # "cpython" or "pypy"
+DJANGO_USER = get_current_user()
+HOSTNAME = get_current_hostname()
+PROD_HOSTNAME = 'panacea'
+PID = get_current_pid()
+START_TIME = get_current_system_time()
+DJANGO_COMMAND = get_current_django_command()
+IS_TESTING = (DJANGO_COMMAND == "test")
+IS_MIGRATING = (DJANGO_COMMAND == "migrate")
+IS_SHELL = (DJANGO_COMMAND in ('shell', 'shell_plus'))
+GIT_HEAD = get_active_git_branch(REPO_DIR)
+GIT_SHA = get_active_git_commit(REPO_DIR, GIT_HEAD)
+PY_TYPE = get_python_implementation()
 CLI_COLOR = sys.stdout.isatty()
-_PLACEHOLDER_FOR_UNSET = 'set-this-value-in-secrets.env'
 
+check_system_invariants(settings=globals())
 
 ################################################################################
 ### Core Django Settings
@@ -181,11 +192,7 @@ THOUSAND_SEPARATOR = ','
 ### Email Settings
 ################################################################################
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-SUPPORT_GIVERS = [
-    # 'max+support@oddslingers.com',
-    # 'nick+support@oddslingers.com',
-    # 'ana+support@oddslingers.com',
-]
+
 
 INLINE_STATICFILES = False                  # inline JS, and CSS files verbatim instead of inserting a <script> or <link> tag
 
@@ -396,12 +403,25 @@ if DEBUG:
 if PENNY_ENV == 'PROD':
     EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 
-# Assertions about the environment
-
-check_django_invariants()
-chown_django_folders()
-STATUS_LINE = log_django_status_line()
-
 
 # Application name
 APP_NAME = 'Homenet'
+
+
+################################################################################
+### Environment Assertions & Init Logging
+################################################################################
+
+
+STATUS_LINE = get_django_status_line(settings=globals(), pretty=False)
+PRETTY_STATUS_LINE = get_django_status_line(settings=globals(), pretty=True)
+
+settings_dict = AttributeDict(globals())
+
+check_system_invariants(settings=settings_dict)
+check_django_settings(settings=settings_dict)
+check_secure_settings(settings=settings_dict)
+check_data_folders(settings=settings_dict)
+
+
+log_django_startup(settings=settings_dict)

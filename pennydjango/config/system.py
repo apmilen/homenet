@@ -10,21 +10,147 @@ import sys
 import pwd
 import getpass
 
+from datetime import datetime
+from typing import Optional, Iterable, Tuple, Union, IO, Callable, List, Any
+
 import psutil
 import shutil
 import subprocess
-from time import time
 
 from dotenv import dotenv_values
 
-from typing import Optional, Iterable, Tuple, Union
+
+COMMIT_ID_LENGTH = 9
 
 
-# Environment and Config Management
+class AttributeDict(dict): 
+    """Helper to allow accessing dict values via Example.key or Example['key']"""
+
+    def __getattr__(self, attr: str) -> Any:
+        return dict.__getitem__(self, attr)
+
+    def __setattr__(self, attr: str, value: Any) -> None:
+        return dict.__setitem__(self, attr, value)
+
+
+class PrettyTerm:
+    """Helper for printing and formatting pretty terminal output"""
+
+    ANSI_COLOR = '\033[{fg};{bg}m'
+    COLORS = {
+        'RESET':    ANSI_COLOR.format(fg='00', bg='00'),
+        'RED':      ANSI_COLOR.format(fg='01', bg='31'),
+        'GREEN':    ANSI_COLOR.format(fg='01', bg='32'),
+        'YELLOW':   ANSI_COLOR.format(fg='01', bg='33'),
+        'BLUE':     ANSI_COLOR.format(fg='01', bg='34'),
+        'PURPLE':   ANSI_COLOR.format(fg='01', bg='35'),
+        'CYAN':     ANSI_COLOR.format(fg='01', bg='36'),
+        'WHITE':    ANSI_COLOR.format(fg='01', bg='37'),
+    }
+
+    color: bool
+    truncate: bool
+    fd: IO
+
+    def __init__(self, color: bool=False, truncate: bool=False, fd: IO=sys.stdout):
+        self.color = color
+        self.truncate = truncate
+        self.fd = fd
+
+    @classmethod
+    def num_control_chars(cls, string: str) -> int:
+        control_chars = 0
+        for color in cls.COLORS.values():
+            control_chars += (string.count(color) * len(color))
+        return control_chars
+
+    @classmethod
+    def truncated(cls, string: str) -> str:
+        invisible_chars = cls.num_control_chars(string)
+        max_columns = shutil.get_terminal_size((160, 10)).columns
+        return string[:max_columns + invisible_chars]
+
+    @classmethod
+    def colored(cls, string: str, color: Optional[str]) -> str:
+        if color is None:
+            return string
+        return f'{cls.COLORS[color.upper()]}{string}{cls.COLORS["RESET"]}'
+
+    def format(self, *string, color: Optional[str]=None) -> str:
+        out_str = ' '.join(str(s) for s in string)
+
+        if self.color:
+            if color:
+                out_str = self.colored(out_str, color)
+            else:
+                out_str = out_str.format(**self.COLORS)
+        else:
+            out_str = out_str.format(**{key: '' for key in self.COLORS.keys()})
+
+        if self.truncate:
+            out_str = self.truncated(out_str)
+
+        return out_str
+
+    def write(self, string: str) -> None:
+        self.fd.write(self.format(string))
+
+### System Environment Getters
+
+def get_current_django_command() -> Optional[str]:
+    """currently running manage.py command, e.g. runserver, test, migrate, etc"""
+
+    if len(sys.argv) > 1:
+        return sys.argv[1].lower()
+    return None
+
+def get_current_hostname() -> str:
+    """get short system hostname, e.g. squash, panacea, jose-laptop, etc."""
+    return os.uname()[1]
+
+def get_current_user() -> str:
+    """get user running the current process, works on mac, linux, bsd"""
+    
+    # this is more complex than a single command because it needs to handle
+    # the case where the parent proc is run by a different user than the current
+    # proc, and different systems use different conventions.
+    return (
+        pwd.getpwuid(os.getuid()).pw_name
+        or getpass.getuser()
+        or os.getlogin()
+    )
+
+def get_current_pid() -> int:
+    return os.getpid()
+
+def get_current_system_time() -> datetime:
+    return datetime.now()
+
+def get_python_implementation() -> str:
+    return sys.implementation.name
+
+def get_active_git_branch(repo_dir: str) -> str:
+    """e.g. master"""
+    try:
+        with open(os.path.join(repo_dir, '.git', 'HEAD'), 'r') as f:
+            return f.read().strip().replace('ref: refs/heads/', '')
+    except Exception:
+        return 'unknown'
+
+def get_active_git_commit(repo_dir: str, head: str) -> str:
+    """e.g. 47df4ed31"""
+
+    try:
+        with open(os.path.join(repo_dir, '.git', 'refs', 'heads', head), 'r') as f:
+            return f.read().strip()[:COMMIT_ID_LENGTH]
+    except Exception:
+        return 'unknown'
+
+
+### Environment Variable and Config Management
 
 EnvSettingTypes = (str, bool, int, float, list)
 EnvSetting = Union[str, bool, int, float, list]
-
 
 def get_env_value(env: dict, key: str, default: EnvSetting=None):
     """get & cast a given value from a dictionary, or return the default"""
@@ -98,7 +224,7 @@ def load_env_settings(dotenv_path: str=None, env: dict=None, defaults: dict=None
 
 def get_setting_source(sources: Iterable[Tuple[str, dict]], key: str) -> str:
     """determine which file a specific setting was loaded from"""
-    for source_name, settings in reversed(sources):
+    for source_name, settings in reversed(list(sources)):
         if key in settings:
             return source_name
 
@@ -106,23 +232,26 @@ def get_setting_source(sources: Iterable[Tuple[str, dict]], key: str) -> str:
     raise ValueError(f'Setting {key} is not in any of {source_names})')
 
 
-def check_system_invariants(PENNY_ENV):
+### Invariant and Assertion Checkers
+
+def check_system_invariants(settings: dict):
     """Check basic system setup and throw if there is any misconfiguration"""
 
-    ALLOWED_ENVS = ('DEV', 'CI', 'BETA', 'PROD')
+    s = AttributeDict(settings)
 
-    DJANGO_USER = pwd.getpwuid(os.getuid()).pw_name or getpass.getuser() or os.getlogin()
+    assert s.PANACEA_ENV in s.ALLOWED_ENVS, (
+        f'PANACEA_ENV={s.PANACEA_ENV} is not one of the allowed values: '
+        f'{",".join(s.ALLOWED_ENVS)}')
 
-    assert PENNY_ENV in ALLOWED_ENVS, (
-        f'PENNY_ENV={PENNY_ENV} is not one of the allowed values: '
-        f'{",".join(ALLOWED_ENVS)}')
-
-    assert sys.version_info >= (3, 5)
+    assert sys.version_info >= (3, 7)
     assert sys.implementation.name in ('cpython', 'pypy')
 
-    # running as root even once will corrupt
-    # the permissions on all the DATA_DIRS
-    assert DJANGO_USER != 'root', 'Django should never be run as root!'
+    if s.PANACEA_ENV == 'PROD':
+        # running as root even once will corrupt the permissions on all the DATA_DIRS
+        assert s.DJANGO_USER != 'root', 'Django should never be run as root!'
+    else:
+        if s.DJANGO_USER == 'root':
+            print('[!] Warning: You should never run Django as root, even on dev machines!')
 
     # python -O strips asserts from our code, but we use them for critical logic
     try:
@@ -139,23 +268,51 @@ def check_system_invariants(PENNY_ENV):
             '(uppercase) "UTF-8" to run properly.')
 
 
-def check_django_invariants():
+def check_django_settings(settings: dict):
     """Check basic django setup and throw if there is any misconfiguration"""
+    
+    s = AttributeDict(settings)
 
-    from django.conf import settings as s
+    # DEBUG features and permissions mistakes must be forbidden on production boxes
+    if s.HOSTNAME == s.PROD_HOSTNAME:
+        assert s.PANACEA_ENV == 'PROD', 'prod must run in ENV=PROD mode'
+        assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
+        assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
+        assert not s.ENABLE_DEBUG_TOOLBAR, 'Debug toolbar is never allowed on prod!'
+        assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
+        assert s.DEFAULT_HTTP_PORT == 443, 'https (443) is required on prod servers'
+        assert s.DEFAULT_HOST.startswith('https://'), 'https is required on prod servers'
+        assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
+        assert s.REPO_DIR == '/opt/panacea', 'Repo must be in /opt/panacea on prod'
+
+        # tests can pollute the data dir and use lots of CPU / Memory
+        # only disable this check if you're 100% confident it's safe and have a
+        # very good reason to run tests on production. remember to try beta first
+        assert not s.IS_TESTING, 'Tests should not be run on prod machines'
+
+    if s.PANACEA_ENV == 'PROD' and s.HOSTNAME != s.PROD_HOSTNAME:
+        # can be safely ignored when testing PROD mode on dev machines
+        print(
+            f'[!] Warning: Running as PANACEA_ENV={s.PANACEA_ENV} but system '
+            f'hostname {s.HOSTNAME} does not match settings.PROD_HOSTNAME!'
+        )
+
+
+def check_secure_settings(settings: dict):
+    """Check that all secure settings are defined safely in secrets.env"""
+    
+    s = AttributeDict(settings)
 
     # make sure all security-sensitive settings are coming from safe sources
     for setting_name in s.SECURE_SETTINGS:
         defined_in = get_setting_source(s.SETTINGS_SOURCES, setting_name)
 
-        if s.PENNY_ENV in ('PROD', 'BETA'):
+        if s.PANACEA_ENV == 'PROD':
             assert defined_in in s.SECURE_SETTINGS_SOURCES, (
                 'Security-sensitive settings must only be defined in secrets.env!\n'
                 f'    Missing setting: {setting_name} in secrets.env\n'
                 f'    Found in: {defined_in}'
             )
-
-        if s.PENNY_ENV == 'PROD':
             # make sure settings are not defaults on prod
             assert getattr(s, setting_name) != s._PLACEHOLDER_FOR_UNSET, (
                 'Security-sensitive settings must be defined in secrets.env\n'
@@ -167,84 +324,92 @@ def check_django_invariants():
     #         'Tests must be run with a different redis db than the main redis')
 
 
-def django_status_line(fancy: bool=False, truncate: bool=False) -> str:
+def get_django_status_line(settings: dict, pretty: bool=False) -> str:
     """the status line with process info printed every time django starts"""
-    from django.conf import settings
+    # > ./manage.py check; ⚙️ DEV 👾 True 📂 ../data 🗄 127.0.0.1/panacea ...
+    
+    s = AttributeDict(settings)
+    term = PrettyTerm(color=pretty, truncate=pretty)
 
     cli_arguments = " ".join(sys.argv[1:])
 
-    # DEV=settings.py 👤 squash  🆔 24781  📅 1523266746  💾 grater@localhost
-    sections = (
-        ('env=', '| ⚙️  '),   # normal mode, fancy mode
-        ('debug=', ''),
-        ('usr=', '👤  '),
-        ('pid=', ' 🆔  '),
-        ('ts=', ' 🕐  '),
-        ('db=', '🗄  '),
-        ('data=', '📂  '),
-        ('git=', '#️⃣  '),
-    )
-    icn = lambda idx: sections[idx][fancy]
 
-    debug_str = ("", "👾 ")[settings.DEBUG] if fancy else str(settings.DEBUG)
-    pytype_str = " PYPY" if settings.PY_TYPE == "pypy" else ""
+    mng_str = term.format('> ./manage.py ', color='yellow')
+    cmd_str = term.format(cli_arguments, color='blue')
+    env_str = term.format(s.PANACEA_ENV, color='green')
+    debug_str = term.format(s.DEBUG, color=('green', 'red')[s.DEBUG])
+    pytype_str = " PYPY" if s.PY_TYPE == "pypy" else ""
+    path_str = s.DATA_DIR.replace(s.REPO_DIR + "/", "../")
+
+    icons = {
+        'env':      '⚙️  ',
+        'debug':    '👾 ',
+        'data':     '📂 ',
+        'db':       '🗄  ',
+        'git':      '#️⃣  ',
+        'usr':      '👤 ',
+        'pid':      '🆔 ',
+        'ts':       '🕐 ',
+    }
+    def section(name, value):
+        if pretty:
+            return f'{icons[name]}{value} '
+        return f'{name}={value} '
 
     status_line = ''.join((
-        '\033[01;33m' if fancy else '',  # yellow
-        '> ./manage.py ',
-        '\033[01;34m' if fancy else '',  # blue
-        cli_arguments,
-        '\033[00;00m' if fancy else '',  # reset
-        f' {icn(0)}../env/{settings.PENNY_ENV}.env',
-        f' {icn(1)}{debug_str}{pytype_str}',
-        f' {icn(2)}{settings.DJANGO_USER}',
-        f' {icn(3)}{settings.PID}',
-        f' {icn(4)}{int(time())}',
-        f' {icn(5)}{settings.POSTGRES_HOST}/{settings.POSTGRES_DB}',
-        f' {icn(6)}{settings.DATA_DIR.replace(settings.REPO_DIR + "/", "../")}',
-        f' {icn(7)}{settings.GIT_SHA[:7]}',
+        mng_str,
+        cmd_str,
+        '; ',
+        section("env",      env_str),
+        section("debug",    f'{debug_str}{pytype_str}'),
+        section("data",     path_str),
+        section("db",       f'{s.POSTGRES_HOST}/{s.POSTGRES_DB}'),
+        section("git",      f'{s.GIT_SHA} ({s.GIT_HEAD})'),
+        section("usr",      s.DJANGO_USER),
+        section("pid",      s.PID),
+        section("ts",       int(s.START_TIME.timestamp())),
     ))
 
-    if truncate:
-        term_width = shutil.get_terminal_size((160, 10)).columns
-        control_characters = 24 if fancy else 0
-        status_line = status_line[:term_width + control_characters]
-
-    if fancy:
-        return f"{status_line}\033[00;00m"
-    else:
-        return status_line
+    return term.format(status_line)
 
 
-def log_django_status_line():
+def log_django_startup(settings: dict) -> None:
     """print and log the django status line to stdout and the reloads log"""
-    from django.conf import settings
+    
+    s = AttributeDict(settings)
 
-    plain_status = django_status_line()
-    fancy_status = django_status_line(fancy=settings.FANCY_STDOUT,
-                                      truncate=settings.FANCY_STDOUT)
+    # Log status line to reloads log
+    with open(s.RELOADS_LOGS, 'a+') as f:
+        f.write(f'{s.STATUS_LINE}\n')
 
-    # Log django process launch to reloads log
-    with open(settings.RELOADS_LOGS, 'a+') as f:
-        f.write(f'{plain_status}\n')
+    # Log status line to stdout
+    if s.FANCY_STDOUT:
+        print(s.PRETTY_STATUS_LINE)
+    else:
+        print(s.STATUS_LINE)
 
-    print(fancy_status)
-    return plain_status
 
+### File and folder management
 
-# File and folder management
-
-def mkchown(path: str, user: str):
+def mkchown(path: str, user: str, group: str):
     """create and chown a directory to make sure a user can write to it"""
 
     try:
-        os.makedirs(path, exist_ok=True)
-        if sys.platform == 'darwin':
-            # on mac, just chown as the user
-            shutil.chown(path, user=user)
-        else:
-            # on linux, chown as user:group
-            shutil.chown(path, user=user, group=user)
+        if os.path.exists(path) and not os.path.isdir(path):
+            raise FileExistsError
+        elif not os.path.exists(path):
+            os.makedirs(path, exist_ok=True)
+            if sys.platform == 'darwin':
+                # on mac, just chown as the user
+                shutil.chown(path, user=user)
+            else:
+                # on linux, chown as user:group
+                shutil.chown(path, user=user, group=group)
+
+        testfile = os.path.join(path, '.django_write_test')
+        with open(testfile, 'w') as f:
+            f.write('test')
+        os.remove(testfile)
     except FileExistsError:
         # sshfs folders can trigger a FileExistsError if permissions
         # are not set up to allow user to access fuse filesystems
@@ -260,20 +425,25 @@ def mkchown(path: str, user: str):
         raise
 
 
-def chown_django_folders():
+def check_data_folders(settings: dict):
     """set the proper permissions on all the data folders used by django"""
 
-    from django.conf import settings
+    s = AttributeDict(settings)
 
-    mkchown(settings.DATA_DIR, settings.DJANGO_USER)
-    for path in settings.DATA_DIRS:
-        mkchown(path, settings.DJANGO_USER)
+    writeable_dirs = [s.DATA_DIR, *s.DATA_DIRS]
+    for path in writeable_dirs:
+        mkchown(
+            path,
+            user=s.DJANGO_USER,
+            group=s.DJANGO_USER,
+        )
 
 
-# Process Management
+### Process Management
 
-def ps_aux(pattern: str=None):
+def ps_aux(pattern: Optional[str]=None) -> List[str]:
     """find all processes matching a given str pattern"""
+
     return [
         line for line in subprocess.Popen(
             ['ps', 'axw'],
@@ -283,31 +453,16 @@ def ps_aux(pattern: str=None):
     ]
 
 
-def kill(pid_lines: list):
+def kill(pid_lines: list) -> None:
     """for each process line produced by ps_aux, kill the process"""
+    
     for line in pid_lines:
         pid = line.decode().strip().split()[0]
         assert pid.isdigit(), 'Found invalid text when expecting PID'
         subprocess.Popen(['kill', pid])
 
 
-def kill_all_heartbeats():
-    """send a SIGTERM to all running tablebeat and botbeats"""
-    from grater.utils import ANSI
-
-    term_width = shutil.get_terminal_size((160, 10)).columns - 3
-    print(term_width * '=')
-    heartbeat_procs = ps_aux(b'table_heartbeat')
-    botbeat_proc = ps_aux(b'bot_heartbeat')
-
-    print(f'{ANSI["red"]}'
-          f'[X] Killing {len(heartbeat_procs)} tablebeats and {len(botbeat_proc)} botbeats...'
-          f'{ANSI["reset"]}')
-    kill(heartbeat_procs)
-    kill(botbeat_proc)
-
-
-def matching_pids(match_func) -> Iterable[int]:
+def matching_pids(match_func: Callable[[psutil.Process, str], bool]) -> Iterable[int]:
     """yield all pids that match using a given function match function"""
     for proc in psutil.process_iter():      # python api for ps -aux
         with proc.oneshot():
@@ -321,18 +476,20 @@ def matching_pids(match_func) -> Iterable[int]:
                 yield proc.pid
 
 
-def find_process(mgmt_command: str, *args,
-                 exact=False, exclude_pid=None) -> Optional[int]:
+def find_django_process(mgmt_command: str,
+                        *command_args,
+                        exact=False,
+                        exclude_pid=None) -> Optional[int]:
     """find the pid for a given management command thats running"""
 
-    def pid_matches(proc, cmd):
+    def pid_matches(proc: psutil.Process, cmd: str) -> bool:
         if not cmd[2] == mgmt_command:
             return False
 
         if exact:
-            return cmd[3:] == args
-        else:
-            return all(arg in cmd for arg, cmd in zip(args, cmd[3:]))
+            return cmd[3:] == command_args
+        
+        return all(arg in cmd for arg, cmd in zip(command_args, cmd[3:]))
 
     pids = list(matching_pids(pid_matches))
     if pids and pids[0] != exclude_pid:
@@ -343,6 +500,7 @@ def find_process(mgmt_command: str, *args,
 
 def stop_process(pid: int, block: bool=True) -> bool:
     """stop the process identified by pid, optionally block until it's dead"""
+    
     if not pid:
         return False
 
@@ -384,7 +542,7 @@ def DOUBLE_FORK():
         sys.exit(1)
 
 
-# Load Management
+### Load Management
 
 
 MAX_LOAD = {
@@ -393,12 +551,6 @@ MAX_LOAD = {
         'Number of Processes': 70,
         'Memory': 75,
         'Disk Space': 95,
-    },
-    'BETA': {
-        'CPU': 80,
-        'Number of Processes': 80,
-        'Memory': 80,
-        'Disk Space': 70,
     },
     # dev limits are not enforced because we run tons of other programs
     'DEV': {
