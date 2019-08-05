@@ -10,6 +10,7 @@ node_modules/
 yarn-error.log
 
 supervisord.pid
+.python-version
 
 env/secrets.env
 data/database/
@@ -17,3 +18,4 @@ data/logs/
 data/caches/
 data/tmp/
 data/certs/
+data/media/
