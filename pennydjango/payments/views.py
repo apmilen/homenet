@@ -22,7 +22,7 @@ from payments.utils import (
 )
 from payments.constants import (
     DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED, PAYMENT_METHOD,
-    FROM_TO
+    FROM_TO, BANK_TRANSFER
 )
 from leases.models import Lease, LeaseMember
 
@@ -336,7 +336,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                         transaction_user=request.user,
                         amount=amount,
                         from_to=CLIENT_TO_APP,
-                        payment_method=PAYMENT_METHOD[3][0]
+                        payment_method=BANK_TRANSFER
                     )
                     try:
                         plaid_stripe_charge = stripe.Charge.create(
