@@ -37,6 +37,7 @@ ipdb = "*"
 django-mapbox-location-field = "*"
 stripe = "*"
 weasyprint = "*"
+plaid-python = "*"
 
 [requires]
 python_version = "3.7"

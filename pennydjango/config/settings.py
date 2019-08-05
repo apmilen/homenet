@@ -153,6 +153,8 @@ STRIPE_PUBLISHABLE_KEY = _PLACEHOLDER_FOR_UNSET
 STRIPE_FEE = Decimal("0.029")  # 2.9% stripe fee
 STRIPE_FIXED_FEE = Decimal("0.3")  # 30¢ flat fee
 
+# Plaid Keys Settings
+PLAID_PUBLIC_KEY = _PLACEHOLDER_FOR_UNSET
 
 ################################################################################
 ### Internationalization & Formatting Settings

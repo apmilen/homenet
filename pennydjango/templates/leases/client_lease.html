@@ -299,9 +299,11 @@
                     <div class="col-12">
                       {% if lease_pending_payment %}
                         {% include 'payments/payments.html' %}
+                        {% include 'payments/payment_method_modal.html' %}
+                        {% include 'payments/plaid_modal.html' %}
                         <button type="button" class="btn btn-outline-info"
                                 data-toggle="modal"
-                                data-target="#paymentModal">
+                                data-target="#paymentMethodModal">
                           Pay
                         </button>
                       {% endif %}
@@ -327,6 +329,8 @@
   <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
           type="text/javascript" crossorigin></script>
     <script src="{% http2static 'js/dropzone.js' %}"></script>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js">
+</script>
     <script type="text/javascript">
         Dropzone.autoDiscover = false;
         $(document).ready(() => {
@@ -347,27 +351,80 @@
   {% endif %}
 
   <script>
-      $('#paymentModal').on('shown.bs.modal', function (e) {
-          $.getScript("{% static 'js/stripe.js' '1' %}", function () {
-          });
+    $('#paymentModal, #plaidModal').on('show.bs.modal', function (e) {
+        $('#paymentMethodModal').modal('hide')
       });
 
-      getStripeFee = () => {
-          document.getElementById("total").innerHTML = ''
-          let amount = parseFloat(document.getElementById("amount").value)
-          if (amount > 0) {
-              $.ajax({
-                  url: "{% url 'payments' pk=lease.id %}",
-                  data: {
-                      'amount': amount
-                  },
-                  dataType: 'json',
-                  success: function (data) {
-                      document.getElementById("amount-plus-fee").value = data.total_paid
-                      document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
-                  }
-              });
-          }
-      }
+    $('#paymentModal').on('shown.bs.modal', function (e) {
+      $.getScript("{% static 'js/stripe.js' '1' %}", function () {
+      });
+    });
+
+    getStripeFee = () => {
+        document.getElementById("total").innerHTML = ''
+        let amount = parseFloat(document.getElementById("amount").value)
+        if (amount > 0) {
+            $.ajax({
+                url: "{% url 'payments' pk=lease.id %}",
+                data: {
+                    'amount': amount
+                },
+                dataType: 'json',
+                success: function (data) {
+                    document.getElementById("amount-plus-fee").value = data.total_paid
+                    document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
+                }
+            });
+        }
+    }
+    var linkHandler = Plaid.create({
+      selectAccount: true,
+      env: 'sandbox',
+      clientName: 'Homenet',
+      key: "{{plaid_key}}",
+      product: ['auth'],
+      onLoad: function() {
+        // The Link module finished loading.
+      },
+      onSuccess: function(public_token, metadata) {
+        // The onSuccess function is called when the user has successfully
+        // authenticated and selected an account to use.
+        //
+        // When called, you will send the public_token and the selected
+        // account ID, metadata.account_id, to your backend app server.
+        let amount = $('#plaidModal #amount').val()
+      $.ajax({
+            url: "{% url 'plaid' pk=lease.id %}",
+            type: 'POST',
+            data: {
+                'public_token': public_token,
+                'account_id': metadata.account_id,
+                'amount': amount
+            },
+            dataType: 'json',
+            success: function (data) {
+              if (data.status) {
+                window.location.replace("{% url 'leases:detail-client' pk=object.id %}")
+                }
+            }
+        });
+        console.log('Public Token: ' + public_token);
+        console.log('Customer-selected account ID: ' + metadata.account_id);
+      },
+      onExit: function(err, metadata) {
+        // The user exited the Link flow.
+        if (err != null) {
+          // The user encountered a Plaid API error prior to exiting.
+        }
+        // metadata contains information about the institution
+        // that the user selected and the most recent API request IDs.
+        // Storing this information can be helpful for support.
+      },
+    });
+
+  // Trigger the standard Institution Select view
+  document.getElementById('linkButton').onclick = function() {
+    linkHandler.open();
+  };
   </script>
 {% endblock tail %}
