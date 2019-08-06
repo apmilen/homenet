@@ -2,6 +2,15 @@
 
 Apartment rental listing platform to match realtors with potential home renters and buyers.
 
+- https://homenet.zalad.io
+- https://homenet.zalad.io/admin
+
+Services:  
+- https://dashboard.stripe.com/account/team
+- https://app.mailgun.com/app/account/settings
+- https://dash.cloudflare.com/413ad3842c5a82a780b582d8de8dc903/zalad.io/dns
+- https://console.cloud.google.com/google/maps-apis/overview?pli=1&project=pennybags-1556050514027
+
 ## Project Quickstart
 
 ---

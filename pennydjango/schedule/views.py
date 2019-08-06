@@ -21,7 +21,7 @@ class Schedule(AgentRequiredMixin, BaseContextMixin, FormMixin, ListView):
     def context(self, request, *args, **kwargs):
         return {
             'form': self.get_form(),
-            'map_key': settings.MAP_KEY
+            'map_key': settings.GOOGLE_MAPS_API_KEY
         }
 
     def get_success_url(self):

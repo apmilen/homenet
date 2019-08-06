@@ -34,7 +34,7 @@ class BaseContextMixin(object):
             'GIT_SHA': settings.GIT_SHA,
             # refers to which set of database settings are used
             # (aka which env is active)
-            'ENVIRONMENT': settings.PENNY_ENV,
+            'ENVIRONMENT': settings.SERVER_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
             'LANGUAGE_CODE': settings.LANGUAGE_CODE,
             'user': request.user,
@@ -132,7 +132,7 @@ class PublicReactView(BaseView):
             'GIT_SHA': settings.GIT_SHA,
             # refers to which set of database settings are used
             # (aka which env is active)
-            'ENVIRONMENT': settings.PENNY_ENV,
+            'ENVIRONMENT': settings.SERVER_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
             'user': self.user_json(request),
         }

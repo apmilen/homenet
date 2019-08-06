@@ -11,7 +11,7 @@ import pwd
 import getpass
 
 from datetime import datetime
-from typing import Optional, Iterable, Tuple, Union, IO, Callable, List, Any
+from typing import Optional, Iterable, Dict, Union, Set, IO, Callable, List, Any
 
 import psutil
 import shutil
@@ -20,6 +20,7 @@ import subprocess
 from dotenv import dotenv_values
 
 
+PLACEHOLDER_FOR_SECRET = 'set-this-value-in-secrets.env'
 COMMIT_ID_LENGTH = 9
 
 
@@ -104,16 +105,20 @@ def get_current_django_command() -> Optional[str]:
         return sys.argv[1].lower()
     return None
 
-def get_current_hostname() -> str:
+def get_current_hostname(fqdn=False) -> str:
     """get short system hostname, e.g. squash, prod, jose-laptop, etc."""
-    return os.uname()[1]
+    hostname = os.uname()[1]
+    if fqdn:
+        if '.' not in hostname:
+            print('[!] Warning, tried to get host FQDN, but got short hostname')
+        return hostname
+    return hostname.split('.', 1)[0]
 
 def get_current_user() -> str:
     """get user running the current process, works on mac, linux, bsd"""
     
-    # this is more complex than a single command because it needs to handle
-    # the case where the parent proc is run by a different user than the current
-    # proc, and different systems use different conventions.
+    # different systems propagate ownership from parent->child in different ways
+    # this handles all the cases and correctly gets only the child proccess user
     return (
         pwd.getpwuid(os.getuid()).pw_name
         or getpass.getuser()
@@ -192,6 +197,7 @@ def get_env_value(env: dict, key: str, default: EnvSetting=None):
 
 def unique_env_settings(env: dict, defaults: dict) -> dict:
     """return all the new valid env settings in a dictionary of settings"""
+
     existing_settings = {
         setting_name: val
         for setting_name, val in (defaults or env).items()
@@ -222,15 +228,24 @@ def load_env_settings(dotenv_path: str=None, env: dict=None, defaults: dict=None
     return unique_env_settings(env_values, defaults)
 
 
-def get_setting_source(sources: Iterable[Tuple[str, dict]], key: str) -> str:
+def get_setting_source(SETTINGS_SOURCES: Dict[str, Dict[str, Any]], key: str) -> str:
     """determine which file a specific setting was loaded from"""
-    for source_name, settings in reversed(list(sources)):
+    for source_name, settings in reversed(list(SETTINGS_SOURCES.items())):
         if key in settings:
             return source_name
 
-    source_names = ", ".join(name for name, vals in sources)
+    source_names = ', '.join(name for name in SETTINGS_SOURCES.keys())
     raise ValueError(f'Setting {key} is not in any of {source_names})')
 
+def get_secret_setting_names(settings: dict) -> Set[str]:
+    """guess the setting names that likely contain sensitive values"""
+    return {
+        key for key in settings.keys()
+        if any(s in key for s in ('API_KEY', 'SECRET', 'PASSWORD'))
+    } | {
+        key for key, value in settings['SETTINGS_DEFAULTS'].items()
+        if value == PLACEHOLDER_FOR_SECRET
+    }
 
 ### Invariant and Assertion Checkers
 
@@ -239,19 +254,44 @@ def check_system_invariants(settings: dict):
 
     s = AttributeDict(settings)
 
-    assert s.PENNY_ENV in s.ALLOWED_ENVS, (
-        f'PENNY_ENV={s.PENNY_ENV} is not one of the allowed values: '
+    assert s.SERVER_ENV in s.ALLOWED_ENVS, (
+        f'SERVER_ENV={s.SERVER_ENV} is not one of the allowed values: '
         f'{",".join(s.ALLOWED_ENVS)}')
 
-    assert sys.version_info >= (3, 7)
-    assert sys.implementation.name in ('cpython', 'pypy')
+    assert sys.version_info >= s.MIN_PYTHON_VERSION, (
+        f'Installed Python version {sys.version_info} is not high enough '
+        f' (you must install Python >={s.MIN_PYTHON_VERSION.join(".")})'
+    )
 
-    if s.PENNY_ENV == 'PROD':
-        # running as root even once will corrupt the permissions on all the DATA_DIRS
-        assert s.DJANGO_USER != 'root', 'Django should never be run as root!'
-    else:
-        if s.DJANGO_USER == 'root':
-            print('[!] Warning: You should never run Django as root, even on dev machines!')
+    assert sys.implementation.name in s.ALLOWED_PYTHON_IMPLEMENTATIONS, (
+        f'The active Python implementation type "{sys.implementation.name}" '
+        f'is not supported (must be one of {s.ALLOWED_PYTHON_IMPLEMENTATIONS})'
+    )
+
+    assert os.path.abspath(s.REPO_DIR) == os.path.abspath(s.ALLOWED_REPO_DIR), (
+        'Project directory was not found in the expected location. '
+        f'(you must move or symlink {s.REPO_DIR} to {s.ALLOWED_REPO_DIR})'
+    )
+
+    try:
+        with open('/etc/passwd', 'r') as f:
+            f.read()
+        except PermissionError:
+            pass
+
+    # running as root even once will corrupt the permissions on all the DATA_DIRS
+    if s.DJANGO_USER == 'root':
+        if not s.ALLOW_ROOT:
+            raise PermissionError('Django should never be run as root!')
+        else:
+            print(
+                '[!] Warning: Running Django as root because ALLOW_ROOT=True. '
+                '(You must manually fix the data folder permissions after '
+                'quitting in order to be able to run it as your normal user).'
+            )
+
+    if s.SERVER_ENV == 'PROD':
+        
 
     # python -O strips asserts from our code, but we use them for critical logic
     try:
@@ -262,39 +302,103 @@ def check_system_invariants(settings: dict):
         pass
 
     if hasattr(sys.stderr, 'encoding'):
+        # Set these in ~/.bashrc or ~/.config/fish/config.fish to fix encoding:
+        #   LANG='en_US.UTF-8',
+        #   LC_ALL='en_US.UTF-8',
+        #   PYTHONIOENCODING='UTF-8'
         assert sys.stderr.encoding == sys.stdout.encoding == 'UTF-8', (
             f'Bad shell encoding setting "{sys.stdout.encoding}". '
             'System, Shell, and Python system locales must be set to '
-            '(uppercase) "UTF-8" to run properly.')
+            '(uppercase) "UTF-8" to run properly.'
+        )
 
 
-def check_django_settings(settings: dict):
-    """Check basic django setup and throw if there is any misconfiguration"""
-    
+def check_prod_safety(settings: dict):
     s = AttributeDict(settings)
 
     # DEBUG features and permissions mistakes must be forbidden on production boxes
-    if s.HOSTNAME == s.PROD_HOSTNAME:
-        # assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
-        assert s.PENNY_ENV == 'PROD', 'prod must run in ENV=PROD mode'
+    if s.PROD_SAFETY_CHECK:
+        assert not s.DEBUG, 'DEBUG=True is never allowed on prod and beta!'
+        assert s.SERVER_ENV == 'PROD', 'Prod must always be run with SERVER_ENV=PROD'
         assert s.DJANGO_USER == 'www-data', 'Django can only be run as user www-data'
         assert s.DEFAULT_HTTP_PROTOCOL == 'https', 'https is required on prod servers'
-        assert s.DEFAULT_HTTP_PORT == 443, 'https (443) is required on prod servers'
-        assert s.BASE_URL.startswith('https://'), 'https is required on prod servers'
         assert s.TIME_ZONE == 'UTC', 'Prod servers must always be set to UTC timezone'
-        assert s.REPO_DIR == '/opt/monadical.homenet', 'Repo must be in /opt/monadical.homenet on prod'
 
         # tests can pollute the data dir and use lots of CPU / Memory
         # only disable this check if you're 100% confident it's safe and have a
         # very good reason to run tests on production. remember to try beta first
         assert not s.IS_TESTING, 'Tests should not be run on prod machines'
-
-    if s.PENNY_ENV == 'PROD' and s.HOSTNAME != s.PROD_HOSTNAME:
+    elif s.SERVER_ENV == 'PROD':
         # can be safely ignored when testing PROD mode on dev machines
         print(
-            f'[!] Warning: Running as PENNY_ENV={s.PENNY_ENV} but system '
-            f'hostname {s.HOSTNAME} does not match settings.PROD_HOSTNAME!'
+            f'[!] Warning: Running with SERVER_ENV=PROD but '
+            f'PROD_SAFETY_CHECK is set to False! '
+            '(dangerous if server is publicly accessible)'
         )
+
+
+def check_http_settings(settings: dict):
+    """check the server url scheme, host, and port config"""
+    s = AttributeDict(settings)
+
+    baseurl_scheme, baseurl_host = s.BASE_URL.split('://', 1)
+    baseurl_domain, baseurl_port = baseurl_host.split(':', 1)
+
+    # check scheme
+    assert baseurl_scheme in ('http', 'https'), (
+        'BASE_URL scheme must be http or https')
+    assert baseurl_scheme == s.DEFAULT_HTTP_PROTOCOL, (
+        'BASE_URL scheme must match DEFAULT_HTTP_PROTOCOL')
+    if baseurl_scheme == 'http':
+        assert not (s.SESSION_COOKIE_SECURE or s.CSRF_COOKIE_SECURE), (
+            'SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE must be False '
+            'when using http (to fix, set them to False in env/secrets.env)'
+        )
+    elif baseurl_scheme == 'https':
+        assert s.SESSION_COOKIE_SECURE and s.CSRF_COOKIE_SECURE, (
+            'SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE must be True '
+            'when using https (to fix, set them to False in env/secrets.env)'
+        )
+
+    # check host
+    assert baseurl_domain == s.DEFAULT_HOST, (
+        'BASE_URL must use the DEFAULT_HOST for links on the site to work')
+    assert baseurl_domain.replace('.', '').replace('-', '').isalnum(), (
+        'DEFAULT_HOST must be a valid hostname or IP address e.g. '
+        '127.0.0.1 or example.zalad.io (without scheme, port, or path)'
+    )
+    assert baseurl_domain in s.ALLOWED_HOSTS, (
+        'DEFAULT_HOST must be in ALLOWED_HOSTS for the site to be accessible')
+
+    # check port
+    assert isinstance(s.DEFAULT_HTTP_PORT, int)
+    if s.DEFAULT_HTTP_PORT == 80:
+        assert s.DEFAULT_HTTP_PROTOCOL == 'http', (
+            'DEFAULT_HTTP_PROTOCOL must be http when DEFAULT_HTTP_PORT=80')
+    elif s.DEFAULT_HTTP_PORT == 443:
+        assert s.DEFAULT_HTTP_PROTOCOL == 'https', (
+            'DEFAULT_HTTP_PROTOCOL must be https when DEFAULT_HTTP_PORT=443')
+    else:
+        assert s.DEFAULT_HTTP_PROTOCOL in ('http', 'https')
+        assert 65535 > s.DEFAULT_HTTP_PORT > 1024
+
+    if baseurl_port:
+        assert baseurl_port.isdigit()
+        assert int(baseurl_port) == s.DEFAULT_HTTP_PORT, 'port in '
+    else:
+        assert s.DEFAULT_HTTP_PORT in (80, 443)
+
+    # check BASE_URL
+    assert not s.BASE_URL.endswith('/'), (
+        'BASE_URL should not have a trailing slash')
+    if s.DEFAULT_HTTP_PORT in (80, 443):
+        assert ':' not in s.BASE_URL.split('://')[1] (
+            'Port should not be included in BASE_URL when using '
+            'https on 443 or http on 80')
+    else:
+        assert s.BASE_URL.endswith(f':{s.DEFAULT_HTTP_PORT}'), (
+            ':port must be included in BASE_URL when using a non-standard port')
+
 
 
 def check_secure_settings(settings: dict):
@@ -302,21 +406,36 @@ def check_secure_settings(settings: dict):
     
     s = AttributeDict(settings)
 
-    # make sure all security-sensitive settings are coming from safe sources
-    for setting_name in s.SECURE_SETTINGS:
-        defined_in = get_setting_source(s.SETTINGS_SOURCES, setting_name)
+    # Some config should not be in git and can only be passed via secrets or os.env
+    SECURE_SETTINGS_SOURCES = (s.ENV_SECRETS_FILE, 'os.environ')
+    SECURE_SETTINGS = get_secret_setting_names(settings=settings)
 
-        if s.PENNY_ENV == 'PROD':
-            assert defined_in in s.SECURE_SETTINGS_SOURCES, (
+    # make sure all security-sensitive settings are coming from safe sources
+    for name in SECURE_SETTINGS:
+        value = settings.get(name, '')
+        defined_in = get_setting_source(s.SETTINGS_SOURCES, name)
+
+        # Do not comment this out, instead move the secret into secrets.env
+        # and PM the secret to other devs to update their secrets.env
+        assert defined_in not in SECURE_SETTINGS_SOURCES
+
+        try:
+            assert defined_in in SECURE_SETTINGS_SOURCES, (
                 'Security-sensitive settings must only be defined in secrets.env!\n'
-                f'    Missing setting: {setting_name} in secrets.env\n'
-                f'    Found in: {defined_in}'
+                f'    Missing setting: {name} expected in secrets.env\n'
+                f'    Found in: {defined_in} instead'
             )
             # make sure settings are not defaults on prod
-            assert getattr(s, setting_name) != s._PLACEHOLDER_FOR_UNSET, (
-                'Security-sensitive settings must be defined in secrets.env\n'
-                f'    Missing setting: {setting_name} in secrets.env'
+            assert value and value != PLACEHOLDER_FOR_SECRET, (
+                'Required API key or secret was not defined in secrets.env or os.environ\n'
+                f'    Got:       {name}={value} from {defined_in}'
+                f'    Expected:  {name}=somesecretvalue or {name}=UNUSED in secrets.env'
             )
+        except AssertionError as e:
+            if s.SERVER_ENV == 'PROD':
+                raise EnvironmentError from e
+            else:
+                print(f'[!] Warning: {e}')
 
     # if s.IS_TESTING:
     #     assert s.REDIS_DB != s.SETTINGS_DEFAULTS['REDIS_DB'], (
@@ -335,7 +454,7 @@ def get_django_status_line(settings: dict, pretty: bool=False) -> str:
 
     mng_str = term.format('> ./manage.py ', color='yellow')
     cmd_str = term.format(cli_arguments, color='blue')
-    env_str = term.format(s.PENNY_ENV, color='green')
+    env_str = term.format(s.SERVER_ENV, color='green')
     debug_str = term.format(s.DEBUG, color=('green', 'red')[s.DEBUG])
     pytype_str = " PYPY" if s.PY_TYPE == "pypy" else ""
     path_str = s.DATA_DIR.replace(s.REPO_DIR + "/", "../")
@@ -382,7 +501,7 @@ def log_django_startup(settings: dict) -> None:
         f.write(f'{s.STATUS_LINE}\n')
 
     # Log status line to stdout
-    if s.FANCY_STDOUT:
+    if s.CLI_COLOR:
         print(s.PRETTY_STATUS_LINE)
     else:
         print(s.STATUS_LINE)
@@ -390,13 +509,16 @@ def log_django_startup(settings: dict) -> None:
 
 ### File and folder management
 
-def mkchown(path: str, user: str, group: str):
+def mkchown(path: str, mode: str, user: str, group: str):
     """create and chown a directory to make sure a user can write to it"""
 
+    abilities = {'r':'read', 'w': 'write to'}
+    assert mode in abilities
     try:
         if os.path.exists(path) and not os.path.isdir(path):
             raise FileExistsError
-        elif not os.path.exists(path):
+
+        if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)
             if sys.platform == 'darwin':
                 # on mac, just chown as the user
@@ -405,22 +527,28 @@ def mkchown(path: str, user: str, group: str):
                 # on linux, chown as user:group
                 shutil.chown(path, user=user, group=group)
 
-        testfile = os.path.join(path, '.django_write_test')
-        with open(testfile, 'w') as f:
-            f.write('test')
-        os.remove(testfile)
+        if mode == 'r':
+            os.listdir(path)
+        else:
+            os.listdir(path)
+            testfile = os.path.join(path, '.django_write_test')
+            with open(testfile, 'w') as f:
+                f.write('test')
+            os.remove(testfile)
     except FileExistsError:
         # sshfs folders can trigger a FileExistsError if permissions
         # are not set up to allow user to access fuse filesystems
+        # make sure allow_other is passed to sshfs and www-data is in "fuse" group
         print(
-            f'Unwritable file existed where folder {path} was expected (if '
-            f'using sshfs, make sure allow_other is passed and {user} '
-            'is a member of the "fuse" user group)'
+            f'[!] Existing file conflicts with data dir path: {path}\n'
+            '(check for incorrect permissions, or remove it and try again)'
         )
         raise
     except PermissionError:
-        print(f'[!] Django user "{user}" must have permission to modify '
-              f'the data dir: {path}')
+        print(
+            f'[!] Django user "{user}" is not able to {abilities[mode]} '
+            f'the data dir: {path}'
+        )
         raise
 
 
@@ -429,13 +557,24 @@ def check_data_folders(settings: dict):
 
     s = AttributeDict(settings)
 
-    writeable_dirs = [s.DATA_DIR, *s.DATA_DIRS]
-    for path in writeable_dirs:
+    # Required permissions for each folder, r=read only, w=read and write
+    PROJECT_DIRS = {
+        s.REPO_DIR: 'r',
+        s.DATA_DIR: 'r',
+        s.LOGS_DIR: 'w',
+        s.STATIC_ROOT: 'r',
+        s.MEDIA_ROOT: 'w',
+    }
+
+    for path, mode in PROJECT_DIRS.items():
         mkchown(
             path,
+            mode=mode,
             user=s.DJANGO_USER,
             group=s.DJANGO_USER,
         )
+
+    return PROJECT_DIRS
 
 
 ### Process Management
