@@ -36,7 +36,7 @@ from config.system import (
 ################################################################################
 ### Environment Setup
 ################################################################################
-SERVER_ENV = os.getenv('SERVER_ENV', 'DEV').upper()
+SERVER_ENV = os.getenv('SERVER_ENV', os.getenv('PENNY_ENV', 'PROD')).upper()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
