@@ -239,9 +239,16 @@ def get_setting_source(SETTINGS_SOURCES: Dict[str, Dict[str, Any]], key: str) ->
 
 def get_secret_setting_names(settings: dict) -> Set[str]:
     """guess the setting names that likely contain sensitive values"""
+    excluded = {
+        'ENV_SECRETS',
+        'ENV_SECRETS_FILE',
+        'AUTH_PASSWORD_VALIDATORS',
+        'PASSWORD_RESET_TIMEOUT_DAYS',
+    }
     return {
         key for key in settings.keys()
         if any(s in key for s in ('API_KEY', 'SECRET', 'PASSWORD'))
+        and key not in excluded
     } | {
         key for key, value in settings['SETTINGS_DEFAULTS'].items()
         if value == PLACEHOLDER_FOR_SECRET
@@ -268,7 +275,7 @@ def check_system_invariants(settings: dict):
         f'is not supported (must be one of {s.ALLOWED_PYTHON_IMPLEMENTATIONS})'
     )
 
-    assert os.path.abspath(s.REPO_DIR) == os.path.abspath(s.ALLOWED_REPO_DIR), (
+    assert os.path.realpath(s.REPO_DIR) == os.path.realpath(s.ALLOWED_REPO_DIR), (
         'Project directory was not found in the expected location. '
         f'(you must move or symlink {s.REPO_DIR} to {s.ALLOWED_REPO_DIR})'
     )
@@ -276,8 +283,10 @@ def check_system_invariants(settings: dict):
     try:
         with open('/etc/passwd', 'r') as f:
             f.read()
-        except PermissionError:
-            pass
+        if not s.ALLOW_ROOT:
+            raise PermissionError(f'Django should never be run as root ({s.DJANGO_USER} can read /etc/passwd)!')
+    except PermissionError:
+        pass
 
     # running as root even once will corrupt the permissions on all the DATA_DIRS
     if s.DJANGO_USER == 'root':
@@ -289,9 +298,6 @@ def check_system_invariants(settings: dict):
                 '(You must manually fix the data folder permissions after '
                 'quitting in order to be able to run it as your normal user).'
             )
-
-    if s.SERVER_ENV == 'PROD':
-        
 
     # python -O strips asserts from our code, but we use them for critical logic
     try:
@@ -341,8 +347,8 @@ def check_http_settings(settings: dict):
     """check the server url scheme, host, and port config"""
     s = AttributeDict(settings)
 
-    baseurl_scheme, baseurl_host = s.BASE_URL.split('://', 1)
-    baseurl_domain, baseurl_port = baseurl_host.split(':', 1)
+    baseurl_scheme, baseurl_host, *_ = s.BASE_URL.split('://', 1) + ['']
+    baseurl_domain, baseurl_port, *_ = baseurl_host.split(':', 1) + ['']
 
     # check scheme
     assert baseurl_scheme in ('http', 'https'), (
@@ -392,7 +398,7 @@ def check_http_settings(settings: dict):
     assert not s.BASE_URL.endswith('/'), (
         'BASE_URL should not have a trailing slash')
     if s.DEFAULT_HTTP_PORT in (80, 443):
-        assert ':' not in s.BASE_URL.split('://')[1] (
+        assert ':' not in s.BASE_URL.split('://')[1], (
             'Port should not be included in BASE_URL when using '
             'https on 443 or http on 80')
     else:
@@ -432,9 +438,9 @@ def check_secure_settings(settings: dict):
                 f'    Expected:  {name}=somesecretvalue or {name}=UNUSED in secrets.env'
             )
         except AssertionError as e:
-            if s.SERVER_ENV == 'PROD':
+            if s.SERVER_ENV == 'PROD' or s.PROD_SAFETY_CHECK:
                 raise EnvironmentError from e
-            else:
+            elif not s.DEBUG:
                 print(f'[!] Warning: {e}')
 
     # if s.IS_TESTING:

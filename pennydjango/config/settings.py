@@ -36,7 +36,7 @@ from config.system import (
 ################################################################################
 ### Environment Setup
 ################################################################################
-SERVER_ENV = os.getenv('SERVER_ENV', 'UNSET').upper()
+SERVER_ENV = os.getenv('SERVER_ENV', 'DEV').upper()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
@@ -126,7 +126,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600            # 2 weeks
 
 CORS_ORIGIN_WHITELIST = (               # allow JS from these hosts to query server
-    DEFAULT_HOST,
     f'https://{PROJECT_NAME.lower()}.l',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
