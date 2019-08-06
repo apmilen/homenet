@@ -254,6 +254,7 @@ def get_secret_setting_names(settings: dict) -> Set[str]:
     } | {
         key for key, value in settings['SETTINGS_DEFAULTS'].items()
         if value == PLACEHOLDER_FOR_SECRET
+        and key not in excluded
     }
 
 ### Invariant and Assertion Checkers
