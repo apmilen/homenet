@@ -205,7 +205,10 @@ brew services stop nginx
 #### Generate a self-signed SSL certificate
 ```bash
 cd /opt/monadical.homenet
-./bin/generate_dev_ssl homenet.l
+./bin/generate_dev_ssl homenet.l openssl
+./bin/generate_dev_ssl homenet.zalad.io openssl
+# optionally specify mkcert arg instead of openssl if its installed
+# https://github.com/FiloSottile/mkcert
 ```
 
 ---
