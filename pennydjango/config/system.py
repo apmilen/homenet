@@ -423,8 +423,6 @@ def check_secure_settings(settings: dict):
 
         # Do not comment this out, instead move the secret into secrets.env
         # and PM the secret to other devs to update their secrets.env
-        assert defined_in not in SECURE_SETTINGS_SOURCES
-
         try:
             assert defined_in in SECURE_SETTINGS_SOURCES, (
                 'Security-sensitive settings must only be defined in secrets.env!\n'
