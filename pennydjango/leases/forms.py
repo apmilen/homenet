@@ -23,16 +23,12 @@ class BasicLeaseMemberForm(forms.ModelForm):
         fields = ('name', 'email', 'applicant_type', 'app_fee')
 
     def clean_email(self):
-
         _, email = parseaddr(self.cleaned_data.get('email'))
+        email = email.strip()
 
         if '@' not in email:
             raise ValidationError(
                 'Email is invalid, double check it and try again'
-            )
-        if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError(
-                'That email is already in use with a different account'
             )
         return email
 
