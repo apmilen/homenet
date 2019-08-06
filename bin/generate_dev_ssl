@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -Eeuxo pipefail
+# set -Eeuxo pipefail
 
 REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 OUT_DIR="$REPO_DIR/data/certs"
@@ -30,8 +30,6 @@ function install_mkcert {
     echo "[+] Installing mkcert (https://github.com/FiloSottile/mkcert)..."
     if brew --version > /dev/null; then
         brew install mkcert
-    else
-        apt install -y mkcert
     fi
 }
 
@@ -61,7 +59,7 @@ function generate_ssl_cert_openssl {
 
 function main {
     DOMAIN="$1"
-    METHOD="${2:-mkcert}"
+    METHOD="${2:-openssl}"
 
     if [[ ! "$DOMAIN" ]]; then
         print_help
@@ -80,3 +78,5 @@ function main {
     echo "[√] Done. Your new certificates are can be found here:"
     echo "    $OUT_DIR"
 }
+
+main "$@"
