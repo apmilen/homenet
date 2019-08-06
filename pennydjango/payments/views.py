@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, DecimalException
 
 from django.conf import settings
 from django.views.generic.base import TemplateView
@@ -62,7 +62,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             amount = Decimal(request.POST['amount'])
             amt_with_fee = Decimal(request.POST['amount-plus-fee'])
             request_amount_plus_fee = amt_with_fee * Decimal(100)
-        except ValueError:
+        except DecimalException:
             messages.error(
                 request, 
                 "Please provide a valid amount"
@@ -92,6 +92,16 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         amount_plus_fee = get_amount_plus_fee(amount)
         fee = amount_plus_fee / Decimal(100) - amount
         amount_to_stripe = int(amount_plus_fee)
+
+        if amount_to_stripe < 50:
+            messages.error(
+                request, 
+                "Amount to pay must be at least 50 cents"
+            )
+            return HttpResponseRedirect(
+                reverse('leases:detail-client', args=[client.id])
+            )
+            
         assert request_amount_plus_fee == amount_plus_fee, \
             "The amount plus Stripe fee is inconsistent"
         lease_member = LeaseMember.objects.get(user=request.user)
@@ -178,7 +188,7 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
             
             try:
                 amount = Decimal(request.POST['amount'])
-            except ValueError:
+            except DecimalException:
                 messages.error(
                     request, 
                     "Please provide a valid amount"
@@ -284,7 +294,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
             try:
                 amount = Decimal(request.POST['amount'])
                 stripe_plaid_amt = amount * 100
-            except ValueError:
+            except DecimalException:
                 messages.error(
                     request, 
                     "Please provide a valid amount"
