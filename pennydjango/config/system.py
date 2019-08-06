@@ -6,6 +6,7 @@ in the function, not at the top!!!
 """
 
 import os
+import re
 import sys
 import pwd
 import getpass
@@ -20,8 +21,17 @@ import subprocess
 from dotenv import dotenv_values
 
 
-PLACEHOLDER_FOR_SECRET = 'set-this-value-in-secrets.env'
 COMMIT_ID_LENGTH = 9
+PLACEHOLDER_FOR_SECRET = 'set-this-value-in-secrets.env'
+AUTOFIND_SECRET_SETTINGS = re.compile('^.*(PASSWORD|SECRET|API_KEY).*$')
+AUTOFIND_SECRET_SETTINGS_EXCLUDED = {
+    'ENV_SECRETS',
+    'ENV_SECRETS_FILE',
+    'AUTH_PASSWORD_VALIDATORS',
+    'PASSWORD_RESET_TIMEOUT_DAYS',
+    'ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE',
+    'PLACEHOLDER_FOR_SECRET',
+}
 
 
 class AttributeDict(dict): 
@@ -239,22 +249,14 @@ def get_setting_source(SETTINGS_SOURCES: Dict[str, Dict[str, Any]], key: str) ->
 
 def get_secret_setting_names(settings: dict) -> Set[str]:
     """guess the setting names that likely contain sensitive values"""
-    excluded = {
-        'ENV_SECRETS',
-        'ENV_SECRETS_FILE',
-        'AUTH_PASSWORD_VALIDATORS',
-        'PASSWORD_RESET_TIMEOUT_DAYS',
-        'ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE',
-        'PLACEHOLDER_FOR_SECRET',
-    }
     return {
         key for key in settings.keys()
-        if any(s in key for s in ('API_KEY', 'SECRET', 'PASSWORD'))
-        and key not in excluded
+        if AUTOFIND_SECRET_SETTINGS.match(key)
+        and key not in AUTOFIND_SECRET_SETTINGS_EXCLUDED
     } | {
         key for key, value in settings['SETTINGS_DEFAULTS'].items()
         if value == PLACEHOLDER_FOR_SECRET
-        and key not in excluded
+        and key not in AUTOFIND_SECRET_SETTINGS_EXCLUDED
     }
 
 ### Invariant and Assertion Checkers
