@@ -34,6 +34,22 @@ ln -s /opt/monadical.homenet /opt/pennybags
 
 ### 1. Install the dependencies
 
+#### Make the JS and Python dependencies accessible from your `$PATH`
+
+If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
+```bash
+PATH=./node_modules/.bin:./.venv/bin:./../.venv/bin:$PATH
+PIPENV_VENV_IN_PROJECT=1
+PIPENV_IGNORE_VIRTUALENVS=1
+```
+
+If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
+```fish
+set -x PATH ./node_modules/.bin ./.venv/bin ./../.venv/bin $PATH
+set -x PIPENV_VENV_IN_PROJECT 1
+set -x PIPENV_IGNORE_VIRTUALENVS 1
+```
+
 #### Python dependencies
 
 ##### Install `Python >= 3.7.4`
@@ -44,7 +60,7 @@ Optional: You can also use [pyenv](https://github.com/pyenv/pyenv) to install py
 
 ##### Install the [`pipenv`](https://github.com/pypa/pipenv) package manager
 ```bash
-python3.7 -m pip install --user pipenv
+python3.7 -m pip install pipenv
 ```
 
 ##### Install the project Python dependencies
@@ -96,21 +112,6 @@ Add this line to your `/etc/hosts` file (`sudo` is required to edit it):
 127.0.0.1   homenet.l
 ```
 
-#### Make the JS and Python dependencies accessible from your `$PATH`
-
-If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
-```bash
-PATH=./node_modules/.bin:./.venv/bin:./../.venv/bin:$PATH
-PIPENV_VENV_IN_PROJECT=1
-PIPENV_IGNORE_VIRTUALENVS=1
-```
-
-If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
-```fish
-set -x ./node_modules/.bin ./.venv/bin ./../.venv/bin $PATH
-set -x PIPENV_VENV_IN_PROJECT 1
-set -x PIPENV_IGNORE_VIRTUALENVS 1
-```
 
 #### Install supervisord
 
