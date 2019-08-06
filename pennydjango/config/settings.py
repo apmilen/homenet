@@ -317,12 +317,17 @@ TEMPLATES = [
 ]
 STATICFILES_DIRS = [STATICFILES_DIR]
 
-# Required permissions for each folder, r=read only, w=read and write
+# Required permissions for each folder, r=read-only, w=read & write
 PROJECT_DIRS = {
     REPO_DIR: 'r',
+    BASE_DIR: 'r',
+    ENV_DIR: 'r',
+    DATA_DIR: 'r',
+    TEMPLATES_DIR: 'r',
+    STATICFILES_DIR: 'r',
     LOGS_DIR: 'w',
-    STATIC_ROOT: 'r',
     MEDIA_ROOT: 'w',
+    STATIC_ROOT: 'w',
 }
 
 DATABASES = {
