@@ -1,36 +1,82 @@
 #!/usr/bin/env bash
 
-DOMAIN="$1"
+# set -Eeuxo pipefail
 
-if [[ ! "$DOMAIN" ]]; then
+REPO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+OUT_DIR="$REPO_DIR/data/certs"
+
+DH_SIZE=2048
+
+function print_help {
     echo "Generate a self-signed SSL certificate and Diffie-helman parameters for a given [domain]"
     echo ""
     echo "Usage:"
-    echo "    ./generate.sh [domain]"
+    echo "    ./generate.sh [domain] [mkcert|openssl]"
     echo ""
     echo "Examples:"
-    echo "    ./generate.sh homenet.l"
-    echo "    ./generate.sh homenet.zalad.io"
-    echo "    ./generate.sh homenet.com"
+    echo "    ./generate.sh example.l"
+    echo "    ./generate.sh example.zalad.io mkcert"
+    echo "    ./generate.sh example.com openssl"
     exit 2
-fi
+}
 
-openssl dhparam -out "$DOMAIN.dh" 2048
 
-# You can either:
-#
-# 1. generate a self-signed cert with openssl
-#
-#openssl req -new -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out "$DOMAIN.crt" -keyout "$DOMAIN.key" -subj "/C=US/ST=NY/L=New York/O=Monadical/OU=Engineering/CN=$DOMAIN"
-#
-# 2. Or use mkcert to install a trusted local dev cert (https://github.com/FiloSottile/mkcert)
+function generate_dh_param {
+    echo "[+] Generating $DH_SIZE bit Diffie-helman parameter file..."
+    openssl dhparam -out "$OUT_DIR/$DOMAIN.dh" "$DH_SIZE"
+}
 
-if brew --version > /dev/null; then
-    brew install mkcert
-else
-    apt install -y mkcert
-fi
+function install_mkcert {
+    echo "[+] Installing mkcert (https://github.com/FiloSottile/mkcert)..."
+    if brew --version > /dev/null; then
+        brew install mkcert
+    fi
+}
 
-mkcert "$DOMAIN"
-mv "$DOMAIN.pem" "$DOMAIN.crt"
-mv "$DOMAIN-key.pem" "$DOMAIN.key"
+function generate_ssl_cert_mkcert {
+    DOMAIN="$1"
+    echo "[+] Generating self-signed cert for $DOMAIN using mkcert..."
+    cd /tmp || exit 1
+    mkcert "$DOMAIN"
+    mv "$DOMAIN.pem" "$OUT_DIR/$DOMAIN.crt"
+    mv "$DOMAIN-key.pem" "$OUT_DIR/$DOMAIN.key"
+}
+
+function generate_ssl_cert_openssl {
+    DOMAIN="$1"
+    echo "[+] Generating self-signed cert for $DOMAIN using openssl..."
+    openssl req \
+        -new \
+        -newkey rsa:4096 \
+        -x509 \
+        -sha256 \
+        -days 365 \
+        -nodes \
+        -out "$OUT_DIR/$DOMAIN.crt" \
+        -keyout "$OUT_DIR/$DOMAIN.key" \
+        -subj "/C=US/ST=NY/L=New York/O=Monadical/OU=Engineering/CN=$DOMAIN"
+}
+
+function main {
+    DOMAIN="$1"
+    METHOD="${2:-openssl}"
+
+    if [[ ! "$DOMAIN" ]]; then
+        print_help
+        exit 2
+    fi
+    if [[ "$METHOD" == "mkcert" ]]; then
+        install_mkcert
+        generate_ssl_cert_mkcert "$DOMAIN"
+    elif [[ "$METHOD" == "openssl" ]]; then
+        generate_ssl_cert_openssl "$DOMAIN"
+    else
+        print_help
+        exit 2
+    fi
+    generate_dh_param
+    echo "[√] Done. Your new certificates are can be found here:"
+    echo "    $OUT_DIR"
+}
+
+main "$@"

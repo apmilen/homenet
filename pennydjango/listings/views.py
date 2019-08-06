@@ -221,7 +221,7 @@ class ListingDetailView(BaseContextMixin, DetailView):
         )
 
     def context(self, request, *args, **kwargs):
-        return {'map_key': settings.MAP_KEY}
+        return {'map_key': settings.MAPBOX_API_KEY}
 
 
 class ChangeListingStatusView(AgentRequiredMixin, UpdateView):

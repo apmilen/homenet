@@ -35,7 +35,7 @@ class MapGeopoint(MapInput):
             default_map_attrs.update(self.map_attrs)
         js = f"""
 <script>
-    mapboxgl.accessToken = '{settings.MAP_KEY}';
+    mapboxgl.accessToken = '{settings.MAPBOX_API_KEY}';
     {self.map_attrs_to_javascript(default_map_attrs)}
 </script>
 """

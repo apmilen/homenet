@@ -2,6 +2,15 @@
 
 Apartment rental listing platform to match realtors with potential home renters and buyers.
 
+- https://homenet.zalad.io
+- https://homenet.zalad.io/admin
+
+Services:  
+- https://dashboard.stripe.com/account/team
+- https://app.mailgun.com/app/account/settings
+- https://dash.cloudflare.com/413ad3842c5a82a780b582d8de8dc903/zalad.io/dns
+- https://console.cloud.google.com/google/maps-apis/overview?pli=1&project=pennybags-1556050514027
+
 ## Project Quickstart
 
 ---
@@ -11,17 +20,35 @@ Apartment rental listing platform to match realtors with potential home renters 
 Clone this repo into the `/opt` directory:
 ```bash
 # Use ssh (not https) to avoid push permission errors
-git clone git@github.com:pirate/pennybags.git /opt/monadical.homenet
+# (replace YOUR_GITHUB_USER with your github username)
+git clone git@github.com:YOUR_GITHUB_USER/pennybags.git /opt/monadical.homenet
 ```
 
 If you clone it elsewhere instead (e.g. inside your home folder), you must symlink `/opt/monadical.homenet` to the repo location:
 ```bash
 ln -s /path/to/cloned/repo/pennybags /opt/monadical.homenet
+ln -s /opt/monadical.homenet /opt/pennybags
 ```
 
 ---
 
 ### 1. Install the dependencies
+
+#### Make the JS and Python dependencies accessible from your `$PATH`
+
+If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
+```bash
+PATH=./node_modules/.bin:./.venv/bin:./../.venv/bin:$PATH
+PIPENV_VENV_IN_PROJECT=1
+PIPENV_IGNORE_VIRTUALENVS=1
+```
+
+If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
+```fish
+set -x PATH ./node_modules/.bin ./.venv/bin ./../.venv/bin $PATH
+set -x PIPENV_VENV_IN_PROJECT 1
+set -x PIPENV_IGNORE_VIRTUALENVS 1
+```
 
 #### Python dependencies
 
@@ -33,7 +60,7 @@ Optional: You can also use [pyenv](https://github.com/pyenv/pyenv) to install py
 
 ##### Install the [`pipenv`](https://github.com/pypa/pipenv) package manager
 ```bash
-python3.7 -m pip install --user pipenv
+python3.7 -m pip install pipenv
 ```
 
 ##### Install the project Python dependencies
@@ -41,19 +68,28 @@ python3.7 -m pip install --user pipenv
 (The Python dependencies are defined in `./Pipfile`)
 ```bash
 cd /opt/monadical.homenet
-pipenv install
+pipenv install --dev
+pipenv clean
+pipenv lock --clear
+pipenv check
 ```
 
 #### Javascript dependencies (dev machines only):
 
 ##### Install `Node >= 12.6.0`
+
+On Ubuntu:
 ```bash
-sudo apt install npm gdal-bin   # or `brew install node gdal`
-npm install -g npm
+sudo apt install npm gdal-bin
+```
+On Mac:
+```bash
+brew install node gdal
 ```
 
 ##### Install the [`yarn`](https://yarnpkg.com/) package manager
 ```bash
+npm install --global npm
 npm install --upgrade --global yarn
 ```
 
@@ -76,25 +112,21 @@ Add this line to your `/etc/hosts` file (`sudo` is required to edit it):
 127.0.0.1   homenet.l
 ```
 
-#### Make the JS and Python dependencies accessible from your `$PATH`
-
-If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
-```bash
-PATH=./node_modules/.bin:$PATH
-PIPENV_VENV_IN_PROJECT=1
-```
-
-If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
-```fish
-set -x ./node_modules/.bin $PATH
-set -x PIPENV_VENV_IN_PROJECT 1
-```
 
 #### Install supervisord
 
 Supervisord is used to manage starting and stopping nginx, postgresql, and any other background services.
+
+On Ubuntu:
 ```bash
-sudo apt install supervisor   # or `brew install supervisor`
+sudo apt install supervisor
+systemctl enable supervisor
+```
+
+On Mac:
+```bash
+brew install supervisor
+brew services start supervisor
 ```
 
 ---
@@ -109,12 +141,19 @@ sudo echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" >> /et
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 sudo apt-get update
 sudo apt install postgresql libpq-dev
+
+# Postgresl is managed by supervisord, so we dont want it being started at boot
+systemctl stop postgresql
+systemctl disable postgresql
 ```
 
 On macOS:
 ```bash
 brew install postgresql
 brew link --overwrite --force postgresql
+
+# Postgresl is managed by supervisord, so we dont want it being started at boot
+brew services stop postgresql
 ```
 
 #### Instantiate the pennybags database
@@ -154,17 +193,23 @@ On Ubuntu:
 sudo add-apt-repository -y ppa:nginx/stable
 sudo apt update
 sudo apt install nginx
+systemctl stop nginx
+systemctl disable nginx
 ```
 
 On macOS:
 ```bash
 brew install nginx
+brew services stop nginx
 ```
 
-#### Generate a self-signed SSL certificate for `homenet.l`
+#### Generate a self-signed SSL certificate
 ```bash
-cd /opt/monadical.homenet/data/certs
-./generate.sh homenet.l
+cd /opt/monadical.homenet
+./bin/generate_dev_ssl homenet.l openssl
+./bin/generate_dev_ssl homenet.zalad.io openssl
+# optionally specify mkcert arg instead of openssl if its installed
+# https://github.com/FiloSottile/mkcert
 ```
 
 ---
@@ -174,15 +219,35 @@ cd /opt/monadical.homenet/data/certs
 #### Start Postgresql and Nginx
 Background processes are managed by Supervisord, they must be started in order for Django to work.
 
+**First, link the supervisord config to your system supervisord config folder.**
+
 On Ubuntu:
 ```bash
-supervisord -c /opt/monadical.homenet/etc/supervisor/ubuntu-dev.conf
+ln -s /opt/monadical.homenet/etc/supervisor/monadical.homenet.dev.ubuntu.conf /etc/supervisor/conf.d/
 ```
 
 On macOS:
 ```bash
-supervisord -c /opt/monadical.homenet/etc/supervisor/mac-dev.conf
+mkdir /usr/local/etc/supervisor.d
+ln -s /opt/monadical.homenet/etc/supervisor/monadical.homenet.dev.ubuntu.conf /usr/local/etc/supervisor.d/
 ```
+
+**Then start supervisord and confirm the background tasks have been started succesfully.**
+```bash
+supervisorctl reread
+supervisorctl update
+supervisorctl status
+```
+Should output something like:
+```
+monadical.homenet:nginx          RUNNING   pid 28518, uptime 0:25:32
+monadical.homenet:django         RUNNING   pid 28517, uptime 0:25:32
+monadical.homenet:postgres       RUNNING   pid 28516, uptime 0:25:32
+```
+
+If you encounter any problems, you can check the logs here:  
+`/opt/monadical.homenet/data/logs/*.log`
+
 
 #### Start Django Runserver
 ```bash
@@ -208,22 +273,23 @@ Alternatively, open [http://127.0.0.1:8000](http://127.0.0.1:8000) to access run
 ### Activate the Python Virtualenv
 ```bash
 cd /opt/monadical.homenet
-source .venv/bin/activate  # or source .venv/bin/activate.fish
+source .venv/bin/activate
+# or `source .venv/bin/activate.fish`
+# or `pipenv shell`
 ```
 
 ### Start/stop/restart Nginx or Postgresql
 
-Replace `ubuntu-dev.conf` below with `mac-dev.conf` if using macOS.
 ```bash
 cd /opt/monadical.homenet
 
 # make sure supervisord is running first
-supervisord -c etc/supervisor/ubuntu-dev.conf
+systemctl start supervisor  # on mac: brew services start supervisor
 
 # then check the status of all services or a specific service
-supervisorctl -c etc/supervisor/ubuntu-dev.conf status <service|all>
-supervisorctl -c etc/supervisor/ubuntu-dev.conf stop <service|all>
-supervisorctl -c etc/supervisor/ubuntu-dev.conf start <service|all>
+supervisorctl status <service|all>
+supervisorctl stop <service|all>
+supervisorctl start <service|all>
 ```
 
 ### Inspect logfile output
@@ -231,9 +297,9 @@ supervisorctl -c etc/supervisor/ubuntu-dev.conf start <service|all>
 cd /opt/monadical.homenet/data/logs
 tail -f nginx.err
 tail -f nginx.out
-tail -f postgresql.err
-tail -f postgresql.out
+tail -f postgres.log
 tail -f reloads.log
+tail -f django.log
 # etc.
 ```
 

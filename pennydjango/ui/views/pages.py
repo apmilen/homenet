@@ -26,7 +26,7 @@ class Home(PublicReactView):
         }
 
         return {
-            'map_key': settings.MAP_KEY,
+            'map_key': settings.MAPBOX_API_KEY,
             'constants': constants,
             'endpoint': '/listings/public/',
         }
