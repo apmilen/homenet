@@ -244,6 +244,7 @@ def get_secret_setting_names(settings: dict) -> Set[str]:
         'ENV_SECRETS_FILE',
         'AUTH_PASSWORD_VALIDATORS',
         'PASSWORD_RESET_TIMEOUT_DAYS',
+        'PLACEHOLDER_FOR_SECRET',
     }
     return {
         key for key in settings.keys()
@@ -426,8 +427,8 @@ def check_secure_settings(settings: dict):
         try:
             assert defined_in in SECURE_SETTINGS_SOURCES, (
                 'Security-sensitive settings must only be defined in secrets.env!\n'
-                f'    Missing setting: {name} expected in secrets.env\n'
-                f'    Found in: {defined_in} instead'
+                f'    Got:       {name}={value} in {defined_in}\n'
+                f'    Expected:  {name}={value} in secrets.env'
             )
             # make sure settings are not defaults on prod
             assert value and value != PLACEHOLDER_FOR_SECRET, (
@@ -437,7 +438,7 @@ def check_secure_settings(settings: dict):
             )
         except AssertionError as e:
             if s.SERVER_ENV == 'PROD' or s.PROD_SAFETY_CHECK:
-                raise EnvironmentError from e
+                raise e
             elif not s.DEBUG:
                 print(f'[!] Warning: {e}')
 
