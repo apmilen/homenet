@@ -244,6 +244,7 @@ def get_secret_setting_names(settings: dict) -> Set[str]:
         'ENV_SECRETS_FILE',
         'AUTH_PASSWORD_VALIDATORS',
         'PASSWORD_RESET_TIMEOUT_DAYS',
+        'ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE',
         'PLACEHOLDER_FOR_SECRET',
     }
     return {
