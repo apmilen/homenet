@@ -329,8 +329,6 @@
   <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"
           type="text/javascript" crossorigin></script>
     <script src="{% http2static 'js/dropzone.js' %}"></script>
-    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js">
-</script>
     <script type="text/javascript">
         Dropzone.autoDiscover = false;
         $(document).ready(() => {
@@ -350,6 +348,7 @@
     </script>
   {% endif %}
 
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
   <script>
     $('#paymentModal, #plaidModal').on('show.bs.modal', function (e) {
         $('#paymentMethodModal').modal('hide')

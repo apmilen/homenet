@@ -19,6 +19,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     def clean_email(self):
         _, email = parseaddr(self.cleaned_data.get('email'))
+        email = email.strip()
 
         if '@' not in email:
             raise ValidationError(
