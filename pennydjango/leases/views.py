@@ -17,6 +17,7 @@ from django.views.generic import (
     DeleteView)
 from django.views.generic.base import View
 from django.utils.text import slugify
+from django.db.models import Q
 
 from rest_framework import viewsets
 from weasyprint import HTML
@@ -38,7 +39,9 @@ from listings.mixins import ListingContextMixin
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
-from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT, APPROVED
+from payments.constants import (
+    CLIENT_TO_APP, APP_TO_CLIENT, APPROVED, OWNER_PAYOUT, APP_TO_AGENT
+)
 
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
@@ -91,7 +94,9 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
             status=APPROVED
         ).aggregate(Sum('amount'))
         lease_negative_balance = lease_transactions.filter(
-            from_to=APP_TO_CLIENT,
+            Q(from_to=APP_TO_CLIENT) | 
+            Q(from_to=OWNER_PAYOUT) | 
+            Q(from_to=APP_TO_AGENT),
             status=APPROVED
         ).aggregate(Sum('amount'))
         lease_postive_balance = lease_postive_balance['amount__sum'] or 0
