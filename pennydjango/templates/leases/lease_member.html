@@ -97,25 +97,37 @@
             '<input type="hidden" name="lease" value={{lease.id}} />'
             )
           $('#manual-transaction-modal').modal('show')
+          $('#manual-transaction-modal #id_from_to').change(function () {
+            let from_to = $("#id_from_to option:selected").val()
+            if (from_to === 'owner_payout') {
+              $("#id_lease_member").parent().hide()
+            } else {
+              $("#id_lease_member").parent().show()
+            }
+          })
         }
     });
   }
+  
   submitTransaction = () => {
     $('#manual-transaction-form').submit(function() { // catch the form's submit event
-          $.ajax({
-              data: $(this).serialize(), 
-              type: $(this).attr('method'), 
-              url: $(this).attr('action'),
-              success: function(data, textStatus, xhr) { 
-               if (data.complete) {
-                window.location.replace("{% url 'leases:detail' pk=lease.id %}")
-               } else {
-                 $('#manual-transaction-modal .modal-body').empty()
-                 $('#manual-transaction-modal .modal-body').append(data)
-               }
-              }
-          });
-        return false;
+      $.ajax({
+          data: $(this).serialize(), 
+          type: $(this).attr('method'), 
+          url: $(this).attr('action'),
+          success: function(data, textStatus, xhr) { 
+            if (data.complete) {
+            window.location.replace("{% url 'leases:detail' pk=lease.id %}")
+            } else {
+              $('#manual-transaction-modal .modal-body').empty()
+              $('#manual-transaction-modal .modal-body').append(data)
+              $('#manual-transaction-form').append(
+              '<input type="hidden" name="lease" value={{lease.id}} />'
+              )
+            }
+          }
+        });
+      return false;
     });
   }
   

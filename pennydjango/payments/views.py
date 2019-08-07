@@ -22,7 +22,7 @@ from payments.utils import (
 )
 from payments.constants import (
     DEFAULT_PAYMENT_METHOD, CLIENT_TO_APP, FAILED, APPROVED, PAYMENT_METHOD,
-    FROM_TO, BANK_TRANSFER
+    FROM_TO, BANK_TRANSFER, MANUAL_TRANSACTION_CHOICES
 )
 from leases.models import Lease, LeaseMember
 
@@ -174,18 +174,33 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
         if request.is_ajax():
             error = False
             form = request.POST
-            lease_id = request.POST.get('lease', False)
-            lease = get_object_or_404(Lease, id=lease_id)
-            lease_member_id = request.POST.get('lease_member', False)
-            lease_member = get_object_or_404(LeaseMember, id=lease_member_id)
-            entered_by_id = request.POST.get('entered_by', False)
-            entered_by = get_object_or_404(User, id=entered_by_id)
-            from_to = request.POST.get('from_to', False)
-            payment_method = request.POST.get('payment_method', False)
             context = {
                 'form': ManualTransactionForm(initial=form)
             }
+            lease_id = request.POST.get('lease', False)
+            lease = get_object_or_404(Lease, id=lease_id)
+            lease_member_id = request.POST.get('lease_member', False)
+            from_to = request.POST.get('from_to', False)
             
+            if from_to is "owner_payout":
+                lease_member = None
+            elif not lease_member_id:
+                error = True
+                messages.error(
+                    request, 
+                    'Please select a Lease Member'
+                )
+                response = render_to_string(
+                    'payments/manual_transaction_form.html',
+                    context,
+                    request
+                )
+                return HttpResponse(response)
+            else:
+                lease_member = get_object_or_404(LeaseMember, id=lease_member_id)        
+
+            payment_method = request.POST.get('payment_method', False)
+        
             try:
                 amount = Decimal(request.POST['amount'])
             except DecimalException:
@@ -208,7 +223,7 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
                     'Invalid amount to pay'
                 )
 
-            from_to_options = dict(FROM_TO)
+            from_to_options = dict(MANUAL_TRANSACTION_CHOICES)
             if not from_to in from_to_options:
                 error = True
                 messages.error(
@@ -245,7 +260,7 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
 
                         Transaction.objects.create(
                             lease_member=lease_member,
-                            entered_by=entered_by,
+                            entered_by=request.user,
                             transaction_user=request.user,
                             amount=amount,
                             from_to=from_to,
