@@ -112,7 +112,7 @@ class CreateCollectionModal extends React.Component {
                 listing_id: this.props.listing_id,
                 ...collection_data,
             }
-            $.post("", post_data, response => {
+            $.post("/listings/", post_data, response => {
                 if (response.success)
                     global.location.reload()
                 else
@@ -197,7 +197,7 @@ export class ListingComponent extends React.Component {
             collection_id: e.target.id,
             listing_id: this.props.listing.id
         }
-        $.post("", post_data, response => {
+        $.post("/listings/", post_data, response => {
             if (response.success) {
                 this.setState({collections: response.collections})
             }
