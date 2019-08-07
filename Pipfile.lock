@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c16102fc9674734e1b313576273cbe95e244653bdd8a97e5fb2368d8cab96ae1"
+            "sha256": "8f6e461a72b2cd7d8b29166cfaa2f506159c537674ee88608f3f33d23571c35a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -22,14 +22,6 @@
                 "sha256:58587dd4dc3daefad0487f6d9ae32b4542b185e1c36db6993290e7c41ca2b47c"
             ],
             "version": "==1.5"
-        },
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
         },
         "atomicwrites": {
             "hashes": [
@@ -478,13 +470,6 @@
             "index": "pypi",
             "version": "==2.8.3"
         },
-        "psycopg2cffi": {
-            "hashes": [
-                "sha256:fcaa4d5477a8205b33e8e9e6707a5c331a0f5d7f4af354529b6564377b678079"
-            ],
-            "index": "pypi",
-            "version": "==2.8.1"
-        },
         "ptyprocess": {
             "hashes": [
                 "sha256:923f299cc5ad920c68f2bc0bc98b75b9f838b93b599941a6b63ddbc2476394c0",
@@ -625,11 +610,11 @@
         },
         "stripe": {
             "hashes": [
-                "sha256:03a620ec1868db914671ec4fd409622fff9a439d5a49197fbe107e57368c5ce9",
-                "sha256:20776e19e9ac61a6f005e669991296c867b34bd2a5880450476b514c5ebb495b"
+                "sha256:9357983bf226af97825c7668d48759dd7d90298b53e124fbaefcfdc234042ab7",
+                "sha256:ca1420459a6038323b669c5818617a9c53fae43757373d309505a9193339cc04"
             ],
             "index": "pypi",
-            "version": "==2.33.0"
+            "version": "==2.33.2"
         },
         "text-unidecode": {
             "hashes": [
@@ -690,14 +675,6 @@
         }
     },
     "develop": {
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "backcall": {
             "hashes": [
                 "sha256:38ecd85be2c1e78f77fd91700c76e14667dc21e2713b63876c0eb901196e01e4",

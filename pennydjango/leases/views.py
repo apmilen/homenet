@@ -38,7 +38,7 @@ from listings.mixins import ListingContextMixin
 from listings.serializer import PrivateListingSerializer
 
 from payments.models import Transaction
-from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT
+from payments.constants import CLIENT_TO_APP, APP_TO_CLIENT, APPROVED
 
 from penny.mixins import (
     ClientOrAgentRequiredMixin, AgentRequiredMixin, MainObjectContextMixin
@@ -83,13 +83,16 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         change_status_url = reverse('leases:change-status',
                                     args=[self.object.id])
         lease_transactions = Transaction.objects.filter(
-            lease_member__offer=self.object
+            lease_member__offer=self.object,
+            status=APPROVED
         )
         lease_postive_balance = lease_transactions.filter(
-            from_to=CLIENT_TO_APP
+            from_to=CLIENT_TO_APP,
+            status=APPROVED
         ).aggregate(Sum('amount'))
         lease_negative_balance = lease_transactions.filter(
-            from_to=APP_TO_CLIENT
+            from_to=APP_TO_CLIENT,
+            status=APPROVED
         ).aggregate(Sum('amount'))
         lease_postive_balance = lease_postive_balance['amount__sum'] or 0
         lease_negative_balance = lease_negative_balance['amount__sum'] or 0
@@ -443,7 +446,10 @@ class ClientLease(ClientOrAgentRequiredMixin,
         )
         lease_members = lease.leasemember_set.select_related('user')
         move_in_costs = lease.moveincost_set.order_by('-created')
-        lease_transactions = Transaction.objects.filter(lease_member__offer=lease)
+        lease_transactions = Transaction.objects.filter(
+            lease_member__offer=lease,
+            status=APPROVED
+        )
         total_paid_lease = lease_transactions.aggregate(Sum('amount'))
         total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
         lease_pending_payment = total_move_in_cost
