@@ -7,6 +7,7 @@ from django.db.models import Sum
 from leases.models import MoveInCost
 from leases.constants import LEASE_STATUS
 from payments.models import Transaction
+from payments.constants import APPROVED
 
 
 def get_amount_plus_fee(amount):
@@ -20,7 +21,8 @@ def get_amount_plus_fee(amount):
 
 def get_lease_total_pending(lease):
     lease_total_paid = Transaction.objects.filter(
-        lease_member__offer=lease
+        lease_member__offer=lease,
+        status=APPROVED
     ).aggregate(Sum('amount'))
     lease_move_in_costs = MoveInCost.objects.total_by_offer(lease.id)
     lease_total_pending = lease_move_in_costs
