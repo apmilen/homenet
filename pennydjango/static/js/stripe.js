@@ -33,7 +33,11 @@ form.addEventListener('submit', function(event) {
     if (result.error) {
       // Inform the customer that there was an error.
       var errorElement = document.getElementById('card-errors');
-      errorElement.textContent = result.error.message;
+      //errorElement.textContent = result.error.message + "ERROR";
+      $('#paymentModal .modal-body').before('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+      + result.error.message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+      '<span aria-hidden="true">&times;</span></button><div>')
+    $('.alert').alert()
     } else {
       // Send the token to your server.
       stripeTokenHandler(result.token);

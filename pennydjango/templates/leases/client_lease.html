@@ -360,25 +360,25 @@
     });
 
     $('#plaidModal, #paymentModal').on('hidden.bs.modal', function (e) {
-      $('.loader').remove()
+      $('.alert, .loader').remove()
     });
 
     getStripeFee = () => {
-        document.getElementById("total").innerHTML = ''
-        let amount = parseFloat(document.getElementById("amount").value)
-        if (amount > 0) {
-            $.ajax({
-                url: "{% url 'payments' pk=lease.id %}",
-                data: {
-                    'amount': amount
-                },
-                dataType: 'json',
-                success: function (data) {
-                    document.getElementById("amount-plus-fee").value = data.total_paid
-                    document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
-                }
-            });
-        }
+      document.getElementById("total").innerHTML = ''
+      let amount = parseFloat(document.getElementById("amount").value)
+      if (amount > 0) {
+          $.ajax({
+              url: "{% url 'payments' pk=lease.id %}",
+              data: {
+                  'amount': amount
+              },
+              dataType: 'json',
+              success: function (data) {
+                  document.getElementById("amount-plus-fee").value = data.total_paid
+                  document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
+              }
+          });
+      }
     }
     var linkHandler = Plaid.create({
       selectAccount: true,
@@ -410,6 +410,14 @@
               if (data.complete) {
                 window.location.replace("{% url 'leases:detail-client' pk=object.id %}")
                 }
+            },
+            error: function(xhr, status, error){
+              $('.loader').remove()
+              let errorMessage = xhr.status + ': ' + xhr.statusText
+              $('#plaidModal .modal-body').before('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                + errorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button><div>')
+              $('.alert').alert()
             }
         });
       },
