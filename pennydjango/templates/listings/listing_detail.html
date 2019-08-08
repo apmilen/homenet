@@ -12,6 +12,7 @@
       <div id="carousel-listing" class="carousel slide"
            data-ride="carousel" data-interval="2500">
         {% if user.is_authenticated and user.perms.has_agent_access %}
+          {% include 'listings/change_status_modal.html' %}
           <div class="dropdown" style="display: inline-block;position: absolute;z-index: 10;">
             <button
                     class="btn btn-sm btn-info mr-1 dropdown-toggle"
@@ -38,6 +39,9 @@
                 <i class='material-icons'>create_new_folder</i> Create Offer
               </a>
               <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#changeListStatusModal">
+                <i class='material-icons'>settings</i> Change Status
+              </a>
             </div>
           </div>
         {% endif %}
