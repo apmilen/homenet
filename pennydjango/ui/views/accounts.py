@@ -32,7 +32,7 @@ class UserProfile(BaseContextMixin, DetailView):
     custom_stylesheet = 'user.css'
 
     def get_object(self):
-        return get_object_or_404(User, username=self.kwargs.get('username'))
+        return get_object_or_404(User, id=self.kwargs.get('id'))
 
     def context(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -57,7 +57,7 @@ class UserProfile(BaseContextMixin, DetailView):
             )
             if profile_form.is_valid():
                 profile_form.save()
-                return self.redirect(request.user.username)
+                return self.redirect(request.user.id)
             else:
                 forms.update({'profile_form': profile_form})
 
@@ -66,7 +66,7 @@ class UserProfile(BaseContextMixin, DetailView):
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
-                return self.redirect(request.user.username)
+                return self.redirect(request.user.id)
             else:
                 forms.update({'password_form': password_form})
 
@@ -74,5 +74,5 @@ class UserProfile(BaseContextMixin, DetailView):
         context = self.get_context_data(object=self.object, **forms)
         return self.render_to_response(context)
 
-    def redirect(self, username):
-        return HttpResponseRedirect(reverse('userprofile', args=[username]))
+    def redirect(self, id):
+        return HttpResponseRedirect(reverse('userprofile', args=[id]))
