@@ -13,11 +13,30 @@ from penny.utils import avatar_path, validate_file_size
 
 
 class CaseInsensitiveUserManager(UserManager):
-    def get_by_natural_key(self, username):
-        return self.get(username__iexact=username)
+    def get_by_natural_key(self, email):
+        return self.get(email__iexact=email)
 
 
 class UserTypeManager(CaseInsensitiveUserManager):
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Create and save a user with the given email, and password.
+        """
+        email = self.normalize_email(email)
+        user = self.model(email=email, username=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', False)
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault("user_type", 'admin')
+        return self._create_user(email, password, **extra_fields)
+
     def create_agent(self, *args, **kwargs):
         user = self.create_user(*args, **kwargs)
         user.user_type = AGENT_TYPE
@@ -41,7 +60,6 @@ class User(AbstractUser, BaseModel):
     objects = UserTypeManager()
 
     # id = models.UUIDField
-    # username
     # password
     # email
     # first_name
@@ -51,7 +69,7 @@ class User(AbstractUser, BaseModel):
     # is_superuser
     # last_login
     # date_joined
-
+    email = models.EmailField('email address', unique=True)
     job_application = models.OneToOneField(
         JobApplication,
         on_delete=models.SET_NULL,
@@ -68,6 +86,11 @@ class User(AbstractUser, BaseModel):
     user_type = models.CharField(max_length=255, choices=USER_TYPE)
     phone = models.CharField(max_length=20, blank=True)
     bio = models.TextField(max_length=1000, blank=True)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.get_full_name()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -78,7 +101,6 @@ class User(AbstractUser, BaseModel):
             **self.attrs(
                 'id',
                 'email',
-                'username',
                 'first_name',
                 'last_name',
                 'date_joined',
@@ -113,7 +135,7 @@ class User(AbstractUser, BaseModel):
 
     @cached_property
     def profile_link(self):
-        return reverse('userprofile', args=[self.username])
+        return reverse('userprofile', args=[self.id])
 
     @cached_property
     def avatar_url(self):

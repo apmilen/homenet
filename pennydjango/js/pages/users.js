@@ -31,16 +31,16 @@ class UserModal extends React.Component {
     }
     updateUser() {
         const {
-            id, first_name, last_name, username, email, is_active, user_type
+            id, first_name, last_name, email, is_active, user_type
         } = this.state
         this.props.updateUser({
-            id, first_name, last_name, username, email, is_active, user_type
+            id, first_name, last_name, email, is_active, user_type
         })
         this.toggle()
     }
     render() {
         const {
-            open, first_name, last_name, username, email, is_active, user_type
+            open, first_name, last_name, email, is_active, user_type
         } = this.state
         const {constants} = global.props
 
@@ -60,17 +60,6 @@ class UserModal extends React.Component {
                                          value={last_name} placeholder='Last name'
                                          autoComplete="off"
                                          onChange={::this.changeField} />
-                            <InputGroup className="my-2">
-                                <InputGroup.Prepend>
-                                    <InputGroup.Text>@</InputGroup.Text>
-                                </InputGroup.Prepend>
-                                <FormControl id='username'
-                                             type='text'
-                                             value={username}
-                                             placeholder='username'
-                                             autoComplete="off"
-                                             onChange={::this.changeField} />
-                            </InputGroup>
                             <FormControl id='email' className="my-2"
                                          type='email'
                                          value={email}
@@ -82,7 +71,7 @@ class UserModal extends React.Component {
                                          value={user_type}
                                          onChange={::this.changeField} >
                                 {Object.keys(constants.user_type).map(u_type =>
-                                    <option value={u_type}>{constants.user_type[u_type]}</option>
+                                    <option key={u_type} value={u_type}>{constants.user_type[u_type]}</option>
                                 )}
                             </FormControl>
                             <FormCheckbox id='is_active'
@@ -125,13 +114,12 @@ class UserCard extends React.Component {
                 }
                 <div style={{ padding: '20px 0', margin: '0 30px' }}>
                     <a href={user.profile_link} target="_blank">
-                        <div class="circle-avatar" style={{ backgroundImage: `url(${user.avatar_url})` }}></div>
+                        <div className="circle-avatar" style={{ backgroundImage: `url(${user.avatar_url})` }}></div>
                     </a>
                 </div>
                 <div style={{ padding: '0 1.9rem' }}>
                     <h3>{user.first_name || 'Unnamed'}</h3>
-                    <Card.Title>@{user.username}</Card.Title>
-                    <Card.Subtitle className="text-muted">{user.email || 'no email'}</Card.Subtitle>
+                    <Card.Title className="text-muted">{user.email || 'no email'}</Card.Title>
                 </div>
             </Card>
         )
@@ -144,9 +132,8 @@ class Users extends React.Component {
         super(props)
         this.state = {
             name: '',
-            username: '',
             email: '',
-            user_type: props.constants.user_type['agent'],
+            user_type: "agent",
             users: [],
             errors: '',
         }
@@ -155,10 +142,10 @@ class Users extends React.Component {
         this.setState({[e.target.id]: e.target.value})
     }
     postUser() {
-        const {name, username, email, user_type} = this.state
+        const {name, email, user_type} = this.state
         const post_data = {
             type: 'NEW_USER',
-            name, username, email, user_type
+            name, email, user_type
         }
 
         $.post('', post_data, (resp) => {
@@ -166,7 +153,6 @@ class Users extends React.Component {
                 const new_users = [resp.new_user].concat(this.state.users)
                 this.setState({
                     name: '',
-                    username: '',
                     email: '',
                     users: new_users,
                     errors: ''
@@ -194,10 +180,10 @@ class Users extends React.Component {
         const {users} = this.state
         const filters = ["searching_text", "only_active", "user_type"]
 
-        return [
+        return <>
             <FiltersBar filters={filters}
                         constants={constants}
-                        updateParams={::this.fetchUsers} />,
+                        updateParams={::this.fetchUsers} />
             <Row className="justify-content-center usercards-container">
                 <Card style={{ width: '18rem', height: 370, margin: 5 }}>
                     <div style={{ margin: 'auto', width: '80%' }}>
@@ -212,16 +198,6 @@ class Users extends React.Component {
                                      value={this.state.name}
                                      placeholder='Name'
                                      onChange={::this.changeField} />
-                        <InputGroup className="my-2">
-                            <InputGroup.Prepend>
-                                <InputGroup.Text>@</InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl id='username'
-                                         type='text'
-                                         value={this.state.username}
-                                         placeholder='username'
-                                         onChange={::this.changeField} />
-                        </InputGroup>
                         <FormControl id='email' className="my-2"
                                      type='email'
                                      value={this.state.email}
@@ -232,7 +208,7 @@ class Users extends React.Component {
                                      value={this.state.user_type}
                                      onChange={::this.changeField} >
                             {Object.keys(constants.user_type).map(u_type =>
-                                <option value={u_type}>{constants.user_type[u_type]}</option>
+                                <option key={u_type} value={u_type}>{constants.user_type[u_type]}</option>
                             )}
                         </FormControl>
                         <Button onClick={::this.postUser}>
@@ -242,10 +218,10 @@ class Users extends React.Component {
                     </div>
                 </Card>
                 {users.map(user =>
-                    <UserCard user={user} updateUser={::this.updateUser} />
+                    <UserCard key={user.id} user={user} updateUser={::this.updateUser} />
                 )}
             </Row>
-        ]
+        </>
     }
 }
 

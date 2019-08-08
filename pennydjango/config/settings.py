@@ -137,8 +137,8 @@ CORS_ORIGIN_ALLOW_ALL = False
 ### Account Validation Settings
 ################################################################################
 EMAIL_VERIFICATION = True
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # login via either username or email
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True               # easier verification by just clicking a link
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # login via either username or email
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True      # easier verification by just clicking a link
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/accounts/email/'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
