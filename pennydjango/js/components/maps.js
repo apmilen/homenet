@@ -64,9 +64,12 @@ export class MapComponent extends PureComponent {
         map.getCanvas().style.cursor = cursor
         this.setState({popup_listing})
     }
+    clickOn(listing){
+        global.open(listing.listing_link, "_blank")
+    }
 
     render() {
-        const {listings, center, zoom, listing_highlighted, clickOn} = this.props
+        const {listings, center, zoom, listing_highlighted} = this.props
         const {popup_listing} = this.state
 
         const blue_listings = listings.filter(listing => listing.id != listing_highlighted.id)
@@ -89,7 +92,7 @@ export class MapComponent extends PureComponent {
                             key={`feature-${listing.id}`}
                             onMouseEnter={({map}) => this.markerHover(map, listing, 'pointer')}
                             onMouseLeave={({map}) => this.markerHover(map, undefined, '')}
-                            onClick={() => clickOn(listing)}
+                            onClick={() => this.clickOn(listing)}
                             coordinates={coordinates(listing)}
                         />
                     ))}
@@ -100,7 +103,7 @@ export class MapComponent extends PureComponent {
                             key={`feature-${listing.id}`}
                             onMouseEnter={({map}) => this.markerHover(map, listing, 'pointer')}
                             onMouseLeave={({map}) => this.markerHover(map, undefined, '')}
-                            onClick={() => clickOn(listing)}
+                            onClick={() => this.clickOn(listing)}
                             coordinates={coordinates(listing)}
                         />
                     ))}

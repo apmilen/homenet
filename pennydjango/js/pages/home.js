@@ -14,14 +14,14 @@ import {MapComponent, coordinates} from '@/components/maps'
 import {Switch, SettingsGear} from '@/components/misc'
 
 
-const ListingGrid = ({listing, hoverOn, clickOn}) => {
+const ListingGrid = ({listing, hoverOn}) => {
     const listing_existance = differenceInDays(Date.now(), listing.created)
     const new_listing = listing_existance < 1 ? 'New Listing' : ''
 
     return (
         <div className="col-lg-6 col-md-12 mx-w-450 px-1 card card-smallcard-post card-post--1 card-listing overlay-parent"
              onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
-            <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
+            <a className="overlay" href={listing.listing_link} target="_blank"></a>
             <div className="card-post__image text-center">
                 <img className="box-wd" src={listing.default_image} />
                 {listing.no_fee_listing &&
@@ -60,10 +60,10 @@ const ListingGrid = ({listing, hoverOn, clickOn}) => {
 }
 
 
-const ListingList = ({listing, hoverOn, clickOn}) => (
+const ListingList = ({listing, hoverOn}) => (
     <div className="card col-11 col-md-12 col-lg-11 col-xl-10 px-0 mx-auto my-1 overlay-parent"
          onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
-        <a className="overlay" href='#' onClick={() => {clickOn(listing)}}></a>
+        <a className="overlay" href={listing.listing_link} target="_blank"></a>
         <div className="d-flex align-items-center">
 
             <div className="">
@@ -87,108 +87,6 @@ const ListingList = ({listing, hoverOn, clickOn}) => (
 
         </div>
     </div>
-)
-
-
-const ListingDetail = ({listing}) => (
-    <span>
-        <div id="carouselExampleIndicators" className="carousel slide"
-             data-ride="carousel" data-interval="2500">
-            <ol className="carousel-indicators">
-                {listing.images.map((image_url, idx) =>
-                    <li key={`${idx}-indicator`} data-target="#carouselExampleIndicators" data-slide-to={idx}
-                        className={idx == 0 ? 'active' : ''}></li>
-                )}
-            </ol>
-            <div className="carousel-inner">
-                {listing.images.map((image_url, idx) =>
-                    <div key={`${idx}-slide`}  className={`carousel-item ${idx == 0 ? 'active' : ''}`}>
-                        <img className="d-block w-100" src={image_url} alt="First slide" />
-                    </div>
-                )}
-            </div>
-            {listing.images.length > 1 ? [
-                <a className="carousel-control-prev" href="#carouselExampleIndicators"
-                   role="button" data-slide="prev">
-                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span className="sr-only">Previous</span>
-                </a>,
-                <a className="carousel-control-next" href="#carouselExampleIndicators"
-                   role="button" data-slide="next">
-                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span className="sr-only">Next</span>
-                </a>] : null}
-        </div>
-
-        <div className="card card-smallcard-post card-post--1 card-listing">
-            <div className="card-body p-0 text-center row m-0">
-                <div className="col-4 wrap-info p-0 pt-2 pb-2 border border"
-                     data-toggle="tooltip"
-                     title={`$${ listing.price }/Month`}>
-                    ${ listing.price }/Month
-                </div>
-                <div className="col-4 wrap-info p-0 pt-2 pb-2 border"
-                     data-toggle="tooltip"
-                     title={`${ listing.bedrooms } Beds`}>
-                    { parseFloat(listing.bedrooms).toString() } Beds
-                </div>
-                <div className="col-4 wrap-info p-0 pt-2 pb-2 border"
-                     data-toggle="tooltip"
-                     title={`${ listing.baths } Bath`}>
-                    { parseFloat(listing.bathrooms).toString() } Bath
-                </div>
-                <div className="col-4 p-0 pt-2 pb-2  border">
-                    Pets: { listing.pets }
-                </div>
-                <div className="col-8 wrap-info p-0 pt-2 pb-2 border"
-                     data-toggle="tooltip"
-                     title={ listing.address }>
-                    { listing.address }
-                </div>
-                <div className="col-md-8 col-12 p-0 pt-2 pb-2 border">
-                    <div className="col-12 text-justify border-bottom pt-2">
-                        <p><b>About the place</b></p>
-                        <p>{ listing.description }</p>
-                    </div>
-                    <div className="col-12 text-justify border-top border-bottom pt-2">
-                        <p><b>Amenities</b></p>
-                        <ul className="ul-2">
-                            {listing.amenities.map(amenity =>
-                                <li>{ amenity }</li>
-                            )}
-                        </ul>
-                    </div>
-                    <div className="col-6 text-justify pt-2">
-                        <p><b>Nearby transit</b></p>
-                        <p>{ listing.nearby_transit }</p>
-                    </div>
-                    <div className="col-12 text-justify pt-2">
-                        <div className="row">
-                            <div className="col-6 text-justify border-top border-bottom pt-2">
-                                <p><b>Walkability score</b></p>
-                                <p>{ listing.walkability_score }%</p>
-                            </div>
-                            <div className="col-6 text-justify border-top border-bottom pt-2">
-                                <p><b>Bikability score</b></p>
-                                <p>{ listing.bikeability_score }%</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-6 text-justify pt-2">
-                        <p><b>Parking</b></p>
-                        <p>{ listing.parking }</p>
-                    </div>
-                </div>
-                <div className="col-md-4 col-12  p-0 pt-2 pb-2 border ">
-                    <p><b>Contact</b></p>
-                    <a className="contact-avatar" href="#" role="button">
-                        <div className="circle-avatar" style={{ backgroundImage: `url(${ listing.sales_agent.avatar_url })`}}></div>
-                    </a>
-                    <div>{ listing.sales_agent.first_name }</div>
-                </div>
-            </div>
-        </div>
-    </span>
 )
 
 
@@ -216,14 +114,6 @@ class PublicListings extends React.Component {
             })
         else
             this.setState({listing_marked: undefined})
-    }
-    showDetail(listing) {
-        this.setState({
-            listing_detail: listing,
-            listing_marked: listing,
-            map_center: coordinates(listing),
-            map_zoom: [16]
-        })
     }
     hideDetail() {
         this.setState({
@@ -270,22 +160,13 @@ class PublicListings extends React.Component {
 
         return <div>
             <Row key="mainrow1" style={{minHeight: 43}}>
-                {listing_detail ?
-                    <a href='#'
-                       style={{margin: 'auto 0 auto 35px'}}
-                       onClick={::this.hideDetail}>
-                        <i className="material-icons">keyboard_arrow_left</i>
-                        Back to results
-                    </a>
-                :
-                    <FiltersBar filters={basic_filters}
-                                advancedFilters={advanced_filters}
-                                filtersState={filters}
-                                constants={constants}
-                                updateFilters={filters => this.setState({filters})}
-                                updateParams={::this.fetchListings}
-                            />
-                }
+                <FiltersBar filters={basic_filters}
+                            advancedFilters={advanced_filters}
+                            filtersState={filters}
+                            constants={constants}
+                            updateFilters={filters => this.setState({filters})}
+                            updateParams={::this.fetchListings}
+                />
                 <Dropdown className="settings-dropdown">
                     <Dropdown.Toggle as={SettingsGear} />
                     <Dropdown.Menu alignRight>
@@ -300,26 +181,19 @@ class PublicListings extends React.Component {
             </Row>
             <Row  key="mainrow2">
                 <Col className="main-scroll left-main-column">
-                    {listing_detail ?
-                        <Row>
-                            <ListingDetail listing={listing_detail} />
-                        </Row>
-                    : [
-                        <center key="center"><h6>{total_listings} results</h6></center>,
+                        <center key="center"><h6>{total_listings} results</h6></center>
                         <Row key="row1" className="justify-content-center">
                             {listings.map(listing =>
                                 as_grid ?
                                     <ListingGrid listing={listing}
                                                  key={listing.id}
-                                                 hoverOn={::this.hoverOn}
-                                                 clickOn={::this.showDetail} />
+                                                 hoverOn={::this.hoverOn} />
                                 :
                                     <ListingList listing={listing}
                                                  key={listing.id}
-                                                 hoverOn={::this.hoverOn}
-                                                 clickOn={::this.showDetail} />
+                                                 hoverOn={::this.hoverOn} />
                             )}
-                        </Row>,
+                        </Row>
                         <Row key="row2" className="justify-content-center">
                             {more_listings_link ?
                                 <Button variant="outline-primary" onClick={::this.moreListings} style={{padding: 5, margin: 10}}>
@@ -333,7 +207,6 @@ class PublicListings extends React.Component {
                                 </div>
                             }
                         </Row>
-                    ]}
                 </Col>
                 {show_map &&
                     <Col className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
@@ -342,7 +215,6 @@ class PublicListings extends React.Component {
                             listing_highlighted={listing_marked || []}
                             center={map_center}
                             zoom={map_zoom}
-                            clickOn={::this.showDetail}
                         />
                     </Col>
                 }

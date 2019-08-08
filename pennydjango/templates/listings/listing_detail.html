@@ -12,21 +12,44 @@
       <div id="carousel-listing" class="carousel slide"
            data-ride="carousel" data-interval="2500">
         {% if user.is_authenticated and user.perms.has_agent_access %}
-          <a class="card-post__category left-badge badge badge-pill badge-info"
-             href="{% url 'listing:edit' pk=object.id %}">
-            <i  class="material-icons">edit</i>
-            Edit
-          </a>
+          <div class="dropdown" style="display: inline-block;position: absolute;z-index: 10;">
+            <button
+                    class="btn btn-sm btn-info mr-1 dropdown-toggle"
+                    type="button"
+                    id="dropdownManageButton"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false">
+              Manage
+            </button>
+            <div class="dropdown-menu dropdown-menu-small"
+                 aria-labelledby="dropdownManageButton">
+              <a class="dropdown-item" href="{{ object.edit_link }}">
+                <i class='material-icons'>edit</i> Edit
+              </a>
+              <a class="dropdown-item" href="{{ object.detail_link }}">
+                <i class='material-icons'>format_list_bulleted</i> Details
+              </a>
+              <a class="dropdown-item" href="{{ object.photos_link }}">
+                <i class='material-icons'>camera</i> Photos
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{{ object.offer_link }}">
+                <i class='material-icons'>create_new_folder</i> Create Offer
+              </a>
+              <div class="dropdown-divider"></div>
+            </div>
+          </div>
         {% endif %}
         <ol class="carousel-indicators">
           {% for image in object.images %}
-          <li data-target="#carousel-listing" data-slide-to="{{ forloop.counter0 }}"
-              class="{% if forloop.first %}active{% endif %}"></li>
+            <li data-target="#carousel-listing" data-slide-to="{{ forloop.counter0 }}"
+                class="{% if forloop.first %}active{% endif %}"></li>
           {% empty %}
             <li data-target="#carousel-listing" data-slide-to="0"
                 class="active"></li>
           {% endfor %}
-          </ol>
+        </ol>
         <div class="carousel-inner">
           {% for image in object.images %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
@@ -38,20 +61,20 @@
               <img class="d-block w-100" src="{{ object.default_image }}"
                    alt="First slide">
             </div>
-        {% endfor %}
+          {% endfor %}
         </div>
-      {% if object.images|length > 1 %}
-        <a class="carousel-control-prev" href="#carousel-listing"
-           role="button" data-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carousel-listing"
-           role="button" data-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      {% endif %}
+        {% if object.images|length > 1 %}
+          <a class="carousel-control-prev" href="#carousel-listing"
+             role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carousel-listing"
+             role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        {% endif %}
       </div>
       <div class="card card-smallcard-post card-post--1 card-listing">
         <div class="card-body p-0 text-center row m-0">
@@ -62,13 +85,19 @@
           </div>
           <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
-               title="{{ object.bedrooms }} Beds">
-            {{ object.bedrooms.normalize }} Beds
+               title="{{ object.bedrooms.normalize }} Beds / {{ object.bathrooms.normalize }} Bath">
+            {{ object.bedrooms.normalize }} Beds / {{ object.bathrooms.normalize }} Bath
           </div>
           <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
                data-toggle="tooltip"
                title="{{ object.bathrooms }} Bath">
-            {{ object.bathrooms.normalize }} Bath
+
+            <button
+                    id="clip-{{ object.id }}"
+                    data-clipboard-text="{{ BASE_URL }}{{ object.listing_link }}"
+                    class="btn btn-pill btn-outline-info">
+              Copy to Clipboard
+            </button>
           </div>
           <div class="col-4 p-0 pt-2 pb-2  border">
             Pets: {{ object.get_pets_display }}
@@ -80,42 +109,43 @@
           </div>
           <div class="col-md-8 col-12 p-0 pt-2 pb-2  border">
             <div class="col-12 text-justify border-bottom pt-2">
-                <p><b>About the place</b></p>
-                <p>{{ object.description }}</p>
+              <p><b>About the place</b></p>
+              <p>{{ object.description }}</p>
             </div>
             <div class="col-12 text-justify border-top border-bottom pt-2">
               <p><b>Amenities</b></p>
-                <ul class="ul-2">
-                  {% for amenity in object.amenities %}
-                    <li>{{ amenity }}</li>
-                  {% endfor %}
-                </ul>
+              <ul class="ul-2">
+                {% for amenity in object.amenities %}
+                  <li>{{ amenity }}</li>
+                {% endfor %}
+              </ul>
             </div>
             <div class="col-6 text-justify pt-2">
-                <p><b>Nearby transit</b></p>
-                <p>{{ object.nearby_transit }}</p>
+              <p><b>Nearby transit</b></p>
+              <p>{{ object.nearby_transit }}</p>
             </div>
             <div class="col-12 text-justify pt-2">
-                <div class="row">
-                    <div class="col-6 text-justify border-top border-bottom pt-2">
-                        <p><b>Walkability score</b></p>
-                        <p>{{ listing.walkability_score|default_if_none:""}}%</p>
-                    </div>
-                    <div class="col-6 text-justify border-top border-bottom pt-2">
-                        <p><b>Bikability score</b></p>
-                        <p>{{ listing.bikeability_score|default_if_none:""}}%</p>
-                    </div>
+              <div class="row">
+                <div class="col-6 text-justify border-top border-bottom pt-2">
+                  <p><b>Walkability score</b></p>
+                  <p>{{ listing.walkability_score|default_if_none:"" }}%</p>
                 </div>
+                <div class="col-6 text-justify border-top border-bottom pt-2">
+                  <p><b>Bikability score</b></p>
+                  <p>{{ listing.bikeability_score|default_if_none:"" }}%</p>
+                </div>
+              </div>
             </div>
             <div class="col-6 text-justify pt-2">
-                <p><b>Parking</b></p>
-                <p>{{ listing.get_parking_display|default_if_none:""}}</p>
+              <p><b>Parking</b></p>
+              <p>{{ listing.get_parking_display|default_if_none:"" }}</p>
             </div>
           </div>
           <div class="col-md-4 col-12  p-0 pt-2 pb-2  border text-center">
             <p><b>Contact</b></p>
             <a class="contact-avatar" href="#" role="button">
-                <div class="circle-avatar" style="background-image:url({{ object.listing_agent.avatar_url  }})"></div>
+              <div class="circle-avatar"
+                   style="background-image:url({{ object.listing_agent.avatar_url }})"></div>
             </a>
             <span>{{ object.listing_agent.get_full_name }}</span>
           </div>
@@ -129,22 +159,26 @@
 {% endblock %}
 
 {% block tail %}
-  <script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript" crossorigin></script>
+  <script src="{% http2static 'js/mapbox-gl.js' %}" type="text/javascript"
+          crossorigin></script>
+  <script src="{% http2static 'js/clipboard.min.js' %}" type="text/javascript"
+          crossorigin></script>
   <script>
-    mapboxgl.accessToken = '{{ map_key }}';
-    var map_center = [{{ listing.longitude }}, {{ listing.latitude }}]
-    var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
-    var map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: map_center,
-      zoom: 15,
-      minZoom: 12,
-      maxBounds,
-    });
-    var marker = new mapboxgl.Marker({
-      draggable: false,
-      color: 'orange',
-    }).setLngLat(map_center).addTo(map);
+      mapboxgl.accessToken = '{{ map_key }}';
+      var map_center = [{{ listing.longitude }}, {{ listing.latitude }}]
+      var maxBounds = [[-74.363101, 40.400624], [-73.600364, 40.993590]]
+      var map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v11',
+          center: map_center,
+          zoom: 15,
+          minZoom: 12,
+          maxBounds,
+      });
+      var marker = new mapboxgl.Marker({
+          draggable: false,
+          color: 'orange',
+      }).setLngLat(map_center).addTo(map);
+      new ClipboardJS("#clip-{{ object.id }}")
   </script>
 {% endblock %}
