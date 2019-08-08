@@ -52,4 +52,9 @@ function stripeTokenHandler(token) {
 
   // Submit the form
   form.submit();
+  addLoadPage()
+}
+
+addLoadPage = () => {
+  $('#paymentModal .modal-body').append('<div class="loader"></div>')
 }

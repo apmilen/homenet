@@ -480,4 +480,32 @@ div.modal-body>p {
     margin: 0.4rem;
     border: solid 0.05rem;
 }
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #017bff;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    position: fixed;
+    margin-left: 25%;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
+  #paymentModal .modal-content .loader {
+      margin-top: -20%;
+  }
+  #plaidModal .modal-body .loader {
+    margin-top: -10%;
+}

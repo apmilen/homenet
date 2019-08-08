@@ -378,7 +378,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                             source=bank_account_token,
                             description='Test charge from Plaid - Stripe',
                         )
-                    except stripe.error.account_invalid:
+                    except stripe.error.InvalidRequestError:
                         plaid_transaction.status = FAILED
                         plaid_transaction.save()
                         messages.warning(

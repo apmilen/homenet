@@ -359,6 +359,10 @@
       });
     });
 
+    $('#plaidModal, #paymentModal').on('hidden.bs.modal', function (e) {
+      $('.loader').remove()
+    });
+
     getStripeFee = () => {
         document.getElementById("total").innerHTML = ''
         let amount = parseFloat(document.getElementById("amount").value)
@@ -383,16 +387,17 @@
       key: "{{plaid_key}}",
       product: ['auth'],
       onLoad: function() {
-        // The Link module finished loading.
+        // The Link module finished loading. 
       },
-      onSuccess: function(public_token, metadata) {
+      onSuccess: function(public_token, metadata) {      
         // The onSuccess function is called when the user has successfully
         // authenticated and selected an account to use.
         //
         // When called, you will send the public_token and the selected
         // account ID, metadata.account_id, to your backend app server.
+        $('#plaidModal .modal-body').append('<div class="loader"></div>')
         let amount = $('#plaidModal #amount').val()
-      $.ajax({
+        $.ajax({
             url: "{% url 'plaid' pk=lease.id %}",
             type: 'POST',
             data: {
