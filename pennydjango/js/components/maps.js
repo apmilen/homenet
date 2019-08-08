@@ -110,22 +110,22 @@ export class MapComponent extends PureComponent {
                 </Layer>
                 {popup_listing && (
                     <Popup key={`popup-${popup_listing.id}`} coordinates={coordinates(popup_listing)} offset={{'bottom': [0,-15]}}>
-                        <div class="card card-smallcard-post card-post--1 card-listing overlay-parent">
-                            <div class="card-post__image text-center">
+                        <div className="card card-smallcard-post card-post--1 card-listing overlay-parent">
+                            <div className="card-post__image text-center">
                                 <img style={{width: '24vw', maxHeight: 170}} src={popup_listing.default_image} />
                                 {popup_listing.no_fee_listing &&
-                                    <span class="card-post__category left-badge badge badge-pill badge-info">no fee</span>
+                                    <span className="card-post__category left-badge badge badge-pill badge-info">no fee</span>
                                 }
-                                <span class="card-post__category badge badge-pill badge-dark">${popup_listing.price}</span>
+                                <span className="card-post__category badge badge-pill badge-dark">${popup_listing.price}</span>
                             </div>
-                            <div class="card-body p-0 text-center">
-                                <table class="table mb-0 listing-info">
+                            <div className="card-body p-0 text-center">
+                                <table className="table mb-0 listing-info">
                                     <tbody>
                                         <tr>
-                                            <td class="wrap-info">
+                                            <td className="wrap-info">
                                                 {parseFloat(popup_listing.bedrooms).toString()} Beds / {parseFloat(popup_listing.bathrooms).toString()} Bath
                                             </td>
-                                            <td class="wrap-info">
+                                            <td className="wrap-info">
                                                 {popup_listing.pets}
                                             </td>
                                         </tr>
