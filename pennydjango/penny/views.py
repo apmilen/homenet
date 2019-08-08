@@ -115,7 +115,6 @@ class Users(AdminRequiredMixin, PublicReactView):
                 True if fields['is_active'] == 'true' else False)
             fields.pop('type', None)
             user_id = fields.pop('id', None)
-            print(fields, flush=True)
             response = update_user(user_id, fields)
 
         return JsonResponse(response)
