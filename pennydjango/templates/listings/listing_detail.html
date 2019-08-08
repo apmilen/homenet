@@ -92,10 +92,7 @@
                title="{{ object.bedrooms.normalize }} Beds / {{ object.bathrooms.normalize }} Bath">
             {{ object.bedrooms.normalize }} Beds / {{ object.bathrooms.normalize }} Bath
           </div>
-          <div class="col-4 wrap-info p-0 pt-2 pb-2  border"
-               data-toggle="tooltip"
-               title="{{ object.bathrooms }} Bath">
-
+          <div class="col-4 wrap-info p-0 pt-2 pb-2  border">
             <button
                     id="clip-{{ object.id }}"
                     data-clipboard-text="{{ BASE_URL }}{{ object.listing_link }}"
