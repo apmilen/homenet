@@ -21,11 +21,11 @@ def qs_from_filters(queryset, params):
 
     if sales_agents:
         queryset = queryset.filter(
-            listing__sales_agent__username__in=sales_agents)
+            listing__sales_agent__email__in=sales_agents)
 
     if listing_agents:
         queryset = queryset.filter(
-            listing__listing_agent__username__in=listing_agents)
+            listing__listing_agent__email__in=listing_agents)
 
     if hoods:
         queryset = queryset.filter(listing__neighborhood__in=hoods)

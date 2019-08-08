@@ -221,7 +221,13 @@ class ListingDetailView(BaseContextMixin, DetailView):
         )
 
     def context(self, request, *args, **kwargs):
-        return {'map_key': settings.MAPBOX_API_KEY}
+        user = self.request.user
+        context = {'map_key': settings.MAPBOX_API_KEY}
+        if user.is_authenticated and user.perms.has_agent_access:
+            context['change_status_form'] = ChangeListingStatusForm(
+                instance=self.object
+            )
+        return context
 
 
 class ChangeListingStatusView(AgentRequiredMixin, UpdateView):
