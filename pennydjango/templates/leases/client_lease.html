@@ -423,7 +423,7 @@
         // When called, you will send the public_token and the selected
         // account ID, metadata.account_id, to your backend app server.
         $('#plaidModal .modal-body').append('<div class="loader"></div>')
-        let amount = $('#plaidModal #amount').val()
+        let amount = $('#plaidModal #amount_plaid').val()
         $.ajax({
             url: "{% url 'plaid' pk=lease.id %}",
             type: 'POST',
