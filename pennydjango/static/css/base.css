@@ -509,3 +509,6 @@ div.modal-body>p {
   #plaidModal .modal-body .loader {
     margin-top: -10%;
 }
+#amount_plaid {
+    width: 79%;
+  }
