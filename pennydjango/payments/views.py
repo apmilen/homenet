@@ -1,4 +1,5 @@
 from decimal import Decimal, DecimalException
+from math import ceil
 
 from django.conf import settings
 from django.views.generic.base import TemplateView
@@ -308,7 +309,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
             }
             try:
                 amount = Decimal(request.POST['amount'])
-                stripe_plaid_amt = amount * 100
+                stripe_plaid_amt = ceil(amount * Decimal(100))
             except DecimalException:
                 messages.error(
                     request, 
@@ -360,7 +361,6 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                 access_token, ACCOUNT_ID
             )
             bank_account_token = stripe_response['stripe_bank_account_token']
-    
             try:
                 with transaction.atomic():
                     
@@ -378,7 +378,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
                             source=bank_account_token,
                             description='Test charge from Plaid - Stripe',
                         )
-                    except stripe.error.account_invalid:
+                    except stripe.error.InvalidRequestError:
                         plaid_transaction.status = FAILED
                         plaid_transaction.save()
                         messages.warning(

@@ -352,6 +352,10 @@
   <script>
     $('#paymentModal, #plaidModal').on('show.bs.modal', function (e) {
         $('#paymentMethodModal').modal('hide')
+        setInputFilter(document.getElementById("amount_plaid"), function(value) {
+          return inputFilter(value)
+        });
+        
       });
 
     $('#paymentModal').on('shown.bs.modal', function (e) {
@@ -359,22 +363,49 @@
       });
     });
 
+    $('#plaidModal, #paymentModal').on('hidden.bs.modal', function (e) {
+      $('.alert, .loader').remove()
+    });
+    // Input amount validation
+    function setInputFilter(textbox, inputFilter) {
+      ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+        textbox.addEventListener(event, function() {
+          if (inputFilter(this.value)) {
+            this.oldValue = this.value;
+            this.oldSelectionStart = this.selectionStart;
+            this.oldSelectionEnd = this.selectionEnd;
+          } else if (this.hasOwnProperty("oldValue")) {
+            this.value = this.oldValue;
+            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+          }
+        });
+      });
+    }
+    
+    inputFilter = (value) => {
+      return /^\d*[.]?\d{0,2}$/.test(value); 
+    }
+
+    setInputFilter(document.getElementById("amount"), function(value) {
+      return inputFilter(value)
+    });
+
     getStripeFee = () => {
-        document.getElementById("total").innerHTML = ''
-        let amount = parseFloat(document.getElementById("amount").value)
-        if (amount > 0) {
-            $.ajax({
-                url: "{% url 'payments' pk=lease.id %}",
-                data: {
-                    'amount': amount
-                },
-                dataType: 'json',
-                success: function (data) {
-                    document.getElementById("amount-plus-fee").value = data.total_paid
-                    document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
-                }
-            });
-        }
+      document.getElementById("total").innerHTML = ''
+      let amount = parseFloat(document.getElementById("amount").value)
+      if (amount > 0) {
+          $.ajax({
+              url: "{% url 'payments' pk=lease.id %}",
+              data: {
+                  'amount': amount
+              },
+              dataType: 'json',
+              success: function (data) {
+                  document.getElementById("amount-plus-fee").value = data.total_paid
+                  document.getElementById("total").innerHTML = '<span data-toggle="tooltip" id="total_amount" data-placement="top" title="' + data.total_paid + '">' + data.total_paid + '</span>'
+              }
+          });
+      }
     }
     var linkHandler = Plaid.create({
       selectAccount: true,
@@ -383,16 +414,17 @@
       key: "{{plaid_key}}",
       product: ['auth'],
       onLoad: function() {
-        // The Link module finished loading.
+        // The Link module finished loading. 
       },
-      onSuccess: function(public_token, metadata) {
+      onSuccess: function(public_token, metadata) {      
         // The onSuccess function is called when the user has successfully
         // authenticated and selected an account to use.
         //
         // When called, you will send the public_token and the selected
         // account ID, metadata.account_id, to your backend app server.
-        let amount = $('#plaidModal #amount').val()
-      $.ajax({
+        $('#plaidModal .modal-body').append('<div class="loader"></div>')
+        let amount = $('#plaidModal #amount_plaid').val()
+        $.ajax({
             url: "{% url 'plaid' pk=lease.id %}",
             type: 'POST',
             data: {
@@ -405,6 +437,14 @@
               if (data.complete) {
                 window.location.replace("{% url 'leases:detail-client' pk=object.id %}")
                 }
+            },
+            error: function(xhr, status, error){
+              $('.loader').remove()
+              let errorMessage = 'Something went wrong... Please try again'
+              $('#plaidModal .modal-body').before('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
+                + errorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+                '<span aria-hidden="true">&times;</span></button><div>')
+              $('.alert').alert()
             }
         });
       },
