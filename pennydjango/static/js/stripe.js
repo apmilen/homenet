@@ -34,8 +34,9 @@ form.addEventListener('submit', function(event) {
       // Inform the customer that there was an error.
       var errorElement = document.getElementById('card-errors');
       //errorElement.textContent = result.error.message + "ERROR";
+      let errorMessage = 'Something went wrong... Please try again'
       $('#paymentModal .modal-body').before('<div class="alert alert-danger alert-dismissible fade show" role="alert">'
-      + result.error.message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+      + errorMessage + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
       '<span aria-hidden="true">&times;</span></button><div>')
     $('.alert').alert()
     } else {
