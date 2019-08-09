@@ -22,13 +22,13 @@ class UsersList(AdminRequiredMixin, DatatablesListView, TemplateView):
     model = User
     table_name = 'Users'
     template_name = 'penny/datatables.html'
-    fields = ('username', 'first_name', 'last_name', 'email')
-    column_names_and_defs = ('Username', 'First Name', 'Last Name', 'Email')
+    fields = ('first_name', 'last_name', 'email')
+    column_names_and_defs = ('First Name', 'Last Name', 'Email')
     options_list = [
         {
             'option_label': 'Detail',
             'option_url': 'userprofile',
-            'url_params': ['username'],
+            'url_params': ['id'],
             'icon': 'user'
         }
     ]
@@ -96,10 +96,9 @@ class Users(AdminRequiredMixin, PublicReactView):
 
         if request_type == 'NEW_USER':
             name = request.POST.get('name')
-            username = request.POST.get('username')
             email = request.POST.get('email')
             user_type = request.POST.get('user_type')
-            response = invite_new_user(name, username, email, user_type)
+            response = invite_new_user(name, email, user_type)
 
         if request_type == 'FILTER_USER':
             users = qs_from_filters(
@@ -122,14 +121,6 @@ class Users(AdminRequiredMixin, PublicReactView):
 
 
 def update_user(user_id, fields):
-    username = fields.get('username').strip()
-
-    if not username:
-        return {
-            'success': False,
-            'details': "Username cannot be empty",
-        }
-
     users = User.objects.filter(id=user_id)
     if not users or users.count() > 1:
         return {
@@ -152,7 +143,6 @@ def qs_from_filters(queryset, params):
 
     if searching_text:
         queryset = queryset.filter(
-            Q(username__icontains=searching_text) |
             Q(first_name__icontains=searching_text) |
             Q(last_name__icontains=searching_text) |
             Q(email__icontains=searching_text)
@@ -167,7 +157,7 @@ def qs_from_filters(queryset, params):
     return queryset
 
 
-def invite_new_user(name, username, email, user_type):
+def invite_new_user(name, email, user_type):
     if not (email and user_type):
         return {
             'success': False,
@@ -182,11 +172,10 @@ def invite_new_user(name, username, email, user_type):
         }
 
     new_user = User.objects.create_user(
-        first_name=name,
-        username=username or email,
-        password='',
         email=email,
-        user_type=user_type
+        password='',
+        user_type=user_type,
+        first_name=name,
     )
 
     return {

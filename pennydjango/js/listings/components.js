@@ -7,6 +7,7 @@ import FormGroup from 'react-bootstrap/FormGroup'
 import FormLabel from 'react-bootstrap/FormLabel'
 import Form from 'react-bootstrap/Form'
 import {FormCheckbox} from 'shards-react'
+import ClipboardJS from 'clipboard'
 
 
 const validateCollectionForm = (collection_data) => {
@@ -203,6 +204,10 @@ export class ListingComponent extends React.Component {
             }
         })
     }
+    componentDidMount() {
+        new ClipboardJS(`#clip-${this.props.listing.id}`)
+    }
+
     render() {
         const {
             full_address, no_fee_listing, detail, detail_link, default_image,
@@ -278,7 +283,7 @@ export class ListingComponent extends React.Component {
                                         position: 'relative',
                                         paddingTop: '56.25%'
                                     }}>
-                                        <a href={detail_link} target="_blank"
+                                        <a href={listing_link} target="_blank"
                                            rel="noreferrer noopener">
                                             <img className="lazy img-fluid mx-auto"
                                                  src={default_image}
@@ -471,6 +476,8 @@ export class ListingComponent extends React.Component {
                                             <b>Share</b></div>
                                         <div className="col-sm-8 text-left">
                                             <button
+                                                id={`clip-${id}`}
+                                                data-clipboard-text={`${global.props.BASE_URL}${listing_link}`}
                                                 className="btn btn-pill btn-outline-info">
                                                 Copy to Clipboard
                                             </button>

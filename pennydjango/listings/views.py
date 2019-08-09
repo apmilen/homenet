@@ -91,6 +91,11 @@ class DetailListingUpdate(AgentRequiredMixin, WizardMixin, UpdateView):
     model = ListingDetail
     form_class = ListingDetailForm
 
+    def form_valid(self, form):
+        instance = form.save()
+        instance.listing.save()
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_success_url(self):
         return reverse("listings:photos", kwargs={'pk': self.listing.id})
 
@@ -128,7 +133,8 @@ class UploadPrimaryPhoto(AgentRequiredMixin, View):
                 request.FILES,
                 instance=listing_photo
             )
-            form.save()
+            instance = form.save()
+            instance.listing.save()
             # delete old image form disk
             if delete_path:
                 try:
@@ -155,6 +161,7 @@ class UploadExtraPhoto(AgentRequiredMixin, View):
             photo = form.save(commit=False)
             photo.listing = listing_photo
             photo.save()
+            listing_photo.listing.save()
             return JsonResponse({'status': 200})
         # Bad request
         return JsonResponse({'status': 401})
@@ -221,7 +228,13 @@ class ListingDetailView(BaseContextMixin, DetailView):
         )
 
     def context(self, request, *args, **kwargs):
-        return {'map_key': settings.MAPBOX_API_KEY}
+        user = self.request.user
+        context = {'map_key': settings.MAPBOX_API_KEY}
+        if user.is_authenticated and user.perms.has_agent_access:
+            context['change_status_form'] = ChangeListingStatusForm(
+                instance=self.object
+            )
+        return context
 
 
 class ChangeListingStatusView(AgentRequiredMixin, UpdateView):

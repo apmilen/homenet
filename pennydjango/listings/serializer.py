@@ -28,7 +28,8 @@ class PublicListingSerializer(serializers.ModelSerializer):
             'description', 'id', 'images', 'latitude', 'longitude',
             'neighborhood', 'no_fee_listing', 'pets', 'price', 'sales_agent',
             'created', 'parking', 'nearby_transit', 'walkability_score',
-            'bikeability_score'
+            'bikeability_score', 'detail_link', 'edit_link', 'photos_link',
+            'change_status_link', 'offer_link', 'listing_link'
         )
 
 

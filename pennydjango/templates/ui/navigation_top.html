@@ -13,7 +13,7 @@
     <ul class="navbar-nav flex-row ml-auto">
     {% if request.user.is_authenticated %}
       <li class="nav-item border-right pr-2">
-        <a href="{% url 'userprofile' username=user.username %}">
+        <a href="{% url 'userprofile' id=user.id %}">
           <div class="p-1" style="width: 2.75rem">
             <div class="circle-avatar" style="background-image:url({{ request.user.avatar_url  }})"></div>
           </div>

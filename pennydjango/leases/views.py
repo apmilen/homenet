@@ -681,7 +681,7 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
     def get(self, *args, **kwargs):
         rental_app = self.get_object()
         lease_member = rental_app.lease_member
-        zip_subdir = f'{lease_member.get_full_name()}'
+        zip_subdir = f'{slugify(lease_member.get_full_name())}'
         zip_filename = f'{zip_subdir}.zip'
 
         bytes_io = BytesIO()
@@ -699,7 +699,7 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             content_type="application/x-zip-compressed"
         )
 
-        response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+        response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
         return response
 
 

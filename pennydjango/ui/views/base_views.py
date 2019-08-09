@@ -37,6 +37,7 @@ class BaseContextMixin(object):
             'ENVIRONMENT': settings.SERVER_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
             'LANGUAGE_CODE': settings.LANGUAGE_CODE,
+            'BASE_URL': settings.BASE_URL,
             'user': request.user,
             'title': self.title or self.__class__.__name__,
             'page_id': self.__class__.__name__.lower(),
@@ -134,6 +135,7 @@ class PublicReactView(BaseView):
             # (aka which env is active)
             'ENVIRONMENT': settings.SERVER_ENV,
             'TIME_ZONE': settings.TIME_ZONE,
+            'BASE_URL': settings.BASE_URL,
             'user': self.user_json(request),
         }
 
