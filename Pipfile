@@ -37,6 +37,7 @@ stripe = "*"
 weasyprint = "*"
 plaid-python = "*"
 django-extensions = "*"
+django-optimized-image = "*"
 
 [requires]
 python_version = "3.7"

@@ -6,12 +6,15 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.core.validators import MaxValueValidator
 
+from optimized_image.fields import OptimizedImageField
+
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, DEFAUL_RENT_IMAGE
 from penny.model_utils import BaseModel
 from penny.models import User
-from penny.utils import image_path, validate_file_size
+from penny.utils import image_path
 from listings.constants import (
-    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT, PARKING_OPTIONS
+    LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT,
+    PARKING_OPTIONS
 )
 
 
@@ -280,9 +283,8 @@ class ListingPhotos(BaseModel):
         on_delete=models.CASCADE,
         related_name='photos'
     )
-    primary_photo = models.ImageField(
+    primary_photo = OptimizedImageField(
         upload_to=image_path,
-        validators=[validate_file_size],
         null=True,
         blank=True
     )
@@ -290,8 +292,7 @@ class ListingPhotos(BaseModel):
 
 class ListingPhoto(BaseModel):
     listing = models.ForeignKey(ListingPhotos, on_delete=models.CASCADE)
-    photo = models.ImageField(
+    photo = OptimizedImageField(
         upload_to=image_path,
-        validators=[validate_file_size],
         blank=True
     )

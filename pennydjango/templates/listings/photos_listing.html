@@ -72,7 +72,6 @@
           let mainDrop = new Dropzone("div#primary-photo", {
               url: '{% url 'listings:photo' pk=listing.id %}',
               paramName: 'primary_photo',
-              maxFilesize: 1,
               maxFiles: 1,
               headers: {"X-CSRFToken": "{{ csrf_token }}"},
               acceptedFiles: "image/*",
@@ -83,7 +82,6 @@
           let photosDrop = new Dropzone("div#listing-photos", {
               url: '{% url 'listings:photo-extra' pk=listing.id %}',
               paramName: 'photo',
-              maxFilesize: 1,
               headers: {"X-CSRFToken": "{{ csrf_token }}"},
               acceptedFiles: "image/*",
               addRemoveLinks: true,

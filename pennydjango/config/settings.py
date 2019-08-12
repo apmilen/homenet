@@ -169,6 +169,8 @@ PLAID_PUBLIC_KEY = PLACEHOLDER_FOR_SECRET
 PLAID_SECRET_KEY = PLACEHOLDER_FOR_SECRET
 PLAID_CLIENT_ID = PLACEHOLDER_FOR_SECRET
 
+OPTIMIZED_IMAGE_METHOD = 'pillow'
+
 ################################################################################
 ### Internationalization & Formatting Settings
 ################################################################################
@@ -269,6 +271,7 @@ INSTALLED_APPS = [
     'payments',
     'weasyprint',
     'listing_collections',
+    'optimized_image',
 ]
 
 MIDDLEWARE = [
