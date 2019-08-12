@@ -256,12 +256,8 @@ export class ListingComponent extends React.Component {
                                             <a className="dropdown-item" href={offer_link}>
                                                 <i className={'material-icons'}>create_new_folder</i> Create Offer
                                             </a>
-                                            {global.user.is_user_admin ?
-                                                <>
-                                                <div className="dropdown-divider"></div>
-                                                    <ChangeStatusModal link={change_status_link}/>
-                                                </>
-                                                : null}
+                                            <div className="dropdown-divider"></div>
+                                            <ChangeStatusModal link={change_status_link}/>
                                         </div>
                                     </div>
                                     <AddToCollection
