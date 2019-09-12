@@ -32,6 +32,9 @@ AUTOFIND_SECRET_SETTINGS_EXCLUDED = {
     'ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE',
     'PLACEHOLDER_FOR_SECRET',
 }
+MIN_PYTHON_VERSION = (3, 7)                     # minimum python binary version
+ALLOWED_ENVS = ('DEV', 'PROD')                  # must match filenamess in env/
+ALLOWED_PYTHON_IMPLEMENTATIONS = ('cpython',)   # add 'pypy' here if using PyPy
 
 
 class AttributeDict(dict): 
@@ -280,6 +283,7 @@ def check_system_invariants(settings: dict):
         f'is not supported (must be one of {s.ALLOWED_PYTHON_IMPLEMENTATIONS})'
     )
 
+    ALLOWED_REPO_DIR = os.path.abspath(os.path.join(s.PROJECTS_DIR, s.PROJECT_NAME))
     assert os.path.realpath(s.REPO_DIR) == os.path.realpath(s.ALLOWED_REPO_DIR), (
         'Project directory was not found in the expected location. '
         f'(you must move or symlink {s.REPO_DIR} to {s.ALLOWED_REPO_DIR})'
@@ -567,15 +571,7 @@ def check_data_folders(settings: dict):
     s = AttributeDict(settings)
 
     # Required permissions for each folder, r=read only, w=read and write
-    PROJECT_DIRS = {
-        s.REPO_DIR: 'r',
-        s.DATA_DIR: 'r',
-        s.LOGS_DIR: 'w',
-        s.STATIC_ROOT: 'r',
-        s.MEDIA_ROOT: 'w',
-    }
-
-    for path, mode in PROJECT_DIRS.items():
+    for path, mode in s.PROJECT_DIRS.items():
         mkchown(
             path,
             mode=mode,
@@ -583,7 +579,7 @@ def check_data_folders(settings: dict):
             group=s.DJANGO_USER,
         )
 
-    return PROJECT_DIRS
+    return s.PROJECT_DIRS
 
 
 ### Process Management

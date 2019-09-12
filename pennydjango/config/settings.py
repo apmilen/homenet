@@ -41,6 +41,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
 APP_NAME = 'Homenet'
+APP_CODENAME = 'Pennybags'
 PROJECT_OWNER = 'Monadical'
 PROJECT_NAME = f'{PROJECT_OWNER.lower()}.{APP_NAME.lower()}'
 PROJECTS_DIR = '/opt'
@@ -58,14 +59,12 @@ GIT_SHA = get_active_git_commit(REPO_DIR, GIT_HEAD)
 PY_TYPE = get_python_implementation()
 IS_TTY = sys.stdout.isatty()
 
-ALLOW_ROOT = False                              # allow django to be run as root (bad)
-PROD_SAFETY_CHECK = True                        # enforce that settings are safe for productino environment
-MIN_PYTHON_VERSION = (3, 7)                     # minimum python binary version
-ALLOWED_ENVS = ('DEV', 'PROD')                  # must match filenamess in env/
-ALLOWED_PYTHON_IMPLEMENTATIONS = ('cpython',)   # add 'pypy' here if using PyPy
-ALLOWED_REPO_DIR = os.path.abspath(os.path.join(PROJECTS_DIR, PROJECT_NAME))
+ALLOW_ROOT = False         # allow django to be run as root (bad)
+PROD_SAFETY_CHECK = True   # enforce that settings are safe for production environment
+
 
 check_system_invariants(settings=globals())
+
 
 ################################################################################
 ### Core Django Settings
@@ -235,7 +234,6 @@ DJANGO_SHELL_LOG = os.path.join(LOGS_DIR, 'django_shell.log')
 ################################################################################
 ### Django Core Setup
 ################################################################################
-
 BASE_URL = f'{DEFAULT_HTTP_PROTOCOL}://{DEFAULT_HOST}'
 if DEFAULT_HTTP_PORT not in (80, 443):
     BASE_URL = f'{BASE_URL}:{DEFAULT_HTTP_PORT}'
