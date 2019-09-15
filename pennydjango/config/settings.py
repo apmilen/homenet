@@ -14,6 +14,9 @@ from decimal import Decimal
 
 from config.system import (
     PLACEHOLDER_FOR_SECRET,
+    MIN_PYTHON_VERSION,
+    ALLOWED_ENVS,
+    ALLOWED_PYTHON_IMPLEMENTATIONS,
     AttributeDict,
     get_current_django_command,
     get_current_user,
@@ -45,6 +48,8 @@ APP_CODENAME = 'Pennybags'
 PROJECT_OWNER = 'Monadical'
 PROJECT_NAME = f'{PROJECT_OWNER.lower()}.{APP_NAME.lower()}'
 PROJECTS_DIR = '/opt'
+ALLOWED_REPO_DIR = os.path.abspath(os.path.join(PROJECTS_DIR, PROJECT_NAME))
+
 
 HOSTNAME = get_current_hostname()
 DJANGO_USER = get_current_user()
