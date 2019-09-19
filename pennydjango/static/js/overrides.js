@@ -40,8 +40,9 @@ applyOverrides();
 window.applyOverrides = applyOverrides;
 
 var is_staff = window.user && (window.user.is_staff || window.user.is_superuser)
-
-console.log('Help us build amazing web platforms: %chello@monadical.com', 'color: green;font-family: serif')
+if (!window.DEBUG && !is_staff) {
+    console.log('Help us build amazing web platforms: %chello@monadical.com', 'color: green;font-family: serif')
+}
 
 window.addEventListener('load', function() {
     // Django CSRF
