@@ -4,7 +4,16 @@ RUN apt-get update && apt-get install -y python3.7\
     python3-pip \
     gcc \
     python3.7-dev \
-    libpq-dev
+    libpq-dev \
+    locales \
+    libpango1.0-0 \
+    libcairo2
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+
+ENV LANG en_US.UTF-8 
 
 RUN python3.7 -m pip install -U pip \
     pipenv 
@@ -36,6 +45,7 @@ RUN npm install --upgrade --global yarn
 WORKDIR /opt/monadical.homenet/pennydjango/js
 RUN yarn install
 
-
-WORKDIR /opt/monadical.homenet/pennydjango
-RUN python3 ./manage.py migrate
+WORKDIR /opt/monadical.homenet/pennydjango/
+# RUN adduser www-data
+USER www-data
+RUN echo $USER
