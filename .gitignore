@@ -22,3 +22,4 @@ data/static/
 data/media/
 .vscode/
 data/backups/
+etc/nginx/certs/
