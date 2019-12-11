@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+VENV_DIR="$BASE_DIR/.venv"
+DJANGO_DIR="$BASE_DIR/pennydjango"
+
+sudo -u www-data bash -c "\
+    source $VENV_DIR/bin/activate
+    python $DJANGO_DIR/manage.py $*"
