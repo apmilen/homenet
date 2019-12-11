@@ -109,8 +109,9 @@ class PublicListings extends React.Component {
     hoverOn(listing) {
         if (listing)
             this.setState({
-                map_center: coordinates(listing),
-                listing_marked: listing
+                // re-positioning the map on every hover is too dizzying
+                // map_center: coordinates(listing),
+                listing_marked: listing,
             })
         else
             this.setState({listing_marked: undefined})
