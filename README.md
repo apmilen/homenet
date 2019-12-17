@@ -1,4 +1,4 @@
-# Pennybags (aka HomeNet)
+# HomeNet
 
 Apartment rental listing platform to match realtors with potential home renters and buyers.
 
@@ -21,13 +21,13 @@ Clone this repo into the `/opt` directory:
 ```bash
 # Use ssh (not https) to avoid push permission errors
 # (replace YOUR_GITHUB_USER with your github username)
-git clone git@github.com:YOUR_GITHUB_USER/pennybags.git /opt/monadical.homenet
+git clone git@github.com:YOUR_GITHUB_USER/homenet.git /opt/monadical.homenet
 ```
 
 If you clone it elsewhere instead (e.g. inside your home folder), you must symlink `/opt/monadical.homenet` to the repo location:
 ```bash
-ln -s /path/to/cloned/repo/pennybags /opt/monadical.homenet
-ln -s /opt/monadical.homenet /opt/pennybags
+ln -s /path/to/cloned/repo/homenet /opt/monadical.homenet
+ln -s /opt/monadical.homenet /opt/homenet
 ```
 
 ---
