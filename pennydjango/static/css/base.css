@@ -282,6 +282,13 @@ hr.divider-hr {
     background-color:#c3c7cc;
 }
 
+.carousel-image {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 350px;
+}
+
 /*  Collections  */
 .collection-modal-field {
     margin-bottom: .5rem;
