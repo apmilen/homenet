@@ -2,7 +2,7 @@ import bleach
 import json as jsonlib
 
 from django import template
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 
 from penny.utils import sanitize_html, ExtendedEncoder

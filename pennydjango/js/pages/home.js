@@ -23,7 +23,12 @@ const ListingGrid = ({listing, hoverOn}) => {
              onMouseEnter={() => {hoverOn(listing)}} onMouseLeave={() => {hoverOn(undefined)}}>
             <a className="overlay" href={listing.listing_link} target="_blank"></a>
             <div className="card-post__image text-center">
-                <img className="box-wd" src={listing.default_image} />
+                <div className="box-wd" style={{
+                    backgroundImage: `url(${listing.default_image})`,
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center'
+                }} />
                 {listing.no_fee_listing &&
                     <span className="card-post__category left-badge badge badge-pill badge-info">no fee</span>
                 }
