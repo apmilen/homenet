@@ -57,13 +57,13 @@
         <div class="carousel-inner">
           {% for image in object.images %}
             <div class="carousel-item {% if forloop.first %}active{% endif %}">
-              <img class="d-block w-100" src="{{ image }}"
-                   alt="First slide">
+              <div style="background-image: url({{image}});" class="carousel-image" alt="First slide">
+              </div>
             </div>
           {% empty %}
             <div class="carousel-item active">
-              <img class="d-block w-100" src="{{ object.default_image }}"
-                   alt="First slide">
+              <div style="background-image: url({{object.default_image}});" class="carousel-image" alt="First slide">
+              </div>
             </div>
           {% endfor %}
         </div>
