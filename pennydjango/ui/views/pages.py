@@ -10,7 +10,7 @@ from penny.constants import NEIGHBORHOODS
 
 
 class Home(PublicReactView):
-    title = "Real Estate"
+    title = "Home"
     component = 'pages/home.js'
 
     def props(self, request, *args, **kwargs):
