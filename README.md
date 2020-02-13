@@ -38,7 +38,7 @@ ln -s /opt/monadical.homenet /opt/homenet
 
 If you use Bash, add these lines to your `~/.bashrc` or `~/.bash_profile` file:
 ```bash
-PATH=./node_modules/.bin:./.venv/bin:./../.venv/bin:$PATH
+PATH="$PATH:./.venv/bin:./../.venv/bin:./node_modules/.bin"
 PIPENV_VENV_IN_PROJECT=1
 PIPENV_IGNORE_VIRTUALENVS=1
 ```
