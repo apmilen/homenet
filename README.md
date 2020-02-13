@@ -280,6 +280,32 @@ source .venv/bin/activate
 # or `pipenv shell`
 ```
 
+### Deploy changes to a server
+```bash
+# ssh into the server running django. e.g.
+ssh -p 44 root@some.host.here.com
+cd /opt/monadical.homenet
+
+# make a database backup to be safe
+pg_dump --user=penny penny > data/backups/penny_2020-02-14.sql
+
+# stop the server
+supervisorctl stop all
+
+# pull the latest codebase version
+git pull
+
+# update any python dependencies
+pipenv install
+
+# run the database migrations
+pipenv shell
+./manage.py migrate
+
+# restart the server, then confirm it's all working as expected
+supervisorctl start all
+```
+
 ### Start/stop/restart Nginx, Django, Postgresql
 
 ```bash
@@ -297,7 +323,7 @@ supervisorctl start <service|all>
 supervisorctl restart monadical.homenet:penny-django
 ```
 
-### Inspect logfile output
+### Inspect Logfile Output
 ```bash
 cd /opt/monadical.homenet/data/logs
 tail -f nginx.err
@@ -306,6 +332,15 @@ tail -f postgres.log
 tail -f reloads.log
 tail -f django.log
 # etc.
+```
+
+### Run Tests
+```bash
+cd /opt/monadical.homenet
+source .venv/bin/activate
+
+# Run the django management test command
+./manage.py test
 ```
 
 ### Run Migrations
