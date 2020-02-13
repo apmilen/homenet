@@ -278,7 +278,7 @@ source .venv/bin/activate
 # or `pipenv shell`
 ```
 
-### Start/stop/restart Nginx or Postgresql
+### Start/stop/restart Nginx, Django, Postgresql
 
 ```bash
 cd /opt/monadical.homenet
@@ -290,6 +290,9 @@ systemctl start supervisor  # on mac: brew services start supervisor
 supervisorctl status <service|all>
 supervisorctl stop <service|all>
 supervisorctl start <service|all>
+
+# to restart django for example
+supervisorctl restart monadical.homenet:penny-django
 ```
 
 ### Inspect logfile output
@@ -313,6 +316,18 @@ cd /opt/monadical.homenet/pennydjango
 ./manage.py migrate
 ```
 
+### Update an API Secret
+```bash
+# ssh into the machine running django, e.g.
+ssh -p 44 root@some.host.here.com
+
+# then locate the project directory and env secrets file
+cd /opt/monadical.homenet
+nano env/secrets.env
+
+# then restart django for the changes to take effect (see above)
+supversiorctl restart monadical.homenet:penny-django
+```
 ---
 
 ## Troubleshooting
