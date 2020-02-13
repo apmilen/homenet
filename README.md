@@ -45,7 +45,7 @@ PIPENV_IGNORE_VIRTUALENVS=1
 
 If you use Fish, add these lines to your `~/.config/fish/config.fish` file:
 ```fish
-set -x PATH ./node_modules/.bin ./.venv/bin ./../.venv/bin $PATH
+set -x PATH $PATH ./node_modules/.bin ./.venv/bin ./../.venv/bin
 set -x PIPENV_VENV_IN_PROJECT 1
 set -x PIPENV_IGNORE_VIRTUALENVS 1
 ```
