@@ -2,14 +2,16 @@
 
 Apartment rental listing platform to match realtors with potential home renters and buyers.
 
-- https://homenet.zalad.io
-- https://homenet.zalad.io/admin
+- https://pushforward.nyc
+- https://pushforward.nyc/admin
 
 Services:  
-- https://dashboard.stripe.com/account/team
-- https://app.mailgun.com/app/account/settings
-- https://dash.cloudflare.com/413ad3842c5a82a780b582d8de8dc903/zalad.io/dns
-- https://console.cloud.google.com/google/maps-apis/overview?pli=1&project=pennybags-1556050514027
+
+- Hosting: https://my.vultr.com
+- Payments: https://dashboard.stripe.com/account/team + https://plaid.com/docs/
+- Emails: https://app.mailgun.com/app/account/settings
+- DNS / CDN: https://dash.cloudflare.com/413ad3842c5a82a780b582d8de8dc903/zalad.io/dns
+- Maps: https://account.mapbox.com/auth/signin/?route-to=%22/access-tokens/%22 + https://console.cloud.google.com/google/maps-apis/overview?pli=1&project=pennybags-1556050514027
 
 ## Project Quickstart
 
