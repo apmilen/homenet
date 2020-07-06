@@ -49,11 +49,11 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         logger = logging.getLogger('test.logger')
-        logger.info('testing123')
-        logger.info(self)
-        logger.info(request)
-        logger.info(args)
-        logger.info(kwargs)
+        logger.error('testing123')
+        logger.error(self)
+        logger.error(request)
+        logger.error(args)
+        logger.error(kwargs)
 
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
