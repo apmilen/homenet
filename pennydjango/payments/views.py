@@ -27,6 +27,7 @@ from payments.constants import (
 )
 from leases.models import Lease, LeaseMember
 
+import logging
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
@@ -46,11 +47,13 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
-        print("testlog")
-        print(self)
-        print(request)
-        print(args)
-        print(kwargs)
+        logger = logging.getLogger('test.logger')
+        logger.info('testing123')
+        logger.info(self)
+        logger.info(request)
+        logger.info(args)
+        logger.info(kwargs)
+
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
         lease_total_pending = get_lease_total_pending(lease)
