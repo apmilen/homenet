@@ -27,7 +27,6 @@ from payments.constants import (
 )
 from leases.models import Lease, LeaseMember
 
-import logging
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
@@ -43,8 +42,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         return context 
 
     def get(self, request, *args, **kwargs):
-        blogger = logging.getLogger('please.work')
-        blogger.info('workingnow')
         if request.is_ajax():
             amount = Decimal(request.GET.get('amount', 0))
             amount_plus_fee = get_amount_plus_fee(amount) / Decimal(100)

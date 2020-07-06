@@ -56,6 +56,8 @@ from ui.views.base_views import PublicReactView
 
 from django.db.models import Sum
 
+import logging
+
 
 # Rest Framework
 class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
@@ -443,6 +445,10 @@ class ClientLease(ClientOrAgentRequiredMixin,
         return self.model.objects.select_related('offer', 'offer__listing')
 
     def get_context_data(self, **kwargs):
+        blogger = logging.getLogger('please.work.please')
+        blogger.info('workingnow')
+        print("assumingno")
+        
         context = super().get_context_data(**kwargs)
         # Main objects
         lease = self.object.offer
