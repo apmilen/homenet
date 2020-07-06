@@ -46,6 +46,11 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
+        print("testlog")
+        print(self)
+        print(request)
+        print(args)
+        print(kwargs)
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
         lease_total_pending = get_lease_total_pending(lease)
