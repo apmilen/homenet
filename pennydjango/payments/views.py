@@ -32,8 +32,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         stripe.api_key = settings.STRIPE_SECRET_KEY
-        wtf = logging.getLogger('wtf.logger')
-        wtf.info("wtf")
 
     template_name = 'payments/payments.html'
 
@@ -50,10 +48,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         logger = logging.getLogger('test.logger')
         logger.error('testing123')
-        logger.error(self)
-        logger.error(request)
-        logger.error(args)
-        logger.error(kwargs)
 
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)

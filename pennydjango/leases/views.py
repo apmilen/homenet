@@ -447,7 +447,6 @@ class ClientLease(ClientOrAgentRequiredMixin,
     def get_context_data(self, **kwargs):
         blogger = logging.getLogger('please.work.please')
         blogger.error('workingnow')
-        print("assumingno")
 
         context = super().get_context_data(**kwargs)
         # Main objects
