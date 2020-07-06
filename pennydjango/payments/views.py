@@ -33,6 +33,8 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         stripe.api_key = settings.STRIPE_SECRET_KEY
+        wtf = logging.getLogger('wtf.logger')
+        wtf.info("wtf")
 
     template_name = 'payments/payments.html'
 
