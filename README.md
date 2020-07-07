@@ -283,7 +283,7 @@ source .venv/bin/activate
 ### Rebuild Javascript Pages
 ```bash
 cd /opt/monadical.homenet/pennydjango/js
-yarn run build
+webpack --display-error-details
 git add ../static/pages
 git commit -m "rebuilt staticfiles"
 ```
