@@ -134,7 +134,7 @@ class PublicListings extends React.Component {
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) => {
-            let fixedLink = '#'
+            let fixedLink = null
             if (resp.next !== null) {
                 fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
             }
@@ -147,7 +147,7 @@ class PublicListings extends React.Component {
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) => {
-            let fixedLink = '#'
+            let fixedLink = null
             if (resp.next !== null) {
                 fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
             }
