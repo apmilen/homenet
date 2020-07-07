@@ -147,10 +147,14 @@ class PublicListings extends React.Component {
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) => {
+            let fixedLink = '#'
+            if (resp.next !== null) {
+                fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
+            }
             this.setState({
                 listings: this.state.listings.concat(resp.results),
                 total_listings: resp.count,
-                more_listings_link: resp.next.slice(0,4) + 's' + resp.next.slice(4)
+                more_listings_link: fixedLink
             })
         })
     }
