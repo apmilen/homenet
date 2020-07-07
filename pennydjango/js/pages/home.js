@@ -5,7 +5,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
-import differenceInDays from "date-fns/difference_in_days";
+import differenceInDays from "date-fns/differenceInDays";
 
 import {tooltip} from '@/util/dom'
 

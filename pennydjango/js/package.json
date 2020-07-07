@@ -3,39 +3,35 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/cli": "^7.2.0",
-    "@babel/core": "^7.2.0",
-    "@babel/node": "^7.2.0",
-    "@babel/plugin-syntax-function-bind": "^7.2.0",
-    "@babel/plugin-transform-react-constant-elements": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/polyfill": "^7.0.0",
-    "@babel/preset-env": "^7.2.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "^7.2.0",
-    "babel-eslint": "^10.0.1",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-root-import": "^6.1.0",
-    "babel-plugin-transform-function-bind": "^6.8.0",
-    "babelify": "^10.0.0",
-    "bootstrap": "^4.3.1",
-    "clipboard": "^2.0.4",
-    "core-js": "2",
-    "css-loader": "^3.0.0",
-    "date-fns": "^1.30.1",
-    "eslint-config-react-app": "^3.0.8",
-    "mapbox-gl": "^1.0.0",
-    "react": "^16.8.6",
-    "react-bootstrap": "^1.0.0-beta.8",
-    "react-dom": "^16.8.6",
-    "react-mapbox-gl": "^4.4.0",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8",
-    "shards-react": "^1.0.3"
-  },
-  "devDependencies": {
-    "webpack": "^4.29.5",
-    "webpack-cli": "^3.2.3"
+    "@babel/cli": ">=7.2.0",
+    "@babel/core": ">=7.2.0",
+    "@babel/node": ">=7.2.0",
+    "@babel/plugin-syntax-function-bind": ">=7.2.0",
+    "@babel/plugin-transform-react-constant-elements": ">=7.2.0",
+    "@babel/plugin-transform-runtime": ">=7.2.0",
+    "@babel/polyfill": ">=7.0.0",
+    "@babel/preset-env": ">=7.2.0",
+    "@babel/preset-react": ">=7.0.0",
+    "@babel/runtime": ">=7.2.0",
+    "babel-eslint": ">=10.0.1",
+    "babel-loader": ">=8.0.4",
+    "babel-plugin-root-import": ">=6.1.0",
+    "babel-plugin-transform-function-bind": ">=6.8.0",
+    "babelify": ">=10.0.0",
+    "bootstrap": ">=4.3.1",
+    "clipboard": ">=2.0.4",
+    "core-js": ">=2",
+    "css-loader": ">=3.0.0",
+    "date-fns": "^2.14.0",
+    "eslint-config-react-app": ">=3.0.8",
+    "mapbox-gl": ">=1.0.0",
+    "react": ">=16.8.6",
+    "react-bootstrap": ">=1.0.0-beta.8",
+    "react-dom": ">=16.8.6",
+    "react-mapbox-gl": ">=4.4.0",
+    "react-router-dom": ">=5.0.0",
+    "react-scripts": ">=2.1.8",
+    "shards-react": ">=1.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -50,10 +46,10 @@
         "@babel/preset-env",
         {
           "useBuiltIns": "usage",
-          "corejs": "2",
+          "corejs": "3",
           "targets": [
             "last 5 versions",
-            "> 0.25%",
+            ">= 0.25%",
             "ie >= 11"
           ]
         }
@@ -75,9 +71,12 @@
     "extends": "react-app"
   },
   "browserslist": [
-    ">0.2%",
+    ">=0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "webpack-cli": "^3.3.12"
+  }
 }
