@@ -280,6 +280,14 @@ source .venv/bin/activate
 # or `pipenv shell`
 ```
 
+### Rebuild Javascript Pages
+```bash
+cd /opt/monadical.homenet/pennydjango/js
+yarn run build
+git add ../static/pages
+git commit -m "rebuilt staticfiles"
+```
+
 ### Deploy changes to a server
 ```bash
 # ssh into the server running django. e.g.
