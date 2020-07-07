@@ -132,23 +132,23 @@ class PublicListings extends React.Component {
         this.setState({[option]: !this.state[option]})
     }
     fetchListings(params) {
-        $.get(this.props.endpoint, params, (resp) =>
+        $.get(this.props.endpoint, params, (resp) => {
             let fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
             this.setState({
                 listings: resp.results,
                 total_listings: resp.count,
                 more_listings_link: fixedLink
             })
-        )
+        })
     }
     moreListings() {
-        $.get(this.state.more_listings_link, (resp) =>
+        $.get(this.state.more_listings_link, (resp) => {
             this.setState({
                 listings: this.state.listings.concat(resp.results),
                 total_listings: resp.count,
                 more_listings_link: resp.next.slice(0,4) + 's' + resp.next.slice(4)
             })
-        )
+        })
     }
     render() {
         console.log("testing")
