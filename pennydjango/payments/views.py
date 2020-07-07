@@ -186,7 +186,7 @@ class ManualTransaction(ClientOrAgentRequiredMixin, CreateView):
             lease_member_id = request.POST.get('lease_member', False)
             from_to = request.POST.get('from_to', False)
             
-            if from_to is "owner_payout":
+            if from_to == "owner_payout":
                 lease_member = None
             elif not lease_member_id:
                 error = True

@@ -7,11 +7,12 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import differenceInDays from "date-fns/differenceInDays";
 
-import {tooltip} from '@/util/dom'
+import {tooltip, ErrorBoundary} from '@/util/dom'
 
 import {FiltersBar} from '@/components/filtersbar'
 import {MapComponent, coordinates} from '@/components/maps'
 import {Switch, SettingsGear} from '@/components/misc'
+
 
 
 const ListingGrid = ({listing, hoverOn}) => {
@@ -133,7 +134,10 @@ class PublicListings extends React.Component {
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) => {
-            let fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
+            let fixedLink = '#'
+            if (resp.next !== null) {
+                fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
+            }
             this.setState({
                 listings: resp.results,
                 total_listings: resp.count,
@@ -151,7 +155,6 @@ class PublicListings extends React.Component {
         })
     }
     render() {
-        console.log("testing")
         const {constants} = this.props
         const {
             listings, total_listings, more_listings_link, listing_detail,
@@ -191,6 +194,7 @@ class PublicListings extends React.Component {
                 <Col className="main-scroll left-main-column">
                         <center key="center"><h6>{total_listings} results</h6></center>
                         <Row key="row1" className="justify-content-center">
+                            {listings.length ? null : 'No listings found.'}
                             {listings.map(listing =>
                                 as_grid ?
                                     <ListingGrid listing={listing}
@@ -218,12 +222,14 @@ class PublicListings extends React.Component {
                 </Col>
                 {show_map &&
                     <Col className={`map-panel ${listing_detail ? '' : 'd-none'} d-md-inline`}>
-                        <MapComponent
-                            listings={listings}
-                            listing_highlighted={listing_marked || []}
-                            center={map_center}
-                            zoom={map_zoom}
-                        />
+                        <ErrorBoundary>
+                            <MapComponent
+                                listings={listings}
+                                listing_highlighted={listing_marked || []}
+                                center={map_center}
+                                zoom={map_zoom}
+                            />
+                        </ErrorBoundary>
                     </Col>
                 }
             </Row>
