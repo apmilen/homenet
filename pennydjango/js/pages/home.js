@@ -136,7 +136,7 @@ class PublicListings extends React.Component {
             this.setState({
                 listings: resp.results,
                 total_listings: resp.count,
-                more_listings_link: resp.next
+                more_listings_link: resp.next.slice(0,4) + 's' + resp.next.slice(4)
             })
         )
     }
@@ -145,7 +145,7 @@ class PublicListings extends React.Component {
             this.setState({
                 listings: this.state.listings.concat(resp.results),
                 total_listings: resp.count,
-                more_listings_link: resp.next
+                more_listings_link: resp.next.slice(0,4) + 's' + resp.next.slice(4)
             })
         )
     }
