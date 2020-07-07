@@ -322,7 +322,7 @@ def check_system_invariants(settings: dict):
         #   LANG='en_US.UTF-8',
         #   LC_ALL='en_US.UTF-8',
         #   PYTHONIOENCODING='UTF-8'
-        assert sys.stderr.encoding == sys.stdout.encoding == 'UTF-8', (
+        assert sys.stderr.encoding.upper() == sys.stdout.encoding.upper() == 'UTF-8', (
             f'Bad shell encoding setting "{sys.stdout.encoding}". '
             'System, Shell, and Python system locales must be set to '
             '(uppercase) "UTF-8" to run properly.'
