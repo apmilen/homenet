@@ -142,8 +142,6 @@ class PublicListings extends React.Component {
         )
     }
     moreListings() {
-        console.log("moreListings")
-        console.log(this.state.more_listings_link)
         $.get(this.state.more_listings_link, (resp) =>
             this.setState({
                 listings: this.state.listings.concat(resp.results),
@@ -153,6 +151,7 @@ class PublicListings extends React.Component {
         )
     }
     render() {
+        console.log("testing")
         const {constants} = this.props
         const {
             listings, total_listings, more_listings_link, listing_detail,
