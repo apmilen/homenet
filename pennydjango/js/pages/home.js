@@ -133,14 +133,11 @@ class PublicListings extends React.Component {
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) =>
-            console.log("inside fetchListings response")
-            console.log(resp.next)
             let fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
-            console.log(fixedLink)
             this.setState({
                 listings: resp.results,
                 total_listings: resp.count,
-                more_listings_link: resp.next.slice(0,4) + 's' + resp.next.slice(4)
+                more_listings_link: fixedLink
             })
         )
     }
