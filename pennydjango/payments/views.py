@@ -47,11 +47,10 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         return JsonResponse({'error': 'This is an API enpoint only accessible via AJAX, it is not intended for humans to view directly.'})
 
     def post(self, request, *args, **kwargs):
-
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
-        client = LeaseMember.objects.get(user=request.user)
+        client = LeaseMember.objects.get(user=request.user, offer_id=lease.id)
         lease_total_pending = get_lease_total_pending(lease)
-       
+
         if lease_total_pending == 0:
             messages.warning(
                 request, 
@@ -107,7 +106,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             
         assert request_amount_plus_fee == amount_plus_fee, \
             "The amount plus Stripe fee is inconsistent"
-        lease_member = LeaseMember.objects.get(user=request.user)
+        lease_member = LeaseMember.objects.get(user=request.user, offer_id=lease.id)
         token = request.POST['stripeToken']
         
         try:
@@ -304,7 +303,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
             lease = get_object_or_404(Lease, id=kwargs.get('pk'))
             lease_member = LeaseMember.objects.get(
                 user=request.user,
-                offer=lease
+                offer_id=lease.id,
             )
             response = {
                 'complete': True,
