@@ -46,7 +46,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
-        flogger = logging.getLogger('test.logger')
+        flogger = logging.getLogger('django')
         flogger.error('testing123')
 
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
