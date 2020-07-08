@@ -44,6 +44,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             amount = Decimal(request.GET.get('amount', 0))
             amount_plus_fee = get_amount_plus_fee(amount) / Decimal(100)
             return JsonResponse({'total_paid': amount_plus_fee})
+        return JsonResponse({'error': 'This is an API enpoint only accessible via AJAX, it is not intended for humans to view directly.'})
 
     def post(self, request, *args, **kwargs):
 
