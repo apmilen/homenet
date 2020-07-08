@@ -178,7 +178,7 @@
         var props_elem = document.getElementById('props');
         window.props = JSON.parse(props_elem.textContent || props_elem.innerText);
         window.react_mount = document.getElementById('react');
-        window.csfrtoken = "{{ csfr_token }}";
+        window.csrftoken = "{{ csrf_token }}";
     </script>
     <script src="{% http2static 'js/errors.js' GIT_SHA %}" type="text/javascript" crossorigin></script>
     {% if component %}
