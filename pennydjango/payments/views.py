@@ -27,14 +27,10 @@ from payments.constants import (
 )
 from leases.models import Lease, LeaseMember
 
-import logging
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        flogger = logging.getLogger('django')
-        flogger.error('testing123')
-        print("why dont you print")
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
     template_name = 'payments/payments.html'
@@ -44,10 +40,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         return context 
 
     def get(self, request, *args, **kwargs):
-
-        slogger = logging.getLogger('django')
-        slogger.error('testing234')
-        print("why you dont print??")
         if request.is_ajax():
             amount = Decimal(request.GET.get('amount', 0))
             amount_plus_fee = get_amount_plus_fee(amount) / Decimal(100)
@@ -133,7 +125,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     stripe_charge = stripe.Charge.create(
                         amount=amount_to_stripe,
                         currency='usd',
-                        description='A test charge',
+                        description='Lease payment',
                         source=token,
                         statement_descriptor='Lease payment'
                     )
@@ -141,7 +133,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     stripe_transaction.status = FAILED
                     stripe_transaction.save()
                     messages.warning(
-                        request, 
+                        request,
                         "There has been a problem with your card"
                     )
                 else:
