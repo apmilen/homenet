@@ -9,6 +9,7 @@ from django.utils.functional import cached_property
 from penny.constants import DEFAUL_AVATAR
 from penny.models import BaseModel, User
 from listings.models import Listing
+from payments.constants import APPROVED
 from leases.constants import (
     LEASE_STATUS, DEFAULT_LEASE_STATUS, APPLICANT_TYPE,
     LEASE_STATUS_PROGRESS
@@ -88,12 +89,12 @@ class LeaseMember(BaseModel):
 
     @cached_property
     def total_paid(self):
-        paid_amnts = self.transaction_set.filter(status='approved').aggregate(total_amount=Sum('amount'))
+        paid_amnts = self.transaction_set.filter(status=APPROVED).aggregate(total_amount=Sum('amount'))
         return paid_amnts.get('total_amount') or 0
 
     @cached_property
     def total_fee(self):
-        paid_fee = self.transaction_set.filter(status='approved').aggregate(total_fee=Sum('fee'))
+        paid_fee = self.transaction_set.filter(status=APPROVED).aggregate(total_fee=Sum('fee'))
         return paid_fee.get('total_fee') or 0
 
     @property
