@@ -27,10 +27,14 @@ from payments.constants import (
 )
 from leases.models import Lease, LeaseMember
 
+import logging
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        flogger = logging.getLogger('django')
+        flogger.error('testing123')
+        print("why dont you print")
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
     template_name = 'payments/payments.html'
@@ -46,8 +50,6 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             return JsonResponse({'total_paid': amount_plus_fee})
 
     def post(self, request, *args, **kwargs):
-        flogger = logging.getLogger('django')
-        flogger.error('testing123')
 
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
         client = LeaseMember.objects.get(user=request.user)
