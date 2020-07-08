@@ -284,12 +284,6 @@ def check_system_invariants(settings: dict):
         f'is not supported (must be one of {s.ALLOWED_PYTHON_IMPLEMENTATIONS})'
     )
 
-    ALLOWED_REPO_DIR = os.path.abspath(os.path.join(s.PROJECTS_DIR, s.PROJECT_NAME))
-    assert os.path.realpath(s.REPO_DIR) == os.path.realpath(s.ALLOWED_REPO_DIR), (
-        'Project directory was not found in the expected location. '
-        f'(you must move or symlink {s.REPO_DIR} to {s.ALLOWED_REPO_DIR})'
-    )
-
     try:
         with open('/etc/passwd', 'r') as f:
             f.read()

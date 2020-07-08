@@ -6,7 +6,7 @@ from django.urls import reverse
 from leases.models import LeaseMember
 
 
-def send_invitation_email(lease_member: LeaseMember):
+def send_invitation_email(lease_member: LeaseMember, from_user=None):
     name = lease_member.get_full_name()
     lease = lease_member.offer
     member_id = lease_member.id
@@ -17,7 +17,7 @@ def send_invitation_email(lease_member: LeaseMember):
     subject = render_to_string(
         'email/leases/_invitation.txt',
         context={
-            'user': name,
+            'user': from_user.get_full_name(),
             'listing': listing_desc
         }
     )
