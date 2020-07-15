@@ -5,3 +5,6 @@ This is your temporary password: {{ password }}
 Please log in and change your password using the next link:
 
 {{ url }}
+
+
+--The PushForward.NYC Team
