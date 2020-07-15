@@ -104,6 +104,8 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['annual_income'].required = False
         self.fields['time_at_current_job'].required = False
 
+        self.fields['ssn'].label = "SSN"
+
 
 class RentalApplicationEditingForm(forms.ModelForm):
     use_required_attribute = False
