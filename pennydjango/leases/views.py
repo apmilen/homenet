@@ -231,7 +231,7 @@ class LeaseMemberCreate(MainObjectContextMixin,
                 member = form.save(commit=False)
                 member.offer = self.get_main_object()
                 member.save()
-                send_invitation_email(member)
+                send_invitation_email(member, from_user=self.request.user)
         except DatabaseError:
             messages.add_message(
                 self.request,
@@ -430,7 +430,7 @@ class ResendLeaseInvitation(ClientOrAgentRequiredMixin,
 
     def get(self, request, *args, **kwargs):
         lease_member = self.get_object()
-        send_invitation_email(lease_member)
+        send_invitation_email(lease_member, from_user=request.user)
         kwargs.update({"lease_id": lease_member.offer_id})
         return super().get(request, *args, **kwargs)
 

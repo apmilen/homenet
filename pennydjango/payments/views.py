@@ -27,14 +27,10 @@ from payments.constants import (
 )
 from leases.models import Lease, LeaseMember
 
-import logging
 
 class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        flogger = logging.getLogger('django')
-        flogger.error('testing123')
-        print("why dont you print")
         stripe.api_key = settings.STRIPE_SECRET_KEY
 
     template_name = 'payments/payments.html'
@@ -44,21 +40,17 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
         return context 
 
     def get(self, request, *args, **kwargs):
-
-        slogger = logging.getLogger('django')
-        slogger.error('testing234')
-        print("why you dont print??")
         if request.is_ajax():
             amount = Decimal(request.GET.get('amount', 0))
             amount_plus_fee = get_amount_plus_fee(amount) / Decimal(100)
             return JsonResponse({'total_paid': amount_plus_fee})
+        return JsonResponse({'error': 'This is an API enpoint only accessible via AJAX, it is not intended for humans to view directly.'})
 
     def post(self, request, *args, **kwargs):
-
         lease = get_object_or_404(Lease, id=kwargs.get('pk'))
-        client = LeaseMember.objects.get(user=request.user)
+        client = LeaseMember.objects.get(user=request.user, offer_id=lease.id)
         lease_total_pending = get_lease_total_pending(lease)
-       
+
         if lease_total_pending == 0:
             messages.warning(
                 request, 
@@ -114,7 +106,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
             
         assert request_amount_plus_fee == amount_plus_fee, \
             "The amount plus Stripe fee is inconsistent"
-        lease_member = LeaseMember.objects.get(user=request.user)
+        lease_member = LeaseMember.objects.get(user=request.user, offer_id=lease.id)
         token = request.POST['stripeToken']
         
         try:
@@ -133,7 +125,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     stripe_charge = stripe.Charge.create(
                         amount=amount_to_stripe,
                         currency='usd',
-                        description='A test charge',
+                        description='Lease payment',
                         source=token,
                         statement_descriptor='Lease payment'
                     )
@@ -141,7 +133,7 @@ class PaymentPage(ClientOrAgentRequiredMixin, TemplateView):
                     stripe_transaction.status = FAILED
                     stripe_transaction.save()
                     messages.warning(
-                        request, 
+                        request,
                         "There has been a problem with your card"
                     )
                 else:
@@ -311,7 +303,7 @@ class PaymentPagePlaid(ClientOrAgentRequiredMixin, TemplateView):
             lease = get_object_or_404(Lease, id=kwargs.get('pk'))
             lease_member = LeaseMember.objects.get(
                 user=request.user,
-                offer=lease
+                offer_id=lease.id,
             )
             response = {
                 'complete': True,

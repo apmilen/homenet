@@ -44,12 +44,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
 APP_NAME = 'Homenet'
-APP_CODENAME = 'Pennybags'
-PROJECT_OWNER = 'Monadical'
-PROJECT_NAME = f'{PROJECT_OWNER.lower()}.{APP_NAME.lower()}'
-PROJECTS_DIR = '/opt'
-ALLOWED_REPO_DIR = os.path.abspath(os.path.join(PROJECTS_DIR, PROJECT_NAME))
-
 
 HOSTNAME = get_current_hostname()
 DJANGO_USER = get_current_user()
@@ -76,7 +70,7 @@ check_system_invariants(settings=globals())
 ################################################################################
 DEBUG = False
 SERVE_STATIC = False
-DEFAULT_HOST = 'homenet.zalad.io'
+DEFAULT_HOST = 'pushforward.nyc'
 ALLOWED_HOSTS = [DEFAULT_HOST]
 DEFAULT_HTTP_PROTOCOL = 'http'
 DEFAULT_HTTP_PORT = 443
@@ -130,7 +124,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600            # 2 weeks
 
 CORS_ORIGIN_WHITELIST = (               # allow JS from these hosts to query server
-    f'https://{PROJECT_NAME.lower()}.l',
+    f'https://{APP_NAME.lower()}.l',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
 )
@@ -391,6 +385,26 @@ if DEBUG:
     ]
     AUTH_PASSWORD_VALIDATORS = []  # don't validate passwords on dev
     INTERNAL_IPS = ['127.0.0.1']
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGS_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 
 ################################################################################
