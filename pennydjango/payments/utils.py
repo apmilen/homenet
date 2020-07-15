@@ -19,6 +19,7 @@ def get_amount_plus_fee(amount):
     total_paid = ceil(total_paid * Decimal(100))
     return total_paid
 
+
 def get_lease_total_pending(lease):
     lease_total_paid = Transaction.objects.filter(
         lease_member__offer=lease,
@@ -30,6 +31,7 @@ def get_lease_total_pending(lease):
         total_sum = lease_total_paid['amount__sum']
         lease_total_pending = lease_move_in_costs - total_sum
     return lease_total_pending
+
 
 def update_lesase_status(lease):
     lease.status = LEASE_STATUS[1][0]

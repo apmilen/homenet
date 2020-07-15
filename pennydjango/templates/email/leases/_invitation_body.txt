@@ -1,5 +1,5 @@
 {{ user }}
 
-Welcome to Homenet. You have been invited to apply for an apartment. Use the link below to accept and get started.
+Welcome to Push Forward. You have been invited to apply for an apartment. Use the link below to accept and get started.
 
 {{ url }}

@@ -1,12 +1,15 @@
 from django.db.models import Q
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import TemplateView, UpdateView
+from django.template.loader import render_to_string
 
 from penny.forms import GeneralSettingsForm
 from penny.models import User
@@ -170,15 +173,31 @@ def invite_new_user(name, email, user_type):
             'success': False,
             'details': 'Email belongs to registered user. Try another one.'
         }
-
+    password = User.objects.make_random_password()
     new_user = User.objects.create_user(
         email=email,
-        password='',
+        password=password,
         user_type=user_type,
         first_name=name,
     )
-
+    new_user_invite_email(new_user, password, user_type)
     return {
         'success': True,
         'new_user': new_user.__json__(),
     }
+
+
+def new_user_invite_email(new_user, password_context, user_type):
+    login_url = f"{settings.BASE_URL}{reverse('login')}?next={reverse('penny:user_settings')}"
+
+    subject = render_to_string("email/users/_new_user.txt")
+    body = render_to_string(
+        "email/users/_new_user_body.txt",
+        context={
+            'user_type': user_type,
+            'name': new_user,
+            'password': password_context,
+            'url': login_url
+        }
+    )
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [new_user.email])

@@ -1,0 +1,7 @@
+Your new account as {{ user_type }} has been created in Push Forward.
+
+This is your temporary password: {{ password }}
+
+Please log in and change your password using the next link:
+
+{{ url }}
