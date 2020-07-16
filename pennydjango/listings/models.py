@@ -28,7 +28,8 @@ class Listing(BaseModel):
     listing_type = models.CharField(
         max_length=255,
         verbose_name='Type',
-        choices=LISTING_TYPES)
+        choices=LISTING_TYPES
+    )
     price = models.PositiveIntegerField()
     move_in_cost = models.CharField(
         max_length=100, choices=MOVE_IN_COST

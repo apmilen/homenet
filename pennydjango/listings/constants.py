@@ -1,9 +1,11 @@
 # Listing Types
 APARTMENT_TYPE = 'apartment'
 HOUSE_TYPE = 'house'
+COMMERCIAL = 'commercial'
 LISTING_TYPES = (
     (APARTMENT_TYPE, 'Apartment'),
-    (HOUSE_TYPE, 'House')
+    (HOUSE_TYPE, 'House'),
+    (COMMERCIAL, 'Commercial'),
 )
 
 # Listing Status

@@ -3,3 +3,5 @@ Hello,
 This is a collection of listings you may be interested on: {{ url }}
 
 {{ note }}
+
+--The PushForward.NYC Team
