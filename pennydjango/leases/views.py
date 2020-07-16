@@ -66,12 +66,14 @@ class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = get_all_or_by_user(
-            Lease,
-            user,
-            'created_by',
-            self.queryset
-        )
+        queryset = Lease.objects.all()
+        # Uncomment this if we want to filter by agent again
+        # queryset = get_all_or_by_user(
+        #     Lease,
+        #     user,
+        #     'created_by',
+        #     self.queryset
+        # )
         queryset = qs_from_filters(queryset, self.request.query_params)
         return queryset.order_by('-modified')
 
