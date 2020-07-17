@@ -66,7 +66,7 @@ class LeaseMember(BaseModel):
     name = models.CharField(max_length=155)
     email = models.CharField(max_length=255)
     applicant_type = models.CharField(max_length=155, choices=APPLICANT_TYPE)
-    app_fee = models.DecimalField(max_digits=15, decimal_places=2, default=100)
+    app_fee = models.DecimalField(max_digits=15, decimal_places=2, default=20)
     legal_name = models.CharField(max_length=255, null=True)
     signed_agreement = models.DateField(null=True)
     ip_address = models.CharField(max_length=50, null=True)
