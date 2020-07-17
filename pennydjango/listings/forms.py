@@ -22,7 +22,8 @@ class ListingForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['price'].widget.attrs.update({'addon_before': '$'})
         self.fields['owner_pays'].widget.attrs.update({'addon_before': '%'})
-        self.fields['size'].widget.attrs.update({'addon_after': 'sq.feet'})
+        self.fields['size'].widget.attrs.update({'addon_after': 'sq.feet', "required": False})
+        self.fields['size'].required = False
         self.fields['date_available'].widget.attrs.update({
             'addon_before': '&#x1F4C5;'
         })
