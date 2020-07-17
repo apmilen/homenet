@@ -43,7 +43,7 @@ SERVER_ENV = os.getenv('SERVER_ENV', os.getenv('PENNY_ENV', 'PROD')).upper()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPO_DIR = os.path.dirname(BASE_DIR)
 
-APP_NAME = 'Homenet'
+APP_NAME = 'Push Forward'
 
 HOSTNAME = get_current_hostname()
 DJANGO_USER = get_current_user()

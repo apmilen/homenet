@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.views.generic.edit import CreateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordResetConfirmView
 
 from penny.constants import CLIENT_TYPE
 from penny.models import User

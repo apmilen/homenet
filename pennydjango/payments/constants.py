@@ -2,13 +2,13 @@ from django.conf import settings
 
 
 PAYMENT_METHOD = (
-    ('stripe', 'Stripe'),
+    ('payment_processor', 'Payment Processor'),
     ('check', 'Check'),
     ('non-cash', 'Non cash'),
     ('bank', 'Bank'),
     ('cash', 'Cash')
 )
-DEFAULT_PAYMENT_METHOD = 'stripe'
+DEFAULT_PAYMENT_METHOD = 'payment_processor'
 BANK_TRANSFER = 'bank'
 
 APP_NAME = settings.APP_NAME
