@@ -4,10 +4,13 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.generic import TemplateView, UpdateView
 from django.template.loader import render_to_string
 
@@ -174,30 +177,45 @@ def invite_new_user(name, email, user_type):
             'details': 'Email belongs to registered user. Try another one.'
         }
     password = User.objects.make_random_password()
-    new_user = User.objects.create_user(
+    new_user = User.objects.create(
         email=email,
         password=password,
         user_type=user_type,
         first_name=name,
+        username=email,
     )
-    new_user_invite_email(new_user, password, user_type)
+    new_user_invite_email(new_user, user_type)
     return {
         'success': True,
         'new_user': new_user.__json__(),
     }
 
 
-def new_user_invite_email(new_user, password_context, user_type):
-    login_url = f"{settings.BASE_URL}{reverse('login')}?next={reverse('penny:user_settings')}"
-
+def new_user_invite_email(new_user, user_type):
+    reset_link = generate_password_reset_link(new_user)
     subject = render_to_string("email/users/_new_user.txt")
     body = render_to_string(
         "email/users/_new_user_body.txt",
         context={
             'user_type': user_type,
             'name': new_user,
-            'password': password_context,
-            'url': login_url
+            'url': reset_link,
         }
     )
     send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [new_user.email])
+
+
+def generate_password_reset_link(user):
+    """
+    Generate a one-use only link for resetting password and send it to the
+    user.
+    """
+    token_generator = default_token_generator
+    uid = urlsafe_base64_encode(force_bytes(user.pk)),
+    context = {
+        'uid': uid,
+        'token': token_generator.make_token(user),
+        'base_url': settings.BASE_URL
+    }
+    url = render_to_string("email/users/_one_use_password_reset_link.txt", context=context)
+    return url
