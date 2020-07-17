@@ -60,16 +60,6 @@ class Listing(BaseModel):
         verbose_name='Unit Number (Only one)'
     )
     neighborhood = models.CharField(max_length=100, choices=NEIGHBORHOODS)
-    walkability_score = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(100)],
-        null=True,
-        blank=True,
-    )
-    bikeability_score = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(100)],
-        null=True,
-        blank=True,
-    )
     parking = models.CharField(
         max_length=64,
         choices=PARKING_OPTIONS,
@@ -211,8 +201,6 @@ class Listing(BaseModel):
                 'modified',
                 'status',
                 'nearby_transit',
-                'walkability_score',
-                'bikeability_score',
                 'parking',
             ),
             'str': str(self),
