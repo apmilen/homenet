@@ -23,6 +23,7 @@ LISTING_STATUS = (
 
 # Move in cost types
 MOVE_IN_COST = (
+    ('miscellaneous', 'Miscellaneous'),
     ('first_last_security', 'First, Last, and Security'),
     ('first_security', 'First and Security')
 )
