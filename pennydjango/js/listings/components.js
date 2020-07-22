@@ -213,7 +213,7 @@ export class ListingComponent extends React.Component {
             full_address, no_fee_listing, detail, detail_link, default_image,
             price, price_per_bed, bedrooms, bathrooms, neighborhood, short_id,
             date_available, utilities, move_in_cost, size, landlord_contact,
-            listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
+            listing_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
             offer_link, nearby_transit, parking, photos_link, id, change_status_link
         } = this.props.listing
@@ -398,16 +398,6 @@ export class ListingComponent extends React.Component {
                                                      style={{backgroundImage: `url(${listing_agent.avatar_url})`}}></div>
                                             </a>
                                             {listing_agent.first_name} {listing_agent.last_name}
-                                        </div>
-                                        <div className="col-6">
-                                            <h6>Sales</h6>
-                                            <a className="contact-avatar"
-                                               href={sales_agent.profile_link}
-                                               target="_blank">
-                                                <div className="circle-avatar"
-                                                     style={{backgroundImage: `url(${sales_agent.avatar_url})`}}></div>
-                                            </a>
-                                            {sales_agent.first_name} {sales_agent.last_name}
                                         </div>
                                         <hr/>
                                     </div>

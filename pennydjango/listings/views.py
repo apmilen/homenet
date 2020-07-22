@@ -197,7 +197,7 @@ class ReviewListing(WizardMixin, PublicReactView, TemplateView):
     def get_main_object_qs(self):
         self.main_object_qs = super().get_main_object_qs()
         self.main_object_qs = self.main_object_qs.select_related(
-            'detail', 'photos', 'listing_agent', 'sales_agent'
+            'detail', 'photos', 'listing_agent'
         )
         return self.main_object_qs
 

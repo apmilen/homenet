@@ -191,33 +191,6 @@ export const Lease = ({lease}) => {
                                                 }</div>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style={{width: "90px"}}>
-                                                <img
-                                                    className="rounded-circle img-fluid mx-auto"
-                                                    width="75"
-                                                    height="75"
-                                                    src={`${listing.sales_agent.avatar_url}`}
-                                                    alt="Missing"/>
-                                            </td>
-                                            <td>
-                                                <div className="mb-2">
-                                                    <strong>{
-                                                        listing
-                                                        .sales_agent.get_full_name
-                                                    }</strong> ·
-                                                    Sales Agent
-                                                </div>
-                                                <div>Contact: {
-                                                    listing
-                                                    .sales_agent.phone
-                                                }</div>
-                                                <div>{
-                                                    listing
-                                                    .sales_agent.email
-                                                }</div>
-                                            </td>
-                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
