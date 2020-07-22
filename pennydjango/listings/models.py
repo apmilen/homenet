@@ -233,11 +233,6 @@ class ListingDetail(BaseModel):
         help_text='Only check if apartment is on HPD unit!'
     )
     accepts_site_apply = models.BooleanField(default=False)
-    listing_agreement = models.FileField(
-        null=True,
-        help_text=('(Manhattan only) Please provide your listing agreement or'
-                   'contact with the owner to prove you can post this listing')
-    )
     floorplans = models.FileField(null=True)
     exclusive = models.BooleanField(default=False)
     private = models.BooleanField(default=False)

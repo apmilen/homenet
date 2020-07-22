@@ -54,13 +54,12 @@ class ListingDetailForm(forms.ModelForm):
         model = ListingDetail
         fields = (
             'amenities', 'landlord_contact', 'building_access',
-            'listing_agreement', 'floorplans', 'vacant', 'hpd', 'exclusive',
-            'private', 'accepts_site_apply',  # 'office'
+            'floorplans', 'vacant', 'hpd', 'exclusive', 'private',
+            'accepts_site_apply', # 'office'
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['listing_agreement'].required = False
         self.fields['floorplans'].required = False
 
 
