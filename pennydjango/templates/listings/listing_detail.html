@@ -125,19 +125,7 @@
               <p><b>Nearby transit</b></p>
               <p>{{ object.nearby_transit }}</p>
             </div>
-            <div class="col-12 text-justify pt-2">
-              <div class="row">
-                <div class="col-6 text-justify border-top border-bottom pt-2">
-                  <p><b>Walkability score</b></p>
-                  <p>{{ listing.walkability_score|default_if_none:"" }}%</p>
-                </div>
-                <div class="col-6 text-justify border-top border-bottom pt-2">
-                  <p><b>Bikability score</b></p>
-                  <p>{{ listing.bikeability_score|default_if_none:"" }}%</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-6 text-justify pt-2">
+            <div class="col-12 text-justify pt-2 border-top">
               <p><b>Parking</b></p>
               <p>{{ listing.get_parking_display|default_if_none:"" }}</p>
             </div>

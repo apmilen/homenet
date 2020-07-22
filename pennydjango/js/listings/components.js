@@ -215,8 +215,7 @@ export class ListingComponent extends React.Component {
             date_available, utilities, move_in_cost, size, landlord_contact,
             listing_agent, sales_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
-            offer_link, nearby_transit, walkability_score, bikeability_score, 
-            parking, photos_link, id, change_status_link
+            offer_link, nearby_transit, parking, photos_link, id, change_status_link
         } = this.props.listing
         const {
             collections
@@ -360,16 +359,6 @@ export class ListingComponent extends React.Component {
                                             <b>Access</b></div>
                                         <div
                                             className="col-sm-8 text-left">{detail.building_access}</div>
-                                    </div>
-                                    <div className="row listing-area-data-row">
-                                        <div className="col-sm-4 text-left">
-                                            <b>Walkability Score</b></div>
-                                        <div className="col-sm-8 text-left">{walkability_score}%</div>
-                                    </div>
-                                    <div className="row listing-area-data-row">
-                                        <div className="col-sm-4 text-left">
-                                            <b>Bikability Score</b></div>
-                                        <div className="col-sm-8 text-left">{bikeability_score}%</div>
                                     </div>
                                     <div className="row listing-area-data-row">
                                         <div className="col-sm-4 text-left">

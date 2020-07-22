@@ -49,12 +49,7 @@
               <i class="material-icons">library_books</i>
               <span>Collections</span>
             </a><div class="dropdown-divider"></div>
-
-            <a class="dropdown-item" href="{% url 'schedule' %}">
-              <i class="material-icons">schedule</i>
-              <span>Schedule</span>
-            </a><div class="dropdown-divider"></div>
-            {% endif %}
+          {% endif %}
             {% if request.user.perms.has_admin_access %}
             <a class="dropdown-item" href="{% url 'penny:users' %}">
               <i class="material-icons">perm_identity</i>

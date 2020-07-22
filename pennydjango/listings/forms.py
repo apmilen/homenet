@@ -30,8 +30,6 @@ class ListingForm(forms.ModelForm):
         self.fields['agent_bonus'].widget.attrs.update({'addon_before': '$'})
         self.fields['bathrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
-        self.fields['walkability_score'].widget.attrs.update({'addon_before': '%'})
-        self.fields['bikeability_score'].widget.attrs.update({'addon_before': '%'})
         self.fields['address'].widget.attrs.update({'readonly': True})
 
     class Meta:
@@ -41,8 +39,7 @@ class ListingForm(forms.ModelForm):
             'agent_bonus', 'no_fee_listing', 'description', 'agent_notes',
             'utilities', 'size', 'bathrooms', 'bedrooms', 'date_available',
             'term', 'pets', 'address', 'geopoint', 'nearby_transit', 'unit_number',
-            'neighborhood', 'listing_agent', 'sales_agent', 'walkability_score',
-            'bikeability_score', 'parking'
+            'neighborhood', 'listing_agent', 'sales_agent', 'parking'
         )
         widgets = {
             'geopoint': MapGeopoint,
