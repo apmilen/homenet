@@ -570,7 +570,7 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin,
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors)
+        messages.error(self.request, form.errors['__all__'])
         return HttpResponseRedirect(self.get_success_url())
 
 
