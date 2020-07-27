@@ -84,8 +84,8 @@ class RentalApplicationForm(forms.ModelForm):
     class Meta:
         model = RentalApplication
         fields = (
-            'name', 'phone', 'date_of_birth', 'ssn', 'driver_license',
-            'n_of_pets', 'current_address', 'current_monthly_rent',
+            'name', 'phone', 'email', 'date_of_birth', 'ssn', 'driver_license',
+            'n_of_pets', 'current_address', 'zipcode', 'current_monthly_rent',
             'landlord_name', 'landlord_contact', 'current_company',
             'job_title', 'annual_income', 'time_at_current_job'
         )

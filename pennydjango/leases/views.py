@@ -283,12 +283,34 @@ class MoveInCostCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
             'pending_payment': pending_payment,
             'value': render_to_string('leases/move_in_cost.html', context={
                 'charge': cost.charge,
-                'value': cost.value
+                'value': cost.value,
+                'id': cost.id,
+                'user': self.request.user,
             })
         })
 
     def form_invalid(self, form):
         return JsonResponse(data={'status': 500, 'errors': form.errors})
+
+
+class MoveInCostDelete(AgentRequiredMixin, DeleteView):
+    http_method_names = ['post']
+    model = MoveInCost
+
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            self.object = super().get_object()
+            lease = self.object.offer
+            self.object.delete()
+            total = MoveInCost.objects.total_by_offer(lease.id)
+            return JsonResponse(data={
+                'status': 200,
+                'total': total
+            })
+
+        return JsonResponse(data={
+            'status': 401,
+        })
 
 
 class LeaseClientCreate(MainObjectContextMixin, CreateView):

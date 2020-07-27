@@ -60,11 +60,12 @@ Lease Detail
                   <table class="table">
                     <tbody id="move-body-table">
                     {% for move in move_in_costs %}
-                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge %}
+                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge user=user %}
                     {% endfor %}
                     <tr>
                       <td><b class="font-weight-bold">Total Cost Due</b></td>
                       <td>$<b class="font-weight-bold" id="total-cost-due">{{ total }}</b></td>
+                      <td></td>
                     </tr>
                     <tr>
                       <td><b class="font-weight-bold">Pending Payment</b></td>
@@ -127,6 +128,24 @@ Lease Detail
 
                       $(this).removeAttr('disable')
                   })
+          })
+          $("#move-body-table").on('click', '.moveincost-delete', (e) => {
+              let delete_url = $(e.target).data("delete")
+              $.post(delete_url,
+                  {
+                      csrf_token: "{{ csrf_token }}"
+                  },
+                  (response) => {
+                      if (response.status == 200) {
+                          let delete_id = $(e.target).data("delete-id")
+                          $(`#moveincost-tr-${delete_id}`).remove()
+                          $("#total-cost-due").html(response.total)
+                      } else if(response.status == 500) {
+                          alert(response.errors)
+                          console.log(response.errors)
+                      }
+                  }
+              )
           })
       })
   </script>

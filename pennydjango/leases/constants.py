@@ -30,6 +30,7 @@ CHARGE_OPTIONS = [
     ('Security Deposit', 'Security Deposit'),
     ('Storage Fee', 'Storage Fee'),
     ('Utility Fee', 'Utility Fee'),
+    ('Miscellaneous', 'Miscellaneous'),
 ]
 
 

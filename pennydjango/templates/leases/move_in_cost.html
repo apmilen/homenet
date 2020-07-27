@@ -1,8 +1,15 @@
-<tr>
+<tr id="moveincost-tr-{{id}}">
   <td>
     {{ charge }}
   </td>
   <td>
     ${{ value }}
+  </td>
+  <td>
+    {% if user.perms.has_agent_access %}
+    <button class="btn p-0 moveincost-delete" data-delete-id="{{id}}" data-delete="{% url 'leases:delete-moveincost' pk=id %}">
+      <i class="fa fa-trash text-danger" title="Delete Cost" data-delete-id="{{id}}" data-delete="{% url 'leases:delete-moveincost' pk=id %}"></i>
+    </button>
+    {% endif %}
   </td>
 </tr>
