@@ -67,6 +67,14 @@ Lease Detail
                       <td>$<b class="font-weight-bold" id="total-cost-due">{{ total }}</b></td>
                       <td></td>
                     </tr>
+                    <tr>
+                      <td><b class="font-weight-bold">Pending Payment</b></td>
+                      <td>
+                        $<b class="font-weight-bold" id="lease-pending-payment">
+                        {{ lease_pending_payment|default_if_none:"" }}
+                      </b>
+                      </td>
+                    </tr>
                     </tbody>
                   </table>
                   <hr/>
@@ -113,6 +121,7 @@ Lease Detail
                       if (response.status == 200) {
                           $("#move-body-table").prepend(response.value)
                           $("#total-cost-due").html(response.total)
+                          $("#lease-pending-payment").html(response.pending_payment)
                       } else if(response.status == 500) {
                           console.log(response.errors)
                       }

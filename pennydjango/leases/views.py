@@ -20,7 +20,7 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML
+from weasyprint import HTML, CSS
 from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
@@ -32,7 +32,7 @@ from leases.mixins import ClientLeaseAccessMixin
 from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
-from leases.utils import qs_from_filters
+from leases.utils import qs_from_filters, get_lease_pending_payment
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -106,6 +106,8 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         lease_postive_balance = lease_postive_balance['amount__sum'] or 0
         lease_negative_balance = lease_negative_balance['amount__sum'] or 0
         current_balance = lease_postive_balance - lease_negative_balance
+        lease_pending_payment = get_lease_pending_payment(
+            lease_transactions, MoveInCost.objects.total_by_offer(self.object.id))
         context['listing'] = self.object.listing
         context['lease_members'] = lease_members
         context['move_in_costs'] = move_in_costs
@@ -119,6 +121,7 @@ class LeaseDetail(AgentRequiredMixin, DetailView):
         context['lease_transactions'] = lease_transactions
         context['number_of_transactions'] = lease_transactions.count()
         context['current_balance'] = current_balance
+        context['lease_pending_payment'] = lease_pending_payment
 
         return context
 
@@ -269,9 +272,15 @@ class MoveInCostCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
         cost.offer = lease
         cost.save()
         total = MoveInCost.objects.total_by_offer(lease.id)
+        lease_transactions = Transaction.objects.filter(
+            lease_member__offer=lease,
+            status=APPROVED
+        )
+        pending_payment = get_lease_pending_payment(lease_transactions, total)
         return JsonResponse(data={
             'status': 200,
             'total': total,
+            'pending_payment': pending_payment,
             'value': render_to_string('leases/move_in_cost.html', context={
                 'charge': cost.charge,
                 'value': cost.value,
@@ -482,11 +491,9 @@ class ClientLease(ClientOrAgentRequiredMixin,
             lease_member__offer=lease,
             status=APPROVED
         )
-        total_paid_lease = lease_transactions.aggregate(Sum('amount'))
         total_move_in_cost = MoveInCost.objects.total_by_offer(lease.id)
-        lease_pending_payment = total_move_in_cost
-        if total_paid_lease['amount__sum'] is not None:
-            lease_pending_payment = total_move_in_cost - total_paid_lease['amount__sum']           
+        lease_pending_payment = get_lease_pending_payment(
+            lease_transactions, total_move_in_cost)
         # Context
         context['key'] = settings.STRIPE_PUBLISHABLE_KEY
         context['plaid_key'] = settings.PLAID_PUBLIC_KEY
@@ -770,14 +777,30 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
         rental_app = self.get_object()
         lease_member = rental_app.lease_member
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
-
         response = HttpResponse(content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
 
         html = render_to_string("leases/rental_app/rental_app_pdf.html", {
-            'rental_app': lease_member.rentalapplication
+            'rental_app': lease_member.rentalapplication,
+            'empty_line': '____________________________________________________________',
         })
+
         font_config = FontConfiguration()
-        HTML(string=html).write_pdf(response, font_config=font_config)
+        css = CSS(string='''
+                @page {
+                    size: letter; margin-left: 0.7cm; margin-top: -0.4cm;
+                },
+                @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
+                body {
+                    font-family: "Nunito script=latin rev=1"; font-size: 13.5px;,
+                }
+                table td {
+                    white-space: nowrap;overflow: hidden;text-overflow: initial;
+                }
+            ''',
+            font_config=font_config
+        )
+
+        HTML(string=html).write_pdf(response, stylesheets=[css], font_config=font_config)
 
         return response
