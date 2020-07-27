@@ -275,7 +275,8 @@ class MoveInCostCreate(MainObjectContextMixin, AgentRequiredMixin, CreateView):
             'value': render_to_string('leases/move_in_cost.html', context={
                 'charge': cost.charge,
                 'value': cost.value,
-                'id': cost.id
+                'id': cost.id,
+                'user': self.request.user,
             })
         })
 

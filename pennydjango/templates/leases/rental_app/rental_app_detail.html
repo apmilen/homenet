@@ -41,6 +41,10 @@
               <span class="float-right">{{ object.phone }}</span>
             </li>
             <li class="list-group-item">
+              Email
+              <span class="float-right">{{ object.email|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Date of Birth
               <span class="float-right">{{ object.date_of_birth|default_if_none:"" }}</span>
             </li>
@@ -74,6 +78,10 @@
             <li class="list-group-item">
               Current Address
               <span class="float-right">{{ object.current_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Zipcode
+              <span class="float-right">{{ object.zipcode|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
               Current Monthly Rent

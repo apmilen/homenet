@@ -60,7 +60,7 @@ Lease Detail
                   <table class="table">
                     <tbody id="move-body-table">
                     {% for move in move_in_costs %}
-                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge %}
+                      {% include 'leases/move_in_cost.html' with id=move.id value=move.value charge=move.charge user=user %}
                     {% endfor %}
                     <tr>
                       <td><b class="font-weight-bold">Total Cost Due</b></td>
