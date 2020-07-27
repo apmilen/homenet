@@ -52,6 +52,7 @@
                 <div class="card-body">
                   {% bootstrap_field rental_application_form.name %}
                   {% bootstrap_field rental_application_form.phone %}
+                  {% bootstrap_field rental_application_form.email %}
                   {% bootstrap_field rental_application_form.date_of_birth %}
                   {% bootstrap_field rental_application_form.ssn %}
                   {% bootstrap_field rental_application_form.driver_license %}
@@ -74,6 +75,7 @@
                    data-parent="#accordion-rental-app">
                 <div class="card-body">
                   {% bootstrap_field rental_application_form.current_address %}
+                  {% bootstrap_field rental_application_form.zipcode %}
                   {% bootstrap_field rental_application_form.current_monthly_rent %}
                   {% bootstrap_field rental_application_form.landlord_name %}
                   {% bootstrap_field rental_application_form.landlord_contact %}
