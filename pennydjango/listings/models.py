@@ -76,16 +76,6 @@ class Listing(BaseModel):
             'user_type': AGENT_TYPE
         }
     )
-    sales_agent = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Sales Agent',
-        related_name='listings_as_sales',
-        limit_choices_to={
-            'user_type': AGENT_TYPE
-        }
-    )
     status = models.CharField(
         max_length=50,
         choices=LISTING_STATUS,
@@ -205,7 +195,6 @@ class Listing(BaseModel):
             ),
             'str': str(self),
             'detail': self.detail.__json__(),
-            'sales_agent': self.sales_agent.__json__(),
             'listing_agent': self.listing_agent.__json__(),
             **(self.attrs(*attrs) if attrs else {}),
         }
@@ -244,11 +233,6 @@ class ListingDetail(BaseModel):
         help_text='Only check if apartment is on HPD unit!'
     )
     accepts_site_apply = models.BooleanField(default=False)
-    listing_agreement = models.FileField(
-        null=True,
-        help_text=('(Manhattan only) Please provide your listing agreement or'
-                   'contact with the owner to prove you can post this listing')
-    )
     floorplans = models.FileField(null=True)
     exclusive = models.BooleanField(default=False)
     private = models.BooleanField(default=False)

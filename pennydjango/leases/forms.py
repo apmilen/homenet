@@ -90,8 +90,25 @@ class RentalApplicationForm(forms.ModelForm):
             'job_title', 'annual_income', 'time_at_current_job'
         )
 
+    def check_values(self, cleaned_data, required_fields):
+        for value in required_fields:
+            if not cleaned_data[value]:
+                msg = f'{value.capitalize()} field is required.'
+                raise ValidationError(msg)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not self.data['draft']:
+            required_fields = ['name', 'phone', 'ssn']
+            self.check_values(cleaned_data, required_fields)
+        return cleaned_data
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['name'].required = False
+        self.fields['phone'].required = False
+        self.fields['ssn'].required = False
         self.fields['date_of_birth'].required = False
         self.fields['driver_license'].required = False
         self.fields['n_of_pets'].required = False
@@ -105,7 +122,6 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['time_at_current_job'].required = False
 
         self.fields['ssn'].label = "SSN"
-
 
 class RentalApplicationEditingForm(forms.ModelForm):
     use_required_attribute = False

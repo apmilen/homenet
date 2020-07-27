@@ -157,7 +157,8 @@
             </div>
           </div>
           <hr/>
-          <button type="submit" class="btn btn-outline-primary">Save</button>
+          <input type="hidden" id="draft" name="draft"/>
+          <button type="submit" class="btn btn-outline-primary save-draft">Save</button>
           <button type="submit"
                   formaction="{% url "leases:update-application" pk=rental_app.id %}?completed=true"
                   class="btn btn-primary">Submit and Complete Rental Application
@@ -346,6 +347,9 @@
           $("#id_date_of_birth").datetimepicker({
               timepicker: false, format: 'Y-m-d',
           });
+          $(".save-draft").click(function () {
+            $("#draft").val(true)
+          })
       })
     </script>
   {% endif %}

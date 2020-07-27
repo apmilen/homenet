@@ -109,18 +109,6 @@
                 <br>
                 Contact
               </div>
-              <div class="col-6">
-                <h6>Sales</h6>
-                <a href="{% url 'userprofile' username=listing.sales_agent.username %}" target="_blank">
-                  <img class="lazy rounded-circle img-fluid mx-auto"
-                       width="60px"
-                       height="60px"
-                       src="{{ listing.sales_agent.avatar_url }}">
-                </a>
-                <br>{{ listing.sales_agent.get_full_name }}
-                <br>
-                Contact
-              </div>
               <hr>
             </div>
           </div>

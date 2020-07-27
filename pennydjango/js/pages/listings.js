@@ -43,10 +43,10 @@ class Listings extends React.Component {
         const last_listing = listings.length > 0 && listings.slice(-1)[0]
 
         const filters = [
-            "address", "unit", "sales_agents", "listing_agents", "hoods",
-            "price", "price_per_bed", "beds", "baths", "listing_type",
-            "listing_id", "size", "pets_allowed", "nofeeonly", "amenities",
-            "owner_pays", "exclusive", "vacant", "draft_listings", "date_available"
+            "address", "unit", "listing_agents", "hoods", "price", "price_per_bed",
+            "beds", "baths", "listing_type", "listing_id", "size", "pets_allowed",
+            "nofeeonly", "amenities", "owner_pays", "exclusive", "vacant",
+            "draft_listings", "date_available"
         ]
 
         return (

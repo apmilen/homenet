@@ -13,10 +13,6 @@ class ListingForm(forms.ModelForm):
         widget=Select2Widget,
         queryset=User.objects.filter(user_type=AGENT_TYPE)
     )
-    sales_agent = forms.ModelChoiceField(
-        widget=Select2Widget,
-        queryset=User.objects.filter(user_type=AGENT_TYPE)
-    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,7 +35,7 @@ class ListingForm(forms.ModelForm):
             'agent_bonus', 'no_fee_listing', 'description', 'agent_notes',
             'utilities', 'size', 'bathrooms', 'bedrooms', 'date_available',
             'term', 'pets', 'address', 'geopoint', 'nearby_transit', 'unit_number',
-            'neighborhood', 'listing_agent', 'sales_agent', 'parking'
+            'neighborhood', 'listing_agent', 'parking'
         )
         widgets = {
             'geopoint': MapGeopoint,
@@ -58,13 +54,12 @@ class ListingDetailForm(forms.ModelForm):
         model = ListingDetail
         fields = (
             'amenities', 'landlord_contact', 'building_access',
-            'listing_agreement', 'floorplans', 'vacant', 'hpd', 'exclusive',
-            'private', 'accepts_site_apply',  # 'office'
+            'floorplans', 'vacant', 'hpd', 'exclusive', 'private',
+            'accepts_site_apply', # 'office'
         )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['listing_agreement'].required = False
         self.fields['floorplans'].required = False
 
 
