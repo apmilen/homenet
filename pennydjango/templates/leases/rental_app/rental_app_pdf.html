@@ -117,6 +117,13 @@
             <span style="text-decoration: underline;">{{ rental_app.phone }}</span>
           {% endif %}
       </td>
+      <td style="width:100px;padding-bottom:10px;">Email:
+          {% if not rental_app.email %}
+            {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">rental_app.email</span>
+          {% endif%}
+      </td>
     </tr>
   </tbody>
 </table>
@@ -130,6 +137,13 @@
             {{ empty_line }}
         {% else %}
           <span style="text-decoration: underline;">{{ rental_app.current_address }}</span>
+        {% endif %}
+      </td>
+      <td style="width: 90px;padding:0px 0px 15px 22px;">Zip:
+        {% if not rental_app.zipcode %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.zipcode }}</span>
         {% endif %}
       </td>
     </tr>
