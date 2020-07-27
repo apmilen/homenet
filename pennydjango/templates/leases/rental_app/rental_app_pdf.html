@@ -1,87 +1,256 @@
-<h4>Rental Application</h4>
-<br/>
-<hr/>
-<h6>Personal Information</h6>
-<br/>
+
 <table style="width: 100%;">
   <tbody>
-  <tr style="width: 50%;">
-    <td>Name</td>
-    <td>{{ rental_app.name }}</td>
-  </tr>
-  <tr style="width: 50%;">
-    <td>Phone</td>
-    <td>{{ rental_app.phone }}</td>
-  </tr>
-  <tr style="width: 50%;">
-    <td>Date of Birth</td>
-    <td>{{ rental_app.date_of_birth|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>SSN</td>
-    <td>{{ rental_app.ssn }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td># of Pets</td>
-    <td>{{ rental_app.n_of_pets|default_if_none:"" }}</td>
-  </tr>
+    <tr>
+      <td>
+        <p style="color:green;font-size: 20px;margin-bottom:-10px">
+          <span><b>Push Forward Realty</b></span><br/>
+          <span style="margin-left:15%;"><b>Cooperative</b></span><br/>
+        </p>
+        <p>
+          <span style="color:black;margin-left:8%;font-size: 19px;">Rental Application</span>
+        </p>
+      </td>
+      <td>
+        7 Marcus Garvey Blvd Ste. 403 <br/>
+        Brooklyn NY 11206
+      </td>
+      <td><br/><center>Tel: (424) 395- 9900</center></td>
+    </tr>
+  </tbody>
+</table>
+<table style="width: 100%;border: 1px solid rgb(163, 202, 136);border-top: 0px;font-size: 12.5px;padding:0px 20px 20px;">
+   <tbody>
+    <caption style="100%;border: 1px solid rgb(163, 202, 136);border-bottom: 0px;padding:5px 0px 15px 22px;font-size: 12px;">
+      To Be filed out by Rental Agent:
+    </caption>
+    <tr>
+      <td style="width:80px;padding-bottom:10px;word-wrap: break-word;text-overflow: initial;">Property Address:
+        {% if not rental_app.property_address %}
+            {{ empty_line }} 
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.property_address }}</span>
+        {% endif %}
+      </td>
+      <td style="width:30px;padding-bottom:10px;">Date:
+        {% if not rental_app.date %}
+            {{ empty_line }} 
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.date }}</span>
+        {% endif %}
+      </td>
+      <td style="width:30px;padding-bottom:10px;">Agent:
+        {% if not rental_app.agent %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.agent }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:30px;">Monthly rent:
+        {% if not rental_app.monthly_rent %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.monthly_rent }}</span>
+        {% endif %}
+      </td>
+      <td style="width:30px;">Move in date:
+        {% if not rental_app.move_in_date %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.move_in_date }}</span>
+        {% endif %}
+      </td>
+      <td style="width:30px;">Length of Lease:
+        {% if not rental_app.length_lease %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.length_lease }}</span>
+        {% endif %}
+      </td>
+    </tr>
   </tbody>
 </table>
 <br/>
-<hr/>
-<h6>Rental History</h6>
-<br/>
-<table style="width: 100%;">
-  <tbody>
-
-  <tr style="width: 50%;">
-    <td>Current Address</td>
-    <td>{{ rental_app.current_address|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Current Monthly Rent</td>
-    <td>{{ rental_app.current_monthly_rent|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Landlord Name</td>
-    <td>{{ rental_app.landlord_name|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Landlord Contact</td>
-    <td>{{ rental_app.landlord_contact|default_if_none:"" }}</td>
-  </tr>
+<table style="width: 100%;font-size: 12.5px;padding:0px 20px 5px;">
+   <tbody>
+    <caption colspan="3" style="padding:0px 20px 15px 22px">Personal Information:</caption>
+    <tr>
+      <td style="width:100px;padding-bottom:10px;">
+        Name:
+        {% if not rental_app.name %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.name }}</span>
+        {% endif %}
+      </td>
+    </tr>
+ </tbody>
+</table>
+<table style="width: 100%;font-size: 12.5px;padding:0px 20px 5px;">
+   <tbody>
+    <tr>
+      <td style="width:100px;padding-bottom:10px;">
+        Date of Birth:
+          {% if not rental_app.date_of_birth %}
+              {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">{{ rental_app.date_of_birth }}</span>
+          {% endif %}
+      </td>
+      <td style="width: 10px;padding:0 0 10px 60px;">
+          SSN#: 
+          {% if not rental_app.ssn %}
+              {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">{{ rental_app.ssn }}</span>
+          {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:100px;padding-bottom:10px;">
+        Phone:
+          {% if not rental_app.phone %}
+              {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">{{ rental_app.phone }}</span>
+          {% endif %}
+      </td>
+    </tr>
   </tbody>
 </table>
-<br/>
-<hr/>
-<h6>Work Details</h6>
-<br/>
-<table style="width: 100%;">
+<br/><br/>
+<table style="font-size: 12.5px;padding:0px 0px 0px 22px">
+   <tbody>
+    <caption colspan="3" style="padding:0px 20px 10px 23px">Residence History:</caption>
+    <tr>
+      <td style="width: 320px;padding-bottom:10px;">Current Address:
+        {% if not rental_app.current_address %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.current_address }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    </tbody>
+</table>
+<table style="font-size: 12.5px;padding:0px 0px 0px 22px">
   <tbody>
-
-  <tr style="width: 50%;">
-    <td>Current Company</td>
-    <td>{{ rental_app.current_company|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Job Title</td>
-    <td>{{ rental_app.job_title|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Annual Income</td>
-    <td>{{ rental_app.annual_income|default_if_none:"" }}</td>
-  </tr>
-
-  <tr style="width: 50%;">
-    <td>Time At Current Job</td>
-    <td>{{ rental_app.time_at_current_job|default_if_none:"" }}</td>
-  </tr>
+    <tr>
+      <td style="width: 350px;padding-bottom:10px;">
+        Currently Monthly Payment:
+        {% if not rental_app.current_monthly_rent %}
+            {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.current_monthly_rent }}</span>
+        {% endif %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+ <table style="font-size: 12.5px;padding:0px 0px 0px 22px">
+    <tbody>
+    <tr>
+      <td style="width: 300px;padding-bottom:10px;">
+        Property Owner Name:
+        {% if not rental_app.landlord_name %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.landlord_name }}</span>
+        {% endif%}
+      </td>
+      <td style="width: 150px;padding-left:30px;">Phone:
+          {% if not rental_app.landlord_contact %}
+            {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">{{ rental_app.landlord_contact }}</span>
+          {% endif%}
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br/><br/>
+<table style="font-size: 12.5px;padding:0px 20px 0px 23px">
+   <tbody>
+    <caption colspan="3" style="padding:0px 20px 10px 25px">Pet Information:</caption>
+    <tr>
+      <td style="width:130px;padding-bottom:10px;">Number of Pets:
+        {% if not rental_app.n_of_pets %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.n_of_pets }}</span>
+        {% endif%}
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br/><br/>
+<table style="font-size: 12.5px;padding:0px 20px 0px 22px">
+   <tbody>
+    <caption style="padding:0px 20px 10px 23px">Employment Information:</caption>
+    <tr>
+      <td style="width:250px;padding-bottom:10px;">Employer:
+        {% if not rental_app.current_company %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.current_company }}</span>
+        {% endif%}
+      </td>
+      <td style="width:150px;padding-bottom:10px;padding-left:40px;">Job title:
+        {% if not rental_app.job_title %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.job_title }}</span>
+        {% endif%}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:300px;padding-bottom:10px;">How long have you worked there:
+        {% if not rental_app.time_at_current_job %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.time_at_current_job }}</span>
+        {% endif%}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:80px;padding-bottom:10px;">Annual Income:
+        {% if not rental_app.annual_income %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.annual_income }}</span>
+        {% endif%}
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br/><br/>
+<table style="font-size: 12.5px;padding:0px 20px 0px 23px">
+  <tbody>
+    <tr>
+      <td style="width:300px;padding-bottom:10px;">
+        Signature:
+        {% if not rental_app.signature %}
+            {{ empty_line }}
+          {% else %}
+            <span style="text-decoration: underline;">{{ rental_app.signature }}</span>
+          {% endif%}<span style="text-decoration: underline;">
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table style="font-size: 12.5px;padding:0px 20px 0px 23px">
+   <tbody>
+    <tr>
+      <td style="width:100px;padding-bottom:10px;">
+        Date:
+        {% if not rental_app.date %}
+          {{ empty_line }}
+        {% else %}
+          <span style="text-decoration: underline;">{{ rental_app.date }}</span>
+        {% endif%}<span style="text-decoration: underline;">
+      </td>
+    </tr>
   </tbody>
 </table>

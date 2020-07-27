@@ -20,7 +20,7 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML
+from weasyprint import HTML, CSS
 from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
@@ -748,14 +748,30 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
         rental_app = self.get_object()
         lease_member = rental_app.lease_member
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
-
         response = HttpResponse(content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
 
         html = render_to_string("leases/rental_app/rental_app_pdf.html", {
-            'rental_app': lease_member.rentalapplication
+            'rental_app': lease_member.rentalapplication,
+            'empty_line': '____________________________________________________________',
         })
+
         font_config = FontConfiguration()
-        HTML(string=html).write_pdf(response, font_config=font_config)
+        css = CSS(string='''
+                @page {
+                    size: letter; margin-left: 0.7cm; margin-top: -0.4cm;
+                },
+                @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
+                body {
+                    font-family: "Nunito script=latin rev=1"; font-size: 13.5px;,
+                }
+                table td {
+                    white-space: nowrap;overflow: hidden;text-overflow: initial;
+                }
+            '''
+            font_config=font_config
+        )
+
+        HTML(string=html).write_pdf(response, stylesheets=[css], font_config=font_config)
 
         return response
