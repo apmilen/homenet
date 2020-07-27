@@ -768,7 +768,7 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
                 table td {
                     white-space: nowrap;overflow: hidden;text-overflow: initial;
                 }
-            '''
+            ''',
             font_config=font_config
         )
 
