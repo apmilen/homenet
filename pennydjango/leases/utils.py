@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 
 def qs_from_filters(queryset, params):
@@ -48,3 +48,11 @@ def qs_from_filters(queryset, params):
         queryset = queryset.filter(status__in=lease_status)
 
     return queryset
+
+
+def get_lease_pending_payment(lease_transactions, lease_total_move_in_cost):
+    total_paid_lease = lease_transactions.aggregate(Sum('amount'))
+    lease_pending_payment = lease_total_move_in_cost
+    if total_paid_lease['amount__sum'] is not None:
+        lease_pending_payment = lease_total_move_in_cost - total_paid_lease['amount__sum']
+    return lease_pending_payment
