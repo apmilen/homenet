@@ -93,7 +93,10 @@ class RentalApplicationForm(forms.ModelForm):
     def check_values(self, cleaned_data, required_fields):
         for value in required_fields:
             if not cleaned_data[value]:
-                field_name = RentalApplication._meta._forward_fields_map[value].verbose_name.capitalize()
+                field_name = (
+                    RentalApplication._meta
+                    .get_field(value).verbose_name.capitalize()
+                )
                 msg = f'{field_name} field is required.'
                 raise ValidationError(msg)
 
@@ -123,7 +126,9 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['job_title'].required = False
         self.fields['annual_income'].required = False
         self.fields['time_at_current_job'].required = False
-        self.fields['id_file'] = forms.FileField(label="ID  ", required=False, widget=forms.FileInput)
+        self.fields['id_file'] = forms.FileField(
+            label="ID", required=False, widget=forms.FileInput
+        )
 
         self.fields['ssn'].label = "SSN"
 
