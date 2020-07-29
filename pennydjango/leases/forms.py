@@ -87,19 +87,20 @@ class RentalApplicationForm(forms.ModelForm):
             'name', 'phone', 'email', 'date_of_birth', 'ssn', 'driver_license',
             'n_of_pets', 'current_address', 'zipcode', 'current_monthly_rent',
             'landlord_name', 'landlord_contact', 'current_company',
-            'job_title', 'annual_income', 'time_at_current_job'
+            'job_title', 'annual_income', 'time_at_current_job', 'id_file'
         )
 
     def check_values(self, cleaned_data, required_fields):
         for value in required_fields:
             if not cleaned_data[value]:
-                msg = f'{value.capitalize()} field is required.'
+                field_name = RentalApplication._meta._forward_fields_map[value].verbose_name.capitalize()
+                msg = f'{field_name} field is required.'
                 raise ValidationError(msg)
 
     def clean(self):
         cleaned_data = super().clean()
         if not self.data['draft']:
-            required_fields = ['name', 'phone', 'ssn']
+            required_fields = ['name', 'phone', 'ssn', 'email', 'id_file']
             self.check_values(cleaned_data, required_fields)
         return cleaned_data
 
@@ -108,11 +109,13 @@ class RentalApplicationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].required = False
         self.fields['phone'].required = False
+        self.fields['email'].required = False
         self.fields['ssn'].required = False
         self.fields['date_of_birth'].required = False
         self.fields['driver_license'].required = False
         self.fields['n_of_pets'].required = False
         self.fields['current_address'].required = False
+        self.fields['zipcode'].required = False
         self.fields['current_monthly_rent'].required = False
         self.fields['landlord_name'].required = False
         self.fields['landlord_contact'].required = False
@@ -120,6 +123,7 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['job_title'].required = False
         self.fields['annual_income'].required = False
         self.fields['time_at_current_job'].required = False
+        self.fields['id_file'] = forms.FileField(label="ID  ", required=False, widget=forms.FileInput)
 
         self.fields['ssn'].label = "SSN"
 
