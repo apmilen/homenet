@@ -593,13 +593,19 @@ class UpdateRentalApplication(ClientOrAgentRequiredMixin,
     def form_valid(self, form):
         completed = self.request.GET.get('completed') == "true"
         rental_app = form.save(commit=False)
+        if 'id_file' in self.request.FILES:
+            rental_app.id_file = self.request.FILES['id_file']
+            rental_app.rental_app_id = rental_app.id
         rental_app.completed = completed
         rental_app.editing = not completed
         rental_app.save()
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
-        messages.error(self.request, form.errors['__all__'])
+        if '__all__' in form.errors:
+            messages.error(self.request, form.errors['__all__'])
+        else:
+            messages.error(self.request, form.errors)
         return HttpResponseRedirect(self.get_success_url())
 
 

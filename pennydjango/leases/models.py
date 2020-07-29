@@ -131,7 +131,14 @@ class RentalApplication(BaseModel):
     job_title = models.CharField(max_length=100, null=True)
     annual_income = models.CharField(max_length=100, null=True)
     time_at_current_job = models.CharField(max_length=100, null=True)
-
+    id_file = models.FileField(
+        upload_to=rental_doc_path,
+        validators=[validate_file_size],
+        null=True,
+        verbose_name="ID"
+    )
+    def filename(self):
+        return os.path.basename(self.id_file.name)
 
 class RentalAppDocument(BaseModel):
     rental_app = models.ForeignKey(RentalApplication, on_delete=models.CASCADE)

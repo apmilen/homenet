@@ -32,7 +32,8 @@
       {% elif not rental_app.completed or rental_app.editing %}
         <h5>Rental Application</h5>
         <form action="{% url "leases:update-application" pk=rental_app.id %}"
-              method="post">
+              method="post"
+              enctype="multipart/form-data">
           {% csrf_token %}
           <div class="accordion" id="accordion-rental-app">
             <div class="card">
@@ -116,6 +117,14 @@
               <div id="collapseFour" class="collapse"
                    aria-labelledby="headingFour"
                    data-parent="#accordion-rental-app">
+                <div class="card-body">
+                  {% bootstrap_field rental_application_form.id_file %}
+                  {% if rental_app.id_file %}
+                    Current ID:  
+                    <a href="{{ rental_app.id_file.url }}" target="_blank">{{ rental_app.filename }}</a>
+                  {% endif %}
+                  <hr/>
+                </div>      
                 <div class="card-body">
                   {% include 'leases/rental_app/documents_modal.html' %}
                   Documents -
