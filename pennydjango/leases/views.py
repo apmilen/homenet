@@ -775,16 +775,19 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
 
     def get(self, *args, **kwargs):
         rental_app = self.get_object()
+        lease = rental_app.lease_member.offer
+        listing = lease.listing
         lease_member = rental_app.lease_member
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
         response = HttpResponse(content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
-
         html = render_to_string("leases/rental_app/rental_app_pdf.html", {
             'rental_app': lease_member.rentalapplication,
+            'lease_member': lease_member,
+            'lease': lease,
+            'listing': listing,
             'empty_line': '____________________________________________________________',
         })
-
         font_config = FontConfiguration()
         css = CSS(string='''
                 @page {

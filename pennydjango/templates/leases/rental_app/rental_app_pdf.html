@@ -19,54 +19,54 @@
     </tr>
   </tbody>
 </table>
-<table style="width: 100%;border: 1px solid rgb(163, 202, 136);border-top: 0px;font-size: 12.5px;padding:0px 20px 20px;">
+<table style="width: 100%;border: 1px solid rgb(163, 202, 136);border-bottom: 0px;border-top: 0px;font-size: 12.5px;padding-left:20px;">
    <tbody>
     <caption style="100%;border: 1px solid rgb(163, 202, 136);border-bottom: 0px;padding:5px 0px 15px 22px;font-size: 12px;">
       To Be filed out by Rental Agent:
     </caption>
     <tr>
-      <td style="width:80px;padding-bottom:10px;word-wrap: break-word;text-overflow: initial;">Property Address:
-        {% if not rental_app.property_address %}
+      <td style="width:250px;padding-bottom:10px;">Property Address:
+        {% if not listing.address %}
             {{ empty_line }} 
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.property_address }}</span>
+          <span style="text-decoration: underline;word-wrap: break-word;white-space: initial">{{ listing.address }}</span>
         {% endif %}
       </td>
-      <td style="width:30px;padding-bottom:10px;">Date:
-        {% if not rental_app.date %}
-            {{ empty_line }} 
-        {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.date }}</span>
-        {% endif %}
+      <td style="width:10px;padding-bottom:10px;">Date:
+          <span style="text-decoration: underline;">{% now "F j, Y" %}</span>
       </td>
       <td style="width:30px;padding-bottom:10px;">Agent:
-        {% if not rental_app.agent %}
+        {% if not lease_member.user_agent %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.agent }}</span>
+          <span style="text-decoration: underline;">{{ lease_member.user_agent }}</span>
         {% endif %}
       </td>
     </tr>
+  </tbody>
+</table>
+<table style="width: 100%;border: 1px solid rgb(163, 202, 136);border-top: 0px;font-size: 12.5px;padding:0px 20px 20px;">
+   <tbody>
     <tr>
       <td style="width:30px;">Monthly rent:
-        {% if not rental_app.monthly_rent %}
+        {% if not listing.price %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.monthly_rent }}</span>
+          <span style="text-decoration: underline;">$ {{ listing.price }}</span>
         {% endif %}
       </td>
       <td style="width:30px;">Move in date:
-        {% if not rental_app.move_in_date %}
+        {% if not lease.move_in_date %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.move_in_date }}</span>
+          <span style="text-decoration: underline;">{{ lease.move_in_date }}</span>
         {% endif %}
       </td>
       <td style="width:30px;">Length of Lease:
-        {% if not rental_app.length_lease %}
+        {% if not lease.length_of_lease %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.length_lease }}</span>
+          <span style="text-decoration: underline;">{{ lease.length_of_lease }}</span>
         {% endif %}
       </td>
     </tr>
@@ -121,7 +121,7 @@
           {% if not rental_app.email %}
             {{ empty_line }}
           {% else %}
-            <span style="text-decoration: underline;">rental_app.email</span>
+            <span style="text-decoration: underline;">{{ rental_app.email }}</span>
           {% endif%}
       </td>
     </tr>
@@ -132,11 +132,13 @@
    <tbody>
     <caption colspan="3" style="padding:0px 20px 10px 23px">Residence History:</caption>
     <tr>
-      <td style="width: 320px;padding-bottom:10px;">Current Address:
+      <td style="width: 350px;padding-bottom:10px;">Current Address:
         {% if not rental_app.current_address %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.current_address }}</span>
+          <span style="text-decoration: underline;word-wrap: break-word;white-space: initial">
+            {{ rental_app.current_address }}
+          </span>
         {% endif %}
       </td>
       <td style="width: 90px;padding:0px 0px 15px 22px;">Zip:
@@ -157,7 +159,7 @@
         {% if not rental_app.current_monthly_rent %}
             {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.current_monthly_rent }}</span>
+          <span style="text-decoration: underline;">$ {{ rental_app.current_monthly_rent }}</span>
         {% endif %}
       </td>
     </tr>
@@ -233,7 +235,7 @@
         {% if not rental_app.annual_income %}
           {{ empty_line }}
         {% else %}
-          <span style="text-decoration: underline;">{{ rental_app.annual_income }}</span>
+          <span style="text-decoration: underline;">$ {{ rental_app.annual_income }}</span>
         {% endif%}
       </td>
     </tr>
@@ -245,10 +247,10 @@
     <tr>
       <td style="width:300px;padding-bottom:10px;">
         Signature:
-        {% if not rental_app.signature %}
+        {% if not lease_member.legal_name %}
             {{ empty_line }}
           {% else %}
-            <span style="text-decoration: underline;">{{ rental_app.signature }}</span>
+            <span style="text-decoration: underline;">{{ lease_member.legal_name }}</span>
           {% endif%}<span style="text-decoration: underline;">
       </td>
     </tr>
