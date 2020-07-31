@@ -792,7 +792,6 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
             'lease_member': lease_member,
             'lease': lease,
             'listing': listing,
-            'empty_line': '____________________________________________________________',
         })
         font_config = FontConfiguration()
         css = CSS(string='''
@@ -801,10 +800,26 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
                 },
                 @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
                 body {
-                    font-family: "Nunito script=latin rev=1"; font-size: 13.5px;,
+                    font-family: "Nunito script=latin rev=1"; font-size: 12.5px;,
+                }
+                table, .left-space {
+                    padding-left: 22px;
                 }
                 table td {
                     white-space: nowrap;overflow: hidden;text-overflow: initial;
+                    border-bottom: 1px solid black;
+                }
+                .field-name, .no-border  {
+                    border-bottom: none;
+                }
+                .top-space {
+                    padding-top:10px;
+                }
+                .green-border {
+                    border: 1px solid rgb(163, 202, 136);
+                }
+                .no-border {
+                    border-bottom: 0px;
                 }
             ''',
             font_config=font_config
