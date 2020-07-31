@@ -781,16 +781,18 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
 
     def get(self, *args, **kwargs):
         rental_app = self.get_object()
+        lease = rental_app.lease_member.offer
+        listing = lease.listing
         lease_member = rental_app.lease_member
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
         response = HttpResponse(content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
-
         html = render_to_string("leases/rental_app/rental_app_pdf.html", {
             'rental_app': lease_member.rentalapplication,
-            'empty_line': '____________________________________________________________',
+            'lease_member': lease_member,
+            'lease': lease,
+            'listing': listing,
         })
-
         font_config = FontConfiguration()
         css = CSS(string='''
                 @page {
@@ -798,10 +800,26 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
                 },
                 @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
                 body {
-                    font-family: "Nunito script=latin rev=1"; font-size: 13.5px;,
+                    font-family: "Nunito script=latin rev=1"; font-size: 12.5px;,
+                }
+                table, .left-space {
+                    padding-left: 22px;
                 }
                 table td {
                     white-space: nowrap;overflow: hidden;text-overflow: initial;
+                    border-bottom: 1px solid black;
+                }
+                .field-name, .no-border  {
+                    border-bottom: none;
+                }
+                .top-space {
+                    padding-top:10px;
+                }
+                .green-border {
+                    border: 1px solid rgb(163, 202, 136);
+                }
+                .no-border {
+                    border-bottom: 0px;
                 }
             ''',
             font_config=font_config
