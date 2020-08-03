@@ -114,6 +114,7 @@ DATA_DIR = os.path.abspath(os.path.join(REPO_DIR, 'data'))
 X_FRAME_OPTIONS = None                  # handled by nginx
 SECURE_BROWSER_XSS_FILTER = False       # handled by nginx
 SECURE_CONTENT_TYPE_NOSNIFF = False     # handled by nginx
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
