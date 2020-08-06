@@ -514,7 +514,6 @@ class ClientLease(ClientOrAgentRequiredMixin,
                 instance=rental_app
             )
             context['rental_docs'] = rental_app.rentalappdocument_set.all()
-            
         return context
 
 
