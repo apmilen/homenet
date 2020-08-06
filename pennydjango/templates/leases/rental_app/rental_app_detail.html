@@ -5,7 +5,7 @@
 {% block inner_content %}
   <h4 class="text-center">{{ lease_member.get_full_name }}</h4>
   <div class="text-center">
-    {% if rental_docs %}
+    {% if rental_docs or id_file %}
       <a type="button" class="btn btn-primary" href="{% url 'leases:rental-download' pk=object.id %}">
         Download Documents
       </a>

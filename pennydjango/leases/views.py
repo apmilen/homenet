@@ -514,6 +514,7 @@ class ClientLease(ClientOrAgentRequiredMixin,
                 instance=rental_app
             )
             context['rental_docs'] = rental_app.rentalappdocument_set.all()
+            
         return context
 
 
@@ -702,6 +703,7 @@ class RentalApplicationDetail(ClientOrAgentRequiredMixin,
         context = super().get_context_data(**kwargs)
         context['lease_member'] = self.object.lease_member
         context['rental_docs'] = self.object.rentalappdocument_set.all()
+        context['id_file'] = self.object.id_file
         return context
 
 
@@ -731,7 +733,11 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             fdir, fname = os.path.split(doc.file.path)
             zip_path = os.path.join(zip_subdir, fname)
             zipf.write(doc.file.path, zip_path)
-
+        
+        id_file = rental_app.id_file
+        fdir, fname = os.path.split(id_file.path)
+        zip_path = os.path.join(zip_subdir, fname)
+        zipf.write(id_file.path, zip_path)
         zipf.close()
 
         response = HttpResponse(

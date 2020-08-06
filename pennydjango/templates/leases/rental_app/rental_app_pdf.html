@@ -65,7 +65,7 @@
     <caption colspan="3" style="padding:0px 20px 15px 23px">Personal Information:</caption>
     <tr>
       <td class="field-name">Name:</td>
-      <td style="width:66%;">{{ rental_app.nme|default_if_none:"" }}</td>
+      <td style="width:66%;">{{ rental_app.name|default_if_none:"" }}</td>
       <td class="field-name left-space">Date of Birth:</td>
       <td style="width:47%;">
         <span> {{ rental_app.date_of_birth|default_if_none:"" }}</span>
@@ -77,9 +77,9 @@
     <tbody>
     <tr>
       <td class="field-name top-space">SSN#:</td>
-      <td class="top-space" style="width:61%;">{{ rental_app.ss|default_if_none:"" }}</td>
+      <td class="top-space" style="width:61%;">{{ rental_app.ssn|default_if_none:"" }}</td>
       <td class="field-name left-space top-space">Phone:</td>
-      <td class="top-space" style="width:77%;">{{ rental_app.phne|default_if_none:"" }}</td>
+      <td class="top-space" style="width:77%;">{{ rental_app.phone|default_if_none:"" }}</td>
     </tr>
     </tr>
      </tbody>
@@ -87,9 +87,9 @@
     <tbody>
     <tr>
       <td class="field-name top-space">Email:</td>
-      <td class="top-space" style="width:68%;">{{ rental_app.emil|default_if_none:"" }}</td>
+      <td class="top-space" style="width:68%;">{{ rental_app.email|default_if_none:"" }}</td>
       <td class="field-name left-space top-space">Number of Pets:</td>
-      <td class="top-space" style="width:35%;">{{ rental_app.n_ofpets|default_if_none:"" }}</td>
+      <td class="top-space" style="width:35%;">{{ rental_app.n_of_pets|default_if_none:"" }}</td>
     </tr>
   </tbody>
 </table>
@@ -171,7 +171,7 @@
    <tbody>
     <tr>
       <td class="field-name top-space">Date:</td>
-      <td class="top-space" style="width:90.7%;">{{ rental_app.date|default_if_none:"" }}</td>
+      <td class="top-space" style="width:90.7%;">{% now "F j, Y" %}</td>
     </tr>
   </tbody>
 </table>
