@@ -826,6 +826,11 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
                 .no-border {
                     border-bottom: 0px;
                 }
+                .long-text {
+                    table-layout:fixed;
+                    word-wrap: break-word;
+                    white-space: initial;
+                }
             ''',
             font_config=font_config
         )
