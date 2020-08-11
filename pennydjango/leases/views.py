@@ -882,10 +882,11 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
         #Rental pdf
         writer = PdfFileWriter()
         pdf_name = 'agreements/rental_tmp.pdf'
-        pdf_path = os.path.join(settings.MEDIA_ROOT, pdf_name)
+        pdf_path = os.path.join(settings.STATIC_ROOT, pdf_name)
         HTML(string=html).write_pdf(pdf_path, stylesheets=[css], font_config=font_config)
 
         reader_rental = PdfFileReader(pdf_path,'rb')
+        delete_disclosure_pdf(pdf_name)
         rental_firt_page = reader_rental.getPage(0)
         writer.addPage(rental_firt_page)
         #NYS pdf
