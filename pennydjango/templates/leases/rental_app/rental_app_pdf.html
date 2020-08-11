@@ -65,7 +65,7 @@
     <caption colspan="3" style="padding:0px 20px 15px 23px">Personal Information:</caption>
     <tr>
       <td class="field-name">Name:</td>
-      <td style="width:66%;">{{ rental_app.nme|default_if_none:"" }}</td>
+      <td style="width:66%;">{{ rental_app.name|default_if_none:"" }}</td>
       <td class="field-name left-space">Date of Birth:</td>
       <td style="width:47%;">
         <span> {{ rental_app.date_of_birth|default_if_none:"" }}</span>
@@ -77,9 +77,9 @@
     <tbody>
     <tr>
       <td class="field-name top-space">SSN#:</td>
-      <td class="top-space" style="width:61%;">{{ rental_app.ss|default_if_none:"" }}</td>
+      <td class="top-space" style="width:59%;">{{ rental_app.ssn|default_if_none:"" }}</td>
       <td class="field-name left-space top-space">Phone:</td>
-      <td class="top-space" style="width:77%;">{{ rental_app.phne|default_if_none:"" }}</td>
+      <td class="top-space" style="width:77%;">{{ rental_app.phone|default_if_none:"" }}</td>
     </tr>
     </tr>
      </tbody>
@@ -87,9 +87,9 @@
     <tbody>
     <tr>
       <td class="field-name top-space">Email:</td>
-      <td class="top-space" style="width:68%;">{{ rental_app.emil|default_if_none:"" }}</td>
+      <td class="top-space" style="width:62%;">{{ rental_app.email|default_if_none:"" }}</td>
       <td class="field-name left-space top-space">Number of Pets:</td>
-      <td class="top-space" style="width:35%;">{{ rental_app.n_ofpets|default_if_none:"" }}</td>
+      <td class="top-space" style="width:35%;">{{ rental_app.n_of_pets|default_if_none:"" }}</td>
     </tr>
   </tbody>
 </table>
@@ -123,9 +123,25 @@
     <tbody>
     <tr>
       <td class="field-name top-space">Property Owner Name:</td>
-      <td class="top-space" style="width:70%;">{{ rental_app.landlord_name|default_if_none:"" }}</td>
-      <td class="field-name left-space top-space">Property Owner Contact:</td>
-      <td class="top-space" style="width:41%;">{{ rental_app.landlord_contact|default_if_none:"" }}</td>
+      <td class="top-space long-text" 
+        style="{% if rental_app.landlord_name|length > 39 %}
+            width:80%;
+          {% else %}
+            width:70%;
+          {% endif %}">{{ rental_app.landlord_name|default_if_none:"" }}</td>
+    {% if rental_app.landlord_name|length > 39 or rental_app.landlord_contact|length > 48 %}
+      </tr>
+      <tr>
+      <td class="field-name top-space">Property Owner Contact:</td>
+    {% else %}
+      <td class="field-name top-space left-space" style="padding-left: 22px;">Property Owner Contact:</td>
+    {% endif %}
+      <td class="top-space long-text" 
+        style="{% if rental_app.landlord_name|length > 39 or rental_app.landlord_contact|length > 48 %}
+          width:80%;
+          {% else %}
+          width:11%;
+        {% endif %}">{{ rental_app.landlord_contact|default_if_none:"" }}</td>
     </tr>
   </tbody>
 </table>
@@ -135,9 +151,9 @@
     <caption style="padding:0px 20px 15px 23px">Employment Information:</caption>
     <tr>
       <td class="field-name">Employer:</td>
-      <td style="width:50%;">{{ rental_app.current_company|default_if_none:"" }}</td>
+      <td class="long-text" style="width:50%;">{{ rental_app.current_company|default_if_none:"" }}</td>
       <td class="field-name left-space">Job title:</td>
-      <td style="width:30%;">{{ rental_app.job_title|default_if_none:"" }}</td>
+      <td class="long-text" style="width:30%;">{{ rental_app.job_title|default_if_none:"" }}</td>
     </tr>
     </tbody>
 </table>
@@ -145,7 +161,12 @@
     <tbody>
     <tr>
       <td class="field-name top-space">How long have you worked there:</td>
-      <td class="top-space" style="width:46%;">{{ rental_app.time_at_current_job|default_if_none:"" }}</td>
+      <td class="top-space long-text"
+        style="{% if rental_app.time_at_current_job|length > 31 %}
+            width:76%;
+          {% else %}
+            width:46%;
+          {% endif %}">{{ rental_app.time_at_current_job|default_if_none:"" }}</td>
     </tr>
   </tbody>
 </table>
@@ -171,7 +192,7 @@
    <tbody>
     <tr>
       <td class="field-name top-space">Date:</td>
-      <td class="top-space" style="width:90.7%;">{{ rental_app.date|default_if_none:"" }}</td>
+      <td class="top-space" style="width:90.7%;">{% now "F j, Y" %}</td>
     </tr>
   </tbody>
 </table>

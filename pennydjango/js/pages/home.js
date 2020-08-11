@@ -134,27 +134,19 @@ class PublicListings extends React.Component {
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) => {
-            let fixedLink = null
-            if (resp.next !== null) {
-                fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
-            }
             this.setState({
                 listings: resp.results,
                 total_listings: resp.count,
-                more_listings_link: fixedLink
+                more_listings_link: resp.next
             })
         })
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) => {
-            let fixedLink = null
-            if (resp.next !== null) {
-                fixedLink = resp.next.slice(0,4) + 's' + resp.next.slice(4)
-            }
             this.setState({
                 listings: this.state.listings.concat(resp.results),
                 total_listings: resp.count,
-                more_listings_link: fixedLink
+                more_listings_link: resp.next
             })
         })
     }
