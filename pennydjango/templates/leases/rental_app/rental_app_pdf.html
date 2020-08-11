@@ -127,7 +127,7 @@
         style="{% if rental_app.landlord_name|length > 39 %}
             width:80%;
           {% else %}
-            width:70%;
+            width:60%;
           {% endif %}">{{ rental_app.landlord_name|default_if_none:"" }}</td>
     {% if rental_app.landlord_name|length > 39 or rental_app.landlord_contact|length > 48 %}
       </tr>
@@ -140,7 +140,7 @@
         style="{% if rental_app.landlord_name|length > 39 or rental_app.landlord_contact|length > 48 %}
           width:80%;
           {% else %}
-          width:11%;
+          width:21%;
         {% endif %}">{{ rental_app.landlord_contact|default_if_none:"" }}</td>
     </tr>
   </tbody>
