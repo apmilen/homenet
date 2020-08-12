@@ -32,11 +32,10 @@ export class FiltersBar extends React.Component {
         )
 
         let selected_date = initial_filters.date_available
-        if(typeof(selected_date) === "string" && selected_date) {
+        if(selected_date && typeof(selected_date) === "string") {
             selected_date = new Date(selected_date)
+            initial_filters["date_available"] = selected_date
         }
-        initial_filters["date_available"] = selected_date
-
         this.state = {
             filters: initial_filters,
             show_collapse: false,
