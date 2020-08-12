@@ -24,7 +24,6 @@ class Home(PublicReactView):
             'neighborhoods': dict(NEIGHBORHOODS),
             'listing_types': dict(LISTING_TYPES),
         }
-
         return {
             'map_key': settings.MAPBOX_API_KEY,
             'constants': constants,

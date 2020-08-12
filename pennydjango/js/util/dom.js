@@ -39,3 +39,10 @@ export class ErrorBoundary extends React.Component {
         return this.props.children; 
     }
 }
+
+export const pushFilterState = (data) => {
+    const qs_params_string = $.param(data)
+    const push_url = `${window.location.origin}${window.location.pathname}?${qs_params_string}`
+    console.log(data, push_url, qs_params_string)
+    history.pushState(qs_params_string, "", push_url)
+}

@@ -13,18 +13,35 @@ import {
 import {ALL_FILTERS} from '@/constants'
 
 
+const computeFilterValue = (filter_name, filter_value) => {
+    if(filter_value && ["true", "false"].indexOf(filter_value) !== -1) {
+        return filter_value === "true"
+    }
+    return filter_value || ALL_FILTERS[filter_name]
+}
+
+
 export class FiltersBar extends React.Component {
     constructor(props) {
         super(props)
         let initial_filters = {}
+        const initial_values = props.initial_values || {}
         props.filters.concat(props.advancedFilters || []).map(filter_name =>
             initial_filters[filter_name] = props.filtersState && props.filtersState[filter_name] ?
-                props.filtersState[filter_name] : ALL_FILTERS[filter_name]
+                props.filtersState[filter_name] : computeFilterValue(filter_name, initial_values[filter_name])
         )
+
+        let selected_date = initial_filters.date_available
+        if(typeof(selected_date) === "string" && selected_date) {
+            selected_date = new Date(selected_date)
+        }
+        initial_filters["date_available"] = selected_date
+
         this.state = {
             filters: initial_filters,
             show_collapse: false,
         }
+
     }
 
     updateFilter(filter) {
@@ -84,11 +101,11 @@ export class FiltersBar extends React.Component {
 
     updateParent() {
         let params = {...this.state.filters}
-        if (params.date_available)
-            params.date_available = params.date_available.getFullYear() + ' ' +
-                                    (params.date_available.getMonth() + 1) + ' ' +
-                                    params.date_available.getDate()
-
+        if (params.date_available) {
+            params.date_available = params.date_available.getFullYear() + '-' +
+                (params.date_available.getMonth() + 1) + '-' +
+                params.date_available.getDate()
+        }
         const {updateFilters, updateParams} = this.props
         updateFilters && updateFilters(this.state.filters)
         updateParams && updateParams(params)
