@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.views.generic.list import ListView
 
+from listings.utils import get_query_params_as_object
 from ui.views.base_views import PublicReactView, BaseContextMixin
 
 from listings.models import Listing
@@ -14,6 +15,7 @@ class Home(PublicReactView):
     component = 'pages/home.js'
 
     def props(self, request, *args, **kwargs):
+        query_filters = get_query_params_as_object(request.GET)
         constants = {
             'pets_allowed': dict(PETS_ALLOWED),
             'amenities': {
@@ -28,6 +30,7 @@ class Home(PublicReactView):
             'map_key': settings.MAPBOX_API_KEY,
             'constants': constants,
             'endpoint': '/listings/public/',
+            'initial_filters': query_filters,
         }
 
 
