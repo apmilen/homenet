@@ -30,7 +30,7 @@ from listings.serializer import (
 from listings.constants import (
     PETS_ALLOWED, AMENITIES, LISTING_TYPES
 )
-from listings.utils import qs_from_filters
+from listings.utils import qs_from_filters, get_query_params_as_object
 
 
 # ViewSets define the view behavior.
@@ -265,6 +265,7 @@ class Listings(AgentRequiredMixin, PublicReactView):
     component = 'pages/listings.js'
 
     def props(self, request, *args, **kwargs):
+        query_filters = get_query_params_as_object(request.GET)
         constants = {
             'pets_allowed': dict(PETS_ALLOWED),
             'amenities': {
@@ -277,11 +278,12 @@ class Listings(AgentRequiredMixin, PublicReactView):
             'agents': [
                 (agent.username, agent.get_full_name(), agent.avatar_url)
                 for agent in User.objects.filter(user_type=AGENT_TYPE)
-            ]
+            ],
         }
 
         return {
             'constants': constants,
+            'initial_filters': query_filters,
             'endpoint': '/listings/private/'
         }
 
