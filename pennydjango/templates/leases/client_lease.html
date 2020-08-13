@@ -59,10 +59,12 @@
                       {% bootstrap_field rental_application_form.name %}
                       {% bootstrap_field rental_application_form.phone %}
                       {% bootstrap_field rental_application_form.email %}
+                      {% bootstrap_field rental_application_form.cell %}
                       {% bootstrap_field rental_application_form.date_of_birth %}
                       {% bootstrap_field rental_application_form.ssn %}
                       {% bootstrap_field rental_application_form.driver_license %}
-                      {% bootstrap_field rental_application_form.n_of_pets %}
+                      {% bootstrap_field rental_application_form.driver_license_state %}
+                      <!--{% bootstrap_field rental_application_form.n_of_pets %}-->
                     </div>
                   </div>
                 </div>
@@ -81,10 +83,22 @@
                       data-parent="#accordion-rental-app">
                     <div class="card-body">
                       {% bootstrap_field rental_application_form.current_address %}
+                      {% bootstrap_field rental_application_form.current_city %}
+                      {% bootstrap_field rental_application_form.current_state %}
                       {% bootstrap_field rental_application_form.zipcode %}
+                      {% bootstrap_field rental_application_form.reason_moving %}
                       {% bootstrap_field rental_application_form.current_monthly_rent %}
+                      {% bootstrap_field rental_application_form.current_term %}
+                      {% bootstrap_field rental_application_form.previous_address %}
+                      {% bootstrap_field rental_application_form.previous_city %}
+                      {% bootstrap_field rental_application_form.previous_state %}
+                      {% bootstrap_field rental_application_form.previous_zipcode %}
                       {% bootstrap_field rental_application_form.landlord_name %}
+                      {% bootstrap_field rental_application_form.landlord_address %}
                       {% bootstrap_field rental_application_form.landlord_contact %}
+                      {% bootstrap_field rental_application_form.previous_landlord_name %}
+                      {% bootstrap_field rental_application_form.previous_landlord_address %}
+                      {% bootstrap_field rental_application_form.previous_landlord_phone %}
                     </div>
                   </div>
                 </div>
@@ -94,7 +108,7 @@
                       <button class="btn btn-link collapsed" type="button"
                               data-toggle="collapse" data-target="#collapseThree"
                               aria-expanded="false" aria-controls="collapseThree">
-                        Work Details
+                        Business or Source of Income
                       </button>
                     </h5>
                   </div>
@@ -104,8 +118,37 @@
                     <div class="card-body">
                       {% bootstrap_field rental_application_form.current_company %}
                       {% bootstrap_field rental_application_form.job_title %}
-                      {% bootstrap_field rental_application_form.annual_income %}
+                      {% bootstrap_field rental_application_form.work_address %}
+                      {% bootstrap_field rental_application_form.work_phone %}
+                      {% bootstrap_field rental_application_form.work_supervisor %}
+                      {% bootstrap_field rental_application_form.supervisor_phone %}
                       {% bootstrap_field rental_application_form.time_at_current_job %}
+                      {% bootstrap_field rental_application_form.annual_income %}
+                      {% bootstrap_field rental_application_form.aditional_income %}
+                      {% bootstrap_field rental_application_form.other_payments %}
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-header" id="headingFive">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" type="button"
+                              data-toggle="collapse" data-target="#collapseFive"
+                              aria-expanded="false" aria-controls="collapseFive">
+                        References
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="collapseFive" class="collapse"
+                      aria-labelledby="headingFive"
+                      data-parent="#accordion-rental-app">
+                    <div class="card-body">
+                      {% bootstrap_field rental_application_form.personal_reference %}
+                      {% bootstrap_field rental_application_form.reference_relationship %}
+                      {% bootstrap_field rental_application_form.personal_reference_phone %}
+                      {% bootstrap_field rental_application_form.had_bankruptcy %}
+                      {% bootstrap_field rental_application_form.had_been_evicted %}
+                      {% bootstrap_field rental_application_form.had_been_convicted %}
                     </div>
                   </div>
                 </div>

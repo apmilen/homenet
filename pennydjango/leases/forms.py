@@ -84,10 +84,16 @@ class RentalApplicationForm(forms.ModelForm):
     class Meta:
         model = RentalApplication
         fields = (
-            'name', 'phone', 'email', 'date_of_birth', 'ssn', 'driver_license',
-            'n_of_pets', 'current_address', 'zipcode', 'current_monthly_rent',
-            'landlord_name', 'landlord_contact', 'current_company',
-            'job_title', 'annual_income', 'time_at_current_job', 'id_file'
+            'name', 'phone', 'cell', 'email', 'date_of_birth', 'ssn', 'driver_license',
+            'driver_license_state', 'work_phone', 'n_of_pets', 'current_address',
+            'current_city', 'current_state', 'zipcode', 'current_monthly_rent', 'reason_moving',
+            'current_term', 'previous_address', 'previous_city', 'previous_state',
+            'previous_zipcode', 'work_address', 'work_supervisor', 'landlord_name',
+            'landlord_address', 'landlord_contact',  'previous_landlord_name', 'had_bankruptcy',
+            'previous_landlord_address', 'previous_landlord_phone','aditional_income',
+            'personal_reference', 'reference_relationship','personal_reference_phone',
+            'other_payments', 'current_company', 'job_title', 'annual_income', 'supervisor_phone',
+            'time_at_current_job', 'id_file', 'had_been_evicted', 'had_been_convicted'
         )
 
     def check_values(self, cleaned_data, required_fields):
@@ -103,7 +109,16 @@ class RentalApplicationForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         if not self.data['draft']:
-            required_fields = ['name', 'phone', 'ssn', 'email', 'id_file']
+            required_fields = [
+                'name',
+                'phone',
+                'ssn',
+                'email',
+                'id_file',
+                'driver_license',
+                'annual_income',
+                'zipcode'
+            ]
             self.check_values(cleaned_data, required_fields)
         return cleaned_data
 
@@ -129,6 +144,28 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['id_file'] = forms.FileField(
             label="ID", required=False, widget=forms.FileInput
         )
+        self.fields['driver_license_state'].required = False
+        self.fields['cell'].required = False
+        self.fields['work_phone'].required = False
+        self.fields['current_city'].required = False
+        self.fields['current_state'].required = False
+        self.fields['reason_moving'].required = False
+        self.fields['previous_address'].required = False
+        self.fields['previous_city'].required = False
+        self.fields['previous_state'].required = False
+        self.fields['previous_zipcode'].required = False
+        self.fields['work_address'].required = False
+        self.fields['work_supervisor'].required = False
+        self.fields['landlord_address'].required = False
+        self.fields['previous_landlord_name'].required = False
+        self.fields['previous_landlord_address'].required = False
+        self.fields['previous_landlord_phone'].required = False
+        self.fields['aditional_income'].required = False
+        self.fields['personal_reference'].required = False
+        self.fields['reference_relationship'].required = False
+        self.fields['personal_reference_phone'].required = False
+        self.fields['other_payments'].required = False
+        self.fields['supervisor_phone'].required = False
 
         self.fields['ssn'].label = "SSN"
 
