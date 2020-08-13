@@ -36,7 +36,7 @@ from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters, get_lease_pending_payment, \
     create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_merged_pdf, \
-    write_rental_data_pdf, create_full_rental_app_pdf
+    write_rental_data_pdf, create_full_rental_app_pdf, get_query_params_as_object
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -135,6 +135,7 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
     component = 'pages/leases.js'
 
     def props(self, request, *args, **kwargs):
+        query_filters = get_query_params_as_object(request.GET)
         constants = {
             'lease_status': list(LEASE_STATUS),
             'neighborhoods': dict(NEIGHBORHOODS),
@@ -146,7 +147,8 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
 
         return {
             'constants': constants,
-            'endpoint': '/leases/private/'
+            'endpoint': '/leases/private/',
+            'initial_filters': query_filters,
         }
 
 

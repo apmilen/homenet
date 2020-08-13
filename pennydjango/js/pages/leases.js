@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import {Lease} from '@/leases/components'
 import {FiltersBar} from '@/components/filtersbar'
+import {pushFilterState} from '@/util/dom'
 
 export class LeasesList extends React.PureComponent {
     constructor(props) {
@@ -19,6 +20,7 @@ export class LeasesList extends React.PureComponent {
                 leases: response.results,
                 more_leases_link: response.next
             })
+            pushFilterState(params)
         })
     }
 
@@ -32,12 +34,12 @@ export class LeasesList extends React.PureComponent {
     }
 
     render() {
-        const {constants} = this.props
+        const {constants, initial_filters} = this.props
         const {leases, more_leases_link} = this.state
         const last_lease = leases.length > 0 && leases.slice(-1)[0]
 
         const filters = [
-            "address", "unit", "sales_agents", "listing_agents", "hoods",
+            "address", "unit", "listing_agents", "hoods",
             "price", "beds", "lease_id", "lease_status"
         ]
 
@@ -46,6 +48,7 @@ export class LeasesList extends React.PureComponent {
                 <div className="col-12 col-md-10 offset-md-1">
                     <FiltersBar filters={filters}
                                 constants={constants}
+                                initial_values={initial_filters}
                                 updateParams={::this.fetchLeases}
                     />
                     <div className="card card-small mb-4">

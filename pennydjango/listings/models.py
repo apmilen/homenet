@@ -48,7 +48,7 @@ class Listing(BaseModel):
     description = models.TextField(max_length=1024)
     bedrooms = models.DecimalField(max_digits=3, decimal_places=1)
     bathrooms = models.DecimalField(max_digits=3, decimal_places=1)
-    size = models.PositiveSmallIntegerField(help_text='sq.feet')
+    size = models.PositiveSmallIntegerField(help_text='sq.feet', null=True)
     date_available = models.DateField()
     term = models.CharField(max_length=100)
     pets = models.CharField(max_length=100, choices=PETS_ALLOWED)

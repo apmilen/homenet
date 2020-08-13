@@ -12,6 +12,7 @@ import {tooltip, ErrorBoundary} from '@/util/dom'
 import {FiltersBar} from '@/components/filtersbar'
 import {MapComponent, coordinates} from '@/components/maps'
 import {Switch, SettingsGear} from '@/components/misc'
+import {pushFilterState} from '@/util/dom'
 
 
 
@@ -140,6 +141,7 @@ class PublicListings extends React.Component {
                 more_listings_link: resp.next
             })
         })
+        pushFilterState(params)
     }
     moreListings() {
         $.get(this.state.more_listings_link, (resp) => {
@@ -151,7 +153,7 @@ class PublicListings extends React.Component {
         })
     }
     render() {
-        const {constants} = this.props
+        const {constants, initial_filters} = this.props
         const {
             listings, total_listings, more_listings_link, listing_detail,
             filters, map_center, map_zoom, listing_marked, show_map, as_grid
@@ -171,6 +173,7 @@ class PublicListings extends React.Component {
                             advancedFilters={advanced_filters}
                             filtersState={filters}
                             constants={constants}
+                            initial_values={initial_filters}
                             updateFilters={filters => this.setState({filters})}
                             updateParams={::this.fetchListings}
                 />
