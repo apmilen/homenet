@@ -71,6 +71,12 @@ class LeaseMember(BaseModel):
     signed_agreement = models.DateField(null=True)
     ip_address = models.CharField(max_length=50, null=True)
     user_agent = models.CharField(max_length=255, null=True)
+    signed_nys_disclosure = models.DateField(null=True)
+    nys_disclosure_ip_address = models.CharField(max_length=50, null=True)
+    nys_disclosure_user_agent = models.CharField(max_length=255, null=True)
+    signed_fair_housing_disclosure = models.DateField(null=True)
+    fair_housing_disclosure_ip_address = models.CharField(max_length=50, null=True)
+    fair_housing_disclosure_user_agent = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.name
@@ -137,8 +143,10 @@ class RentalApplication(BaseModel):
         null=True,
         verbose_name="ID"
     )
+
     def filename(self):
         return os.path.basename(self.id_file.name)
+
 
 class RentalAppDocument(BaseModel):
     rental_app = models.ForeignKey(RentalApplication, on_delete=models.CASCADE)
