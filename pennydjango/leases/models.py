@@ -169,8 +169,10 @@ class RentalApplication(BaseModel):
         null=True,
         verbose_name="ID"
     )
+
     def filename(self):
         return os.path.basename(self.id_file.name)
+
 
 class RentalAppDocument(BaseModel):
     rental_app = models.ForeignKey(RentalApplication, on_delete=models.CASCADE)

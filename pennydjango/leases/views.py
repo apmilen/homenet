@@ -2,8 +2,6 @@ from io import BytesIO
 import os
 import zipfile
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -22,8 +20,6 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML, CSS
-from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
 from leases.forms import (
@@ -31,12 +27,15 @@ from leases.forms import (
     RentalApplicationForm,
     RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.mixins import ClientLeaseAccessMixin
-from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
-    RentalAppDocument
+from leases.models import (
+    Lease, LeaseMember, MoveInCost, RentalApplication, RentalAppDocument
+)
 from leases.serializer import LeaseSerializer
-from leases.utils import qs_from_filters, get_lease_pending_payment, \
-    create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_merged_pdf, \
-    write_rental_data_pdf, create_full_rental_app_pdf, get_query_params_as_object
+from leases.utils import (
+    qs_from_filters, get_lease_pending_payment, create_nys_disclosure_pdf,
+    create_fh_disclosure_pdf, delete_merged_pdf, get_query_params_as_object,
+    create_full_rental_app_pdf
+)
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -52,16 +51,12 @@ from penny.mixins import (
 )
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
-from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
 
 from django.db.models import Sum
-
-import logging
-
 
 # Rest Framework
 class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
@@ -515,7 +510,7 @@ class ClientLease(ClientOrAgentRequiredMixin,
         context['lease_pending_payment'] = lease_pending_payment
         context['signed_nys'] = rental_app.lease_member.signed_nys_disclosure
         context['signed_fh'] = rental_app.lease_member.signed_fair_housing_disclosure
-        
+
         if not context['signed_nys']:
             create_nys_disclosure_pdf(rental_app)
         elif not context['signed_fh']:
@@ -566,12 +561,12 @@ class SignNYSView(ClientOrAgentRequiredMixin,
             member.nys_disclosure_ip_address = get_client_ip(self.request)
             member.nys_disclosure_user_agent = self.request.META.get('HTTP_USER_AGENT', '')
             member.save()
-            
+
             rental_app_id = request.POST.get('rental_app')
             new_pdf_name = f'agreements/nys-disclosure_{rental_app_id}.pdf'
             delete_merged_pdf(new_pdf_name)
             return JsonResponse({'status': 200})
-        
+
 class SignFHView(ClientOrAgentRequiredMixin,
                         ClientLeaseAccessMixin,
                         UpdateView):
@@ -751,7 +746,10 @@ class RentalApplicationDetail(ClientOrAgentRequiredMixin,
         context = super().get_context_data(**kwargs)
         context['lease_member'] = self.object.lease_member
         context['rental_docs'] = self.object.rentalappdocument_set.all()
-        context['id_file'] = self.object.id_file
+        context['id_file'] = None
+        if self.object.id_file:
+            context['id_file'] = self.object.id_file
+            context['id_file_name'] = os.path.basename(self.object.id_file.name)
         return context
 
 
@@ -781,11 +779,12 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             fdir, fname = os.path.split(doc.file.path)
             zip_path = os.path.join(zip_subdir, fname)
             zipf.write(doc.file.path, zip_path)
-        
-        id_file = rental_app.id_file
-        fdir, fname = os.path.split(id_file.path)
-        zip_path = os.path.join(zip_subdir, fname)
-        zipf.write(id_file.path, zip_path)
+
+        if rental_app.id_file:
+            id_file = rental_app.id_file
+            fdir, fname = os.path.split(id_file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(id_file.path, zip_path)
         zipf.close()
 
         response = HttpResponse(
