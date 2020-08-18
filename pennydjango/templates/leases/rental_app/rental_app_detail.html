@@ -45,6 +45,10 @@
               <span class="float-right">{{ object.email|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Cell
+              <span class="float-right">{{ object.cell|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Date of Birth
               <span class="float-right">{{ object.date_of_birth|default_if_none:"" }}</span>
             </li>
@@ -53,8 +57,12 @@
               <span class="float-right">{{ object.ssn }}</span>
             </li>
             <li class="list-group-item">
-              # of Pets
-              <span class="float-right">{{ object.n_of_pets|default_if_none:"" }}</span>
+              Driver license
+              <span class="float-right">{{ object.driver_license|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Driver license state
+              <span class="float-right">{{ object.driver_license_state|default_if_none:"" }}</span>
             </li>
           </ul>
         </div>
@@ -80,12 +88,40 @@
               <span class="float-right">{{ object.current_address|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Current City
+              <span class="float-right">{{ object.current_city|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Current state
+              <span class="float-right">{{ object.current_state|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Zipcode
               <span class="float-right">{{ object.zipcode|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Reason moving
+              <span class="float-right">{{ object.reason_moving|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Current Monthly Rent
               <span class="float-right">{{ object.current_monthly_rent|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Term
+              <span class="float-right">{{ object.current_term|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous address
+              <span class="float-right">{{ object.previous_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              City
+              <span class="float-right">{{ object.previous_city|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              State
+              <span class="float-right">{{ object.previous_state|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
               Landlord Name
@@ -94,6 +130,18 @@
             <li class="list-group-item">
               Landlord Contact
               <span class="float-right">{{ object.landlord_contact|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord
+              <span class="float-right">{{ object.previous_landlord_name|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord address
+              <span class="float-right">{{ object.previous_landlord_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord phone
+              <span class="float-right">{{ object.previous_landlord_phone|default_if_none:"" }}</span>
             </li>
           </ul>
         </div>
@@ -123,18 +171,36 @@
               <span class="float-right">{{ object.job_title|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
-              Annual Income
-              <span class="float-right">{{ object.annual_income|default_if_none:"" }}</span>
+              Work address
+              <span class="float-right">{{ object.work_address|default_if_none:"" }}</span>
             </li>
-            {% if object.aditional_income %}
-              <li class="list-group-item">
-                Aditional sources of income
-                <span class="float-right">{{ object.aditional_income|default_if_none:"" }}</span>
-              </li>
-            {% endif %}
+            <li class="list-group-item">
+              Work phone
+              <span class="float-right">{{ object.work_phone|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Supervisor
+              <span class="float-right">{{ object.work_supervisor|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Phone
+              <span class="float-right">{{ object.supervisor_phone|default_if_none:"" }}</span>
+            </li>
             <li class="list-group-item">
               Time At Current Job
               <span class="float-right">{{ object.time_at_current_job|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Annual Income
+              <span class="float-right">{{ object.annual_income|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Aditional sources of income
+              <span class="float-right">{{ object.aditional_income|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Alimony/Child support or load payments
+              <span class="float-right">{{ object.other_payments|default_if_none:"" }}</span>
             </li>
           </ul>
         </div>
@@ -197,6 +263,10 @@
            aria-labelledby="headingFour"
            data-parent="#accordion-rental-app">
         <div class="card-body">
+          {% if id_file %}
+            <span style="margin-left: 12px;">Current ID: </span>
+              <a href="{{ id_file.url }}" target="_blank">{{ id_file.name }}</a>
+          {% endif%}
           {% if rental_docs %}
             <table class="table">
               <thead>
