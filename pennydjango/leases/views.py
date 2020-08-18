@@ -2,8 +2,6 @@ from io import BytesIO
 import os
 import zipfile
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -22,8 +20,6 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML, CSS
-from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
 from leases.forms import (
@@ -31,11 +27,15 @@ from leases.forms import (
     RentalApplicationForm,
     RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.mixins import ClientLeaseAccessMixin
-from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
-    RentalAppDocument
+from leases.models import (
+    Lease, LeaseMember, MoveInCost, RentalApplication, RentalAppDocument
+)
 from leases.serializer import LeaseSerializer
-from leases.utils import qs_from_filters, get_lease_pending_payment, \
-    create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_merged_pdf, get_query_params_as_object, write_rental_data_pdf, create_full_rental_app_pdf,
+from leases.utils import (
+    qs_from_filters, get_lease_pending_payment, create_nys_disclosure_pdf,
+    create_fh_disclosure_pdf, delete_merged_pdf, get_query_params_as_object,
+    create_full_rental_app_pdf
+)
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -51,16 +51,12 @@ from penny.mixins import (
 )
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
-from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
 
 from django.db.models import Sum
-
-import logging
-
 
 # Rest Framework
 class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
@@ -783,11 +779,12 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             fdir, fname = os.path.split(doc.file.path)
             zip_path = os.path.join(zip_subdir, fname)
             zipf.write(doc.file.path, zip_path)
-        
-        id_file = rental_app.id_file
-        fdir, fname = os.path.split(id_file.path)
-        zip_path = os.path.join(zip_subdir, fname)
-        zipf.write(id_file.path, zip_path)
+
+        if rental_app.id_file:
+            id_file = rental_app.id_file
+            fdir, fname = os.path.split(id_file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(id_file.path, zip_path)
         zipf.close()
 
         response = HttpResponse(

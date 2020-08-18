@@ -149,6 +149,7 @@ class RentalApplicationForm(forms.ModelForm):
         self.fields['work_phone'].required = False
         self.fields['current_city'].required = False
         self.fields['current_state'].required = False
+        self.fields['current_term'].required = False
         self.fields['reason_moving'].required = False
         self.fields['previous_address'].required = False
         self.fields['previous_city'].required = False
