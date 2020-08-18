@@ -45,6 +45,10 @@
               <span class="float-right">{{ object.email|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Cell
+              <span class="float-right">{{ object.cell|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Date of Birth
               <span class="float-right">{{ object.date_of_birth|default_if_none:"" }}</span>
             </li>
@@ -53,8 +57,12 @@
               <span class="float-right">{{ object.ssn }}</span>
             </li>
             <li class="list-group-item">
-              # of Pets
-              <span class="float-right">{{ object.n_of_pets|default_if_none:"" }}</span>
+              Driver license
+              <span class="float-right">{{ object.driver_license|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Driver license state
+              <span class="float-right">{{ object.driver_license_state|default_if_none:"" }}</span>
             </li>
           </ul>
         </div>
@@ -80,12 +88,40 @@
               <span class="float-right">{{ object.current_address|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Current City
+              <span class="float-right">{{ object.current_city|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Current state
+              <span class="float-right">{{ object.current_state|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Zipcode
               <span class="float-right">{{ object.zipcode|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
+              Reason moving
+              <span class="float-right">{{ object.reason_moving|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
               Current Monthly Rent
               <span class="float-right">{{ object.current_monthly_rent|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Term
+              <span class="float-right">{{ object.current_term|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous address
+              <span class="float-right">{{ object.previous_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              City
+              <span class="float-right">{{ object.previous_city|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              State
+              <span class="float-right">{{ object.previous_state|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
               Landlord Name
@@ -94,6 +130,18 @@
             <li class="list-group-item">
               Landlord Contact
               <span class="float-right">{{ object.landlord_contact|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord
+              <span class="float-right">{{ object.previous_landlord_name|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord address
+              <span class="float-right">{{ object.previous_landlord_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Previous landlord phone
+              <span class="float-right">{{ object.previous_landlord_phone|default_if_none:"" }}</span>
             </li>
           </ul>
         </div>
@@ -105,7 +153,7 @@
           <button class="btn btn-link collapsed" type="button"
                   data-toggle="collapse" data-target="#collapseThree"
                   aria-expanded="false" aria-controls="collapseThree">
-            Work Details
+            Business or Source of Income
           </button>
         </h5>
       </div>
@@ -123,12 +171,79 @@
               <span class="float-right">{{ object.job_title|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
-              Annual Income
-              <span class="float-right">{{ object.annual_income|default_if_none:"" }}</span>
+              Work address
+              <span class="float-right">{{ object.work_address|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Work phone
+              <span class="float-right">{{ object.work_phone|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Supervisor
+              <span class="float-right">{{ object.work_supervisor|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Phone
+              <span class="float-right">{{ object.supervisor_phone|default_if_none:"" }}</span>
             </li>
             <li class="list-group-item">
               Time At Current Job
               <span class="float-right">{{ object.time_at_current_job|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Annual Income
+              <span class="float-right">{{ object.annual_income|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Aditional sources of income
+              <span class="float-right">{{ object.aditional_income|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Alimony/Child support or load payments
+              <span class="float-right">{{ object.other_payments|default_if_none:"" }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="headingFive">
+        <h5 class="mb-0">
+          <button class="btn btn-link collapsed" type="button"
+                  data-toggle="collapse" data-target="#collapseFive"
+                  aria-expanded="false" aria-controls="collapseFive">
+            References
+          </button>
+        </h5>
+      </div>
+      <div id="collapseFive" class="collapse"
+           aria-labelledby="headingFive"
+           data-parent="#accordion-rental-app">
+        <div class="card-body">
+          <ul class="list-unstyled list-group">
+            <li class="list-group-item">
+              Personal Reference
+              <span class="float-right">{{ object.personal_reference|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Relationship
+              <span class="float-right">{{ object.reference_relationship|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Phone
+              <span class="float-right">{{ object.personal_reference_phone|default_if_none:"" }}</span>
+            </li>
+            <li class="list-group-item">
+              Have you ever filed for bankruptcy
+              <span class="float-right">{{ object.had_bankruptcy|yesno:"Yes,No" }}</span>
+            </li>
+            <li class="list-group-item">
+              Have you ever been evicted
+              <span class="float-right">{{ object.had_been_evicted|yesno:"Yes,No" }}</span>
+            </li>
+            <li class="list-group-item">
+              Have you ever been convicted of a felony
+              <span class="float-right">{{ object.had_been_convicted|yesno:"Yes,No" }}</span>
             </li>
           </ul>
         </div>
@@ -149,21 +264,9 @@
            data-parent="#accordion-rental-app">
         <div class="card-body">
           {% if id_file %}
-            <table class="table">
-              <thead>
-              <tr>
-                <th>ID Filename</th>
-                <th>Url</th>
-              </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{{ id_file_name }}</td>
-                  <td><a href="{{ id_file.url }}" target="_blank">Link</a></td>
-                </tr>
-              </tbody>
-            </table>
-          {% endif %}
+            <span style="margin-left: 12px;">Current ID: </span>
+              <a href="{{ id_file.url }}" target="_blank">{{ id_file.name }}</a>
+          {% endif%}
           {% if rental_docs %}
             <table class="table">
               <thead>

@@ -2,8 +2,6 @@ from io import BytesIO
 import os
 import zipfile
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -22,8 +20,6 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML, CSS
-from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
 from leases.forms import (
@@ -31,11 +27,15 @@ from leases.forms import (
     RentalApplicationForm,
     RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.mixins import ClientLeaseAccessMixin
-from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
-    RentalAppDocument
+from leases.models import (
+    Lease, LeaseMember, MoveInCost, RentalApplication, RentalAppDocument
+)
 from leases.serializer import LeaseSerializer
-from leases.utils import qs_from_filters, get_lease_pending_payment, \
-    create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_disclosure_pdf, get_query_params_as_object
+from leases.utils import (
+    qs_from_filters, get_lease_pending_payment, create_nys_disclosure_pdf,
+    create_fh_disclosure_pdf, delete_merged_pdf, get_query_params_as_object,
+    create_full_rental_app_pdf
+)
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -51,16 +51,12 @@ from penny.mixins import (
 )
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
-from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
 
 from django.db.models import Sum
-
-import logging
-
 
 # Rest Framework
 class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
@@ -568,7 +564,7 @@ class SignNYSView(ClientOrAgentRequiredMixin,
 
             rental_app_id = request.POST.get('rental_app')
             new_pdf_name = f'agreements/nys-disclosure_{rental_app_id}.pdf'
-            delete_disclosure_pdf(new_pdf_name)
+            delete_merged_pdf(new_pdf_name)
             return JsonResponse({'status': 200})
 
 class SignFHView(ClientOrAgentRequiredMixin,
@@ -586,7 +582,7 @@ class SignFHView(ClientOrAgentRequiredMixin,
             member.save()
             rental_app_id = request.POST.get('rental_app')
             new_pdf_name = f'agreements/FH_disclosure_{rental_app_id}.pdf'
-            delete_disclosure_pdf(new_pdf_name)
+            delete_merged_pdf(new_pdf_name)
             return JsonResponse({'status': 200})
 
 class DeleteLeaseMember(ClientOrAgentRequiredMixin,
@@ -783,11 +779,12 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             fdir, fname = os.path.split(doc.file.path)
             zip_path = os.path.join(zip_subdir, fname)
             zipf.write(doc.file.path, zip_path)
-        
-        id_file = rental_app.id_file
-        fdir, fname = os.path.split(id_file.path)
-        zip_path = os.path.join(zip_subdir, fname)
-        zipf.write(id_file.path, zip_path)
+
+        if rental_app.id_file:
+            id_file = rental_app.id_file
+            fdir, fname = os.path.split(id_file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(id_file.path, zip_path)
         zipf.close()
 
         response = HttpResponse(
@@ -837,88 +834,9 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
 
     def get(self, *args, **kwargs):
         rental_app = self.get_object()
-        lease = rental_app.lease_member.offer
-        listing = lease.listing
         lease_member = rental_app.lease_member
+        rental_app_pdf =  create_full_rental_app_pdf(rental_app)
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
-
-        html = render_to_string("leases/rental_app/rental_app_pdf.html", {
-            'rental_app': lease_member.rentalapplication,
-            'lease_member': lease_member,
-            'lease': lease,
-            'listing': listing,
-        })
-        font_config = FontConfiguration()
-        css = CSS(string='''
-                @page {
-                    size: letter; margin-left: 0.7cm; margin-top: -0.4cm;
-                },
-                @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
-                body {
-                    font-family: "Nunito script=latin rev=1"; font-size: 12.5px;,
-                }
-                table, .left-space {
-                    padding-left: 22px;
-                }
-                table td {
-                    white-space: nowrap;overflow: hidden;text-overflow: initial;
-                    border-bottom: 1px solid black;
-                }
-                .field-name, .no-border  {
-                    border-bottom: none;
-                }
-                .top-space {
-                    padding-top:10px;
-                }
-                .green-border {
-                    border: 1px solid rgb(163, 202, 136);
-                }
-                .no-border {
-                    border-bottom: 0px;
-                }
-                .long-text {
-                    table-layout:fixed;
-                    word-wrap: break-word;
-                    white-space: initial;
-                }
-            ''',
-            font_config=font_config
-        )
-        #Rental pdf
-        writer = PdfFileWriter()
-        pdf_name = 'agreements/rental_tmp.pdf'
-        pdf_path = os.path.join(settings.STATIC_ROOT, pdf_name)
-        HTML(string=html).write_pdf(pdf_path, stylesheets=[css], font_config=font_config)
-
-        reader_rental = PdfFileReader(pdf_path,'rb')
-        delete_disclosure_pdf(pdf_name)
-        rental_firt_page = reader_rental.getPage(0)
-        writer.addPage(rental_firt_page)
-        #NYS pdf
-        create_nys_disclosure_pdf(rental_app)
-        nys_name = f'agreements/nys-disclosure_{rental_app.id}.pdf'
-        reader = PdfFileReader(open(os.path.join(settings.STATIC_ROOT, nys_name),'rb'))
-        delete_disclosure_pdf(nys_name)
-        first_p = reader.getPage(0)
-        second_p = reader.getPage(1)
-        writer.addPage(first_p)
-        writer.addPage(second_p)
-        #FH pdf
-        create_fh_disclosure_pdf(rental_app)
-        fh_name = f'agreements/FH_disclosure_{rental_app.id}.pdf'
-        reader_fh = PdfFileReader(open(os.path.join(settings.STATIC_ROOT, fh_name),'rb'))
-        delete_disclosure_pdf(fh_name)
-        first_fh = reader_fh.getPage(0)
-        second_fh = reader_fh.getPage(1)
-        writer.addPage(first_fh)
-        writer.addPage(second_fh)
-
-        rental_app_pdf_name = f'agreements/rental_app_{rental_app.id}.pdf'
-        with open(os.path.join(settings.STATIC_ROOT, rental_app_pdf_name), 'wb') as f:
-            writer.write(f)
-
-        rental_app_pdf = open(os.path.join(settings.STATIC_ROOT, rental_app_pdf_name), 'rb').read()
-        delete_disclosure_pdf(rental_app_pdf_name)
         response = HttpResponse(rental_app_pdf, content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
