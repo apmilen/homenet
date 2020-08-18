@@ -35,7 +35,7 @@ from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
     RentalAppDocument
 from leases.serializer import LeaseSerializer
 from leases.utils import qs_from_filters, get_lease_pending_payment, \
-    create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_disclosure_pdf
+    create_nys_disclosure_pdf, create_fh_disclosure_pdf, delete_disclosure_pdf, get_query_params_as_object
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -134,6 +134,7 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
     component = 'pages/leases.js'
 
     def props(self, request, *args, **kwargs):
+        query_filters = get_query_params_as_object(request.GET)
         constants = {
             'lease_status': list(LEASE_STATUS),
             'neighborhoods': dict(NEIGHBORHOODS),
@@ -145,7 +146,8 @@ class LeasesList(AgentRequiredMixin, PublicReactView):
 
         return {
             'constants': constants,
-            'endpoint': '/leases/private/'
+            'endpoint': '/leases/private/',
+            'initial_filters': query_filters,
         }
 
 
@@ -512,7 +514,7 @@ class ClientLease(ClientOrAgentRequiredMixin,
         context['lease_pending_payment'] = lease_pending_payment
         context['signed_nys'] = rental_app.lease_member.signed_nys_disclosure
         context['signed_fh'] = rental_app.lease_member.signed_fair_housing_disclosure
-        
+
         if not context['signed_nys']:
             create_nys_disclosure_pdf(rental_app)
         elif not context['signed_fh']:
@@ -563,12 +565,12 @@ class SignNYSView(ClientOrAgentRequiredMixin,
             member.nys_disclosure_ip_address = get_client_ip(self.request)
             member.nys_disclosure_user_agent = self.request.META.get('HTTP_USER_AGENT', '')
             member.save()
-            
+
             rental_app_id = request.POST.get('rental_app')
             new_pdf_name = f'agreements/nys-disclosure_{rental_app_id}.pdf'
             delete_disclosure_pdf(new_pdf_name)
             return JsonResponse({'status': 200})
-        
+
 class SignFHView(ClientOrAgentRequiredMixin,
                         ClientLeaseAccessMixin,
                         UpdateView):

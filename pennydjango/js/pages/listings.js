@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import {ListingComponent} from '@/listings/components'
 import {FiltersBar} from '@/components/filtersbar'
+import {pushFilterState} from '@/util/dom'
 
 
 class Listings extends React.Component {
@@ -12,6 +13,7 @@ class Listings extends React.Component {
             listings: [],
             more_listings_link: null,
         }
+
     }
     fetchListings(params) {
         $.get(this.props.endpoint, params, (resp) => {
@@ -19,6 +21,7 @@ class Listings extends React.Component {
                 listings: resp.results,
                 more_listings_link: resp.next
             })
+            pushFilterState(params)
         })        
     }
     moreListings() {
@@ -30,7 +33,7 @@ class Listings extends React.Component {
         })
     }
     render() {
-        const {constants} = this.props
+        const {constants, initial_filters} = this.props
         const {listings, more_listings_link} = this.state
         const last_listing = listings.length > 0 && listings.slice(-1)[0]
 
@@ -46,6 +49,7 @@ class Listings extends React.Component {
                 <div className= "col-12 col-md-10 offset-md-1">
                     <FiltersBar filters={filters}
                                 constants={constants}
+                                initial_values={initial_filters}
                                 updateParams={::this.fetchListings}
                             />
                     <div className= "card card-small mb-4">
