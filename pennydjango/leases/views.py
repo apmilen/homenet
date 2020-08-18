@@ -750,7 +750,10 @@ class RentalApplicationDetail(ClientOrAgentRequiredMixin,
         context = super().get_context_data(**kwargs)
         context['lease_member'] = self.object.lease_member
         context['rental_docs'] = self.object.rentalappdocument_set.all()
-        context['id_file'] = self.object.id_file
+        context['id_file'] = None
+        if self.object.id_file:
+            context['id_file'] = self.object.id_file
+            context['id_file_name'] = os.path.basename(self.object.id_file.name)
         return context
 
 
