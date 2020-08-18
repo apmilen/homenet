@@ -197,6 +197,22 @@
            aria-labelledby="headingFour"
            data-parent="#accordion-rental-app">
         <div class="card-body">
+          {% if id_file %}
+            <table class="table">
+              <thead>
+              <tr>
+                <th>ID Filename</th>
+                <th>Url</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ id_file_name }}</td>
+                  <td><a href="{{ id_file.url }}" target="_blank">Link</a></td>
+                </tr>
+              </tbody>
+            </table>
+          {% endif %}
           {% if rental_docs %}
             <table class="table">
               <thead>
