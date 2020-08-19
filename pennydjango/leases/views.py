@@ -20,8 +20,6 @@ from django.utils.text import slugify
 from django.db.models import Q
 
 from rest_framework import viewsets
-from weasyprint import HTML, CSS
-from weasyprint.fonts import FontConfiguration
 
 from leases.emails import send_invitation_email
 from leases.forms import (
@@ -29,10 +27,15 @@ from leases.forms import (
     RentalApplicationForm,
     RentalAppDocForm, ChangeLeaseStatusForm, RentalApplicationEditingForm)
 from leases.mixins import ClientLeaseAccessMixin
-from leases.models import Lease, LeaseMember, MoveInCost, RentalApplication, \
-    RentalAppDocument
+from leases.models import (
+    Lease, LeaseMember, MoveInCost, RentalApplication, RentalAppDocument
+)
 from leases.serializer import LeaseSerializer
-from leases.utils import qs_from_filters, get_lease_pending_payment, get_query_params_as_object
+from leases.utils import (
+    qs_from_filters, get_lease_pending_payment, create_nys_disclosure_pdf,
+    create_fh_disclosure_pdf, delete_merged_pdf, get_query_params_as_object,
+    create_full_rental_app_pdf
+)
 from leases.constants import LEASE_STATUS
 
 from listings.mixins import ListingContextMixin
@@ -48,16 +51,12 @@ from penny.mixins import (
 )
 from penny.constants import NEIGHBORHOODS, AGENT_TYPE, CLIENT_TYPE
 from penny.forms import CustomUserCreationForm
-from penny.model_utils import get_all_or_by_user
 from penny.models import User
 from penny.utils import ExtendedEncoder, get_client_ip
 
 from ui.views.base_views import PublicReactView
 
 from django.db.models import Sum
-
-import logging
-
 
 # Rest Framework
 class LeaseViewSet(AgentRequiredMixin, viewsets.ReadOnlyModelViewSet):
@@ -509,7 +508,13 @@ class ClientLease(ClientOrAgentRequiredMixin,
         context['agreement_form'] = SignAgreementForm()
         context['lease_transactions'] = lease_transactions
         context['lease_pending_payment'] = lease_pending_payment
-        
+        context['signed_nys'] = rental_app.lease_member.signed_nys_disclosure
+        context['signed_fh'] = rental_app.lease_member.signed_fair_housing_disclosure
+
+        if not context['signed_nys']:
+            create_nys_disclosure_pdf(rental_app)
+        elif not context['signed_fh']:
+            create_fh_disclosure_pdf(rental_app)
         # Application context
         if not rental_app.completed or rental_app.editing:
             context['rental_application_form'] = RentalApplicationForm(
@@ -542,6 +547,43 @@ class SignAgreementView(ClientOrAgentRequiredMixin,
     def form_invalid(self, form):
         return HttpResponseRedirect(self.get_success_url())
 
+
+class SignNYSView(ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
+                        UpdateView):
+
+    model = LeaseMember
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            member = self.get_object()
+            member.signed_nys_disclosure = timezone.now()
+            member.nys_disclosure_ip_address = get_client_ip(self.request)
+            member.nys_disclosure_user_agent = self.request.META.get('HTTP_USER_AGENT', '')
+            member.save()
+
+            rental_app_id = request.POST.get('rental_app')
+            new_pdf_name = f'agreements/nys-disclosure_{rental_app_id}.pdf'
+            delete_merged_pdf(new_pdf_name)
+            return JsonResponse({'status': 200})
+
+class SignFHView(ClientOrAgentRequiredMixin,
+                        ClientLeaseAccessMixin,
+                        UpdateView):
+
+    model = LeaseMember
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            member = self.get_object()
+            member.signed_fair_housing_disclosure = timezone.now()
+            member.fair_housing_disclosure_ip_address = get_client_ip(self.request)
+            member.fair_housing_disclosure_user_agent = self.request.META.get('HTTP_USER_AGENT', '')
+            member.save()
+            rental_app_id = request.POST.get('rental_app')
+            new_pdf_name = f'agreements/FH_disclosure_{rental_app_id}.pdf'
+            delete_merged_pdf(new_pdf_name)
+            return JsonResponse({'status': 200})
 
 class DeleteLeaseMember(ClientOrAgentRequiredMixin,
                         ClientLeaseAccessMixin,
@@ -704,7 +746,10 @@ class RentalApplicationDetail(ClientOrAgentRequiredMixin,
         context = super().get_context_data(**kwargs)
         context['lease_member'] = self.object.lease_member
         context['rental_docs'] = self.object.rentalappdocument_set.all()
-        context['id_file'] = self.object.id_file
+        context['id_file'] = None
+        if self.object.id_file:
+            context['id_file'] = self.object.id_file
+            context['id_file_name'] = os.path.basename(self.object.id_file.name)
         return context
 
 
@@ -734,11 +779,12 @@ class DownloadRentalDocuments(ClientOrAgentRequiredMixin,
             fdir, fname = os.path.split(doc.file.path)
             zip_path = os.path.join(zip_subdir, fname)
             zipf.write(doc.file.path, zip_path)
-        
-        id_file = rental_app.id_file
-        fdir, fname = os.path.split(id_file.path)
-        zip_path = os.path.join(zip_subdir, fname)
-        zipf.write(id_file.path, zip_path)
+
+        if rental_app.id_file:
+            id_file = rental_app.id_file
+            fdir, fname = os.path.split(id_file.path)
+            zip_path = os.path.join(zip_subdir, fname)
+            zipf.write(id_file.path, zip_path)
         zipf.close()
 
         response = HttpResponse(
@@ -788,55 +834,9 @@ class GenerateRentalPDF(ClientOrAgentRequiredMixin,
 
     def get(self, *args, **kwargs):
         rental_app = self.get_object()
-        lease = rental_app.lease_member.offer
-        listing = lease.listing
         lease_member = rental_app.lease_member
+        rental_app_pdf =  create_full_rental_app_pdf(rental_app)
         filename = f'{slugify(lease_member.get_full_name())}.pdf'
-        response = HttpResponse(content_type="application/pdf")
+        response = HttpResponse(rental_app_pdf, content_type="application/pdf")
         response['Content-Disposition'] = f'attachment; filename={filename}'
-        html = render_to_string("leases/rental_app/rental_app_pdf.html", {
-            'rental_app': lease_member.rentalapplication,
-            'lease_member': lease_member,
-            'lease': lease,
-            'listing': listing,
-        })
-        font_config = FontConfiguration()
-        css = CSS(string='''
-                @page {
-                    size: letter; margin-left: 0.7cm; margin-top: -0.4cm;
-                },
-                @font-face {src: url(https://fonts.googleapis.com/css2?family=Lilita+One&display=swap)}
-                body {
-                    font-family: "Nunito script=latin rev=1"; font-size: 12.5px;,
-                }
-                table, .left-space {
-                    padding-left: 22px;
-                }
-                table td {
-                    white-space: nowrap;overflow: hidden;text-overflow: initial;
-                    border-bottom: 1px solid black;
-                }
-                .field-name, .no-border  {
-                    border-bottom: none;
-                }
-                .top-space {
-                    padding-top:10px;
-                }
-                .green-border {
-                    border: 1px solid rgb(163, 202, 136);
-                }
-                .no-border {
-                    border-bottom: 0px;
-                }
-                .long-text {
-                    table-layout:fixed;
-                    word-wrap: break-word;
-                    white-space: initial;
-                }
-            ''',
-            font_config=font_config
-        )
-
-        HTML(string=html).write_pdf(response, stylesheets=[css], font_config=font_config)
-
         return response

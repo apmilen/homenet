@@ -8,7 +8,7 @@ from leases.views import (
     UpdateRentalApplication, UploadRentalAppDoc, DeleteRentalAppDoc,
     RentalApplicationDetail, DownloadRentalDocuments, LeaseUpdateView,
     ChangeLeaseStatusView, UpdateEditingRentalApplication, GenerateRentalPDF,
-    MoveInCostDelete
+    MoveInCostDelete, SignNYSView, SignFHView
 )
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -66,4 +66,6 @@ urlpatterns = [
     path('<uuid:pk>/generate-pdf',
          GenerateRentalPDF.as_view(),
          name='generate-pdf'),
+     path('nys/<uuid:pk>', SignNYSView.as_view(), name='nys-disclosure'),
+     path('fh/<uuid:pk>', SignFHView.as_view(), name='fh-disclosure'),
 ]

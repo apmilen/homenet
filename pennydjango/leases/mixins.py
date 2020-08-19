@@ -18,7 +18,7 @@ class ClientLeaseAccessMixin(AccessMixin):
 
     def my_test_func(self):
         user = self.request.user
-        if user.is_user_client:
+        if not user.is_user_admin and user.is_user_client:
             get_object = getattr(self, self.object_method)
             if get_object:
                 test_object = get_object()

@@ -519,7 +519,9 @@ div.modal-body>p {
 #amount_plaid {
     width: 79%;
   }
-
 #id_id_file {
     display: block;
+}
+.wizard-inner .nav-tabs {
+    border-bottom: none;
 }
