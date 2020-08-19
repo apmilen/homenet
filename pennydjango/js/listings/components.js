@@ -215,7 +215,8 @@ export class ListingComponent extends React.Component {
             date_available, utilities, move_in_cost, size, landlord_contact,
             listing_agent, owner_pays, agent_notes, agent_bonus,
             pets, term, created, modified, status, listing_link, edit_link,
-            offer_link, nearby_transit, parking, photos_link, id, change_status_link
+            offer_link, nearby_transit, parking, photos_link, id, change_status_link,
+            other_nearby_transit
         } = this.props.listing
         const {
             collections
@@ -335,8 +336,18 @@ export class ListingComponent extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="row border-bottom-0 nearby-transit">
-                                                <div className="col-sm-4 text-left"><b>Nearby Transit</b></div>
-                                                <div className="col-sm-8 text-left">{nearby_transit}</div>
+                                                <div className="col-sm-3 text-left"><b>Nearby Transit</b></div>
+                                                <div className="col-sm-8 text-left">
+                                                    <ul>
+                                                        {nearby_transit.map((value) => {
+                                                            return <li>{value}</li>
+                                                        })}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div className="row border-bottom-0 nearby-transit">
+                                                <div className="col-sm-3 text-left"><b>Other transit options</b></div>
+                                                <div className="col-sm-8 text-left">{other_nearby_transit}</div>
                                             </div>
                                         </div>
                                     </div>

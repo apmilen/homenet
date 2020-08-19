@@ -28,7 +28,7 @@ from listings.serializer import (
     PublicListingSerializer, PrivateListingSerializer
 )
 from listings.constants import (
-    PETS_ALLOWED, AMENITIES, LISTING_TYPES
+    PETS_ALLOWED, AMENITIES, LISTING_TYPES, TRANSIT_OPTIONS
 )
 from listings.utils import qs_from_filters, get_query_params_as_object
 
@@ -275,12 +275,12 @@ class Listings(AgentRequiredMixin, PublicReactView):
             },
             'listing_types': dict(LISTING_TYPES),
             'neighborhoods': dict(NEIGHBORHOODS),
+            'nearby_transit': dict(TRANSIT_OPTIONS),
             'agents': [
                 (agent.username, agent.get_full_name(), agent.avatar_url)
                 for agent in User.objects.filter(user_type=AGENT_TYPE)
             ],
         }
-
         return {
             'constants': constants,
             'initial_filters': query_filters,
