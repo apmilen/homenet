@@ -11,7 +11,7 @@ def add_transit_options(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('listings', '0018_auto_20200818_1834')
+        ('listings', '0018_auto_20200820_2051')
     ]
 
     operations = [

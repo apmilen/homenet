@@ -13,7 +13,7 @@ class ListingForm(forms.ModelForm):
         widget=Select2Widget,
         queryset=User.objects.filter(user_type=AGENT_TYPE)
     )
-    nearby_transit = forms.ModelMultipleChoiceField(
+    choices_nearby_transit = forms.ModelMultipleChoiceField(
         widget=Select2MultipleWidget(attrs={'data-close-on-select': 'false'}),
         queryset=TransitOptions.objects.all(),
     )
@@ -30,7 +30,8 @@ class ListingForm(forms.ModelForm):
         self.fields['bathrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['bedrooms'].widget.attrs.update({'step': '0.5'})
         self.fields['address'].widget.attrs.update({'readonly': True})
-        self.fields['other_nearby_transit'].required = False
+        self.fields['nearby_transit'].required = False
+        self.fields['choices_nearby_transit'].required = False
 
     class Meta:
         model = Listing
@@ -38,7 +39,7 @@ class ListingForm(forms.ModelForm):
             'listing_type', 'price', 'move_in_cost', 'owner_pays',
             'agent_bonus', 'no_fee_listing', 'description', 'agent_notes',
             'utilities', 'size', 'bathrooms', 'bedrooms', 'date_available',
-            'term', 'pets', 'address', 'geopoint', 'nearby_transit', 'other_nearby_transit',
+            'term', 'pets', 'address', 'geopoint', 'choices_nearby_transit', 'nearby_transit',
             'unit_number', 'neighborhood', 'listing_agent', 'parking',
         )
         widgets = {

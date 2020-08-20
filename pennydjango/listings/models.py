@@ -61,8 +61,8 @@ class Listing(BaseModel):
     pets = models.CharField(max_length=100, choices=PETS_ALLOWED)
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=100)
-    nearby_transit = models.ManyToManyField(TransitOptions)
-    other_nearby_transit = models.TextField(
+    choices_nearby_transit = models.ManyToManyField(TransitOptions, verbose_name='Nearby transit')
+    nearby_transit = models.TextField(
         max_length=500,
         blank=True,
         null=True,
@@ -140,7 +140,7 @@ class Listing(BaseModel):
 
     def transit_option(self):
         return [transit.get_name_display()
-                    for transit in self.nearby_transit.all()]
+                    for transit in self.choices_nearby_transit.all()]
 
     @cached_property
     def neighborhood_name(self):
@@ -208,7 +208,7 @@ class Listing(BaseModel):
                 'modified',
                 'status',
                 'nearby_transit',
-                'other_nearby_transit',
+                'choices_nearby_transit',
                 'parking',
             ),
             'str': str(self),
