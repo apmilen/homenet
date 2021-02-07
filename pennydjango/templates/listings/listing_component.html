@@ -119,6 +119,15 @@
             </div>
             <div class="row listing-area-data-row">
               <div class="col-sm-4 text-left"><b>Nearby Transit</b></div>
+              <div class="col-sm-8 text-left">
+                <ul class="ul-4">
+                {% for line in listing.choices_nearby_transit %}
+                  <li>{{ line }}</li>
+                {% endfor %}
+              </ul></div>
+            </div>
+            <div class="row listing-area-data-row">
+              <div class="col-sm-4 text-left"><b>Other transit options</b></div>
               <div class="col-sm-8 text-left">{{ listing.nearby_transit }}</div>
             </div>
             <div class="row listing-area-data-row">

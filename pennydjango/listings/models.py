@@ -14,8 +14,15 @@ from penny.models import User
 from penny.utils import image_path
 from listings.constants import (
     LISTING_TYPES, LISTING_STATUS, MOVE_IN_COST, PETS_ALLOWED, AMENITIES, DRAFT,
-    PARKING_OPTIONS
+    PARKING_OPTIONS, TRANSIT_OPTIONS
 )
+
+
+class TransitOptions(BaseModel):
+    name = models.CharField(max_length=250, choices=TRANSIT_OPTIONS)
+
+    def __str__(self):
+        return self.get_name_display()
 
 
 class Listing(BaseModel):
@@ -54,7 +61,13 @@ class Listing(BaseModel):
     pets = models.CharField(max_length=100, choices=PETS_ALLOWED)
     address = models.CharField(max_length=255)
     geopoint = models.CharField(max_length=100)
-    nearby_transit = models.TextField(max_length=500, blank=True, null=True)
+    choices_nearby_transit = models.ManyToManyField(TransitOptions, verbose_name='Nearby transit')
+    nearby_transit = models.TextField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name='Other transit options'
+    )
     unit_number = models.CharField(
         max_length=50,
         verbose_name='Unit Number (Only one)'
@@ -65,7 +78,7 @@ class Listing(BaseModel):
         choices=PARKING_OPTIONS,
         null=True,
         blank=True,
-    )    
+    )
     listing_agent = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -124,6 +137,10 @@ class Listing(BaseModel):
             return [amenity.get_name_display()
                     for amenity in self.detail.amenities.all()]
         return []
+
+    def transit_option(self):
+        return [transit.get_name_display()
+                    for transit in self.choices_nearby_transit.all()]
 
     @cached_property
     def neighborhood_name(self):
@@ -191,6 +208,7 @@ class Listing(BaseModel):
                 'modified',
                 'status',
                 'nearby_transit',
+                'choices_nearby_transit',
                 'parking',
             ),
             'str': str(self),

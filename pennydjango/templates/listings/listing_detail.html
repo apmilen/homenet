@@ -121,9 +121,17 @@
                 {% endfor %}
               </ul>
             </div>
-            <div class="col-6 text-justify pt-2">
+            <div class="col-12 text-justify pt-2">
               <p><b>Nearby transit</b></p>
-              <p>{{ object.nearby_transit }}</p>
+             <ul class="ul-4">
+                {% for line in object.transit_option %}
+                  <li>{{ line }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <div class="col-12 text-justify pt-2">
+              <p><b>Other transit options</b></p>
+              <p>{{ object.nearby_transit|default_if_none:"" }}</p>
             </div>
             <div class="col-12 text-justify pt-2 border-top">
               <p><b>Parking</b></p>
