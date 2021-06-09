@@ -11,7 +11,7 @@ ipdb = "*"
 django-extensions = "*"
 
 [packages]
-django = "==2.2.4"
+django = "==2.2.22"
 psycopg2 = "==2.8.3"
 pytest = "==5.0.1"
 pytest-django = "==3.5.1"
